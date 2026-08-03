@@ -490,6 +490,36 @@ function decodeAns(code){
     return out;
 }
 
+/* ---------------------------------------------------------------
+   Optional response logging. On a genuine completion - not a shared
+   link being replayed - POST the answers to the server, which appends
+   one line to a log file. Everything identifying (IP, user-agent, the
+   arrival time) is filled in server-side; the client only sends the
+   answers. Best-effort: if there is no endpoint (opened from disk, or
+   served by a plain static host) the request just fails and the quiz
+   carries on. Nothing here blocks rendering or touches the UI.
+
+   LOG_ENDPOINT is resolved relative to the page, so it lands on the
+   same origin whether the quiz sits at "/" or a subpath. Set it to ""
+   to switch logging off, or to an absolute URL to point elsewhere.
+--------------------------------------------------------------- */
+var LOG_ENDPOINT="log";
+var LOGGED=false;
+function logAnswers(){
+    if(LOGGED || SHARED || !LOG_ENDPOINT) return;   // once per run; never a replay
+    LOGGED=true;
+    var payload={ code:encodeAns(), answers:ANS, page:baseURL() };
+    try{
+        // keepalive lets the POST finish even if the tab is closed right after.
+        fetch(LOG_ENDPOINT,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(payload),
+            keepalive:true
+        }).catch(function(){});   // no backend (static host / file://) - ignore
+    }catch(e){}
+}
+
 var LASTHASH="";
 function fragment(){
     if(VIEW==="intro") return "";
@@ -799,7 +829,7 @@ function advance(){
     // retired one, so recompute rather than trusting the list from render time.
     var A=activeIdx(), pos=A.indexOf(IDX);
     if(pos>=0 && pos<A.length-1){ IDX=A[pos+1]; renderQ(); window.scrollTo({top:0,behavior:"smooth"}); }
-    else showResults();
+    else { logAnswers(); showResults(); }
 }
 
 $("#start").addEventListener("click",function(){
