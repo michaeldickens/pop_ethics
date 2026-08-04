@@ -915,6 +915,63 @@ def suite_share(page, rep):
     rep.check("QUESTION 5" in fresh.inner_text("#counter"),
               "a partial profile with no view marker resumes at the first gap",
               fresh.inner_text("#counter"))
+    rep.check(bool(fresh.query_selector(".notice")),
+              "...and says why it did not go to the results")
+
+    # A verdict is only ever shown over a full set of answers. An unanswered
+    # question emits no edges, which is indistinguishable in the closure from a
+    # considered "cannot be ranked", so a run with holes in it would score as a
+    # confident verdict over answers nobody gave. Every route to the results
+    # that can carry holes has to turn back at the first one.
+    holed = "y" + "-" * (len(QIDS) - 1)
+    fresh.goto(f"{base}#a={holed}&q=r")
+    fresh.wait_for_timeout(400)
+    rep.check(fresh.evaluate("() => VIEW") == "quiz",
+              "asking for the results with answers missing shows no verdict",
+              fresh.evaluate("() => VIEW"))
+    rep.check("QUESTION 2" in fresh.inner_text("#counter"),
+              "...and lands on the first unanswered question", fresh.inner_text("#counter"))
+    rep.check(bool(fresh.query_selector(".notice")), "...saying why")
+    rep.check("&q=r" not in fresh.url, "...and the view marker leaves the URL", fresh.url)
+    rep.check(fresh.evaluate("() => missingActive().length") == len(QIDS) - 3,
+              "...counting only the questions that are live",
+              str(fresh.evaluate("() => missingActive().length")))
+
+    # Filling the gap returns to the verdict that was asked for, rather than
+    # marching back through the answers already given. AvZ is the hole to make
+    # here precisely because nothing is conditional on it: the ordinary forward
+    # step would land on the next question, so arriving at the results is the
+    # turn-back completing its errand and nothing else.
+    code = share.split("#a=")[1]
+    i = QIDS.index("AvZ")
+    fresh.goto(f"{base}#a={code[:i]}-{code[i + 1:]}&q=r")
+    fresh.wait_for_timeout(400)
+    rep.check(fresh.evaluate("() => QUESTIONS[IDX].id") == "AvZ",
+              "one hole in a finished run turns back to exactly that question",
+              fresh.evaluate("() => QUESTIONS[IDX].id"))
+    fresh.query_selector_all(".opt")[CLICK_MODAL["AvZ"]].click()
+    fresh.wait_for_selector(DONE, timeout=5000)
+    rep.check(fresh.inner_text("#results .verdict") == page.inner_text("#results .verdict"),
+              "answering it goes straight back to the verdict",
+              fresh.inner_text("#results .verdict"))
+    fresh.click("#rback")
+    fresh.wait_for_timeout(320)
+    rep.check(not fresh.query_selector(".notice"),
+              "the explanation is spent where it was shown, and does not follow you")
+
+    # A hole can retire a later question, and filling it puts that question
+    # back. The run is not finished until that one has an answer either.
+    j = QIDS.index("trans_eq")
+    fresh.goto(f"{base}#a={code[:j]}-{code[j + 1:]}&q=r")
+    fresh.wait_for_timeout(400)
+    rep.check(fresh.evaluate("() => ANS.menu_eq") is None,
+              "a hole that retires a later question clears that answer too")
+    fresh.query_selector_all(".opt")[CLICK_MODAL["trans_eq"]].click()
+    fresh.wait_for_function("() => document.querySelector('#results:not(.hide) .verdict')"
+                            " || QUESTIONS[IDX].id !== 'trans_eq'", timeout=5000)
+    rep.check(fresh.evaluate("() => QUESTIONS[IDX].id") == "menu_eq",
+              "filling it turns back again for the question that answer revived",
+              fresh.evaluate("() => QUESTIONS[IDX].id"))
 
     for junk in ["#a=zzzzzzzzzzzz&q=99", "#a=&q=r", "#q=3", "#a=%%%", "#nonsense"]:
         errors.clear()
@@ -942,6 +999,9 @@ CLICK_VAGUE = dict(CLICK_MODAL, neutral_mod=3, neutral_wond=1)
 # CLICK_MODAL answers both neutral questions "exactly as good", so the
 # equalities chain and menu independence is live instead.
 CLICK_NO_CHAIN = dict(CLICK_MODAL, trans_eq=1)
+# Unrankable with nothing determinate beside it: one edit away from triggering
+# the collapsing question, but not triggering it yet.
+CLICK_GAP = dict(CLICK_MODAL, neutral_mod=3)
 
 
 def suite_conditional(page, rep):
@@ -1019,6 +1079,31 @@ def suite_conditional(page, rep):
     rep.check(page.evaluate(
         "() => encodeAns()[QUESTIONS.findIndex(q => q.id === 'collapse')]") == "-",
         "the retired answer is cleared from the share link too")
+
+    # The mirror image, and the one with teeth: an edit that brings a question
+    # into play leaves a hole in a run that was finished without it. Walking
+    # forward asks it, but a "&q=r" URL - the address bar of the results page
+    # this run came from - goes straight for the verdict, and must not get one.
+    walk(page, CLICK_GAP)
+    rep.check("collapse" not in walk.asked, "a run that never triggers the question is not asked it")
+    base = page.url.split("#")[0]
+    page.click("#rback")
+    page.wait_for_timeout(320)
+    for _ in range(len(QIDS)):
+        if current_qid(page) == "neutral_wond":
+            break
+        page.click("#back")
+        page.wait_for_timeout(300)
+    page.query_selector_all(".opt")[1].click()      # "K++ is better" triggers it
+    page.wait_for_timeout(400)
+    rep.check(page.evaluate("() => isActive(QUESTIONS.find(q => q.id === 'collapse'))"),
+              "changing the dependency brings the retired question back")
+    page.goto(f"{base}#a={page.evaluate('() => encodeAns()')}&q=r")
+    page.wait_for_timeout(400)
+    rep.check(current_qid(page) == "collapse" and page.evaluate("() => VIEW") == "quiz",
+              "a results link from before the edit turns back to the new question",
+              f"{current_qid(page)} / {page.evaluate('() => VIEW')}")
+    rep.check(bool(page.query_selector(".notice")), "...with the reason on screen")
 
 
 def suite_views(page, rep):

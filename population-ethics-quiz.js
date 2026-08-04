@@ -457,6 +457,13 @@ function analyse(ans){
 
 /* =============== UI =============== */
 var ANS={}, IDX=0, VIEW="intro", SHARED=false;
+// Set when a request for the results was turned back for want of an answer;
+// rendered on the question it was turned back to, then spent.
+var NOTICE="";
+// True between such a turn-back and the verdict it was headed for, so that
+// filling the gaps returns there instead of marching through the answers
+// already given on the way.
+var RETURNING=false;
 var $=function(s){return document.querySelector(s);};
 
 /* ---------------------------------------------------------------
@@ -510,7 +517,9 @@ function decodeAns(code){
 var LOG_ENDPOINT="log";
 var LOGGED=false;
 function logAnswers(){
-    if(LOGGED || SHARED || !LOG_ENDPOINT) return;   // once per run; never a replay
+    // Once per run; never a replay; never a run with holes in it, which the
+    // deep links make reachable and which would silently skew the corpus.
+    if(LOGGED || SHARED || !LOG_ENDPOINT || missingActive().length) return;
     LOGGED=true;
     var payload={ code:encodeAns(), answers:ANS, page:baseURL() };
     try{
@@ -587,22 +596,33 @@ function stepTo(i,dir){
     return dir>0 ? A[A.length-1] : A[0];
 }
 
+// Which live questions have no answer behind them. An unanswered question emits
+// no edges, which the closure cannot tell apart from a considered "cannot be
+// ranked" - so a run with gaps in it would score as a confident verdict over
+// answers nobody gave. showResults is gated on this coming back empty.
+function missingActive(){
+    return activeIdx().filter(function(i){ return ANS[QUESTIONS[i].id]===undefined; });
+}
 function firstUnanswered(){
+    var m=missingActive();
+    if(m.length) return m[0];
     var A=activeIdx();
-    for(var k=0;k<A.length;k++) if(ANS[QUESTIONS[A[k]].id]===undefined) return A[k];
     return A[A.length-1];
 }
 
 function boot(){
     var p=readHash();
+    RETURNING=false;                 // a fresh navigation is not a turn-back
     if(!p){ ANS={}; IDX=0; SHARED=false; show("intro"); LASTHASH=""; return; }
     ANS=decodeAns(p.a||"");
     pruneInactive();
-    var complete=QUESTIONS.every(function(q){ return !isActive(q) || ANS[q.id]!==undefined; });
     var n=parseInt(p.q,10);
-    if(p.q==="r" || (p.q===undefined && complete)){
+    // Both forms of "show me the results" - the view marker, and the share link,
+    // which carries answers and no marker at all - go through showResults, which
+    // turns back at the first gap rather than scoring one.
+    if(p.q==="r" || p.q===undefined){
         // No &q on a complete profile means the link came from someone else.
-        SHARED = p.q===undefined;
+        SHARED = p.q===undefined && !missingActive().length;
         IDX=stepTo(QUESTIONS.length-1,-1);
         showResults();
         return;
@@ -802,7 +822,11 @@ function renderQ(){
     if(q.chain) fig='<div class="figure">'+chainSVG(false)+'</div>';
     var ask = q.ask || "Which is better?";
 
-    var html='<div class="q"><h2 class="qtitle">'+q.title+'</h2>'+
+    // Spent on the way out: the explanation belongs to the arrival, not to the
+    // question, and must not follow the person down the rest of the quiz.
+    var html = NOTICE ? '<p class="notice">'+NOTICE+'</p>' : '';
+    NOTICE="";
+    html+='<div class="q"><h2 class="qtitle">'+q.title+'</h2>'+
         '<p class="qbody">'+(typeof q.body==="function"?q.body(ANS):q.body)+'</p>'+fig+
         '<p class="qbody" style="margin-top:20px"><strong>'+ask+'</strong></p><div class="opts">';
     opts.forEach(function(o){
@@ -832,15 +856,27 @@ function advance(){
     // The answer just given may have brought a later question into play or
     // retired one, so recompute rather than trusting the list from render time.
     var A=activeIdx(), pos=A.indexOf(IDX);
+    // Sent back here to fill a gap: take the next gap, or the verdict that was
+    // asked for in the first place. A gap opened by this very answer - a
+    // conditional question it just brought into play - is caught the same way.
+    if(RETURNING && pos>=0){
+        var miss=missingActive();
+        if(miss.length){ IDX=miss[0]; renderQ(); window.scrollTo({top:0,behavior:"smooth"}); }
+        else { logAnswers(); showResults(); }
+        return;
+    }
     if(pos>=0 && pos<A.length-1){ IDX=A[pos+1]; renderQ(); window.scrollTo({top:0,behavior:"smooth"}); }
     else { logAnswers(); showResults(); }
 }
 
 $("#start").addEventListener("click",function(){
-    ANS={}; IDX=0; SHARED=false; show("quiz"); renderQ();
+    ANS={}; IDX=0; SHARED=false; RETURNING=false; show("quiz"); renderQ();
 });
 $("#next").addEventListener("click",advance);
 $("#back").addEventListener("click",function(){
+    // Stepping back deliberately ends the errand: from here on, forward means
+    // the next question rather than the next gap.
+    RETURNING=false;
     var A=activeIdx(), pos=A.indexOf(IDX);
     if(pos>0){ IDX=A[pos-1]; renderQ(); window.scrollTo({top:0,behavior:"smooth"}); }
 });
@@ -1003,6 +1039,30 @@ function profile(){
 
 function showResults(){
     pruneInactive();
+    // No verdict without a full run. A deep link into a late question, a
+    // hand-edited fragment, a "&q=r" bookmark from a run that was later
+    // reopened and edited, and an edit that brings a conditional question into
+    // play all arrive here with holes in them, so the check sits at the one
+    // gate they share rather than at each of them. Leaving a question blank is
+    // not a position, and scoring it as one would put a verdict in the person's
+    // mouth: every gap is silently read as "no edge", which is exactly what a
+    // considered "cannot be ranked" looks like to the closure.
+    var miss=missingActive();
+    if(miss.length){
+        var given=activeIdx().length-miss.length;
+        // A link with nothing answered at all is not an incomplete run, it is
+        // just the quiz; explaining the gap would be explaining the thing they
+        // are about to do anyway.
+        NOTICE = !given ? "" : (miss.length===1
+            ? "One question is "
+            : miss.length+" questions are ")
+            + "still unanswered. Please answer the question below.";
+        RETURNING=true;
+        IDX=miss[0];
+        show("quiz"); renderQ(); window.scrollTo({top:0});
+        return;
+    }
+    RETURNING=false;
     var R=analyse(ANS);
     var nHits=R.sets.length + (R.alpha?1:0) + (R.collapse?1:0);
     var B=bullets();
@@ -1077,7 +1137,7 @@ function showResults(){
     h+='</table>';
 
     h+='<hr class="rule thin" style="margin-top:44px"><div class="eyebrow">Save or share</div>';
-    h+='<p class="qbody" style="font-size:17px">This link carries all twelve answers. Bookmark it to keep this page, or send it to someone and they will see exactly what you see.</p>';
+    h+='<p class="qbody" style="font-size:17px">This link carries every answer you gave. Bookmark it to keep this page, or send it to someone and they will see exactly what you see.</p>';
     h+='<div class="sharebox"><input id="sharelink" readonly spellcheck="false" value="'+
         shareURL().replace(/&/g,"&amp;").replace(/"/g,"&quot;")+'"><button class="btn" id="copylink">Copy</button></div>';
 
@@ -1093,7 +1153,7 @@ function showResults(){
     window.scrollTo({top:0,behavior:"smooth"});
 
     $("#again").addEventListener("click",function(){
-        ANS={}; IDX=0; SHARED=false; show("quiz"); renderQ(); window.scrollTo({top:0});
+        ANS={}; IDX=0; SHARED=false; RETURNING=false; show("quiz"); renderQ(); window.scrollTo({top:0});
     });
     if(!SHARED) $("#rback").addEventListener("click",function(){
         IDX=stepTo(QUESTIONS.length-1,-1); show("quiz"); renderQ(); window.scrollTo({top:0});
