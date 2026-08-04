@@ -1049,9 +1049,10 @@ function showResults(){
         // A link with nothing answered at all is not an incomplete run, it is
         // just the quiz; explaining the gap would be explaining the thing they
         // are about to do anyway.
-        NOTICE = !given ? "" : miss.length===1
-            ? "One question is still unanswered. A blank is not the same as having no view, so there is nothing to score it as — here it is."
-            : miss.length+" questions are still unanswered. A blank is not the same as having no view, so there is nothing to score them as — here is the first.";
+        NOTICE = !given ? "" : (miss.length===1
+            ? "One question is "
+            : miss.length+" questions are ")
+            + "still unanswered. Please answer the question below.";
         RETURNING=true;
         IDX=miss[0];
         show("quiz"); renderQ(); window.scrollTo({top:0});
