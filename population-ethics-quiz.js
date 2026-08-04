@@ -33,6 +33,9 @@ var K_BAD =[{n:500,w:55},{n:1,w:-40,tag:"Nadia"}];
 var K_MOD =[{n:500,w:55},{n:1,w:7,tag:"Nadia"}];
 var K_WOND=[{n:500,w:55},{n:1,w:70,tag:"Nadia"}];
 
+var PARETO_FIRST =[{n:100,w:90}];
+var PARETO_SECOND=[{n:100,w:50}];
+
 /* ---------------------------------------------------------------
    Questions. Three kinds:
    pair      — compare two populations; answer becomes a gt/eq edge
@@ -42,6 +45,7 @@ var K_WOND=[{n:500,w:55},{n:1,w:70,tag:"Nadia"}];
 var QUESTIONS=[
     {
         id:"pareto", kind:"principle", label:"Pareto improvement",
+        pops:[PARETO_FIRST,PARETO_SECOND], names:["First","Second"],
         title:"The same people, all better off.",
         body:"Two futures contain <strong>exactly the same people</strong> \u2014 nobody extra, nobody missing. In the first, <strong>every single one of them has a better life</strong> than they do in the second.",
         ask:"Is the first future better?",
