@@ -95,22 +95,6 @@ VIEWS = [
     ),
 
     dict(
-        key="asymmetry_equal",
-        name="Procreation Asymmetry, strong form",
-        blurb="""The common-sense person-affecting view. Adding a miserable
-            life is bad; adding a happy life is neither good nor bad, taken as
-            exactly as good as leaving the person out. Existing people still
-            matter, so benign addition and levelling up are both improvements,
-            and A still beats B and Z. Should collide twice over: once on the
-            ladder, and once because two lives of very different quality
-            cannot both be exactly worth nothing.""",
-        answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="equal",
-                     benign="right", nae="right", generalize="yes", AvZ="left",
-                     neutral_wond="equal", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="A"),
-    ),
-
-    dict(
         key="asymmetry_menu",
         name="Procreation Asymmetry, menu-dependent",
         blurb="""As above, but the pairwise verdicts are not required to cohere
@@ -126,18 +110,52 @@ VIEWS = [
     ),
 
     dict(
-        key="rough",
-        name="Rough comparability",
-        blurb="""Parfit's and Chang's escape route: the additions are not
-            exactly as good as leaving Nadia out, they simply do not rank, and
-            'exactly as good' is not transitive anyway. Nothing is claimed to
-            be equal, so there is nothing to chain, and the neutral-range
-            argument has no purchase. The ladder is untouched, since it runs on
-            better-than. The cost is silence on choices that plainly matter.""",
-        answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="none",
+        key="asymmetry_equal",
+        name="Procreation Asymmetry, strong form",
+        blurb="""Common-sense person-affecting view #2. Adding a miserable life
+            is bad; adding a happy life is neither good nor bad, taken as
+            exactly as good as leaving the person out. Existing people still
+            matter, so benign addition and levelling up are both improvements,
+            but A > B. Should collide twice over: once on the ladder, and once
+            because two lives of very different quality cannot both be exactly
+            worth nothing.""",
+        answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="equal",
                      benign="right", nae="right", generalize="yes", AvZ="left",
+                     neutral_wond="equal", collapse="yes", trans_gt="yes",
+                     trans_eq="yes", menu_eq="yes", menu="A"),
+    ),
+
+    dict(
+        key="asymmetry_B",
+        name="Procreation Asymmetry, prefer greater utility (B > A)",
+        blurb="""Common-sense person-affecting view #1. Adding a happy life is
+        neither good nor badr. Increasing total utility in a single step is
+        good (B > A), but Z is worse than A.""",
+        answers=dict(pareto="yes", AvB="right", misery="left", neutral_mod="equal",
+                     benign="right", nae="right", generalize="yes", AvZ="left",
+                     neutral_wond="equal", collapse="yes", trans_gt="yes",
+                     trans_eq="yes", menu_eq="no", menu="B"),
+    ),
+
+    dict(
+        key="rough",
+        name="Imprecise comparability",
+        blurb="""Parfit's own way out of the mere addition paradox, and the
+            reason he thought it was not a paradox after all. Mere addition is
+            not worse than A -- the extra people have lives worth living and
+            harm nobody -- but neither is it better, nor exactly as good. A+
+            and A are imprecisely comparable, which is Chang's parity applied
+            to populations. Levelling up from A+ to B is a clear improvement,
+            and A is still better than B and than Z. The chain therefore breaks
+            at its first rung rather than at transitivity, and the view should
+            come out consistent. Note what the quiz cannot see: Parfit's
+            distinctive claim is that 'not worse than' fails to be transitive,
+            and there is no question about that relation, so an unrankable
+            verdict simply contributes no link.""",
+        answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="none",
+                     benign="none", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="none", collapse="no", trans_gt="yes",
-                     trans_eq="no", menu_eq="yes", menu="A"),
+                     trans_eq="yes", menu_eq="yes", menu="A"),
     ),
 
     dict(
@@ -174,9 +192,11 @@ VIEWS = [
         blurb="""Temkin's and Rachels' position: each rung of the ladder is a
             genuine improvement and A is still better than Z, because
             better-than simply does not chain across changes in what matters.
-            Denying transitivity should clear the ladder collisions outright,
-            while leaving the neutral-range one, which turns on equality rather
-            than on better-than.""",
+            Denying transitivity should clear the ladder collisions outright.
+            The two neutrality answers are stipulated rather than drawn from
+            Temkin, and are here to show the contrast: the remaining collision
+            turns on equality, which rejecting transitivity of better-than does
+            nothing to touch.""",
         answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="equal",
                      benign="right", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="equal", collapse="yes", trans_gt="no",
@@ -272,7 +292,7 @@ EXPECT = {
     'maximin': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'asymmetry_equal': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt'], ['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'alpha': False, 'collapse': False, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'asymmetry_menu': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'bullets': ['You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
-    'rough': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'bullets': ['You rejected transitivity of equal-goodness.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'rough': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You judged 3 of the 7 pairs unrankable.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'vague_boundary': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': True, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'trans_gt', 'trans_eq', 'menu']},
     'vague_boundary_ok': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'trans_gt', 'trans_eq', 'menu']},
     'nontransitive': {'conflicts': [['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'alpha': False, 'collapse': False, 'bullets': ['You rejected transitivity of better-than.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
