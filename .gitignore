@@ -1,0 +1,3 @@
+# Byproduct of running the test suite, which imports the views catalogue.
+__pycache__/
+*.pyc
