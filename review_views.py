@@ -11,6 +11,10 @@ be read against each other.
 
 --expect prints the same results as a Python literal, to paste into the
 expectations table once they have been checked by eye.
+
+--diff instead reports only what changed against the EXPECT already in
+population_ethics_views.py -- the fast path for "did my edit change anything,
+and if so what" -- and exits 1 if there is a difference to review.
 """
 
 import argparse
@@ -22,7 +26,7 @@ import textwrap
 
 from playwright.sync_api import sync_playwright
 
-from population_ethics_views import VIEWS
+from population_ethics_views import VIEWS, EXPECT
 
 PROBE = """(a) => {
   const keep = ANS;
@@ -85,17 +89,49 @@ def collect(path):
     return out
 
 
+def expect_body(r):
+    return {"conflicts": [c["ids"] for c in r["conflicts"]],
+            "alpha": bool(r["alpha"]),
+            "collapse": bool(r["collapse"]),
+            "bullets": [strip_tags(b) for b in r["bullets"]],
+            "asked": r["asked"]}
+
+
 def as_expect(results):
     lines = ["EXPECT = {"]
     for view, r in results:
-        body = {"conflicts": [c["ids"] for c in r["conflicts"]],
-                "alpha": bool(r["alpha"]),
-                "collapse": bool(r["collapse"]),
-                "bullets": [strip_tags(b) for b in r["bullets"]],
-                "asked": r["asked"]}
-        lines.append("    %r: %r," % (view["key"], body))
+        lines.append("    %r: %r," % (view["key"], expect_body(r)))
     lines.append("}")
     return "\n".join(lines)
+
+
+def as_diff(results):
+    """Compare freshly computed results against EXPECT in population_ethics_views.py.
+
+    Unlike --expect, which reprints every view's literal for a full manual
+    paste, this only surfaces what actually moved -- the thing you need to
+    re-review -- and catches EXPECT entries left behind by a renamed or
+    deleted view.
+    """
+    lines, seen = [], set()
+    for view, r in results:
+        key = view["key"]
+        seen.add(key)
+        got = expect_body(r)
+        want = EXPECT.get(key)
+        if want is None:
+            lines.append("%s: no EXPECT entry (new view)" % key)
+            continue
+        changed = [f for f in got if got[f] != want.get(f)]
+        if changed:
+            lines.append("%s:" % key)
+            for f in changed:
+                lines.append("  - %s: %r" % (f, want.get(f)))
+                lines.append("  + %s: %r" % (f, got[f]))
+    for key in EXPECT:
+        if key not in seen:
+            lines.append("%s: EXPECT entry has no matching view (stale)" % key)
+    return "\n".join(lines) if lines else None
 
 
 def as_markdown(results):
@@ -154,14 +190,25 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--file", default="population-ethics-quiz.html")
     ap.add_argument("-o", "--out", default="views-review.md")
-    ap.add_argument("--expect", action="store_true",
-                    help="print the expectations literal instead of the document")
+    mode = ap.add_mutually_exclusive_group()
+    mode.add_argument("--expect", action="store_true",
+                       help="print the expectations literal instead of the document")
+    mode.add_argument("--diff", action="store_true",
+                       help="diff computed results against EXPECT in "
+                            "population_ethics_views.py; exits 1 if anything differs")
     args = ap.parse_args()
 
     results = collect(args.file)
     if args.expect:
         print(as_expect(results))
         return
+    if args.diff:
+        diff = as_diff(results)
+        if diff is None:
+            print("EXPECT matches the compiled quiz for every view.")
+            return
+        print(diff)
+        sys.exit(1)
     pathlib.Path(args.out).write_text(as_markdown(results))
     print("wrote %s (%d views)" % (args.out, len(results)))
 
