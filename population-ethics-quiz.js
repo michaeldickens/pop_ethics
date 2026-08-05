@@ -1031,9 +1031,11 @@ function bullets(){
 }
 
 function profile(){
-    if(ANS.AvZ==="right" && ANS.benign==="right" && ANS.nae==="right") return "Your answers sit closest to <strong>totalism</strong> \u2014 welfare summed across everyone who ever lives, with no discount for how thinly it is spread.";
-    if((ANS.neutral_mod==="equal" || ANS.neutral_mod==="none") && (ANS.neutral_wond==="equal" || ANS.neutral_wond==="none") && ANS.misery==="left") return "Your answers sit closest to a <strong>person-affecting view</strong> with an asymmetry: harms to possible people count, benefits to them do not.";
-    if(ANS.AvZ==="left" && ANS.benign==="right") return "Your answers pull toward a <strong>critical-level or lexical view</strong> \u2014 something that lets good lives count while denying that barely-good ones can accumulate without limit.";
+    if(ANS.AvZ==="right" && ANS.benign==="right" && ANS.nae==="right") return "Your answers sit closest to <strong>totalism</strong> \u2014 welfare summed across everyone who ever lives.";
+    if(ANS.AvB==="left" && ANS.AvZ==="left" && ANS.benign==="left" && ANS.neutral_mod==="left" && ANS.nae==="right") return "Your answers sit closest to <strong>averagism</strong> \u2014 the view that aims to improve the <em>average</em> welfare of populations.";
+    if((ANS.neutral_mod==="equal" || ANS.neutral_mod==="none") && (ANS.neutral_wond==="equal" || ANS.neutral_wond==="none") && ANS.misery==="left") return "Your answers sit closest to a <strong>person-affecting view</strong> with an asymmetry: creating a bad life is bad, but creating a good life is neutral.";
+    if((ANS.neutral_mod==="equal" || ANS.neutral_mod==="none") && (ANS.neutral_wond==="equal" || ANS.neutral_wond==="none") && (ANS.misery==="equal"||ANS.misery==="none")) return "Your answers sit closest to a <strong>person-affecting view</strong> with symmetry: creating a new life (whether good or bad) is a neutral act. Something can only be good or bad <em>for</em> an existing person.";
+    if(ANS.AvZ==="left" && ANS.benign==="right") return "Your answers pull toward a <strong>critical-level or lexical view</strong> \u2014 sufficiently good lives count, marginally good lives do not.";
     return "Your answers do not settle cleanly onto one of the standard views of population ethics.";
 }
 

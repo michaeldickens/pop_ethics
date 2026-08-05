@@ -15,8 +15,9 @@ and starts it on boot. Paths below assume the quiz lives at
 ## 1. Put the files on the server
 
 ```bash
-sudo mkdir -p /var/www/pop-ethics
-sudo cp population-ethics-quiz.html population-ethics-quiz.js serve_quiz.py /var/www/pop-ethics/
+cd /var/www
+git clone https://github.com/michaeldickens/pop_ethics.git
+sudo mv pop_ethics pop-ethics
 
 # The service writes the log as www-data, so that user must own the directory.
 sudo chown -R www-data:www-data /var/www/pop-ethics
