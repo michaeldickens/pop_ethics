@@ -545,14 +545,26 @@ def answer(page, clicks, probe=None):
     # Some questions are conditional, so the sequence is not known in advance:
     # read which question is on screen, answer it, and wait for the app to move.
     # Waiting on a state change rather than a sleep avoids racing the 260ms
-    # auto-advance.
+    # auto-advance. The last question moves to the (optional) namestep screen
+    # rather than straight to results, so that counts as having moved too.
     qid = current_qid(page)
     seen = page.evaluate(probe) if probe else None
     page.query_selector_all(".opt")[clicks[qid]].click()
     page.wait_for_function(
         "p => document.querySelector('#results:not(.hide) .verdict')"
+        "     || document.querySelector('#namestep:not(.hide)')"
         "     || QUESTIONS[IDX].id !== p", arg=qid, timeout=5000)
     return qid, seen
+
+
+def pass_namestep(page):
+    # The namestep screen sits between the last question and the verdict.
+    # Every walk through the quiz passes through it once, name left blank.
+    if page.query_selector("#namestep:not(.hide)"):
+        page.click("#namenext")
+        page.wait_for_selector(DONE, timeout=5000)
+        return True
+    return False
 
 
 def walk(page, clicks, probe=None):
@@ -561,6 +573,8 @@ def walk(page, clicks, probe=None):
     seen, asked = {}, []
     for _ in range(len(QIDS) + 2):
         if page.query_selector(DONE):
+            break
+        if pass_namestep(page):
             break
         qid, got = answer(page, clicks, probe)
         asked.append(qid)
@@ -691,6 +705,8 @@ def suite_layout(page_factory, rep):
             if page.query_selector(DONE):
                 break
             worst = max(worst, page.evaluate("() => document.documentElement.scrollWidth"))
+            if pass_namestep(page):
+                break
             answer(page, CLICK_MODAL)
         page.wait_for_timeout(900)
         worst = max(worst, page.evaluate("() => document.documentElement.scrollWidth"))
@@ -771,6 +787,8 @@ def suite_flow(page, rep):
     for _ in range(len(QIDS) + 2):
         if page.query_selector(DONE):
             break
+        if pass_namestep(page):
+            break
         counts[current_qid(page)] = len(page.query_selector_all(".opt"))
         answer(page, CLICK_MODAL)
     page.wait_for_selector(DONE, timeout=5000)
@@ -797,6 +815,8 @@ def suite_flow(page, rep):
     rep.check(page.eval_on_selector_all(".opt", "e => e.some(x => x.classList.contains('sel'))"),
               "back from the results keeps the last answer selected")
     page.click("#next")
+    page.wait_for_selector("#namestep:not(.hide)", timeout=5000)
+    page.click("#namenext")
     page.wait_for_selector(DONE, timeout=5000)
     rep.check(page.inner_text("#results .verdict") == verdict,
               "going straight forward again reproduces the same verdict")
@@ -804,6 +824,8 @@ def suite_flow(page, rep):
     page.click("#rback")
     page.wait_for_timeout(400)
     page.query_selector_all(".opt")[2].click()
+    page.wait_for_selector("#namestep:not(.hide)", timeout=5000)
+    page.click("#namenext")
     page.wait_for_selector(DONE, timeout=5000)
     page.wait_for_timeout(300)
     rep.check(page.inner_text("#results .verdict") != verdict,
@@ -950,6 +972,8 @@ def suite_share(page, rep):
               "one hole in a finished run turns back to exactly that question",
               fresh.evaluate("() => QUESTIONS[IDX].id"))
     fresh.query_selector_all(".opt")[CLICK_MODAL["AvZ"]].click()
+    fresh.wait_for_selector("#namestep:not(.hide)", timeout=5000)
+    fresh.click("#namenext")
     fresh.wait_for_selector(DONE, timeout=5000)
     rep.check(fresh.inner_text("#results .verdict") == page.inner_text("#results .verdict"),
               "answering it goes straight back to the verdict",
@@ -978,7 +1002,7 @@ def suite_share(page, rep):
         fresh.goto(base + junk)
         fresh.wait_for_timeout(300)
         visible = fresh.evaluate(
-            "() => ['#intro', '#quiz', '#results']"
+            "() => ['#intro', '#quiz', '#namestep', '#results']"
             ".filter(s => !document.querySelector(s).classList.contains('hide')).length")
         rep.check(not errors and visible == 1,
                   f"malformed fragment {junk} degrades quietly",
@@ -1047,6 +1071,8 @@ def suite_conditional(page, rep):
     seen = []
     for _ in range(len(QIDS) + 2):
         if page.query_selector(DONE):
+            break
+        if pass_namestep(page):
             break
         seen.append((current_qid(page), page.inner_text("#counter"),
                      len(page.query_selector_all(".tick"))))
