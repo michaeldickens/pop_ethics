@@ -210,11 +210,11 @@ VIEWS = [
     dict(
         key="nontransitive-non-independent",
         name="Non-transitive betterness and rejecting independence",
-        blurb="""A variation on Temkin's view: avoid asserting that Nadia's wonderful life is equal to her modest life by allowing verdicts to change when the menu changes.""",
-        answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="equal",
-                     benign="right", nae="right", generalize="yes", AvZ="left",
-                     neutral_wond="equal", collapse="yes", trans_gt="no",
-                     trans_eq="yes", menu_eq="no", menu="A"),
+        blurb="""Eitan's view: avoid asserting that Nadia's wonderful life is equal to her modest life by allowing verdicts to change when the menu changes.""",
+        answers=dict(pareto="yes", AvB="none", misery="left", neutral_mod="equal",
+                     benign="right", nae="neither", generalize="yes", AvZ="none",
+                     neutral_wond="equal", collapse="yes", trans_gt="yes",
+                     trans_eq="yes", menu_eq="no", menu="none"),
     ),
 
     dict(
@@ -311,7 +311,7 @@ EXPECT = {
     'vague_boundary': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': True, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'trans_gt', 'trans_eq', 'menu']},
     'vague_boundary_ok': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'trans_gt', 'trans_eq', 'menu']},
     'nontransitive': {'conflicts': [['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'alpha': False, 'collapse': False, 'bullets': ['You rejected transitivity of better-than.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
-    'nontransitive-non-independent': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You rejected transitivity of better-than.', 'You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
+    'nontransitive-non-independent': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You denied that a verdict survives a wider menu.', 'You denied that levelling up improves things.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'antinatalist': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'intuitive-v1': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'bullets': [], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'intuitive-v2': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'bullets': [], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},

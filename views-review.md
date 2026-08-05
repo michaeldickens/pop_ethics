@@ -454,26 +454,26 @@ Bullets bitten:
 
 ## Non-transitive betterness and rejecting independence
 
-A variation on Temkin's view: avoid asserting that Nadia's wonderful life is equal to
-her modest life by allowing verdicts to change when the menu changes.
+Eitan's view: avoid asserting that Nadia's wonderful life is equal to her modest life by
+allowing verdicts to change when the menu changes.
 
 ### Answers
 
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
-| A against B | A is better than B. |
+| A against B | A is not rankable against B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome neither better nor worse. |
 | Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
-| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Levelling up | B is undefined A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
-| A against Z | A is better than Z. |
+| A against Z | A is not rankable against Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
-| Transitivity of better-than | "Better than" is not always transitive. |
+| Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A third option can change how the first two compare. |
-| Choosing from three | A is the best of A, B and Z. |
+| Choosing from three | None of A, B and Z is best. |
 
 Not asked: collapse. These questions only appear when earlier answers give them something to bite on.
 
@@ -483,8 +483,8 @@ No conflicts.
 
 Bullets bitten:
 
-- You rejected transitivity of better-than.
 - You denied that a verdict survives a wider menu.
+- You denied that levelling up improves things.
 - You hold the Procreation Asymmetry.
 
 <a id="antinatalist"></a>
