@@ -457,6 +457,9 @@ function analyse(ans){
 
 /* =============== UI =============== */
 var ANS={}, IDX=0, VIEW="intro", SHARED=false;
+// Optional, given on the namestep screen just before results. Never required,
+// never decoded from a share link - it travels only in the /log POST.
+var NAME="";
 // Set when a request for the results was turned back for want of an answer;
 // rendered on the question it was turned back to, then spent.
 var NOTICE="";
@@ -504,11 +507,14 @@ function decodeAns(code){
 /* ---------------------------------------------------------------
    Optional response logging. On a genuine completion - not a shared
    link being replayed - POST the answers to the server, which appends
-   one line to a log file. Everything identifying (IP, user-agent, the
-   arrival time) is filled in server-side; the client only sends the
-   answers. Best-effort: if there is no endpoint (opened from disk, or
-   served by a plain static host) the request just fails and the quiz
-   carries on. Nothing here blocks rendering or touches the UI.
+   one line to a log file. Most of what's identifying (IP, user-agent, the
+   arrival time) is filled in server-side; the client sends the answers and,
+   if the person chose to give one on the namestep screen, a name - the one
+   piece of identity the server can't infer, and the only way to recognize
+   the same person across devices instead of just across a shared IP.
+   Best-effort: if there is no endpoint (opened from disk, or served by a
+   plain static host) the request just fails and the quiz carries on.
+   Nothing here blocks rendering or touches the UI.
 
    LOG_ENDPOINT is resolved relative to the page, so it lands on the
    same origin whether the quiz sits at "/" or a subpath. Set it to ""
@@ -522,6 +528,7 @@ function logAnswers(){
     if(LOGGED || SHARED || !LOG_ENDPOINT || missingActive().length) return;
     LOGGED=true;
     var payload={ code:encodeAns(), answers:ANS, page:baseURL() };
+    if(NAME) payload.name=NAME;
     try{
         // keepalive lets the POST finish even if the tab is closed right after.
         fetch(LOG_ENDPOINT,{
@@ -567,6 +574,7 @@ function show(view){
     VIEW=view;
     $("#intro").classList.toggle("hide", view!=="intro");
     $("#quiz").classList.toggle("hide", view!=="quiz");
+    $("#namestep").classList.toggle("hide", view!=="namestep");
     $("#results").classList.toggle("hide", view!=="results");
 }
 
@@ -613,7 +621,7 @@ function firstUnanswered(){
 function boot(){
     var p=readHash();
     RETURNING=false;                 // a fresh navigation is not a turn-back
-    if(!p){ ANS={}; IDX=0; SHARED=false; show("intro"); LASTHASH=""; return; }
+    if(!p){ ANS={}; IDX=0; SHARED=false; NAME=""; show("intro"); LASTHASH=""; return; }
     ANS=decodeAns(p.a||"");
     pruneInactive();
     var n=parseInt(p.q,10);
@@ -862,15 +870,38 @@ function advance(){
     if(RETURNING && pos>=0){
         var miss=missingActive();
         if(miss.length){ IDX=miss[0]; renderQ(); window.scrollTo({top:0,behavior:"smooth"}); }
-        else { logAnswers(); showResults(); }
+        else { showNameStep(); }
         return;
     }
     if(pos>=0 && pos<A.length-1){ IDX=A[pos+1]; renderQ(); window.scrollTo({top:0,behavior:"smooth"}); }
-    else { logAnswers(); showResults(); }
+    else { showNameStep(); }
 }
 
+// One screen, offered once, between the last question and the verdict - a
+// name is never required to see results. Skipped entirely on a reload of a
+// finished run (boot() goes straight to showResults) since it has nothing to
+// ask that a fresh completion doesn't already have an answer to.
+function showNameStep(){
+    $("#namefield").value=NAME;
+    show("namestep");
+    window.scrollTo({top:0,behavior:"smooth"});
+    setTimeout(function(){ $("#namefield").focus(); },0);
+}
+function finishNameStep(){
+    NAME=$("#namefield").value.trim();
+    logAnswers();
+    showResults();
+}
+$("#namenext").addEventListener("click",finishNameStep);
+$("#nameback").addEventListener("click",function(){
+    show("quiz"); renderQ(); window.scrollTo({top:0,behavior:"smooth"});
+});
+$("#namefield").addEventListener("keydown",function(e){
+    if(e.key==="Enter") finishNameStep();
+});
+
 $("#start").addEventListener("click",function(){
-    ANS={}; IDX=0; SHARED=false; RETURNING=false; show("quiz"); renderQ();
+    ANS={}; IDX=0; SHARED=false; RETURNING=false; NAME=""; show("quiz"); renderQ();
 });
 $("#next").addEventListener("click",advance);
 $("#back").addEventListener("click",function(){
@@ -1171,7 +1202,7 @@ function showResults(){
     window.scrollTo({top:0,behavior:"smooth"});
 
     $("#again").addEventListener("click",function(){
-        ANS={}; IDX=0; SHARED=false; RETURNING=false; show("quiz"); renderQ(); window.scrollTo({top:0});
+        ANS={}; IDX=0; SHARED=false; RETURNING=false; NAME=""; show("quiz"); renderQ(); window.scrollTo({top:0});
     });
     if(!SHARED) $("#rback").addEventListener("click",function(){
         IDX=stepTo(QUESTIONS.length-1,-1); show("quiz"); renderQ(); window.scrollTo({top:0});

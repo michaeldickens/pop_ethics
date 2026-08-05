@@ -141,6 +141,11 @@ ol.claims li::before{content:counter(c);position:absolute;left:0;top:9px;font-fa
 }
 .sharebox input:focus{border-color:var(--blue);outline:none}
 .sharebox .btn{flex:0 0 auto}
+.namefield{
+  display:block;width:100%;max-width:52ch;background:var(--panel);border:1.5px solid var(--hair);
+  font-family:var(--body);font-size:17.5px;color:var(--ink);padding:14px 16px;
+}
+.namefield:focus{border-color:var(--blue);outline:none}
 table.rev{width:100%;border-collapse:collapse;margin:14px 0 0;font-size:15px}
 table.rev td{border-top:1px solid var(--hair);padding:9px 8px 9px 0;vertical-align:top}
 table.rev td.a{font-family:var(--mono);font-size:11.5px;color:var(--blue);white-space:nowrap;text-align:right;padding-right:14px;width:1%}
@@ -205,6 +210,22 @@ footer a{color:var(--blue)}
   <div class="nav">
     <button class="btn ghost" id="back">&larr; Back</button>
     <button class="btn" id="next" disabled>Next &rarr;</button>
+  </div>
+</section>
+
+<!-- ============ NAME (optional) ============ -->
+<section id="namestep" class="hide">
+  <div class="hero" style="padding:10vh 0 0">
+    <div class="kicker">One last thing</div>
+    <h2 class="qtitle" style="max-width:22ch;margin-top:10px">Put a name to your answers? (Optional)</h2>
+  </div>
+  <div class="q" style="margin-top:26px">
+    <input id="namefield" class="namefield" type="text" maxlength="80" autocomplete="name" placeholder="Name (optional)">
+    <p class="small" style="margin-top:14px;max-width:52ch">If you give a name, I can see if you take the quiz across multiple devices, to avoid accidentally double-counting your answers.</p>
+  </div>
+  <div class="nav">
+    <button class="btn ghost" id="nameback">&larr; Back</button>
+    <button class="btn" id="namenext">See the verdict &rarr;</button>
   </div>
 </section>
 
