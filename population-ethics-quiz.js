@@ -940,12 +940,16 @@ var STORIES=[
     {
         needs:["misery","neutral_mod","pareto","trans_eq","menu_eq"],
         title:"Nadia cannot be worth nothing whichever way her life goes.",
-        because:"You said K is exactly as good as the world where Nadia exists in agony, and exactly as good as the world where she exists with a decent life. Transitivity of equal-goodness makes those two worlds exactly as good as each other. But they contain the same 501 people, and Nadia is enormously better off in one of them. This is Broome's neutral-range argument run downwards: if bringing someone into existence is never better or worse, it cannot matter how their life then goes \u2014 and it plainly does."
+        because:"You said K is exactly as good as the world where Nadia exists in agony, and exactly as good as the world where she exists with a decent life. Transitivity of equal-goodness makes those two worlds exactly as good as each other. But they contain the same 501 people, and Nadia is enormously better off in one of them. This is Broome's neutral-range argument run downwards: if bringing someone into existence is never better or worse, it cannot matter how their life then goes \u2014 and it plainly does.",
+        // Same argument as the wonderful-life version below, just run at the
+        // lower welfare level; if both trigger they should count once, not twice.
+        group:"nadiaNeutralRange"
     },
     {
         needs:["misery","neutral_wond","pareto","trans_eq","menu_eq"],
         title:"Nadia cannot be worth nothing whichever way her life goes.",
-        because:"You said K is exactly as good as the world where Nadia exists in agony, and exactly as good as the world where she exists with a wonderful life. Transitivity of equal-goodness makes those two worlds exactly as good as each other, yet they contain the same 501 people and Nadia is enormously better off in one. Whatever is attractive about \u201Cmerely possible people do not count\u201D, it cannot survive being applied at both ends of the scale at once."
+        because:"You said K is exactly as good as the world where Nadia exists in agony, and exactly as good as the world where she exists with a wonderful life. Transitivity of equal-goodness makes those two worlds exactly as good as each other, yet they contain the same 501 people and Nadia is enormously better off in one. Whatever is attractive about \u201Cmerely possible people do not count\u201D, it cannot survive being applied at both ends of the scale at once.",
+        group:"nadiaNeutralRange"
     },
     {
         needs:["neutral_mod","neutral_wond","trans_eq","menu_eq","pareto"],
@@ -1066,6 +1070,18 @@ function showResults(){
     }
     RETURNING=false;
     var R=analyse(ANS);
+    // Some story pairs (see STORIES' "group" field) are the same underlying
+    // conflict argued at two different welfare levels; if both of a pair's
+    // sets appear, keep only the first so it is counted and shown once.
+    var seenGroups={};
+    R.sets=R.sets.filter(function(S){
+        var st=storyFor(S);
+        if(st && st.group){
+            if(seenGroups[st.group]) return false;
+            seenGroups[st.group]=true;
+        }
+        return true;
+    });
     var nHits=R.sets.length + (R.alpha?1:0) + (R.collapse?1:0);
     var B=bullets();
     var h='';
