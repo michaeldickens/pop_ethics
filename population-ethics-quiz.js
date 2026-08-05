@@ -47,8 +47,8 @@ var QUESTIONS=[
         id:"pareto", kind:"principle", label:"Pareto improvement",
         pops:[PARETO_BEFORE,PARETO_AFTER], names:["Before","After"],
         title:"The same people, all better off.",
-        body:"Two futures contain <strong>exactly the same people</strong> \u2014 nobody extra, nobody missing. In the first, <strong>every single one of them has a better life</strong> than they do in the second.",
-        ask:"Is the first future better?",
+        body:"Two futures contain <strong>exactly the same people</strong> \u2014 nobody extra, nobody missing. In the second, <strong>every single one of them has a better life</strong> than they do in the first.",
+        ask:"Is the \"After\" future better?",
         opts:[["A","Yes","yes"],["B","No \u2013 they are equal or incomparable","no"]]
     },
     {
