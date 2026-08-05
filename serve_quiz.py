@@ -117,7 +117,9 @@ class Handler(SimpleHTTPRequestHandler):
 
 def main():
     ap = argparse.ArgumentParser(description="Serve the population-ethics quiz and log responses.")
-    ap.add_argument("--host", default="0.0.0.0", help="bind address (default: 0.0.0.0)")
+    ap.add_argument("--host", default="127.0.0.1",
+                    help="bind address (default: 127.0.0.1 - localhost only, for use "
+                         "behind nginx; pass 0.0.0.0 to expose it directly)")
     ap.add_argument("--port", type=int, default=8000, help="port (default: 8000)")
     ap.add_argument("--log", default="quiz-log.jsonl", help="response log file (default: quiz-log.jsonl)")
     ap.add_argument("--dir", default=os.path.dirname(os.path.abspath(__file__)),
