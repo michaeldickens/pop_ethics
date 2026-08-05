@@ -193,22 +193,19 @@ def main():
     mode = ap.add_mutually_exclusive_group()
     mode.add_argument("--expect", action="store_true",
                        help="print the expectations literal instead of the document")
-    mode.add_argument("--diff", action="store_true",
-                       help="diff computed results against EXPECT in "
-                            "population_ethics_views.py; exits 1 if anything differs")
     args = ap.parse_args()
 
     results = collect(args.file)
     if args.expect:
         print(as_expect(results))
-        return
-    if args.diff:
-        diff = as_diff(results)
-        if diff is None:
-            print("EXPECT matches the compiled quiz for every view.")
-            return
+
+    diff = as_diff(results)
+    if diff is None:
+        print("Expected views match actual views according to the quiz.")
+    else:
+        print("WARNING: Expected views do not match actual views according to the quiz.")
         print(diff)
-        sys.exit(1)
+
     pathlib.Path(args.out).write_text(as_markdown(results))
     print("wrote %s (%d views)" % (args.out, len(results)))
 

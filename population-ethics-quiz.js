@@ -79,7 +79,7 @@ var QUESTIONS=[
         id:"nae", kind:"pair", label:"Levelling up",
         pops:[AP_POP,B_POP], names:["A+","B"],
         title:"Same population, more total welfare, more equality.",
-        body:"<strong>A+</strong> and <strong>B</strong> both hold 200 people. B has more welfare in total, more welfare on average, and spreads it perfectly evenly instead of splitting people into a better-off and a worse-off group."
+        body:"<strong>A+</strong> and <strong>B</strong> both hold 200 people. <strong>B has more welfare in total</strong>, more welfare on average, and spreads it perfectly evenly instead of splitting people into a better-off and a worse-off group."
     },
     {
         id:"generalize", kind:"principle", label:"Repeating the moves",

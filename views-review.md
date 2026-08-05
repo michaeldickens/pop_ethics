@@ -12,14 +12,15 @@ Read each view's description against the answers below it, then against the verd
 - [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 1 bullet
 - [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
 - [Imprecise comparability](#rough) - clean, 2 bullets
-- [Unrankable below, better above](#vague_boundary) - 3 conflicts, 1 bullet
+- [Unrankable below, better above](#vague_boundary) - 2 conflicts, 1 bullet
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 1 bullet
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
+- [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 3 bullets
 - [Antinatalism](#antinatalist) - clean, 2 bullets
-- [The untutored intuitive package](#intuitive) - 2 conflicts
-- [Totalist who flinches at the menu](#alpha_violator) - 1 conflict, 1 bullet
+- [The untutored intuitive package (A > B)](#intuitive-v1) - 2 conflicts
+- [The untutored intuitive package (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 2 bullets
-- [Declining to rank anything](#quietist) - clean, 6 bullets
+- [Declining to rank anything](#quietist) - clean, 3 bullets
 
 <a id="total"></a>
 
@@ -348,7 +349,7 @@ the collapsing question should catch.
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
-| A against B | A is better than B. |
+| A against B | A is worse than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
 | Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
@@ -359,13 +360,12 @@ the collapsing question should catch.
 | The collapsing principle | A tiny improvement to one life cannot turn "unrankable" into a determinate verdict. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
-| Choosing from three | A is the best of A, B and Z. |
+| Choosing from three | B is the best of A, B and Z. |
 
 Not asked: menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
-- **The ladder reaches B, but you say B is worse.** `AvB+benign+nae+trans_gt`
 - **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
 - **Collapsing principle** - neutral_mod unrankable, neutral_wond determinate, running upwards.
 
@@ -450,15 +450,51 @@ Bullets bitten:
 - You rejected transitivity of better-than.
 - You hold the Procreation Asymmetry.
 
+<a id="nontransitive-non-independent"></a>
+
+## Non-transitive betterness and rejecting independence
+
+A variation on Temkin's view: avoid asserting that Nadia's wonderful life is equal to
+her modest life by allowing verdicts to change when the menu changes.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| A against B | A is better than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome neither better nor worse. |
+| Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is better than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
+| Transitivity of better-than | "Better than" is not always transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Verdicts across a wider menu | A third option can change how the first two compare. |
+| Choosing from three | A is the best of A, B and Z. |
+
+Not asked: collapse. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+No conflicts.
+
+Bullets bitten:
+
+- You rejected transitivity of better-than.
+- You denied that a verdict survives a wider menu.
+- You hold the Procreation Asymmetry.
+
 <a id="antinatalist"></a>
 
 ## Antinatalism
 
 Benatar's view: coming into existence is always a harm, so any addition makes things
 worse, whether the life goes badly or wonderfully. Among people who exist anyway, more
-wellbeing is still better, so levelling up improves things. Not formally inconsistent
-here, but it should be told what it implies: fewer people is better without limit, and
-the best world contains nobody.
+wellbeing is still better, so levelling up improves things. Fewer people is better
+without limit, and the best world contains nobody.
 
 ### Answers
 
@@ -488,15 +524,15 @@ Bullets bitten:
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
 
-<a id="intuitive"></a>
+<a id="intuitive-v1"></a>
 
-## The untutored intuitive package
+## The untutored intuitive package (A > B)
 
-Not a philosopher's view but the one many people arrive with, and the reason the quiz
-exists. More happy people is straightforwardly good, so both of Nadia's good lives are
-worth adding; every step of the ladder looks right; better-than obviously chains; and
-yet A is plainly better than B and vastly better than Z. No view about neutrality here
-at all, so the neutral-range collision should not fire - the ladder ones should, twice.
+Not a philosopher's view but the one many people arrive with. More happy people is
+straightforwardly good, so both of Nadia's good lives are worth adding; every step of
+the ladder looks right; better-than obviously chains; and yet A is plainly better than B
+and vastly better than Z. No view about neutrality here at all, so the neutral-range
+collision should not fire - the ladder ones should, twice.
 
 ### Answers
 
@@ -522,14 +558,15 @@ Not asked: collapse, menu_eq. These questions only appear when earlier answers g
 - **The ladder reaches B, but you say B is worse.** `AvB+benign+nae+trans_gt`
 - **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
 
-<a id="alpha_violator"></a>
+<a id="intuitive-v2"></a>
 
-## Totalist who flinches at the menu
+## The untutored intuitive package (B > A)
 
-Gives every totalist answer in the pairwise comparisons, including that Z beats A, and
-then cannot bring itself to pick Z when all three are on the table together. Nothing in
-the betterness ordering is wrong; what fails is the link between ranking and choosing.
-Should draw the contraction-consistency card rather than an ordinary collision.
+Not a philosopher's view but the one many people arrive with (v2). More happy people is
+straightforwardly good, so both of Nadia's good lives are worth adding; every step of
+the ladder looks right; better-than obviously chains; B is better than A; and yet Z is
+worse than A or B. No view about neutrality here at all, so the neutral-range collision
+should not fire - the ladder ones should, twice.
 
 ### Answers
 
@@ -542,21 +579,17 @@ Should draw the contraction-consistency card rather than an ordinary collision.
 | Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
-| A against Z | A is worse than Z. |
+| A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
-| Choosing from three | A is the best of A, B and Z. |
+| Choosing from three | B is the best of A, B and Z. |
 
 Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
-- **Contraction consistency (Sen's alpha)** - picked A over B, having ranked B higher in the pair.
-
-Bullets bitten:
-
-- You accepted the repugnant conclusion.
+- **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
 
 <a id="misery_gain"></a>
 
@@ -614,11 +647,11 @@ something is wrong.
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
 | Benign addition | A+ is not rankable against A -- everyone gains, and good new lives are added. |
 | Levelling up | B is not rankable against A+ -- same headcount, more total, more average, fully equal. |
-| Repeating the moves | Somewhere on the ladder those two verdicts flip. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
-| Transitivity of better-than | "Better than" is not always transitive. |
-| Transitivity of equal-goodness | "Exactly as good as" is not always transitive. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | None of A, B and Z is best. |
 
 Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
@@ -629,9 +662,6 @@ No conflicts.
 
 Bullets bitten:
 
-- You rejected transitivity of better-than.
-- You rejected transitivity of equal-goodness.
 - You rejected the Pareto principle.
-- You said the verdict flips somewhere on the ladder.
 - You denied that levelling up improves things.
 - You judged none of the seven pairs rankable.
