@@ -17,6 +17,8 @@ Read each view's description against the answers below it, then against the verd
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
 - [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 3 bullets
 - [Antinatalism](#antinatalist) - clean, 2 bullets
+- [Negative-leaning](#negative-leaning) - clean, 3 bullets
+- [Hard negative utilitarianism](#hard-negative) - clean, 3 bullets
 - [The untutored intuitive package (A > B)](#intuitive-v1) - 2 conflicts
 - [The untutored intuitive package (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 2 bullets
@@ -521,6 +523,77 @@ No conflicts.
 
 Bullets bitten:
 
+- You said a life worth living makes the world worse by being lived.
+- Everyone gains, good lives are added, and you called it worse.
+
+<a id="negative-leaning"></a>
+
+## Negative-leaning
+
+More happiness is better, but even a small amount of suffering outweighs a large amount
+of happiness.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| A against B | A is better than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome worse. |
+| Benign addition | A+ is worse than A -- everyone gains, and good new lives are added. |
+| Levelling up | B is worse than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is better than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | A is the best of A, B and Z. |
+
+Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+No conflicts.
+
+Bullets bitten:
+
+- You said a life worth living makes the world worse by being lived.
+- Everyone gains, good lives are added, and you called it worse.
+- You denied that levelling up improves things.
+
+<a id="hard-negative"></a>
+
+## Hard negative utilitarianism
+
+Happiness is not good, but suffering is bad.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | A future need not be better even when the very same people are all better off in it. |
+| A against B | A is better than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome worse. |
+| Benign addition | A+ is worse than A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is better than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome worse. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | A is the best of A, B and Z. |
+
+Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+No conflicts.
+
+Bullets bitten:
+
+- You rejected the Pareto principle.
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
 

@@ -1,5 +1,7 @@
 # Deploying the quiz with response logging (nginx + systemd)
 
+(this section was almost entirely written by Claude)
+
 The quiz is static HTML/JS. Logging needs one small always-on process
 (`serve_quiz.py`) that accepts the answer POSTs and appends them to a file.
 The clean split on a box you control is:
@@ -149,3 +151,12 @@ place (rather than renaming) avoids having to restart it.
 - **Disabling logging:** set `LOG_ENDPOINT=""` at the top of the JS, or just
   stop the service — the client's POST fails silently and the quiz is
   unaffected.
+# Pushing code updates to the server
+
+(this section was written by MD)
+
+```
+ssh root@mdickens.me
+cd /var/www/pop-ethics
+git pull
+```
