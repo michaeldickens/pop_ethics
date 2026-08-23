@@ -123,6 +123,11 @@ button{font-family:var(--mono);font-size:13px;letter-spacing:.08em;cursor:pointe
 .bullet{border:1.5px solid var(--blue);background:var(--blue-15);padding:20px 22px;margin:20px 0 0}
 .bullet .tag{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--blue)}
 .bullet h3{font-size:20px}
+/* A coda inside a .hit or a .bullet, so it must read as distinct from both:
+   its own ground, and violet for the tag where those use red and blue. */
+.world{background:var(--paper);border:1px solid var(--hair);padding:14px 16px 15px;margin:18px 0 0}
+.world .tag{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--violet)}
+.world p{margin:7px 0 0;font-size:16.5px}
 .clean{border:1.5px solid var(--ink);padding:22px;margin:26px 0 0}
 ol.claims{margin:16px 0 0;padding:0 0 0 2px;list-style:none;counter-reset:c}
 ol.claims li{counter-increment:c;position:relative;padding:9px 0 9px 44px;border-top:1px solid var(--hair);font-size:17px}
