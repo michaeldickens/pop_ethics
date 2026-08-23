@@ -228,7 +228,13 @@ VIEWS = [
     dict(
         key="nontransitive-non-independent",
         name="Non-transitive betterness and rejecting independence",
-        blurb="""Eitan's view: avoid asserting that Nadia's wonderful life is equal to her modest life by allowing verdicts to change when the menu changes.""",
+        blurb="""Eitan's view: avoid asserting that Nadia's wonderful life is
+            equal to her modest life by allowing verdicts to change when the
+            menu changes. Denying menu independence is what buys the escape,
+            and it buys the same escape twice: from the neutral-range collision
+            and from the medical programmes, both of which need two equalities
+            to chain before they can bite. Declines to rank A against B or
+            against Z, and picks nothing from the three.""",
         answers=dict(pareto="yes", AvB="none", misery="left", neutral_mod="equal",
                      benign="right", nae="neither", generalize="yes", AvZ="none",
                      neutral_wond="equal", collapse="yes", no_difference="yes",

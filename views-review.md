@@ -482,7 +482,10 @@ Bullets bitten:
 ## Non-transitive betterness and rejecting independence
 
 Eitan's view: avoid asserting that Nadia's wonderful life is equal to her modest life by
-allowing verdicts to change when the menu changes.
+allowing verdicts to change when the menu changes. Denying menu independence is what
+buys the escape, and it buys the same escape twice: from the neutral-range collision and
+from the medical programmes, both of which need two equalities to chain before they can
+bite. Declines to rank A against B or against Z, and picks nothing from the three.
 
 ### Answers
 
