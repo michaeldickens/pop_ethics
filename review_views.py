@@ -54,6 +54,7 @@ PROBE = """(a) => {
     collapse: r.collapse
       ? {vague: r.collapse.vague.id, anchor: r.collapse.anchor.id, dir: r.collapse.dir}
       : null,
+    medical: r.medical ? {ids: r.medical.ids} : null,
     bullets: bullets().map(b => b.t)
   };
   ANS = keep;
@@ -93,6 +94,7 @@ def expect_body(r):
     return {"conflicts": [c["ids"] for c in r["conflicts"]],
             "alpha": bool(r["alpha"]),
             "collapse": bool(r["collapse"]),
+            "medical": bool(r["medical"]),
             "bullets": [strip_tags(b) for b in r["bullets"]],
             "asked": r["asked"]}
 
@@ -143,7 +145,7 @@ def as_markdown(results):
 
     doc += ["## Contents", ""]
     for view, r in results:
-        n = len(r["conflicts"]) + bool(r["alpha"]) + bool(r["collapse"])
+        n = len(r["conflicts"]) + bool(r["alpha"]) + bool(r["collapse"]) + bool(r["medical"])
         summary = "clean" if n == 0 else ("%d conflict%s" % (n, "" if n == 1 else "s"))
         nb = len(r["bullets"])
         if nb:
@@ -165,7 +167,7 @@ def as_markdown(results):
                     "answers give them something to bite on." % ", ".join(skipped)]
 
         doc += ["", "### Verdict", ""]
-        if not r["conflicts"] and not r["alpha"] and not r["collapse"]:
+        if not r["conflicts"] and not r["alpha"] and not r["collapse"] and not r["medical"]:
             doc.append("No conflicts.")
         for c in r["conflicts"]:
             doc.append("- **%s** " % (c["title"] or "(no story: generic card)")
@@ -179,6 +181,9 @@ def as_markdown(results):
                        "running %swards."
                        % (r["collapse"]["vague"], r["collapse"]["anchor"],
                           r["collapse"]["dir"]))
+        if r["medical"]:
+            doc.append("- **The medical programmes** - the No-Difference View against a "
+                       "neutral range `%s`" % "+".join(sorted(r["medical"]["ids"])))
         if r["bullets"]:
             doc += ["", "Bullets bitten:", ""]
             doc += ["- %s" % strip_tags(b) for b in r["bullets"]]

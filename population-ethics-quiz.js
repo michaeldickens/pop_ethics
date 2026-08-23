@@ -121,6 +121,21 @@ var QUESTIONS=[
               ["B","Yes \u2014 boundaries have to fall somewhere","no"]]
     },
     {
+        id:"no_difference", kind:"principle", label:"The medical programmes",
+        // No figure. The two cancellations produce populations with the same
+        // headcount and the same wellbeing in the same places; what separates
+        // them is which children the handicapped ones are. Blocks cannot say
+        // that, and a picture of two identical pairs would read as a bug.
+        title:"Two screening programmes, and only one can be kept.",
+        body:"A health service can afford only one of two programmes. Both prevent the same handicap — a real one, but not so severe as to make a life not worth living — and each would prevent it in 1,000 children.<br><br>"+
+            "<strong>Preconception testing</strong> screens women who have not yet conceived; those who test positive are advised to wait, and conceive after treatment. Cancel it and 1,000 handicapped children are born — and the 1,000 unhandicapped children who would have been conceived later <strong>never exist at all</strong>.<br><br>"+
+            "<strong>Pregnancy testing</strong> screens women already pregnant; those who test positive are treated, and their children are born unharmed. Cancel it and 1,000 handicapped children are born — and they are <strong>the very same children</strong> who would otherwise have been born unharmed.<br><br>"+
+            "Either way, 1,000 children are handicapped. Only in the second case is there anyone who is worse off than they would otherwise have been.",
+        ask:"Is cancelling preconception testing just as bad?",
+        opts:[["A","Yes — equally bad; it makes no difference which is cancelled","yes"],
+              ["B","No — cancelling pregnancy testing is the worse of the two","no"]]
+    },
+    {
         id:"trans_gt", kind:"principle", label:"Transitivity of better-than",
         title:"Better than, and better than again.",
         body:"Take any three futures. Suppose the first is better than the second, and the second is better than the third.",
@@ -406,6 +421,35 @@ function eqChainMatters(ans){
     return false;
 }
 
+/* ---------------------------------------------------------------
+   Parfit's two medical programmes (Reasons and Persons, ch. 16). Checked here
+   rather than in the closure, for the reason alpha and collapse are: a
+   population in this file is a list of {n,w}, identity-blind by construction,
+   and the whole case turns on identity. Both cancellations leave the same
+   headcount at the same wellbeing; what separates them is which children the
+   handicapped ones are. No pair of blocks can state that, so no edge can
+   carry it.
+
+   The collision needs neutrality in its strong form. "Exactly as good" at two
+   different wellbeing levels makes each of the two cohorts that differ between
+   the outcomes exactly as good as nobody, so they cancel, and what is left is
+   the cohort that exists either way - whom Pareto ranks. "Cannot be ranked"
+   does not chain like that, and is left to a bullet instead. That is also what
+   keeps Parfit's own position off this card: he holds the No-Difference View
+   and imprecise comparability together, and reads the medical case as a
+   same-number choice rather than a mere addition.
+--------------------------------------------------------------- */
+function medicalCandidate(ans){
+    if(ans.no_difference!=="yes" || ans.pareto!=="yes") return null;
+    if(ans.neutral_mod!=="equal" || ans.neutral_wond!=="equal") return null;
+    // The two cohorts cancel only by chaining a pair of equalities, so denying
+    // either chaining principle is a way out, and has to be charged as one.
+    if(ans.trans_eq!=="yes" || ans.menu_eq==="no") return null;
+    var ids=["pareto","neutral_mod","neutral_wond","no_difference","trans_eq"];
+    if(ans.menu_eq!==undefined) ids.push("menu_eq");
+    return {ids:ids, lo:K_MOD[1].w, hi:K_WOND[1].w};
+}
+
 function analyse(ans){
     var clashes=hasClash(ans,null);
 
@@ -450,8 +494,12 @@ function analyse(ans){
     // closure machinery can never see it. Without this, an incomparabilist is
     // unfalsifiable here no matter what else they say.
     var collapse = ans.collapse==="yes" ? collapseCandidate(ans) : null;
+    // The Medical Programmes, checked separately for the reason given above
+    // medicalCandidate: the case is about who the people are, and populations
+    // here have no identities for the closure to work on.
+    var medical = medicalCandidate(ans);
 
-    return {sets:sets, alpha:alpha, collapse:collapse, clashes:clashes};
+    return {sets:sets, alpha:alpha, collapse:collapse, medical:medical, clashes:clashes};
 }
 /* ===ENGINE END=== */
 
@@ -938,6 +986,10 @@ var LABELS={
         yes:"A tiny improvement to one life cannot turn \u201Cunrankable\u201D into a determinate verdict.",
         no:"A tiny improvement to one life can turn \u201Cunrankable\u201D into a determinate verdict.",
         abstain:"No view on whether unrankability collapses at its boundary."}[a]; },
+    no_difference:function(a){ return {
+        yes:"Cancelling preconception testing is just as bad as cancelling pregnancy testing.",
+        no:"Cancelling pregnancy testing is the worse of the two cancellations.",
+        abstain:"No view on whether the two cancellations are equally bad."}[a]; },
     menu_eq:function(a){ return {
         yes:"A verdict reached between two options still holds when a third joins them.",
         no:"A third option can change how the first two compare.",
@@ -1062,6 +1114,24 @@ function bullets(){
             : " You took it in the weak form: the addition is simply <em>not rankable</em> against leaving her out. Nothing is claimed to be exactly as good, so the neutral-range argument has nothing to chain through. That is the usual reason people retreat here \u2014 but it is not safety, only a different battlefield: Broome's collapsing principle is aimed squarely at it, which is what the boundary question was testing. What the retreat costs even if it works is silence: on a choice that plainly matters, your ordering declines to speak.";
         out.push({t:"You hold the Procreation Asymmetry.",b:"Creating a miserable life is bad; creating a happy one is not good. This is what most people say, and it is not formally inconsistent on its own \u2014 which is why it is not scored as a conflict here. It is, however, notoriously hard to ground: the obvious explanations of the first half tend to imply the opposite of the second."+route});
     }
+
+    // Both answers to the medical programmes say something substantive, so
+    // neither may pass in silence. The "yes" bullet is for the readers the
+    // conflict card deliberately does not catch: those whose neutrality is
+    // unrankability, or who bought their way out by refusing to chain
+    // equalities. Where the card does fire it makes this point at length, so
+    // the bullet stands down.
+    if(ANS.no_difference==="no"){
+        out.push({t:"You said it matters which children they are.",b:"Both cancellations leave 1,000 children handicapped, and the two outcomes hold the same wellbeing spread the same way. The only difference is whether the handicapped children are ones who would have existed anyway. Ranking one cancellation worse than the other makes that difference morally load-bearing. It is the natural person-affecting answer, and Parfit's chapter on the non-identity problem is an account of what it costs: the children in the preconception case are not worse off than they would otherwise have been, since the alternative for them was never existing at all, so their handicap is bad for nobody. On your view a health service short of money should cancel preconception testing first \u2014 and should go on cancelling it however many children it comes to affect."});
+    } else if(ANS.no_difference==="yes" && notBetter(ANS.neutral_mod) &&
+              notBetter(ANS.neutral_wond) && !medicalCandidate(ANS)){
+        var mroute = (ANS.neutral_mod==="equal" && ANS.neutral_wond==="equal")
+            ? "exactly as good as leaving them out"
+            : (ANS.neutral_mod==="none" && ANS.neutral_wond==="none")
+            ? "not something your ordering will rank against leaving them out"
+            : "never an improvement on leaving them out";
+        out.push({t:"You set aside whether the children exist, but not which children they are.",b:"By your answers, bringing a person with a life worth living into existence is "+mroute+". Yet you ranked the two cancellations determinately against one another, and what separates them is exactly which merely possible children come to exist and how well their lives then go. Both are questions about people who need not have existed; the first your ordering sets aside, the second it settles. That is a coherent place to stand, and it is roughly where Parfit stood: same-number choices decided by how well the lives go, different-number choices left to the neutrality. But then the line between same-number and different-number is carrying the entire view, and it needs a defence \u2014 nothing about the badness of a handicap changes when the number of children does."});
+    }
     return out;
 }
 
@@ -1113,7 +1183,7 @@ function showResults(){
         }
         return true;
     });
-    var nHits=R.sets.length + (R.alpha?1:0) + (R.collapse?1:0);
+    var nHits=R.sets.length + (R.alpha?1:0) + (R.collapse?1:0) + (R.medical?1:0);
     var B=bullets();
     var h='';
     h+='<div class="hero" style="padding:6vh 0 0">';
@@ -1164,6 +1234,32 @@ function showResults(){
            'and vagueness cannot both live in one betterness ordering. Note it is a constraint on the <em>determinacy</em> '+
            'of your ordering rather than on its content, so it is listed apart from the conflicts above \u2014 and it is '+
            'contested: Carlson and others have argued the principle is too strong.</p></div>';
+    }
+
+    if(R.medical){
+        h+='<div class="hit"><div class="tag">Conflict '+
+           (R.sets.length+(R.alpha?1:0)+(R.collapse?1:0)+1)+' &middot; the medical programmes</div>';
+        h+='<h3 style="margin-top:10px">The two cancellations come apart on your own account.</h3>';
+        h+='<ol class="claims">';
+        QUESTIONS.forEach(function(q){
+            if(R.medical.ids.indexOf(q.id)>=0) h+='<li>'+claimText(q.id)+'</li>';
+        });
+        h+='</ol>';
+        h+='<p class="because">Cancelling either programme leaves 1,000 children handicapped, and the two '+
+           'outcomes hold the same wellbeing spread the same way; what separates them is only which children '+
+           'the handicapped ones are. You said that makes no difference — Parfit’s No-Difference View, '+
+           'and the reason he took the non-identity problem to be a problem rather than a curiosity. '+
+           'Your other answers pull the two apart again. Cancelling pregnancy testing leaves children who exist '+
+           'either way worse off than they would otherwise have been, and Pareto makes that determinately worse. '+
+           'Cancelling preconception testing leaves nobody worse off: the handicapped children have lives worth '+
+           'living and would otherwise never have existed, and the unhandicapped children who never exist are, by '+
+           'your own answer, no loss. You said twice that bringing a worth-living person into existence is exactly '+
+           'as good as leaving them out — at wellbeing '+R.medical.lo+' and again at '+R.medical.hi+' — so '+
+           'each of the two cohorts that differ between the outcomes is exactly as good as nobody, and they cancel. '+
+           'What is left is the cohort that exists either way, better off under one cancellation than the other. '+
+           'So one cancellation is worse than the other, which is what you denied. This is the neutral-range '+
+           'collision arriving as a choice somebody actually has to make: the ways out are the same ways out, '+
+           'and Parfit’s point is that none of them should look attractive here.</p></div>';
     }
 
     if(B.length){
