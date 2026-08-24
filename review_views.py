@@ -54,6 +54,7 @@ PROBE = """(a) => {
     collapse: r.collapse
       ? {vague: r.collapse.vague.id, anchor: r.collapse.anchor.id, dir: r.collapse.dir}
       : null,
+    greedy: r.greedy,
     bullets: bullets().map(b => b.t)
   };
   ANS = keep;
@@ -93,6 +94,7 @@ def expect_body(r):
     return {"conflicts": [c["ids"] for c in r["conflicts"]],
             "alpha": bool(r["alpha"]),
             "collapse": bool(r["collapse"]),
+            "greedy": bool(r["greedy"]),
             "bullets": [strip_tags(b) for b in r["bullets"]],
             "asked": r["asked"]}
 
@@ -143,7 +145,8 @@ def as_markdown(results):
 
     doc += ["## Contents", ""]
     for view, r in results:
-        n = len(r["conflicts"]) + bool(r["alpha"]) + bool(r["collapse"])
+        n = (len(r["conflicts"]) + bool(r["alpha"]) + bool(r["collapse"])
+             + bool(r["greedy"]))
         summary = "clean" if n == 0 else ("%d conflict%s" % (n, "" if n == 1 else "s"))
         nb = len(r["bullets"])
         if nb:
@@ -165,7 +168,7 @@ def as_markdown(results):
                     "answers give them something to bite on." % ", ".join(skipped)]
 
         doc += ["", "### Verdict", ""]
-        if not r["conflicts"] and not r["alpha"] and not r["collapse"]:
+        if not any((r["conflicts"], r["alpha"], r["collapse"], r["greedy"])):
             doc.append("No conflicts.")
         for c in r["conflicts"]:
             doc.append("- **%s** " % (c["title"] or "(no story: generic card)")
@@ -179,6 +182,11 @@ def as_markdown(results):
                        "running %swards."
                        % (r["collapse"]["vague"], r["collapse"]["anchor"],
                           r["collapse"]["dir"]))
+        if r["greedy"]:
+            doc.append("- **Greediness of neutrality** - the addition at %d is "
+                       "unrankable against leaving it out, and K is ranked above "
+                       "K+- all the same."
+                       % r["greedy"]["level"])
         if r["bullets"]:
             doc += ["", "Bullets bitten:", ""]
             doc += ["- %s" % strip_tags(b) for b in r["bullets"]]

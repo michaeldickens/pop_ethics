@@ -11,9 +11,9 @@ Read each view's description against the answers below it, then against the verd
 - [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 2 bullets
 - [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 1 bullet
 - [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
-- [Imprecise comparability](#rough) - clean, 2 bullets
-- [Unrankable below, better above](#vague_boundary) - 2 conflicts, 1 bullet
-- [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 1 bullet
+- [Imprecise comparability](#rough) - clean, 3 bullets
+- [Unrankable below, better above](#vague_boundary) - 3 conflicts, 1 bullet
+- [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 3 conflicts, 1 bullet
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
 - [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 3 bullets
 - [Antinatalism](#antinatalist) - clean, 2 bullets
@@ -22,7 +22,7 @@ Read each view's description against the answers below it, then against the verd
 - [The untutored intuitive package (A > B)](#intuitive-v1) - 2 conflicts
 - [The untutored intuitive package (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 2 bullets
-- [Declining to rank anything](#quietist) - clean, 3 bullets
+- [Declining to rank anything](#quietist) - clean, 4 bullets
 
 <a id="total"></a>
 
@@ -47,6 +47,7 @@ transitive ordering.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
@@ -84,6 +85,7 @@ for being below par.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -122,6 +124,7 @@ it, and it is committed to some lives worth living being not worth adding.
 | Repeating the moves | Somewhere on the ladder those two verdicts flip. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
@@ -161,6 +164,7 @@ and is told instead what its verdicts commit it to.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
@@ -201,6 +205,7 @@ violates Sen's property beta.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A third option can change how the first two compare. |
@@ -241,6 +246,7 @@ very different quality cannot both be exactly worth nothing.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
@@ -278,6 +284,7 @@ Increasing total utility in a single step is good (B > A), but Z is worse than A
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A third option can change how the first two compare. |
@@ -306,7 +313,11 @@ from A+ to B is a clear improvement, and A is still better than B and than Z. Th
 therefore breaks at its first rung rather than at transitivity, and the view should come
 out consistent. Note what the quiz cannot see: Parfit's distinctive claim is that 'not
 worse than' fails to be transitive, and there is no question about that relation, so an
-unrankable verdict simply contributes no link.
+unrankable verdict simply contributes no link. It answers the greediness case the same
+way -- K and K+- are imprecisely comparable too -- and that is where the view now pays:
+a harm to somebody who exists either way has been made unrankable by an addition
+alongside it. Consistent, and a bullet rather than a conflict, which is exactly Broome's
+complaint about the position.
 
 ### Answers
 
@@ -321,6 +332,7 @@ unrankable verdict simply contributes no link.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -333,7 +345,8 @@ No conflicts.
 
 Bullets bitten:
 
-- You judged 3 of the 7 pairs unrankable.
+- A neutral addition made a real harm unrankable.
+- You judged 4 of the 8 pairs unrankable.
 - You hold the Procreation Asymmetry.
 
 <a id="vague_boundary"></a>
@@ -344,7 +357,9 @@ Holds that adding Nadia at 7 does not rank against leaving her out, but that add
 at 70 is determinately better, and accepts that no hair's improvement to a life can
 convert 'no fact of the matter' into a settled verdict. Those three cannot all stand:
 Broome's collapsing principle is aimed exactly here. The one profile in this list that
-the collapsing question should catch.
+the collapsing question should catch. It also keeps ranking where it can, K above K+-,
+and so takes the first horn of the greediness dilemma as well: two separate cards, on
+two separate weaknesses of the same unrankable verdict.
 
 ### Answers
 
@@ -360,6 +375,7 @@ the collapsing question should catch.
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life cannot turn "unrankable" into a determinate verdict. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
@@ -370,6 +386,7 @@ Not asked: menu_eq. These questions only appear when earlier answers give them s
 
 - **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
 - **Collapsing principle** - neutral_mod unrankable, neutral_wond determinate, running upwards.
+- **Greediness of neutrality** - the addition at 7 is unrankable against leaving it out, and K is ranked above K+- all the same.
 
 Bullets bitten:
 
@@ -381,7 +398,9 @@ Bullets bitten:
 
 The same answers as the previous view, except that a sharp boundary between 'unrankable'
 and 'better' is accepted as the price of vagueness. That single change should be the
-difference between being caught by the collapsing principle and not.
+difference between being caught by the collapsing principle and not -- and only that.
+The greediness card stands either way, which is the point of having both: accepting a
+sharp boundary is no help against an addition that reaches across a harm.
 
 ### Answers
 
@@ -397,6 +416,7 @@ difference between being caught by the collapsing principle and not.
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life can turn "unrankable" into a determinate verdict. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -407,6 +427,7 @@ Not asked: menu_eq. These questions only appear when earlier answers give them s
 
 - **The ladder reaches B, but you say B is worse.** `AvB+benign+nae+trans_gt`
 - **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
+- **Greediness of neutrality** - the addition at 7 is unrankable against leaving it out, and K is ranked above K+- all the same.
 
 Bullets bitten:
 
@@ -436,6 +457,7 @@ better-than does nothing to touch.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is not always transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
@@ -472,6 +494,7 @@ allowing verdicts to change when the menu changes.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A third option can change how the first two compare. |
@@ -511,6 +534,7 @@ without limit, and the best world contains nobody.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome worse. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -546,6 +570,7 @@ of happiness.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -581,6 +606,7 @@ Happiness is not good, but suffering is bad.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome worse. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -620,6 +646,7 @@ collision should not fire - the ladder ones should, twice.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -654,6 +681,7 @@ should not fire - the ladder ones should, twice.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
@@ -686,6 +714,7 @@ able to pass without comment.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
@@ -708,7 +737,8 @@ Bullets bitten:
 Answers 'cannot be ranked' to every comparison and rejects every structural principle. A
 boundary case: there is nothing to be inconsistent with, so the quiz should find no
 collisions, and should not manufacture one. If this profile ever produces a conflict,
-something is wrong.
+something is wrong. Bullets are a different matter: an ordering that says nothing about
+anything is told so, and told what its silence costs where a harm is involved.
 
 ### Answers
 
@@ -723,6 +753,7 @@ something is wrong.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 7. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | None of A, B and Z is best. |
@@ -736,5 +767,6 @@ No conflicts.
 Bullets bitten:
 
 - You rejected the Pareto principle.
+- A neutral addition made a real harm unrankable.
 - You denied that levelling up improves things.
-- You judged none of the seven pairs rankable.
+- You judged none of the eight pairs rankable.

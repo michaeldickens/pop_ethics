@@ -37,8 +37,10 @@ import sys
 from playwright.sync_api import sync_playwright
 
 QIDS = ["pareto", "AvB", "misery", "neutral_mod", "benign", "nae", "generalize",
-        "AvZ", "neutral_wond", "collapse", "trans_gt", "trans_eq", "menu_eq", "menu"]
-PAIRS = ["AvB", "misery", "neutral_mod", "benign", "nae", "AvZ", "neutral_wond"]
+        "AvZ", "neutral_wond", "collapse", "greedy", "trans_gt", "trans_eq",
+        "menu_eq", "menu"]
+PAIRS = ["AvB", "misery", "neutral_mod", "benign", "nae", "AvZ", "neutral_wond",
+         "greedy"]
 PRINCIPLES = ["pareto", "generalize", "collapse", "trans_gt", "trans_eq", "menu_eq"]
 PAIR_VALUES = ["left", "right", "equal", "none"]
 PRINCIPLE_VALUES = ["yes", "no"]
@@ -47,10 +49,10 @@ MENU_VALUES = ["A", "B", "Z", "none"]
 # Index of the answer button to click, per question, for named profiles.
 CLICK_MODAL = {"pareto": 0, "AvB": 0, "misery": 0, "neutral_mod": 2, "benign": 1,
                "nae": 1, "generalize": 0, "AvZ": 0, "neutral_wond": 2, "collapse": 0,
-               "trans_gt": 0, "trans_eq": 0, "menu_eq": 0, "menu": 0}
+               "greedy": 0, "trans_gt": 0, "trans_eq": 0, "menu_eq": 0, "menu": 0}
 CLICK_TOTALIST = {"pareto": 0, "AvB": 1, "misery": 0, "neutral_mod": 1, "benign": 1,
                   "nae": 1, "generalize": 0, "AvZ": 1, "neutral_wond": 1, "collapse": 0,
-                  "trans_gt": 0, "trans_eq": 0, "menu_eq": 0, "menu": 2}
+                  "greedy": 0, "trans_gt": 0, "trans_eq": 0, "menu_eq": 0, "menu": 2}
 CLICK_ALPHA = dict(CLICK_TOTALIST, menu=0)
 # Accepting every principle but declaring every pair unrankable. Index 3 on a
 # pair is "neither - they cannot be ranked", the only way to decline.
@@ -59,16 +61,20 @@ CLICK_REJECT = {q: (1 if q in PRINCIPLES else 0) for q in QIDS}
 
 MODAL = {"pareto": "yes", "AvB": "left", "misery": "left", "neutral_mod": "equal",
          "benign": "right", "nae": "right", "generalize": "yes", "AvZ": "left",
-         "neutral_wond": "equal", "collapse": "yes", "trans_gt": "yes",
-         "trans_eq": "yes", "menu_eq": "yes", "menu": "A"}
+         "neutral_wond": "equal", "collapse": "yes", "greedy": "left",
+         "trans_gt": "yes", "trans_eq": "yes", "menu_eq": "yes", "menu": "A"}
 TOTALIST = {"pareto": "yes", "AvB": "right", "misery": "left", "neutral_mod": "right",
             "benign": "right", "nae": "right", "generalize": "yes", "AvZ": "right",
-            "neutral_wond": "right", "collapse": "yes", "trans_gt": "yes",
-            "trans_eq": "yes", "menu_eq": "yes", "menu": "Z"}
+            "neutral_wond": "right", "collapse": "yes", "greedy": "left",
+            "trans_gt": "yes", "trans_eq": "yes", "menu_eq": "yes", "menu": "Z"}
 
 LADDER_SHORT = "AvB+benign+nae+trans_gt"
 LADDER_FULL = "AvZ+benign+generalize+nae+trans_gt"
 BROOME = "menu_eq+neutral_mod+neutral_wond+pareto+trans_eq"
+# The two ways K+- can contradict the strong form of neutrality: ranked level
+# with K (which needs the equalities chained) or above it (which does not).
+PRICED_EQ = "greedy+menu_eq+neutral_mod+pareto+trans_eq"
+PRICED_GT = "greedy+neutral_mod+pareto+trans_gt"
 
 
 class Report:
@@ -100,7 +106,7 @@ def analyse(page, answers):
     return page.evaluate(
         """a => { const r = analyse(a);
                   return {sets: r.sets.map(s => [...s].sort().join('+')).sort(),
-                          alpha: r.alpha, collapse: r.collapse,
+                          alpha: r.alpha, collapse: r.collapse, greedy: r.greedy,
                           clashes: r.clashes.length}; }""", answers)
 
 
@@ -195,7 +201,8 @@ def suite_engine(page, rep):
     # the quiz says nothing at all about.
     watch = [["misery", "right"], ["neutral_mod", "left"], ["neutral_wond", "left"],
              ["benign", "left"], ["nae", "left"], ["pareto", "no"], ["trans_gt", "no"],
-             ["trans_eq", "no"], ["generalize", "no"], ["AvZ", "right"]]
+             ["trans_eq", "no"], ["generalize", "no"], ["AvZ", "right"],
+             ["greedy", "right"], ["greedy", "equal"]]
     silent = page.evaluate("""(cfg) => {
       const keep = ANS, bad = new Set();
       cfg.profiles.forEach(a => {
@@ -281,6 +288,69 @@ def suite_engine(page, rep):
     rep.check(levels[0] < 0 < levels[1] < levels[2],
               "the three Nadia levels still straddle zero as the check assumes", str(levels))
 
+    # Broome ch.12 again: the greediness of neutrality. K+- is K with Owen
+    # harmed and Nadia added, so the weak form of neutrality has to say
+    # something about it, and everything it can say costs.
+    weak = dict(MODAL, neutral_mod="none", neutral_wond="none")
+    r = analyse(page, dict(weak, greedy="left"))
+    rep.check(bool(r["greedy"]), "greediness fires: unrankable addition, determinate K > K+-")
+    rep.check(not any("greedy" in s for s in r["sets"]),
+              "...and does it outside the closure, which sees no edge to worry about",
+              str(r["sets"]))
+    for label, prof in [
+            ("the addition is only unrankable at the wonderful level",
+             dict(MODAL, neutral_wond="none", greedy="left")),
+            ("the addition was called exactly as good", dict(MODAL, greedy="left")),
+            ("K+- was not ranked determinately", dict(weak, greedy="none")),
+            ("K+- was ranked the other way", dict(weak, greedy="right")),
+            ("Pareto is rejected, so Owen's loss is not conceded",
+             dict(weak, pareto="no", greedy="left"))]:
+        rep.check(not analyse(page, prof)["greedy"], f"greediness stays quiet: {label}")
+
+    # The strong form does not escape either, but it is caught by the closure:
+    # K = K+ chains with Pareto's K+ > K+- to deliver K > K+-.
+    rep.check(PRICED_GT in analyse(page, dict(MODAL, greedy="right"))["sets"],
+              "ranking K+- above K contradicts calling the addition worth nothing",
+              str(analyse(page, dict(MODAL, greedy="right"))["sets"]))
+    rep.check(PRICED_EQ in analyse(page, dict(MODAL, greedy="equal"))["sets"],
+              "so does ranking it exactly level with K",
+              str(analyse(page, dict(MODAL, greedy="equal"))["sets"]))
+    rep.check(not any("greedy" in s for s in analyse(page, MODAL)["sets"]),
+              "...while K > K+-, which those answers actually entail, is clean")
+    rep.check(not any("greedy" in s for s in
+                      analyse(page, dict(MODAL, pareto="no", greedy="right"))["sets"]),
+              "both need Pareto, which is what makes Owen's loss a loss")
+
+    # Pareto ranks K+- against the two additions that leave Owen alone, and
+    # against nothing else: K has no Nadia in it, and K- has her far worse off.
+    kpm = page.evaluate("""() => {
+      const e = compile({pareto: 'yes'}).filter(x => x.a === 'K\\u00B1' || x.b === 'K\\u00B1');
+      return e.map(x => x.a + '>' + x.b).sort();
+    }""")
+    rep.check(kpm == ["K++>K±", "K+>K±"],
+              "Pareto places K+- below K+ and K++ and nowhere else", str(kpm))
+
+    # Both horns have to say something. Silence here is the failure mode the
+    # whole addition exists to fix.
+    horns = bullet_titles(page, dict(weak, greedy="none"))
+    rep.check(any("unrankable" in t for t in horns),
+              "declining to rank K against K+- draws the swallowed-harm bullet", str(horns))
+    for val, phrase in [("right", "came out ahead"), ("equal", "priced")]:
+        got = bullet_titles(page, dict(MODAL, greedy=val))
+        rep.check(any(phrase in t for t in got),
+                  f"greedy={val} draws its own bullet", str(got))
+
+    # The profile the quiz used to have nothing at all to say to: neutrality in
+    # the weak form, everything else modal.
+    quiet_before = dict(pareto="yes", AvB="left", misery="left", neutral_mod="none",
+                        benign="none", nae="right", generalize="yes", AvZ="left",
+                        neutral_wond="none", collapse="no", greedy="left",
+                        trans_gt="yes", trans_eq="yes", menu_eq="yes", menu="A")
+    r = analyse(page, quiet_before)
+    rep.check(not r["sets"] and not r["collapse"] and bool(r["greedy"]),
+              "the weak-form neutralist who escaped everything else is caught here",
+              f"sets {r['sets']}, collapse {bool(r['collapse'])}, greedy {bool(r['greedy'])}")
+
     # The point of the whole exercise: incomparability must be falsifiable.
     caught = page.evaluate("""(ps) => {
       const keep = ANS; let ever = 0, tot = 0;
@@ -290,6 +360,8 @@ def suite_engine(page, rep):
         const sup = new Set();
         r.sets.forEach(s => s.forEach(x => sup.add(x)));
         if (r.collapse) { sup.add(r.collapse.vague.id); sup.add(r.collapse.anchor.id); }
+        // The greediness card is charged to the unrankable addition it turns on.
+        if (r.greedy) { sup.add('neutral_mod'); sup.add('greedy'); }
         Object.keys(a).forEach(q => { if (a[q] === 'none') { tot++; if (sup.has(q)) ever++; } });
       });
       ANS = keep; return {ever, tot};
@@ -486,7 +558,9 @@ PROBE_FIGURE = """
   const svg = f.querySelector('svg'), vb = svg.viewBox.baseVal;
   return {
     vbW: vb.width, vbH: vb.height,
-    rects: [...svg.querySelectorAll('rect')].map(r => {
+    // .mask rects are the patches of panel that keep a leader line from
+    // running through a neighbouring caption; they are not part of the data.
+    rects: [...svg.querySelectorAll('rect:not(.mask)')].map(r => {
       const b = r.getBoundingClientRect();
       return {w: +r.getAttribute('width'), h: +r.getAttribute('height'),
               px: +b.width.toFixed(1), py: +b.height.toFixed(1)};
@@ -530,6 +604,7 @@ VIEW_PROBE = """(a) => {
                 .sort((x, y) => x.join().localeCompare(y.join())),
     alpha: !!r.alpha,
     collapse: !!r.collapse,
+    greedy: !!r.greedy,
     bullets: bullets().map(b => b.t)
   };
   ANS = keep;
@@ -619,6 +694,18 @@ def suite_geometry(page, rep):
                   f"{qid}: the added person carries a caption")
         rep.check(len(d["rects"]) == 3, f"{qid}: the added person is drawn as its own bar",
                   f"{len(d['rects'])} bars")
+
+    # K+- carries two single people, a person's width apart. Both must be drawn
+    # and both captioned; the overlap check above is what keeps the two captions
+    # off each other, since they cannot fit side by side on one line.
+    d = figures["greedy"]
+    for caption in ("Owen", "Nadia"):
+        rep.check(any(caption == t["s"] for t in d["texts"]),
+                  f"greedy: {caption} carries a caption")
+    rep.check(len(d["rects"]) == 4, "greedy: both single people are drawn as their own bars",
+              f"{len(d['rects'])} bars")
+    rows = sorted({round(t["ink1"]) for t in d["texts"] if t["s"] in ("Owen", "Nadia")})
+    rep.check(len(rows) == 2, "greedy: the two captions sit on separate rows", str(rows))
 
     # Above the knee the blocks stop encoding total welfare as area, so those
     # figures carry a to-scale bar row instead. That row has to be exact.
@@ -1150,10 +1237,12 @@ def suite_views(page, rep):
         got = page.evaluate(VIEW_PROBE, view["answers"])
         rep.check(got["conflicts"] == want["conflicts"], f"{key}: same conflicts",
                   f"{got['conflicts']} vs {want['conflicts']}")
-        rep.check(got["alpha"] == want["alpha"] and got["collapse"] == want["collapse"],
-                  f"{key}: same choice-consistency cards",
+        rep.check(got["alpha"] == want["alpha"] and got["collapse"] == want["collapse"]
+                  and got["greedy"] == want["greedy"],
+                  f"{key}: same cards from the checks outside the closure",
                   f"alpha {got['alpha']}/{want['alpha']}, "
-                  f"collapse {got['collapse']}/{want['collapse']}")
+                  f"collapse {got['collapse']}/{want['collapse']}, "
+                  f"greedy {got['greedy']}/{want['greedy']}")
         rep.check(got["bullets"] == want["bullets"], f"{key}: same bullets",
                   f"{got['bullets']} vs {want['bullets']}")
         rep.check(got["asked"] == want["asked"], f"{key}: same questions asked",
