@@ -1013,25 +1013,36 @@ function claimText(id){
     return (typeof v==="function") ? v(ANS[id]) : v;
 }
 
-/* The strong form of neutrality meets K± through the closure rather than
-   through the greediness check: it supplies K = K+ (or K = K++), Pareto
-   supplies K+ > K±, and between them K > K± follows. Ranking K± level with K
-   or above it then contradicts a verdict the person's own answers deliver.
-   Four sets, because the equality can come from either level and because
-   "exactly as good" reaches the contradiction by chaining equalities while
-   "better" reaches it in one step. All four are the same complaint, so they
-   share a group and are shown once. */
+/* K± meets the closure whenever the addition was ranked at all: the answer
+   supplies K = K+ or K > K+ (or the same at the wonderful level), Pareto
+   supplies K+ > K±, and between them K is better than K±. Ranking K± level
+   with K or above it then contradicts a verdict the person's own answers
+   deliver.
+
+   Four sets, because the addition can be ranked at either welfare level and
+   because the contradiction is reached either by chaining equalities or in one
+   step of better-than. The sets do not line up with the answers, though: the
+   one-step set is reached from three different pairs of verdicts, so the prose
+   has to be read off the answers rather than off the set. All four are the
+   same complaint, so they share a group and are shown once. */
 function greedyPriced(via, over, level){
     return function(chained){
         return {
             needs: chained ? ["greedy",via,"pareto","trans_eq","menu_eq"]
                            : ["greedy",via,"pareto","trans_gt"],
-            title:"The addition you called worth nothing paid for a harm.",
-            because:"You said adding Nadia at "+level+" is exactly as good as leaving her out. Pareto then puts "+over+
-                " above K±: the same 501 people, Owen better off by "+(K_BASE[0].w-K_BOTH[1].w)+
-                " in one of them and nobody worse. Between them those two give K better than K± — the harm survives an addition that is worth nothing — and you ranked K± "+
-                (chained? "exactly level with K instead":"above K instead")+
-                ". Nadia's arrival is being made to carry weight against Owen's loss that you denied it when she was the only thing that changed. That is the greediness of neutrality met from its other side: taken in the strong form the intuition does not swallow the harm, but only by pricing a life it called worthless.",
+            title:"Your own answers already rank K above K±.",
+            because:function(a){
+                var said = a[via]==="equal"
+                    ? "You said adding Nadia at "+level+" is exactly as good as leaving her out, so K and "+over+" stand level."
+                    : "You said adding Nadia at "+level+" makes the outcome worse, so K stands above "+over+".";
+                var put = a.greedy==="equal" ? "exactly level with K" : "above K";
+                var moral = a[via]==="equal"
+                    ? "Nadia's arrival is being made to carry weight against Owen's loss that you denied it when she was the only thing that changed. That is the greediness of neutrality met from its other side: taken in the strong form the intuition does not swallow the harm, but only by pricing a life it called worthless."
+                    : "Her arrival is a cost by your own account, and Owen's loss is a second one. Two costs and no gain cannot leave the world level with K, let alone better than it.";
+                return said+" Pareto then puts "+over+" above K±: the same 501 people, Owen better off by "+
+                    (K_BASE[0].w-K_BOTH[1].w)+" in one of them and nobody worse. Between them those two give K better than K±, and you put K± "+
+                    put+" instead. "+moral;
+            },
             group:"greedyPriced"
         };
     };
@@ -1239,7 +1250,9 @@ function showResults(){
         h+='<ol class="claims">';
         QUESTIONS.forEach(function(q){ if(S.has(q.id)) h+='<li>'+claimText(q.id)+'</li>'; });
         h+='</ol>';
-        if(st){ h+='<p class="because">'+st.because+'</p>'; }
+        // A story whose answers can differ behind one support set reads its
+        // prose off the answers, so because may be a function of them.
+        if(st){ h+='<p class="because">'+(typeof st.because==="function"?st.because(ANS):st.because)+'</p>'; }
         else { h+='<p class="because">Closing your judgements under the transitivity principles you accepted produces a pair of outcomes ranked in both directions at once. Dropping any one of the answers above dissolves it; keeping all of them does not.</p>'; }
         if(st&&st.chain){ h+='<div class="chainwrap">'+chainSVG(true)+'</div>'; }
         h+='</div>';
