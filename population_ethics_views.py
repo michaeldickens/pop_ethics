@@ -30,8 +30,8 @@ is better, "right" the second, "equal" exactly as good, "none" unrankable.
     AvZ          A  vs Z
 """
 
-# collapse and menu_eq are conditional; give an answer and it is used only if
-# the view's other answers make the question come up.
+# collapse, trans_none and menu_eq are conditional; give an answer and it is
+# used only if the view's other answers make the question come up.
 VIEWS = [
 
     dict(
@@ -46,7 +46,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="right", misery="left", neutral_mod="right",
                      benign="right", nae="right", generalize="yes", AvZ="right",
                      neutral_wond="right", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="Z"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="Z"),
     ),
 
     dict(
@@ -61,7 +61,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="left",
                      benign="left", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="right", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="A"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="A"),
     ),
 
     dict(
@@ -77,7 +77,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="right", misery="left", neutral_mod="right",
                      benign="right", nae="right", generalize="no", AvZ="left",
                      neutral_wond="right", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="B"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="B"),
     ),
 
     dict(
@@ -95,7 +95,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="left",
                      benign="left", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="equal", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="A"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="A"),
     ),
 
     dict(
@@ -110,7 +110,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="equal",
                      benign="right", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="equal", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="no", menu="A"),
+                     trans_none="yes", trans_eq="yes", menu_eq="no", menu="A"),
     ),
 
     dict(
@@ -126,7 +126,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="equal",
                      benign="right", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="equal", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="A"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="A"),
     ),
 
     dict(
@@ -138,7 +138,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="right", misery="left", neutral_mod="equal",
                      benign="right", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="equal", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="no", menu="B"),
+                     trans_none="yes", trans_eq="yes", menu_eq="no", menu="B"),
     ),
 
     dict(
@@ -152,14 +152,16 @@ VIEWS = [
             to populations. Levelling up from A+ to B is a clear improvement,
             and A is still better than B and than Z. The chain therefore breaks
             at its first rung rather than at transitivity, and the view should
-            come out consistent. Note what the quiz cannot see: Parfit's
-            distinctive claim is that 'not worse than' fails to be transitive,
-            and there is no question about that relation, so an unrankable
-            verdict simply contributes no link.""",
+            come out consistent. What makes it consistent is the answer to the
+            not-worse-than question, which is Parfit's distinctive claim: an
+            unrankable A+ is still not worse than A, so the ladder can be run
+            on that relation straight through the gap, and only denying that
+            it chains stops it. Answer yes there instead and the same profile
+            collides -- see the view below.""",
         answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="none",
                      benign="none", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="none", collapse="no", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="A"),
+                     trans_none="no", trans_eq="yes", menu_eq="yes", menu="A"),
     ),
 
     dict(
@@ -174,7 +176,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="right", misery="left", neutral_mod="none",
                      benign="right", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="right", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="B"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="B"),
     ),
 
     dict(
@@ -187,7 +189,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="none",
                      benign="right", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="right", collapse="no", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="A"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="A"),
     ),
 
     dict(
@@ -204,7 +206,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="equal",
                      benign="right", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="equal", collapse="yes", trans_gt="no",
-                     trans_eq="yes", menu_eq="yes", menu="A"),
+                     trans_none="no", trans_eq="yes", menu_eq="yes", menu="A"),
     ),
 
     dict(
@@ -214,7 +216,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="none", misery="left", neutral_mod="equal",
                      benign="right", nae="neither", generalize="yes", AvZ="none",
                      neutral_wond="equal", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="no", menu="none"),
+                     trans_none="yes", trans_eq="yes", menu_eq="no", menu="none"),
     ),
 
     dict(
@@ -228,7 +230,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="left",
                      benign="left", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="left", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="A"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="A"),
     ),
 
     dict(
@@ -239,7 +241,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="left",
                      benign="left", nae="left", generalize="yes", AvZ="left",
                      neutral_wond="right", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="A"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="A"),
     ),
 
     dict(
@@ -249,7 +251,7 @@ VIEWS = [
         answers=dict(pareto="no", AvB="left", misery="left", neutral_mod="left",
                      benign="left", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="left", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="A"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="A"),
     ),
 
     dict(
@@ -265,7 +267,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="right",
                      benign="right", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="right", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="A"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="A"),
     ),
 
     dict(
@@ -281,7 +283,7 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="right", misery="left", neutral_mod="right",
                      benign="right", nae="right", generalize="yes", AvZ="left",
                      neutral_wond="right", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="B"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="B"),
     ),
 
     dict(
@@ -295,7 +297,67 @@ VIEWS = [
         answers=dict(pareto="yes", AvB="right", misery="right", neutral_mod="right",
                      benign="right", nae="right", generalize="yes", AvZ="right",
                      neutral_wond="right", collapse="yes", trans_gt="yes",
-                     trans_eq="yes", menu_eq="yes", menu="Z"),
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="Z"),
+    ),
+
+    dict(
+        key="imprecise-critical-level",
+        name="A neutral range with a floor",
+        blurb="""Broome's neutral range taken as a range of critical levels
+            rather than a single one, with a comparison coming out determinate
+            only when it holds at every level in the range. Adding a life is an
+            open question while its welfare falls inside the range, which is
+            why the benign addition cannot be ranked and A cannot be ranked
+            against B - B's people live at 64, well inside any plausible range.
+            It stops being open once the added lives fall beneath the range's
+            floor, which is why the rung verdicts flip partway down the ladder
+            and why Z, whose people live at 4, is rankable at all. The verdict
+            against Z is then carried entirely by A's original hundred, who are
+            still there and have fallen from 100 to 4. Coherent throughout:
+            this profile should draw no conflict, only the bullet naming what
+            the floor commits it to.""",
+        answers=dict(pareto="yes", AvB="none", misery="left", neutral_mod="none",
+                     benign="none", nae="right", generalize="no", AvZ="left",
+                     neutral_wond="none", collapse="no", trans_gt="yes",
+                     trans_none="no", trans_eq="yes", menu_eq="yes", menu="A"),
+    ),
+
+    dict(
+        key="rough-transitive",
+        name="Imprecise comparability, without Parfit's escape",
+        blurb="""The view above, one answer different: not-worse-than is taken
+            to chain. That is the answer most people give without thinking
+            about it, and it is the one Parfit spent the argument denying.
+            Every rung is unrankable rather than an improvement, which looks
+            like it should stop the ladder, and does stop it for better-than.
+            It does not stop it for not-worse-than: an unrankable A+ is not
+            worse than A, B is better than A+ and so not worse than it either,
+            and the chain reaches Z. Ranking A above Z then says Z is worse
+            than A after all. Should collide on the ladder route, where the
+            view above comes out clean.""",
+        answers=dict(pareto="yes", AvB="left", misery="left", neutral_mod="none",
+                     benign="none", nae="right", generalize="yes", AvZ="left",
+                     neutral_wond="none", collapse="no", trans_gt="yes",
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="A"),
+    ),
+
+    dict(
+        key="symmetric-gap-ranks-Z",
+        name="Creating is never better or worse, and Z is worse",
+        blurb="""A person-affecting view with no asymmetry: adding a life is
+            beyond ranking whichever way it goes, agony included. The ladder
+            route does not reach this one, because the rung verdicts are said
+            to flip partway down and the chain stops where they do. The other
+            route does. Read the gaps as a neutral range -- a range of
+            critical levels, a comparison determinate only when it holds at
+            every level in it -- and calling the agony addition unrankable
+            puts a level at -40, while ranking A above Z says every level sits
+            above 4, the welfare Z's people live at. Should collide on the
+            misery route, and be told that route assumes the reading.""",
+        answers=dict(pareto="yes", AvB="none", misery="none", neutral_mod="none",
+                     benign="none", nae="right", generalize="no", AvZ="left",
+                     neutral_wond="none", collapse="no", trans_gt="yes",
+                     trans_none="yes", trans_eq="yes", menu_eq="yes", menu="A"),
     ),
 
     dict(
@@ -309,7 +371,7 @@ VIEWS = [
         answers=dict(pareto="no", AvB="none", misery="none", neutral_mod="none",
                      benign="none", nae="none", generalize="yes", AvZ="none",
                      neutral_wond="none", collapse="no", trans_gt="yes",
-                     trans_eq="yes", menu_eq="no", menu="none"),
+                     trans_none="yes", trans_eq="yes", menu_eq="no", menu="none"),
     ),
 ]
 
@@ -321,23 +383,26 @@ VIEWS_BY_KEY = {v["key"]: v for v in VIEWS}
 #     python3 review_views.py --expect
 
 EXPECT = {
-    'total': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You accepted the repugnant conclusion.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'average': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'critical_level': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You said the verdict flips somewhere on the ladder.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'maximin': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
-    'asymmetry_menu': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'bullets': ['You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
-    'asymmetry_equal': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt'], ['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'alpha': False, 'collapse': False, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
-    'asymmetry_B': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'bullets': ['You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
-    'rough': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You judged 3 of the 7 pairs unrankable.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'vague_boundary': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': True, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'trans_gt', 'trans_eq', 'menu']},
-    'vague_boundary_ok': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'trans_gt', 'trans_eq', 'menu']},
-    'nontransitive': {'conflicts': [['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'alpha': False, 'collapse': False, 'bullets': ['You rejected transitivity of better-than.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
-    'nontransitive-non-independent': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You denied that a verdict survives a wider menu.', 'You denied that levelling up improves things.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
-    'antinatalist': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'negative-leaning': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.', 'You denied that levelling up improves things.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'hard-negative': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You rejected the Pareto principle.', 'You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'intuitive-v1': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'bullets': [], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'intuitive-v2': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'bullets': [], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'misery_gain': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You accepted the repugnant conclusion.', 'You counted a life of suffering as a gain.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'quietist': {'conflicts': [], 'alpha': False, 'collapse': False, 'bullets': ['You rejected the Pareto principle.', 'You denied that levelling up improves things.', 'You judged none of the seven pairs rankable.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'total': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'average': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'critical_level': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You said the verdict flips somewhere on the ladder.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'maximin': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
+    'asymmetry_menu': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
+    'asymmetry_equal': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt'], ['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
+    'asymmetry_B': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
+    'rough': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You judged 3 of the 7 pairs unrankable.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
+    'vague_boundary': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': True, 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'trans_gt', 'trans_eq', 'menu']},
+    'vague_boundary_ok': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'trans_gt', 'trans_eq', 'menu']},
+    'nontransitive': {'conflicts': [['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You rejected transitivity of better-than.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
+    'nontransitive-non-independent': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You denied that levelling up improves things.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
+    'antinatalist': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'negative-leaning': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.', 'You denied that levelling up improves things.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'hard-negative': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You rejected the Pareto principle.', 'You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'intuitive-v1': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': [], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'intuitive-v2': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': [], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'misery_gain': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You counted a life of suffering as a gain.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'imprecise-critical-level': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You said the verdict flips somewhere on the ladder.', 'Your gaps have a floor, and it is doing the work.', 'You judged 4 of the 7 pairs unrankable.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'rough-transitive': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': 'ladder', 'bullets': ['You judged 3 of the 7 pairs unrankable.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
+    'symmetric-gap-ranks-Z': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': 'misery', 'bullets': ['You said the verdict flips somewhere on the ladder.', 'Your gaps have a floor, and it is doing the work.', 'You judged 5 of the 7 pairs unrankable.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'quietist': {'conflicts': [], 'alpha': False, 'collapse': False, 'zrank': None, 'bullets': ['You rejected the Pareto principle.', 'You denied that levelling up improves things.', 'You judged none of the seven pairs rankable.'], 'asked': ['pareto', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
 }

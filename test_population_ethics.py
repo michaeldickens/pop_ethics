@@ -37,9 +37,12 @@ import sys
 from playwright.sync_api import sync_playwright
 
 QIDS = ["pareto", "AvB", "misery", "neutral_mod", "benign", "nae", "generalize",
-        "AvZ", "neutral_wond", "collapse", "trans_gt", "trans_eq", "menu_eq", "menu"]
+        "AvZ", "neutral_wond", "collapse", "trans_gt", "trans_none", "trans_eq",
+        "menu_eq", "menu"]
 PAIRS = ["AvB", "misery", "neutral_mod", "benign", "nae", "AvZ", "neutral_wond"]
-PRINCIPLES = ["pareto", "generalize", "collapse", "trans_gt", "trans_eq", "menu_eq"]
+PRINCIPLES = ["pareto", "generalize", "collapse", "trans_gt", "trans_none",
+              "trans_eq", "menu_eq"]
+CONDITIONAL = ("collapse", "trans_none", "menu_eq")
 PAIR_VALUES = ["left", "right", "equal", "none"]
 PRINCIPLE_VALUES = ["yes", "no"]
 MENU_VALUES = ["A", "B", "Z", "none"]
@@ -47,10 +50,10 @@ MENU_VALUES = ["A", "B", "Z", "none"]
 # Index of the answer button to click, per question, for named profiles.
 CLICK_MODAL = {"pareto": 0, "AvB": 0, "misery": 0, "neutral_mod": 2, "benign": 1,
                "nae": 1, "generalize": 0, "AvZ": 0, "neutral_wond": 2, "collapse": 0,
-               "trans_gt": 0, "trans_eq": 0, "menu_eq": 0, "menu": 0}
+               "trans_gt": 0, "trans_none": 0, "trans_eq": 0, "menu_eq": 0, "menu": 0}
 CLICK_TOTALIST = {"pareto": 0, "AvB": 1, "misery": 0, "neutral_mod": 1, "benign": 1,
                   "nae": 1, "generalize": 0, "AvZ": 1, "neutral_wond": 1, "collapse": 0,
-                  "trans_gt": 0, "trans_eq": 0, "menu_eq": 0, "menu": 2}
+                  "trans_gt": 0, "trans_none": 0, "trans_eq": 0, "menu_eq": 0, "menu": 2}
 CLICK_ALPHA = dict(CLICK_TOTALIST, menu=0)
 # Accepting every principle but declaring every pair unrankable. Index 3 on a
 # pair is "neither - they cannot be ranked", the only way to decline.
@@ -60,10 +63,10 @@ CLICK_REJECT = {q: (1 if q in PRINCIPLES else 0) for q in QIDS}
 MODAL = {"pareto": "yes", "AvB": "left", "misery": "left", "neutral_mod": "equal",
          "benign": "right", "nae": "right", "generalize": "yes", "AvZ": "left",
          "neutral_wond": "equal", "collapse": "yes", "trans_gt": "yes",
-         "trans_eq": "yes", "menu_eq": "yes", "menu": "A"}
+         "trans_none": "yes", "trans_eq": "yes", "menu_eq": "yes", "menu": "A"}
 TOTALIST = {"pareto": "yes", "AvB": "right", "misery": "left", "neutral_mod": "right",
             "benign": "right", "nae": "right", "generalize": "yes", "AvZ": "right",
-            "neutral_wond": "right", "collapse": "yes", "trans_gt": "yes",
+            "neutral_wond": "right", "collapse": "yes", "trans_gt": "yes", "trans_none": "yes",
             "trans_eq": "yes", "menu_eq": "yes", "menu": "Z"}
 
 LADDER_SHORT = "AvB+benign+nae+trans_gt"
@@ -100,7 +103,7 @@ def analyse(page, answers):
     return page.evaluate(
         """a => { const r = analyse(a);
                   return {sets: r.sets.map(s => [...s].sort().join('+')).sort(),
-                          alpha: r.alpha, collapse: r.collapse,
+                          alpha: r.alpha, collapse: r.collapse, zrank: r.zrank,
                           clashes: r.clashes.length}; }""", answers)
 
 
@@ -166,6 +169,44 @@ def suite_engine(page, rep):
     rep.check(r["alpha"] and r["alpha"]["picked"] == "A" and r["alpha"]["pairWinner"] == "B",
               "contraction inconsistency detected (Sen's alpha)")
 
+    # Picking Z while ranking A above it in the pair turns on AvZ alone. Gating
+    # it behind AvB let anyone who declined that pair walk through unnoticed.
+    r = analyse(page, dict(MODAL, AvB="none", AvZ="left", menu="Z"))
+    rep.check(r["alpha"] and r["alpha"]["viaZ"] and r["alpha"]["picked"] == "Z",
+              "picking Z over a ranked A is caught with A/B declined")
+
+    # Ranking below the gap. The ladder route is Parfit's argument run on "not
+    # worse than": an unrankable pair is still a pair where neither is worse,
+    # so declining to rank the rungs does not break the chain - only denying
+    # that the relation chains does, which is Parfit's own answer.
+    gaps = dict(MODAL, AvB="none", benign="none", AvZ="left", menu="A")
+    r = analyse(page, dict(gaps, generalize="yes", trans_none="yes"))
+    rep.check(r["zrank"] and r["zrank"]["via"] == "ladder",
+              "gaps on every rung chain to Z through not-worse-than")
+    rep.check(r["zrank"] and "trans_none" in r["zrank"]["ids"] and
+              "nae" in r["zrank"]["ids"],
+              "...and the chaining and the levelling step are both blamed for it")
+    r = analyse(page, dict(gaps, generalize="yes", trans_none="no"))
+    rep.check(r["zrank"] is None,
+              "Parfit's escape - not-worse-than does not chain - clears it")
+    r = analyse(page, dict(gaps, generalize="yes", trans_none="yes", nae="left"))
+    rep.check(r["zrank"] is None,
+              "...as does a levelling step that is a step down, which breaks the chain")
+    r = analyse(page, dict(gaps, generalize="no", trans_none="yes"))
+    rep.check(r["zrank"] is None,
+              "...as does the verdict flipping partway down, where the chain stops")
+
+    # The misery route has no chain to run on: it turns on ranking A above Z
+    # while placing a critical level at -40, beneath the welfare Z's people
+    # live at. Independent of the ladder, so it survives what breaks the chain.
+    r = analyse(page, dict(gaps, generalize="no", misery="none", trans_none="yes"))
+    rep.check(r["zrank"] and r["zrank"]["via"] == "misery",
+              "an unrankable agony addition collides with ranking Z on its own")
+    r = analyse(page, dict(gaps, generalize="yes", misery="none",
+                           trans_none="yes", AvZ="right"))
+    rep.check(r["zrank"] is None,
+              "...and neither route bites on someone who ranks Z above A")
+
     # Rejecting a principle always draws a bullet. A revisionary verdict used to
     # draw nothing, so answers like "her agony improves the world" could pass
     # in total silence. Each must now name itself.
@@ -181,6 +222,20 @@ def suite_engine(page, rep):
         rep.check(any(phrase in t for t in got),
                   f"revisionary verdict {qid}={val} draws its own bullet", str(got))
 
+    # Same rule for the one principle that is only ever put to some people.
+    # MODAL is not asked it, so the profile has to be one where it is live -
+    # otherwise the check would pass on an answer the person never gave.
+    live = dict(MODAL, AvB="none", benign="none", AvZ="left", generalize="yes",
+                menu="A")
+    rep.check(page.evaluate("a => zRankLadder(a)", live),
+              "the not-worse-than question is live on the profile used to test it")
+    got = page.evaluate(titles, dict(live, trans_none="no"))
+    rep.check(any("not-worse-than" in t for t in got),
+              "rejecting transitivity of not-worse-than draws its own bullet", str(got))
+    kept = page.evaluate(titles, dict(live, trans_none="yes"))
+    rep.check(not any("not-worse-than" in t for t in kept),
+              "...and accepting it does not, it draws the conflict instead", str(kept))
+
     # Ranking a better life below a worse one is only a conflict if Pareto is
     # kept; with Pareto dropped it has to surface as a bullet instead.
     nonmono = page.evaluate(titles, dict(MODAL, pareto="no", neutral_wond="left"))
@@ -195,13 +250,15 @@ def suite_engine(page, rep):
     # the quiz says nothing at all about.
     watch = [["misery", "right"], ["neutral_mod", "left"], ["neutral_wond", "left"],
              ["benign", "left"], ["nae", "left"], ["pareto", "no"], ["trans_gt", "no"],
-             ["trans_eq", "no"], ["generalize", "no"], ["AvZ", "right"]]
+             ["trans_eq", "no"], ["trans_none", "no"], ["generalize", "no"],
+             ["AvZ", "right"]]
     silent = page.evaluate("""(cfg) => {
       const keep = ANS, bad = new Set();
       cfg.profiles.forEach(a => {
         ANS = a;
         const r = analyse(a);
-        if (r.sets.length === 0 && !r.alpha && bullets().length === 0)
+        if (r.sets.length === 0 && !r.alpha && !r.collapse && !r.zrank &&
+            bullets().length === 0)
           cfg.watch.forEach(([q, v]) => { if (a[q] === v) bad.add(q + '=' + v); });
       });
       ANS = keep;
@@ -530,6 +587,7 @@ VIEW_PROBE = """(a) => {
                 .sort((x, y) => x.join().localeCompare(y.join())),
     alpha: !!r.alpha,
     collapse: !!r.collapse,
+    zrank: r.zrank ? r.zrank.via : null,
     bullets: bullets().map(b => b.t)
   };
   ANS = keep;
@@ -955,7 +1013,10 @@ def suite_share(page, rep):
               "...and lands on the first unanswered question", fresh.inner_text("#counter"))
     rep.check(bool(fresh.query_selector(".notice")), "...saying why")
     rep.check("&q=r" not in fresh.url, "...and the view marker leaves the URL", fresh.url)
-    rep.check(fresh.evaluate("() => missingActive().length") == len(QIDS) - 3,
+    # Everything but pareto is a hole, and no conditional question is live on
+    # an answer sheet that empty, so neither is counted against the total.
+    rep.check(fresh.evaluate("() => missingActive().length")
+              == len(QIDS) - 1 - len(CONDITIONAL),
               "...counting only the questions that are live",
               str(fresh.evaluate("() => missingActive().length")))
 
@@ -1038,10 +1099,10 @@ def suite_conditional(page, rep):
             ("two chaining equalities", CLICK_MODAL, {"menu_eq"}),
             ("equalities that cannot chain", CLICK_NO_CHAIN, set())]:
         walk(page, clicks)
-        got = {q for q in ("collapse", "menu_eq") if q in walk.asked}
-        rep.check(got == want, f"{label}: asks {sorted(want) or 'neither'}",
+        got = {q for q in CONDITIONAL if q in walk.asked}
+        rep.check(got == want, f"{label}: asks {sorted(want) or 'none of them'}",
                   f"asked {sorted(got)}")
-        rep.check(len(walk.asked) == len(QIDS) - 2 + len(want),
+        rep.check(len(walk.asked) == len(QIDS) - len(CONDITIONAL) + len(want),
                   f"{label}: quiz length matches", str(len(walk.asked)))
 
     walk(page, CLICK_VAGUE)
@@ -1055,6 +1116,10 @@ def suite_conditional(page, rep):
         ANS = a;
         if (!!collapseCandidate(a) !==
             !!analyse(Object.assign({}, a, {collapse: 'yes'})).collapse) bad.push('collapse');
+        // Same contract for the ladder route: shown exactly when saying yes
+        // to it would score, and never scored without having been shown.
+        const zr = analyse(Object.assign({}, a, {trans_none: 'yes'})).zrank;
+        if (zRankLadder(a) !== (!!zr && zr.via === 'ladder')) bad.push('trans_none');
         // Menu independence is live exactly when denying it removes a conflict.
         const withIt = analyse(Object.assign({}, a, {menu_eq: 'yes'})).sets.length;
         const without = analyse(Object.assign({}, a, {menu_eq: 'no'})).sets.length;

@@ -128,6 +128,17 @@ var QUESTIONS=[
         opts:[["A","Yes, always","yes"],["B","No, not always","no"]]
     },
     {
+        id:"trans_none", kind:"principle", label:"Transitivity of not-worse-than",
+        // Only worth asking of someone whose gaps sit on the ladder with a
+        // verdict at the end of it: that is the one shape where chaining
+        // "not worse than" reaches anything.
+        when:function(a){ return !!zRankLadder(a); },
+        title:"Not worse than, and not worse than again.",
+        body:"Take any three futures. Suppose the first is <strong>not worse than</strong> the second, and the second is not worse than the third. Note that this is weaker than the last question: two futures you cannot rank at all are, among other things, not worse than one another.",
+        ask:"Does it follow that the first is not worse than the third?",
+        opts:[["A","Yes, always","yes"],["B","No, not always","no"]]
+    },
+    {
         id:"trans_eq", kind:"principle", label:"Transitivity of equal-goodness",
         title:"Exactly as good, twice over.",
         body:"Take any three futures. Suppose the first is exactly as good as the second \u2014 neither better nor worse \u2014 and the second is exactly as good as the third.",
@@ -392,6 +403,54 @@ function collapseCandidate(ans){
     return null;
 }
 
+/* ---------------------------------------------------------------
+   Ranking Z while declining to rank the steps that lead to it.
+
+   Two ways to get there, and they are not equally strong.
+
+   The ladder route is Parfit's own argument run on "not worse than" rather
+   than "better than", which is what lets it pass through a gap. Being
+   unrankable, A+ is not worse than A; B is better than A+, so B is not worse
+   than A+ either. Chain that down every rung and Z is not worse than A - but
+   judging A better than Z says Z is worse than A. Nothing about neutral
+   ranges or numbers is needed, only the chaining, which is why it is scored
+   only against someone who has been asked for it and said yes. Parfit's
+   answer was no: his claim is precisely that "not worse than" does not chain,
+   and that is why he thought mere addition was no paradox.
+
+   The misery route has no chain to run on and rests on a reading instead:
+   take a neutral range as Broome does, a range of critical levels shared by
+   every addition, a comparison coming out determinate only when it holds at
+   every level in the range. Then A vs Z turns over at 3.81, just under Z's
+   people at welfare 4, so ranking A above Z says every level you entertain
+   sits above 4 - while calling the addition of a life at -40 unrankable puts
+   one down at -40. The card says out loud that this one assumes the reading.
+
+   Neither is visible to the closure, which never sees an unrankable verdict.
+   What is no conflict at all is a gap at the top of the ladder with the
+   verdict flipping partway down: the chain breaks where it flips. bullets()
+   covers that case instead.
+--------------------------------------------------------------- */
+var Z_LEVEL=Z_POP[0].w;
+// Split out so the trans_none question can gate on the same shape it scores.
+// "Not worse than" needs every link: an unrankable benign step, a levelling
+// step that is not a step down, and the repetition that carries both to Z.
+function zRankLadder(ans){
+    return ans.AvZ==="left" && ans.benign==="none" &&
+           ans.nae!=="left" && ans.generalize==="yes";
+}
+function zRankCandidate(ans){
+    // Only a determinate "A is better" makes the claim. Ranking Z above A is
+    // consistent with any range whose levels all sit below Z.
+    if(ans.AvZ!=="left") return null;
+    if(zRankLadder(ans) && ans.trans_none==="yes")
+        return {via:"ladder", level:Z_LEVEL,
+                ids:["AvZ","benign","nae","generalize","trans_none"]};
+    if(ans.misery==="none")
+        return {via:"misery", level:K_BAD[1].w, ids:["AvZ","misery"]};
+    return null;
+}
+
 // Menu independence only bites if chaining equalities derives something.
 // Rather than enumerate the cases, run the closure both ways and see whether
 // any relation appears only when the chaining is allowed.
@@ -437,21 +496,31 @@ function analyse(ans){
     // it is a constraint on choice, not on the betterness ordering.
     var alpha=null;
     var declined=function(v){ return !v||v==="none"||v==="abstain"; };
-    if(!declined(ans.menu) && !declined(ans.AvB)){
+    if(!declined(ans.menu)){
         var pick=ans.menu;
-        var pairWinner = ans.AvB==="left" ? "A" : ans.AvB==="right" ? "B" : "tie";
-        if((pick==="A"||pick==="B") && pairWinner!=="tie" && pick!==pairWinner){
-            alpha={picked:pick, pairWinner:pairWinner};
+        if(!declined(ans.AvB)){
+            var pairWinner = ans.AvB==="left" ? "A" : ans.AvB==="right" ? "B" : "tie";
+            if((pick==="A"||pick==="B") && pairWinner!=="tie" && pick!==pairWinner){
+                alpha={picked:pick, pairWinner:pairWinner, third:"Z"};
+            }
         }
-        if(pick==="Z" && ans.AvZ==="left") alpha={picked:"Z", pairWinner:"A", viaZ:true};
+        // Picking Z from the three while ranking A above Z in the pair is a
+        // violation on its own terms. It turns on AvZ, not AvB, so it must not
+        // be gated behind AvB: an incomparabilist who declines A against B
+        // would otherwise walk through it.
+        if(pick==="Z" && ans.AvZ==="left")
+            alpha={picked:"Z", pairWinner:"A", third:"B", viaZ:true};
     }
     // Broome's collapsing principle (Weighing Lives ch. 12), checked separately
     // for the same reason as alpha: "cannot be ranked" emits no edge, so the
     // closure machinery can never see it. Without this, an incomparabilist is
     // unfalsifiable here no matter what else they say.
     var collapse = ans.collapse==="yes" ? collapseCandidate(ans) : null;
+    // Same reason again: this one is about where an unrankable verdict places
+    // the boundary of the indeterminacy, which no edge records.
+    var zrank = zRankCandidate(ans);
 
-    return {sets:sets, alpha:alpha, collapse:collapse, clashes:clashes};
+    return {sets:sets, alpha:alpha, collapse:collapse, zrank:zrank, clashes:clashes};
 }
 /* ===ENGINE END=== */
 
@@ -946,6 +1015,10 @@ var LABELS={
         yes:"\u201CBetter than\u201D is transitive.",
         no:"\u201CBetter than\u201D is not always transitive.",
         abstain:"No view on whether \u201Cbetter than\u201D is transitive."}[a]; },
+    trans_none:function(a){ return {
+        yes:"\u201CNot worse than\u201D is transitive.",
+        no:"\u201CNot worse than\u201D is not always transitive.",
+        abstain:"No view on whether \u201Cnot worse than\u201D is transitive."}[a]; },
     trans_eq:function(a){ return {
         yes:"\u201CExactly as good as\u201D is transitive.",
         no:"\u201CExactly as good as\u201D is not always transitive.",
@@ -1016,6 +1089,11 @@ function worldNote(s){
 function bullets(){
     var out=[];
     if(ANS.trans_gt==="no") out.push({t:"You rejected transitivity of better-than.",b:"That is a live position \u2014 Temkin and Rachels both take it \u2014 and it defuses most of the paradoxes here at a stroke. The price is that \u201Cbetter than\u201D can now run in circles, which makes it hard to say what you should be aiming at: for any option there may be a better one that is in turn worse than where you started."});
+    // Every other principle draws a bullet when rejected, and this one is not
+    // the exception: it is only ever asked of someone the ladder has reached,
+    // so declining it is always load-bearing.
+    if(ANS.trans_none==="no") out.push({t:"You rejected transitivity of not-worse-than.",b:"This is Parfit\u2019s own resolution to the mere addition paradox: every rung leaves you not worse off, but \u201Cnot worse than\u201D does not chain, so the ladder never delivers Z. The move is open to you only because you deemed many pairs of outcomes incomparable.<br/><br/>What it costs: the final outcome Z is worse than where we started, even though no step along the way was the mistake."});
+
     if(ANS.menu_eq==="no"){
         // Naming the specific expansion failure is more use than the general
         // principle, so dig the actual pair of equalities out of the answers.
@@ -1058,6 +1136,14 @@ function bullets(){
                                       world:"Distributing malaria nets leaves recipients healthier and better off, and also means more children survive to adulthood, but with worse lives than the global average. Your answer holds that distributing malaria nets may therefore be a <em>bad</em> thing."});
 
     if(ANS.nae!=="right") out.push({t:"You denied that levelling up improves things.",b:"B holds the same "+CHAIN[0].to.n+" people as A+, with more welfare in total, more on average, and more equality. There is a consistent motive available \u2014 the better-off group does lose, falling from "+CHAIN[0].plus[0].w+" to "+CHAIN[0].to.w+", while the worse-off rise from "+CHAIN[0].plus[1].w+" \u2014 so a view that weighs losses to the well-off heavily can resist it. But it sets you against totalism, averagism and egalitarianism in one move."});
+
+    // The coherent half of the conflict zRankCandidate catches. A gap at the
+    // top of the ladder and a verdict at the bottom is exactly what a neutral
+    // range with a floor above Z's welfare delivers - but only if the rung
+    // verdicts flip on the way down, which is what makes it worth naming.
+    if(ANS.AvZ==="left" && ANS.benign==="none" && ANS.generalize==="no"){
+        out.push({t:"Your gaps have a floor, and it is doing the work.",b:"You declined to rank the benign addition, said the verdict flips somewhere further down, and still ranked A above Z. Those fit together, and the natural thing that makes them fit is a neutral range with a <em>floor</em> \u2014 a welfare level below which an added life is no longer merely unrankable but determinately not worth adding. Above the floor the additions are a genuine open question, which is your gap at the top of the ladder; Z\u2019s "+Z_POP[0].n.toLocaleString()+" people live at "+Z_LEVEL+", beneath it, which is why Z is rankable at all. That commits you to two things worth seeing plainly. The rung where your verdict flips is not a matter of taste \u2014 it <em>is</em> the floor, and you are owed a reason why it sits there rather than a rung higher or lower. And the verdict against Z is not carried by the "+(Z_POP[0].n-A_POP[0].n).toLocaleString()+" lives you added: it is carried by A\u2019s original hundred, who are still in Z and have fallen from "+A_POP[0].w+" to "+Z_LEVEL+". Most people who answer this way believe the added lives are what makes Z worse. On your own view they cannot be."});
+    }
 
     var noneCount=0;
     ["AvB","AvZ","misery","neutral_mod","neutral_wond","benign","nae"].forEach(function(k){
@@ -1132,7 +1218,7 @@ function showResults(){
         }
         return true;
     });
-    var nHits=R.sets.length + (R.alpha?1:0) + (R.collapse?1:0);
+    var nHits=R.sets.length + (R.alpha?1:0) + (R.collapse?1:0) + (R.zrank?1:0);
     var B=bullets();
     var h='';
     h+='<div class="hero" style="padding:6vh 0 0">';
@@ -1165,9 +1251,14 @@ function showResults(){
     if(R.alpha){
         h+='<div class="hit"><div class="tag">Conflict '+(R.sets.length+1)+' &middot; contraction inconsistency</div>';
         h+='<h3 style="margin-top:10px">Adding a third option changed your mind about the first two.</h3>';
-        h+='<ol class="claims"><li>Offered A and B alone, you judged '+R.alpha.pairWinner+' the better of the two.</li>';
+        // The pair that was ranked is {pairWinner, picked} either way round:
+        // the A/B question when the pick came from there, A against Z when the
+        // pick was Z. The option left over is the one whose arrival is doing
+        // the damage, and it differs between the two.
+        h+='<ol class="claims"><li>Offered '+R.alpha.pairWinner+' and '+R.alpha.picked+
+           ' alone, you judged '+R.alpha.pairWinner+' the better of the two.</li>';
         h+='<li>Offered A, B and Z together, you picked '+R.alpha.picked+' as best.</li></ol>';
-        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. Z\u2019s presence cannot make '+R.alpha.picked+' beat '+R.alpha.pairWinner+' if it did not already.</p>'+'</div>';
+        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. '+R.alpha.third+'\u2019s presence cannot make '+R.alpha.picked+' beat '+R.alpha.pairWinner+' if it did not already.</p></div>';
     }
 
     if(R.collapse){
@@ -1184,6 +1275,26 @@ function showResults(){
            'and vagueness cannot both live in one betterness ordering. Note it is a constraint on the <em>determinacy</em> '+
            'of your ordering rather than on its content, so it is listed apart from the conflicts above \u2014 and it is '+
            'contested: Carlson and others have argued the principle is too strong.</p></div>';
+    }
+
+    if(R.zrank){
+        var zr=R.zrank;
+        h+='<div class="hit"><div class="tag">Conflict '+
+           (R.sets.length+(R.alpha?1:0)+(R.collapse?1:0)+1)+' &middot; '+
+           (zr.via==="ladder"?"chaining through the gap":"ranking below the gap")+'</div>';
+        h+='<h3 style="margin-top:10px">'+(zr.via==="ladder"
+            ? "Declining to rank the rungs does not stop the ladder."
+            : "You ranked Z, having put the boundary of your indeterminacy underneath it.")+'</h3>';
+        h+='<ol class="claims">';
+        zr.ids.forEach(function(id){ h+='<li>'+claimText(id)+'</li>'; });
+        h+='</ol>';
+        h+= zr.via==="ladder"
+          ? '<p class="because">This is Parfit\u2019s mere addition argument, but run on <em>not worse than</em> instead of <em>better than</em>. Being unrankable, A+ is not worse than A. B is better than A+, so B is not worse than A+ either. You said both verdicts repeat at every rung, and you said not-worse-than chains, so it chains all '+(2*CHAIN.length)+' steps down the ladder: Z is not worse than A. But you also judged A better than Z, which is to say Z <em>is</em> worse than A. Declining to rank the rungs did not stop the contradiction, because an unrankable pair is still a pair where neither is worse.</p></div>'
+          : '<p class="because">Take a neutral range as Broome does: a range of levels, shared by every addition, with a comparison coming out determinate only when it holds at every level in the range. Judging <strong>A better than Z</strong> then says something definite \u2014 that every level you would entertain sits <em>above</em> '+Z_LEVEL+
+            ', the level Z\u2019s '+Z_POP[0].n.toLocaleString()+' people live at. Below that, Z\u2019s numbers win: at any level under '+Z_LEVEL+
+            ' those lives are a gain, and '+Z_POP[0].n.toLocaleString()+' of them swamp what A\u2019s hundred lose. But calling the addition of a life at welfare '+zr.level+
+            ' unrankable puts a level down at '+zr.level+', which is not above '+Z_LEVEL+
+            '. You cannot have the boundary in both places. Note that this one, unlike the others, assumes your gaps come from a neutral range at all \u2014 so if you reject that picture, this is the conflict to argue with.</p></div>';
     }
 
     if(B.length){
