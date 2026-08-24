@@ -222,6 +222,20 @@ def suite_engine(page, rep):
         rep.check(any(phrase in t for t in got),
                   f"revisionary verdict {qid}={val} draws its own bullet", str(got))
 
+    # Same rule for the one principle that is only ever put to some people.
+    # MODAL is not asked it, so the profile has to be one where it is live -
+    # otherwise the check would pass on an answer the person never gave.
+    live = dict(MODAL, AvB="none", benign="none", AvZ="left", generalize="yes",
+                menu="A")
+    rep.check(page.evaluate("a => zRankLadder(a)", live),
+              "the not-worse-than question is live on the profile used to test it")
+    got = page.evaluate(titles, dict(live, trans_none="no"))
+    rep.check(any("not-worse-than" in t for t in got),
+              "rejecting transitivity of not-worse-than draws its own bullet", str(got))
+    kept = page.evaluate(titles, dict(live, trans_none="yes"))
+    rep.check(not any("not-worse-than" in t for t in kept),
+              "...and accepting it does not, it draws the conflict instead", str(kept))
+
     # Ranking a better life below a worse one is only a conflict if Pareto is
     # kept; with Pareto dropped it has to surface as a bullet instead.
     nonmono = page.evaluate(titles, dict(MODAL, pareto="no", neutral_wond="left"))
@@ -236,13 +250,15 @@ def suite_engine(page, rep):
     # the quiz says nothing at all about.
     watch = [["misery", "right"], ["neutral_mod", "left"], ["neutral_wond", "left"],
              ["benign", "left"], ["nae", "left"], ["pareto", "no"], ["trans_gt", "no"],
-             ["trans_eq", "no"], ["generalize", "no"], ["AvZ", "right"]]
+             ["trans_eq", "no"], ["trans_none", "no"], ["generalize", "no"],
+             ["AvZ", "right"]]
     silent = page.evaluate("""(cfg) => {
       const keep = ANS, bad = new Set();
       cfg.profiles.forEach(a => {
         ANS = a;
         const r = analyse(a);
-        if (r.sets.length === 0 && !r.alpha && bullets().length === 0)
+        if (r.sets.length === 0 && !r.alpha && !r.collapse && !r.zrank &&
+            bullets().length === 0)
           cfg.watch.forEach(([q, v]) => { if (a[q] === v) bad.add(q + '=' + v); });
       });
       ANS = keep;

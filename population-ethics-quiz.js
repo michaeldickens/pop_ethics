@@ -1074,6 +1074,11 @@ function storyFor(set){
 function bullets(){
     var out=[];
     if(ANS.trans_gt==="no") out.push({t:"You rejected transitivity of better-than.",b:"That is a live position \u2014 Temkin and Rachels both take it \u2014 and it defuses most of the paradoxes here at a stroke. The price is that \u201Cbetter than\u201D can now run in circles, which makes it hard to say what you should be aiming at: for any option there may be a better one that is in turn worse than where you started."});
+    // Every other principle draws a bullet when rejected, and this one is not
+    // the exception: it is only ever asked of someone the ladder has reached,
+    // so declining it is always load-bearing.
+    if(ANS.trans_none==="no") out.push({t:"You rejected transitivity of not-worse-than.",b:"This is Parfit\u2019s own resolution, and the reason he came to think mere addition was no paradox at all: every rung leaves you not worse off, but \u201Cnot worse than\u201D does not chain, so the ladder never delivers Z. The move is open to you only because you left gaps. On an ordering with no gaps, \u201Cnot worse than\u201D is simply \u201Cbetter than or exactly as good as\u201D, and it inherits transitivity from those two \u2014 so this is a claim about incomparability before it is a claim about transitivity. What it costs is paid out in sequences rather than in any single verdict: each step down the ladder is one you cannot object to, the place the steps end is one you can, and no step along the way was the mistake. Note what this buys compared with saying the verdict flips at some rung \u2014 you owe no account of <em>where</em>, because on your view nothing ever goes wrong anywhere. That is the attraction, and it is also the evasion."});
+
     if(ANS.menu_eq==="no"){
         // Naming the specific expansion failure is more use than the general
         // principle, so dig the actual pair of equalities out of the answers.

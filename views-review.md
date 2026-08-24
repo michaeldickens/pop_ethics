@@ -11,7 +11,7 @@ Read each view's description against the answers below it, then against the verd
 - [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 2 bullets
 - [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 1 bullet
 - [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
-- [Imprecise comparability](#rough) - clean, 2 bullets
+- [Imprecise comparability](#rough) - clean, 3 bullets
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 1 bullet
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 1 bullet
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
@@ -339,6 +339,7 @@ No conflicts.
 
 Bullets bitten:
 
+- You rejected transitivity of not-worse-than.
 - You judged 3 of the 7 pairs unrankable.
 - You hold the Procreation Asymmetry.
 
