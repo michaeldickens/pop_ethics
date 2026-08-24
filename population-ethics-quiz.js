@@ -966,14 +966,13 @@ var STORIES=[
         needs:["benign","nae","generalize","trans_gt","AvZ"],
         title:"The ladder reaches Z, and the loop closes.",
         because:"This is Parfit's mere addition argument. Each rung is a step you endorsed and said you would endorse again; transitivity chains them the whole way down; and the last judgement swings back from the bottom of the ladder to the top. The relation \u201Cbetter than\u201D now runs in a circle.",
-        world:"How large humanity should become is a live question with real advocates. Jeff Bezos has said he would love to see a trillion humans in the solar system, on the grounds that a thousand Mozarts and a thousand Einsteins would be alive at any moment; he thinks the resources stretch that far. Your answers say something stronger and stranger than anything he claims. You accept every rung of a trade he does not have to make — more people at a lower standard — and reject where the rungs lead, without any account of which one to stop on.",
         chain:true
     },
     {
         needs:["misery","neutral_mod","pareto","trans_eq","menu_eq"],
         title:"Nadia cannot be worth nothing whichever way her life goes.",
         because:"You said K is exactly as good as the world where Nadia exists in agony, and exactly as good as the world where she exists with a decent life. Transitivity of equal-goodness makes those two worlds exactly as good as each other. But they contain the same 501 people, and Nadia is enormously better off in one of them. This is Broome's neutral-range argument run downwards: if bringing someone into existence is never better or worse, it cannot matter how their life then goes \u2014 and it plainly does.",
-        world:"Two Tay-Sachs carriers have a one-in-four chance of a child who develops normally for six months, then loses sight, hearing and movement, and dies by about four. Your answers say that conceiving that child makes the world no worse, and that conceiving a healthy one makes it no better. Chain the two and the acts come out exactly equivalent. Nearly everyone treats the first as a serious wrong and the second as unobjectionable, which is a sign that the neutrality is not really being held at both ends.",
+        world:"If two carriers of the Tay-Sachs gene have a child, there's a one-in-four chance that the child develops normally for six months, then loses sight, hearing and movement, and dies by age four. Your answers say that conceiving that child makes the world no worse, and that conceiving a healthy one makes it no better.",
         // Same argument as the wonderful-life version below, just run at the
         // lower welfare level; if both trigger they should count once, not twice.
         group:"nadiaNeutralRange"
@@ -982,14 +981,14 @@ var STORIES=[
         needs:["misery","neutral_wond","pareto","trans_eq","menu_eq"],
         title:"Nadia cannot be worth nothing whichever way her life goes.",
         because:"You said K is exactly as good as the world where Nadia exists in agony, and exactly as good as the world where she exists with a wonderful life. Transitivity of equal-goodness makes those two worlds exactly as good as each other, yet they contain the same 501 people and Nadia is enormously better off in one. Whatever is attractive about \u201Cmerely possible people do not count\u201D, it cannot survive being applied at both ends of the scale at once.",
-        world:"Two Tay-Sachs carriers have a one-in-four chance of a child who develops normally for six months, then loses sight, hearing and movement, and dies by about four. Your answers say that conceiving that child makes the world no worse, and that conceiving a child who will flourish makes it no better. Chain the two and the acts come out exactly equivalent. Nearly everyone treats the first as a serious wrong and the second as unobjectionable, which is a sign that the neutrality is not really being held at both ends.",
+        world:"If two carriers of the Tay-Sachs gene have a child, there's a one-in-four chance that the child develops normally for six months, then loses sight, hearing and movement, and dies by age four. Your answers say that conceiving that child makes the world no worse, and that conceiving a healthy one makes it no better.",
         group:"nadiaNeutralRange"
     },
     {
         needs:["neutral_mod","neutral_wond","trans_eq","menu_eq","pareto"],
         title:"Nadia's life cannot be worth nothing twice over.",
         because:"You said K is exactly as good as the world with Nadia in it at welfare 7, and exactly as good as the world with Nadia in it at welfare 70. Transitivity of equal-goodness makes those two worlds exactly as good as each other. But they contain the same people, and Nadia is far better off in one. This is Broome's argument in <em>Weighing Lives</em> ch. 10 that there can be no neutral <em>range</em> \u2014 at most a neutral point.",
-        world:"The non-identity problem, in Boonin's version of it. Wilma is told that a child conceived now will be born blind, and that if she takes a pill daily for two months first, she will conceive a different child, who will see. Almost everyone says she should wait. It cannot be better <em>for</em> anyone: the child conceived now would otherwise never have existed, and so is not made worse off by the wait. The verdict has to come from the difference between two possible lives, and your answers say that difference carries no weight, because a created life is worth neither more nor less than no life at whatever level it goes. Notice how little the case turns on besides the population question: no screening, no selection among embryos, no judgement about who deserves to exist — only which month. Parfit puts the same point as a policy choice, in the Medical Programmes of <em>Reasons and Persons</em>: a health service must cancel either preconception testing or pregnancy testing, and a thousand children are affected either way."
+        world:"Boonin's \"Wilma and Pebbles\" problem: Wilma is told that if she conceives a child today, her child (to be named Pebbles) will be born blind. If she takes a pill daily for the next two months, she will conceive a different, healthy child (named \"Rocks\"). Most people say she should wait. However, waiting is not better <em>for</em> anyone: Pebbles (the blind child) would not be born otherwise, and so is not made worse off if Wilma has a child now.<br /><br /> Your answers say that creating a positive life is morally neutral in either case, so there cannot be anything wrong with Wilma choosing to have a child now instead of taking the pill first."
     }
 ];
 function storyFor(set){
@@ -1011,7 +1010,7 @@ function storyFor(set){
 // conflicts that are not there. These say what a position implies; they are
 // not further questions, and nothing here is scored.
 function worldNote(s){
-    return '<div class="world"><div class="tag">Where this bites</div><p>'+s+'</p></div>';
+    return '<div class="world"><div class="tag"><div class="world-heading">Concrete Example</div></div><p>'+s+'</p></div>';
 }
 
 function bullets(){
@@ -1029,21 +1028,19 @@ function bullets(){
               " exactly as good as K, and Pareto ranks them against each other, which together would be a contradiction. Denying menu independence is what lets all three stand, at the cost of saying that "+
               eqs[0].w+" and K are equally good only so long as "+eqs[1].w+" is not also on the table."
             : "";
-        out.push({t:"You denied that a verdict survives a wider menu.",b:"Your pairwise judgements no longer have to cohere into a single ordering: each one is indexed to the pair it was made in, and putting a third option on the table can revise it. This blocks the chaining that most of the conflicts here run on."+worked+" The cost is a known one: it is a violation of Sen\u2019s property &beta;, expansion consistency \u2014 the companion of the property &alpha; that the three-way choice tests. An option tied for best in a pair drops below its rival the moment a third arrives. You are also committed to there being no such thing as how good an outcome is <em>full stop</em>, only how good it is against a particular field."});
+        out.push({t:"You denied that a verdict survives a wider menu.",b:"Your pairwise judgements no longer cohere into a single ordering: each judgement depends on the pair it was made in, and putting a third option on the table can reverse it. This is a violation of Sen\u2019s property &beta;, which states that if two options are tied for best, then expanding the set of options cannot break the tie.<br/><br/>You are committed to there being no such thing as how good an outcome is <em>full stop</em>, only how good it is against a particular set of choices."});
     }
 
     if(ANS.trans_eq==="no") out.push({t:"You rejected transitivity of equal-goodness.",b:"This is the standard escape from the neutral-range argument, and it usually comes packaged as the claim that some outcomes are only <em>roughly</em> comparable rather than exactly equal. Be warned that it is not a way out of Broome generally: he devotes a later chapter to arguing that rough comparability cannot be a stable resting place either."});
     if(ANS.pareto==="no") out.push({t:"You rejected the Pareto principle.",b:"Denying that a world is better when the very same people are all better off in it is about as revisionary as population ethics gets. Almost every theory in the field takes this as a fixed point."});
-    if(ANS.AvZ==="right") out.push({t:"You accepted the repugnant conclusion.",b:"You judged Z better than A: enough lives barely worth living outweigh a small number of superb ones. This is the totalist's answer and it is entirely consistent \u2014 Tännsjö, Huemer and others defend it explicitly. It also means there is in principle no quality of life so marginal that sheer numbers cannot compensate.",
-        world:"Put numbers on it. Today about 8 billion people live at wildly varying standards. Your answer says there is some headcount — 100 billion, 10 trillion, whatever it takes — at which a world where every last person lives at the level of today's very poorest is an improvement on this one, and on any smaller world that is thriving. Such a number exists for every quality of life above zero, however marginal. Totalists generally accept this openly rather than looking for a way around it."});
+    if(ANS.AvZ==="right") out.push({t:"You accepted the repugnant conclusion.",b:"You judged Z better than A: enough lives barely worth living outweigh a small number of superb ones. This is the totalist's answer and it is entirely consistent \u2014 Tännsjö, Huemer and others defend it explicitly. It also means there is in principle no quality of life so marginal that sheer numbers cannot compensate."});
     if(ANS.generalize==="no") out.push({t:"You said the verdict flips somewhere on the ladder.",b:"That blocks the argument, but it leaves you owing an account of <em>where</em>. Every rung is qualitatively identical to every other; if rung 4 is fine and rung 5 is not, something must distinguish them. Critical-level and lexical views are attempts to say what."});
     // Revisionary pair verdicts. The principles all draw a comment when rejected;
     // without these, a verdict like "her agony is a gain" could pass in silence.
-    if(ANS.misery==="right") out.push({t:"You counted a life of suffering as a gain.",b:"When Nadia\u2019s life holds far more suffering than good \u2014 a life it would have been better for her never to have had \u2014 you judged the world better for containing it.",
-        world:"Applied to the Tay-Sachs couple, this says they have a reason in favour of conceiving — slight and outweighable, but a reason — and that the world is worse for every such birth that carrier screening prevents."});
+    if(ANS.misery==="right") out.push({t:"You counted a life of suffering as a gain.",b:"When Nadia\u2019s life holds far more suffering than good \u2014 a life it would have been better for her never to have had \u2014 you judged the world better for containing it."});
 
     if(ANS.neutral_mod==="left" || ANS.neutral_wond==="left") out.push({t:"You said a life worth living makes the world worse by being lived.",b:"This goes well past the Procreation Asymmetry, which claims only that creating a happy person is not <em>good</em>. You have said it is positively <em>bad</em>.",
-        world:"This is Benatar's conclusion, in a stronger form than he defends. Take a couple who want a child, can afford one and would raise it well: you are committed to saying the child's birth is a cost the world bears rather than a gain it makes, and that they have a reason — outweighable by their own interests, but real — not to have it."});
+        world:"Imagine a couple who want a child, and would raise it well: you are committed to saying the child's birth is nonetheless bad for the world."});
 
     // Adding a better life should not be ranked below adding a worse one. Pareto
     // turns this into a conflict; without Pareto it is merely very hard to hold.
@@ -1057,8 +1054,8 @@ function bullets(){
     }
     if(inv.length) out.push({t:"Nadia\u2019s life gets better and your verdict gets worse.",b:"You ranked "+inv.join(", and ")+" \u2014 the same woman, the same 500 people around her, and the only difference is how well her life goes. According to your choices, the value of bringing someone into existence <em>falls</em> as their life improves."});
 
-    if(ANS.benign==="left") out.push({t:"Everyone gains, good lives are added, and you called it worse.",b:"Every one of A\u2019s hundred is better off in A+, and a further hundred exist there with lives clearly worth living. Ranking that below A means the new lives are a cost heavy enough to outweigh a gain to every person who was already there. It does block Parfit\u2019s argument at the first rung, which is more than most escapes manage. The price is what it commits you to elsewhere: you would prefer the original hundred be worse off, so long as fewer people existed alongside them.",
-        world:"Bednet distribution leaves the households it reaches healthier and better off, and also means more children survive to adulthood in a place where they will live less well than the people who funded the nets. Your answer allows that package to be a change for the worse — not because anyone alive loses anything, but because of who else ends up existing. Notice that this is a verdict about the outcome, quite apart from the familiar worries about strain on clinics and land, which would be reasons to doubt the first group gains at all."});
+    if(ANS.benign==="left") out.push({t:"Everyone gains, good lives are added, and you called it worse.",b:"Every one of A\u2019s hundred is better off in A+, and a further hundred exist there with lives clearly worth living. Ranking that below A means the new lives are a cost heavy enough to outweigh a gain to every person who was already there.<br/><br/>Your answer does not force you to accept the mere addition paradox. However, the price is what it commits you to elsewhere: you would prefer the original hundred be worse off, so long as fewer people existed alongside them.",
+                                      world:"Distributing malaria nets leaves recipients healthier and better off, and also means more children survive to adulthood, but with worse lives than the global average. Your answer holds that distributing malaria nets may therefore be a <em>bad</em> thing."});
 
     if(ANS.nae!=="right") out.push({t:"You denied that levelling up improves things.",b:"B holds the same "+CHAIN[0].to.n+" people as A+, with more welfare in total, more on average, and more equality. There is a consistent motive available \u2014 the better-off group does lose, falling from "+CHAIN[0].plus[0].w+" to "+CHAIN[0].to.w+", while the worse-off rise from "+CHAIN[0].plus[1].w+" \u2014 so a view that weighs losses to the well-off heavily can resist it. But it sets you against totalism, averagism and egalitarianism in one move."});
 
@@ -1067,7 +1064,7 @@ function bullets(){
         if(ANS[k]==="none") noneCount++;
     });
     if(noneCount>=3) out.push({t:noneCount===7?"You judged none of the seven pairs rankable.":"You judged "+noneCount+" of the 7 pairs unrankable.",b:"You said that these pairs were not <em>equal</em>, but that no betterness relation holds either way. An ordering with widespread incomparability cannot do much practical work \u2014 it will stay silent on most of the choices you would want it to settle.",
-        world:"Parfit's case of Depletion. A country can burn through its mineral reserves, raising living standards for a century and lowering them sharply for every century after, or it can conserve them. Over that span the choice does not merely leave future people better or worse off: by changing everyone's daily circumstances it changes who meets whom and when children are conceived, so the two futures are populated by entirely different people. Every climate policy with a long horizon has this shape. Ranking those futures is the whole of the argument, so a view that declines to rank them does not take a cautious position in the debate — it withdraws from it."});
+                               world:"Parfit's Depletion problem. A country can burn through its natural resource reserves, raising living standards for a century but ruining the climate for future generations; or it can conserve resources and protect the environment. The choice changes who meets whom and when children are conceived, so the two futures are populated by entirely different people. No particular person is harmed by choosing to deplete resources, but it still seems that a wrong has been committed. Your answers force the conclusion that depleting the environment's resources is not wrong."});
     // The second half of the asymmetry is a negative claim - creating a happy
     // person is not *better* - and "cannot be ranked" delivers that as squarely
     // as "exactly as good" does. The two routes differ in what they cost, not in
@@ -1082,7 +1079,7 @@ function bullets(){
             ? " You took it in the strong form: the addition is <em>exactly as good</em> as leaving her out. That is the form Broome\u2019s argument targets, and if you also kept Pareto and transitivity of equal-goodness it will have surfaced as a conflict above."
             : " You took it in the weak form: the addition is simply <em>not rankable</em> against leaving her out. Nothing is claimed to be exactly as good, so the neutral-range argument has nothing to chain through. That is the usual reason people retreat here \u2014 but it is not safety, only a different battlefield: Broome's collapsing principle is aimed squarely at it, which is what the boundary question was testing. What the retreat costs even if it works is silence: on a choice that plainly matters, your ordering declines to speak.";
         out.push({t:"You hold the Procreation Asymmetry.",b:"Creating a miserable life is bad; creating a happy one is not good. This is what most people say, and it is not formally inconsistent on its own \u2014 which is why it is not scored as a conflict here. It is, however, notoriously hard to ground: the obvious explanations of the first half tend to imply the opposite of the second."+route,
-            world:"Parfit's three outcomes: peace; a war that kills 99% of us; a war that kills 100%. Most people think the enormous gap is between the first two. Parfit argued it is between the last two, because 99% leaves a remnant who rebuild and 100% forecloses every generation that would have followed. Your answer sides against him: if creating a happy life is not good, those unborn centuries are no part of what the war destroys, and killing everyone is worse than killing 99% only by that last one per cent."});
+                  world:"The Procreation Asymmetry holds that human extinction need not be a bad thing: if future generations never come to exist, then no one has been harmed, so long as the currently-alive generations are happy."});
     }
     return out;
 }
@@ -1159,7 +1156,7 @@ function showResults(){
         QUESTIONS.forEach(function(q){ if(S.has(q.id)) h+='<li>'+claimText(q.id)+'</li>'; });
         h+='</ol>';
         if(st){ h+='<p class="because">'+st.because+'</p>'; }
-        else { h+='<p class="because">Closing your judgements under the transitivity principles you accepted produces a pair of outcomes ranked in both directions at once. Dropping any one of the answers above dissolves it; keeping all of them does not.</p>'; }
+        else { h+='<p class="because">If the principles of transitivity and menu-independence hold \u2014 and you answers said they do \u2014 then your ranking of outcomes contradicts itself.</p>'; }
         if(st&&st.chain){ h+='<div class="chainwrap">'+chainSVG(true)+'</div>'; }
         if(st&&st.world){ h+=worldNote(st.world); }
         h+='</div>';
@@ -1170,8 +1167,7 @@ function showResults(){
         h+='<h3 style="margin-top:10px">Adding a third option changed your mind about the first two.</h3>';
         h+='<ol class="claims"><li>Offered A and B alone, you judged '+R.alpha.pairWinner+' the better of the two.</li>';
         h+='<li>Offered A, B and Z together, you picked '+R.alpha.picked+' as best.</li></ol>';
-        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. Z\u2019s presence cannot make '+R.alpha.picked+' beat '+R.alpha.pairWinner+' if it did not already. Note that this is a constraint on <em>choice</em> rather than on the betterness ordering \u2014 the choice-theoretic cousin of independence of irrelevant alternatives \u2014 so it is listed separately from the conflicts above.</p>'+
-           worldNote('This is a spoiler on a ballot: a candidate who cannot win still decides which of the two who can does. Here the unwinnable option is Z, usually tabled by someone arguing against it — and on your answers its mere arrival at the table changes which of A and B you prefer, though nothing about A or B has changed and nobody means to choose Z.')+'</div>';
+        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. Z\u2019s presence cannot make '+R.alpha.picked+' beat '+R.alpha.pairWinner+' if it did not already.</p>'+'</div>';
     }
 
     if(R.collapse){
