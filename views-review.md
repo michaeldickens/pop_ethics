@@ -8,17 +8,17 @@ Read each view's description against the answers below it, then against the verd
 - [Average utilitarianism](#average) - clean, 2 bullets
 - [Critical-level utilitarianism](#critical_level) - clean, 1 bullet
 - [Maximin](#maximin) - clean, 3 bullets
-- [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 3 bullets
-- [Procreation Asymmetry, strong form](#asymmetry_equal) - 4 conflicts, 1 bullet
-- [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 3 bullets
+- [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 2 bullets
+- [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 1 bullet
+- [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
 - [Imprecise comparability](#rough) - clean, 3 bullets
-- [Unrankable below, better above](#vague_boundary) - 2 conflicts, 1 bullet
-- [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 1 bullet
-- [Non-transitive betterness](#nontransitive) - 2 conflicts, 2 bullets
+- [Unrankable below, better above](#vague_boundary) - 2 conflicts, 2 bullets
+- [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 2 bullets
+- [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
 - [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 4 bullets
 - [Antinatalism](#antinatalist) - clean, 2 bullets
-- [The untutored intuitive package (A > B)](#intuitive-v1) - 2 conflicts, 1 bullet
-- [The untutored intuitive package (B > A)](#intuitive-v2) - 1 conflict, 1 bullet
+- [The untutored intuitive package (A > B)](#intuitive-v1) - 2 conflicts
+- [The untutored intuitive package (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 2 bullets
 - [Declining to rank anything](#quietist) - clean, 4 bullets
 
@@ -37,6 +37,7 @@ transitive ordering.
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is worse than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome better. |
@@ -45,7 +46,6 @@ transitive ordering.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
-| The medical programmes | Cancelling preconception testing is just as bad as cancelling pregnancy testing. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
@@ -75,6 +75,7 @@ for being below par.
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is better than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome worse. |
@@ -83,7 +84,6 @@ for being below par.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
-| The medical programmes | Cancelling preconception testing is just as bad as cancelling pregnancy testing. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -114,6 +114,7 @@ it, and it is committed to some lives worth living being not worth adding.
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is worse than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome better. |
@@ -122,7 +123,6 @@ it, and it is committed to some lives worth living being not worth adding.
 | Repeating the moves | Somewhere on the ladder those two verdicts flip. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
-| The medical programmes | Cancelling preconception testing is just as bad as cancelling pregnancy testing. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
@@ -154,6 +154,7 @@ and is told instead what its verdicts commit it to.
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is better than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome worse. |
@@ -162,7 +163,6 @@ and is told instead what its verdicts commit it to.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
-| The medical programmes | Cancelling preconception testing is just as bad as cancelling pregnancy testing. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
@@ -188,15 +188,14 @@ As above, but the pairwise verdicts are not required to cohere into a single ord
 is exactly as good as K+ and as K++ when each pair is considered alone; put all three on
 the table and K+ falls below the other two. Denying that a verdict survives a wider menu
 is what lets all three stand. Should escape the neutral-range collision and be told it
-violates Sen's property beta. Follows its own logic into the non-identity problem: the
-medical programmes are not equally bad, because only one of the cancellations leaves
-anybody worse off than they would otherwise have been.
+violates Sen's property beta.
 
 ### Answers
 
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is better than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome neither better nor worse. |
@@ -205,7 +204,6 @@ anybody worse off than they would otherwise have been.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
-| The medical programmes | Cancelling pregnancy testing is the worse of the two cancellations. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A third option can change how the first two compare. |
@@ -222,7 +220,6 @@ Bullets bitten:
 
 - You denied that a verdict survives a wider menu.
 - You hold the Procreation Asymmetry.
-- You said it matters which children they are.
 
 <a id="asymmetry_equal"></a>
 
@@ -231,17 +228,15 @@ Bullets bitten:
 Common-sense person-affecting view #2. Adding a miserable life is bad; adding a happy
 life is neither good nor bad, taken as exactly as good as leaving the person out.
 Existing people still matter, so benign addition and levelling up are both improvements,
-but A > B. Unlike the two neighbouring views it does not follow the asymmetry into the
-non-identity problem: it keeps the common-sense verdict that the two medical programmes
-are equally worth having. Should collide three ways over: on the ladder, on two lives of
-very different quality both being exactly worth nothing, and on those two claims meeting
-in the medical case.
+but A > B. Should collide twice over: once on the ladder, and once because two lives of
+very different quality cannot both be exactly worth nothing.
 
 ### Answers
 
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is better than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome neither better nor worse. |
@@ -250,7 +245,6 @@ in the medical case.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
-| The medical programmes | Cancelling preconception testing is just as bad as cancelling pregnancy testing. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
@@ -263,7 +257,6 @@ Not asked: collapse. These questions only appear when earlier answers give them 
 - **The ladder reaches B, but you say B is worse.** `AvB+benign+nae+trans_gt`
 - **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
 - **Nadia's life cannot be worth nothing twice over.** `menu_eq+neutral_mod+neutral_wond+pareto+trans_eq`
-- **The medical programmes** - the No-Difference View against a neutral range `menu_eq+neutral_mod+neutral_wond+no_difference+pareto+trans_eq`
 
 Bullets bitten:
 
@@ -274,15 +267,14 @@ Bullets bitten:
 ## Procreation Asymmetry, prefer greater utility (B > A)
 
 Common-sense person-affecting view #1. Adding a happy life is neither good nor badr.
-Increasing total utility in a single step is good (B > A), but Z is worse than A. Takes
-the person-affecting line on the medical programmes too: cancelling the one that leaves
-identifiable children worse off is the worse of the two cancellations.
+Increasing total utility in a single step is good (B > A), but Z is worse than A.
 
 ### Answers
 
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is worse than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome neither better nor worse. |
@@ -291,7 +283,6 @@ identifiable children worse off is the worse of the two cancellations.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
-| The medical programmes | Cancelling pregnancy testing is the worse of the two cancellations. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A third option can change how the first two compare. |
@@ -307,7 +298,6 @@ Bullets bitten:
 
 - You denied that a verdict survives a wider menu.
 - You hold the Procreation Asymmetry.
-- You said it matters which children they are.
 
 <a id="rough"></a>
 
@@ -321,17 +311,17 @@ from A+ to B is a clear improvement, and A is still better than B and than Z. Th
 therefore breaks at its first rung rather than at transitivity, and the view should come
 out consistent. Note what the quiz cannot see: Parfit's distinctive claim is that 'not
 worse than' fails to be transitive, and there is no question about that relation, so an
-unrankable verdict simply contributes no link. Holds the No-Difference View as well, as
-Parfit did, and must not be scored as inconsistent for it: unrankable additions never
-chain, and he reads the medical case as a same-number choice rather than a mere
-addition. The tension between the two is real and belongs in a bullet, which is where it
-goes.
+unrankable verdict simply contributes no link. Ranks the same-number pair determinately
+while leaving three different-number ones unrankable, which is Parfit's own shape: the
+Same Number Quality Claim settles a same-number choice by how well the lives go, whoever
+lives them. Should be told what that line owes, and not scored as a conflict.
 
 ### Answers
 
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is better than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
@@ -340,7 +330,6 @@ goes.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
-| The medical programmes | Cancelling preconception testing is just as bad as cancelling pregnancy testing. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -353,9 +342,9 @@ No conflicts.
 
 Bullets bitten:
 
-- You judged 3 of the 7 pairs unrankable.
+- You judged 3 of the 8 pairs unrankable.
 - You hold the Procreation Asymmetry.
-- You set aside whether the children exist, but not which children they are.
+- Comparable when the numbers match, unrankable when they do not.
 
 <a id="vague_boundary"></a>
 
@@ -372,6 +361,7 @@ the collapsing question should catch.
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is worse than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
@@ -381,7 +371,6 @@ the collapsing question should catch.
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life cannot turn "unrankable" into a determinate verdict. |
-| The medical programmes | Cancelling preconception testing is just as bad as cancelling pregnancy testing. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
@@ -396,6 +385,7 @@ Not asked: menu_eq. These questions only appear when earlier answers give them s
 Bullets bitten:
 
 - You hold the Procreation Asymmetry.
+- Comparable when the numbers match, unrankable when they do not.
 
 <a id="vague_boundary_ok"></a>
 
@@ -410,6 +400,7 @@ difference between being caught by the collapsing principle and not.
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is better than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
@@ -419,7 +410,6 @@ difference between being caught by the collapsing principle and not.
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life can turn "unrankable" into a determinate verdict. |
-| The medical programmes | Cancelling preconception testing is just as bad as cancelling pregnancy testing. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -434,6 +424,7 @@ Not asked: menu_eq. These questions only appear when earlier answers give them s
 Bullets bitten:
 
 - You hold the Procreation Asymmetry.
+- Comparable when the numbers match, unrankable when they do not.
 
 <a id="nontransitive"></a>
 
@@ -451,6 +442,7 @@ transitivity of better-than does nothing to touch.
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is better than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome neither better nor worse. |
@@ -459,7 +451,6 @@ transitivity of better-than does nothing to touch.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
-| The medical programmes | Cancelling preconception testing is just as bad as cancelling pregnancy testing. |
 | Transitivity of better-than | "Better than" is not always transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
@@ -470,7 +461,6 @@ Not asked: collapse. These questions only appear when earlier answers give them 
 ### Verdict
 
 - **Nadia's life cannot be worth nothing twice over.** `menu_eq+neutral_mod+neutral_wond+pareto+trans_eq`
-- **The medical programmes** - the No-Difference View against a neutral range `menu_eq+neutral_mod+neutral_wond+no_difference+pareto+trans_eq`
 
 Bullets bitten:
 
@@ -483,15 +473,16 @@ Bullets bitten:
 
 Eitan's view: avoid asserting that Nadia's wonderful life is equal to her modest life by
 allowing verdicts to change when the menu changes. Denying menu independence is what
-buys the escape, and it buys the same escape twice: from the neutral-range collision and
-from the medical programmes, both of which need two equalities to chain before they can
-bite. Declines to rank A against B or against Z, and picks nothing from the three.
+buys the escape from the neutral-range collision, which needs two equalities to chain
+before it can bite. Declines to rank A against B or against Z, and picks nothing from
+the three.
 
 ### Answers
 
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is not rankable against B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome neither better nor worse. |
@@ -500,7 +491,6 @@ bite. Declines to rank A against B or against Z, and picks nothing from the thre
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
-| The medical programmes | Cancelling preconception testing is just as bad as cancelling pregnancy testing. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A third option can change how the first two compare. |
@@ -517,7 +507,7 @@ Bullets bitten:
 - You denied that a verdict survives a wider menu.
 - You denied that levelling up improves things.
 - You hold the Procreation Asymmetry.
-- You set aside whether the children exist, but not which children they are.
+- Comparable when the numbers match, unrankable when they do not.
 
 <a id="antinatalist"></a>
 
@@ -533,6 +523,7 @@ without limit, and the best world contains nobody.
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is better than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome worse. |
@@ -541,7 +532,6 @@ without limit, and the best world contains nobody.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome worse. |
-| The medical programmes | Cancelling preconception testing is just as bad as cancelling pregnancy testing. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -565,15 +555,14 @@ Not a philosopher's view but the one many people arrive with. More happy people 
 straightforwardly good, so both of Nadia's good lives are worth adding; every step of
 the ladder looks right; better-than obviously chains; and yet A is plainly better than B
 and vastly better than Z. No view about neutrality here at all, so the neutral-range
-collision should not fire - the ladder ones should, twice. On the medical programmes it
-takes the untutored line, that harming children who exist either way is the worse of the
-two cancellations, and should be told what that commits it to.
+collision should not fire - the ladder ones should, twice.
 
 ### Answers
 
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is better than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome better. |
@@ -582,7 +571,6 @@ two cancellations, and should be told what that commits it to.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
-| The medical programmes | Cancelling pregnancy testing is the worse of the two cancellations. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -594,10 +582,6 @@ Not asked: collapse, menu_eq. These questions only appear when earlier answers g
 - **The ladder reaches B, but you say B is worse.** `AvB+benign+nae+trans_gt`
 - **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
 
-Bullets bitten:
-
-- You said it matters which children they are.
-
 <a id="intuitive-v2"></a>
 
 ## The untutored intuitive package (B > A)
@@ -606,15 +590,14 @@ Not a philosopher's view but the one many people arrive with (v2). More happy pe
 straightforwardly good, so both of Nadia's good lives are worth adding; every step of
 the ladder looks right; better-than obviously chains; B is better than A; and yet Z is
 worse than A or B. No view about neutrality here at all, so the neutral-range collision
-should not fire - the ladder ones should, twice. On the medical programmes it takes the
-untutored line, that harming children who exist either way is the worse of the two
-cancellations, and should be told what that commits it to.
+should not fire - the ladder ones should, twice.
 
 ### Answers
 
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is worse than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome better. |
@@ -623,7 +606,6 @@ cancellations, and should be told what that commits it to.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
-| The medical programmes | Cancelling pregnancy testing is the worse of the two cancellations. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
@@ -633,10 +615,6 @@ Not asked: collapse, menu_eq. These questions only appear when earlier answers g
 ### Verdict
 
 - **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
-
-Bullets bitten:
-
-- You said it matters which children they are.
 
 <a id="misery_gain"></a>
 
@@ -652,6 +630,7 @@ able to pass without comment.
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is worse than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome better. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome better. |
@@ -660,7 +639,6 @@ able to pass without comment.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
-| The medical programmes | Cancelling preconception testing is just as bad as cancelling pregnancy testing. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
@@ -680,16 +658,18 @@ Bullets bitten:
 
 ## Declining to rank anything
 
-Answers 'cannot be ranked' to every comparison and rejects every structural principle. A
-boundary case: there is nothing to be inconsistent with, so the quiz should find no
-collisions, and should not manufacture one. If this profile ever produces a conflict,
-something is wrong.
+Answers 'cannot be ranked' to every comparison and rejects every structural principle,
+including the same-number pair where identity is the only thing that varies. A boundary
+case: there is nothing to be inconsistent with, so the quiz should find no collisions,
+and should not manufacture one. If this profile ever produces a conflict, something is
+wrong. It should still be told, at length, how little such an ordering can do.
 
 ### Answers
 
 | Question | What this view says |
 | --- | --- |
 | Pareto improvement | A future need not be better even when the very same people are all better off in it. |
+| The same number, different people | A future of 100 people is not rankable against a future of 100 entirely different people whose lives all go far better. |
 | A against B | A is not rankable against B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome incomparable. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
@@ -698,7 +678,6 @@ something is wrong.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
-| The medical programmes | Cancelling pregnancy testing is the worse of the two cancellations. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | None of A, B and Z is best. |
@@ -713,5 +692,5 @@ Bullets bitten:
 
 - You rejected the Pareto principle.
 - You denied that levelling up improves things.
-- You judged none of the seven pairs rankable.
-- You said it matters which children they are.
+- You judged none of the eight pairs rankable.
+- Once the people changed, how well the lives go stopped counting.

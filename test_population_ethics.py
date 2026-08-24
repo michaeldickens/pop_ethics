@@ -36,12 +36,12 @@ import pathlib
 import sys
 from playwright.sync_api import sync_playwright
 
-QIDS = ["pareto", "AvB", "misery", "neutral_mod", "benign", "nae", "generalize",
-        "AvZ", "neutral_wond", "collapse", "no_difference", "trans_gt", "trans_eq",
+QIDS = ["pareto", "same_number", "AvB", "misery", "neutral_mod", "benign", "nae",
+        "generalize", "AvZ", "neutral_wond", "collapse", "trans_gt", "trans_eq",
         "menu_eq", "menu"]
-PAIRS = ["AvB", "misery", "neutral_mod", "benign", "nae", "AvZ", "neutral_wond"]
-PRINCIPLES = ["pareto", "generalize", "collapse", "no_difference", "trans_gt",
-              "trans_eq", "menu_eq"]
+PAIRS = ["same_number", "AvB", "misery", "neutral_mod", "benign", "nae", "AvZ",
+         "neutral_wond"]
+PRINCIPLES = ["pareto", "generalize", "collapse", "trans_gt", "trans_eq", "menu_eq"]
 PAIR_VALUES = ["left", "right", "equal", "none"]
 PRINCIPLE_VALUES = ["yes", "no"]
 MENU_VALUES = ["A", "B", "Z", "none"]
@@ -49,10 +49,10 @@ MENU_VALUES = ["A", "B", "Z", "none"]
 # Index of the answer button to click, per question, for named profiles.
 CLICK_MODAL = {"pareto": 0, "AvB": 0, "misery": 0, "neutral_mod": 2, "benign": 1,
                "nae": 1, "generalize": 0, "AvZ": 0, "neutral_wond": 2, "collapse": 0,
-               "no_difference": 0, "trans_gt": 0, "trans_eq": 0, "menu_eq": 0, "menu": 0}
+               "same_number": 1, "trans_gt": 0, "trans_eq": 0, "menu_eq": 0, "menu": 0}
 CLICK_TOTALIST = {"pareto": 0, "AvB": 1, "misery": 0, "neutral_mod": 1, "benign": 1,
                   "nae": 1, "generalize": 0, "AvZ": 1, "neutral_wond": 1, "collapse": 0,
-                  "no_difference": 0, "trans_gt": 0, "trans_eq": 0, "menu_eq": 0, "menu": 2}
+                  "same_number": 1, "trans_gt": 0, "trans_eq": 0, "menu_eq": 0, "menu": 2}
 CLICK_ALPHA = dict(CLICK_TOTALIST, menu=0)
 # Accepting every principle but declaring every pair unrankable. Index 3 on a
 # pair is "neither - they cannot be ranked", the only way to decline.
@@ -61,11 +61,11 @@ CLICK_REJECT = {q: (1 if q in PRINCIPLES else 0) for q in QIDS}
 
 MODAL = {"pareto": "yes", "AvB": "left", "misery": "left", "neutral_mod": "equal",
          "benign": "right", "nae": "right", "generalize": "yes", "AvZ": "left",
-         "neutral_wond": "equal", "collapse": "yes", "no_difference": "yes",
+         "neutral_wond": "equal", "collapse": "yes", "same_number": "right",
          "trans_gt": "yes", "trans_eq": "yes", "menu_eq": "yes", "menu": "A"}
 TOTALIST = {"pareto": "yes", "AvB": "right", "misery": "left", "neutral_mod": "right",
             "benign": "right", "nae": "right", "generalize": "yes", "AvZ": "right",
-            "neutral_wond": "right", "collapse": "yes", "no_difference": "yes",
+            "neutral_wond": "right", "collapse": "yes", "same_number": "right",
             "trans_gt": "yes", "trans_eq": "yes", "menu_eq": "yes", "menu": "Z"}
 
 LADDER_SHORT = "AvB+benign+nae+trans_gt"
@@ -102,7 +102,7 @@ def analyse(page, answers):
     return page.evaluate(
         """a => { const r = analyse(a);
                   return {sets: r.sets.map(s => [...s].sort().join('+')).sort(),
-                          alpha: r.alpha, collapse: r.collapse, medical: r.medical,
+                          alpha: r.alpha, collapse: r.collapse,
                           clashes: r.clashes.length}; }""", answers)
 
 
@@ -153,14 +153,12 @@ def suite_engine(page, rep):
     rep.check(LADDER_SHORT in r["sets"], "...but the one-rung version survives")
 
     r = analyse(page, TOTALIST)
-    rep.check(not r["sets"] and not r["alpha"] and not r["medical"],
-              "consistent totalist crosses clean")
+    rep.check(not r["sets"] and not r["alpha"], "consistent totalist crosses clean")
 
     abstain = {q: ("none" if q in PAIRS else "abstain") for q in QIDS}
     abstain["menu"] = "none"
     r = analyse(page, abstain)
-    rep.check(not r["sets"] and not r["alpha"] and not r["medical"],
-              "declining every comparison yields no hits")
+    rep.check(not r["sets"] and not r["alpha"], "declining every comparison yields no hits")
 
     mixed = dict(MODAL, AvB="none")
     rep.check(LADDER_SHORT not in analyse(page, mixed)["sets"],
@@ -200,7 +198,7 @@ def suite_engine(page, rep):
     watch = [["misery", "right"], ["neutral_mod", "left"], ["neutral_wond", "left"],
              ["benign", "left"], ["nae", "left"], ["pareto", "no"], ["trans_gt", "no"],
              ["trans_eq", "no"], ["generalize", "no"], ["AvZ", "right"],
-             ["no_difference", "no"]]
+             ["same_number", "left"], ["same_number", "none"], ["same_number", "equal"]]
     silent = page.evaluate("""(cfg) => {
       const keep = ANS, bad = new Set();
       cfg.profiles.forEach(a => {
@@ -286,39 +284,53 @@ def suite_engine(page, rep):
     rep.check(levels[0] < 0 < levels[1] < levels[2],
               "the three Nadia levels still straddle zero as the check assumes", str(levels))
 
-    # Parfit's two medical programmes. The card is separate from the closure
-    # because the case turns on who the people are, which an {n,w} population
-    # cannot record; these checks stand in for the closure's own guarantees.
-    med = dict(MODAL, no_difference="yes")
-    rep.check(analyse(page, med)["medical"],
-              "the No-Difference View collides with a neutral range")
-    for qid, val, why in [
-            ("no_difference", "no", "denying the No-Difference View is a way out"),
-            ("pareto", "no", "it needs Pareto to rank the same-people cancellation"),
-            ("trans_eq", "no", "it needs the two neutral cohorts to chain"),
-            ("menu_eq", "no", "menu dependence blocks that chaining too"),
-            ("neutral_mod", "right", "no neutrality at the low level, no collision"),
-            ("neutral_wond", "right", "no neutrality at the high level, no collision")]:
-        rep.check(not analyse(page, dict(med, **{qid: val}))["medical"], f"...but {why}")
-    # Unrankability is not the strong neutrality the argument needs: the two
-    # cohorts have to be exactly as good as nobody before they can cancel.
-    # Getting this wrong would convict Parfit, who held both halves himself.
-    vague = dict(med, neutral_mod="none", neutral_wond="none")
-    rep.check(not analyse(page, vague)["medical"],
-              "declaring the additions unrankable does not trigger the card")
-    rep.check(any("set aside whether" in t for t in bullet_titles(page, vague)),
-              "...but is answered by a bullet rather than passing in silence",
-              str(bullet_titles(page, vague)))
-    rep.check(not any("set aside whether" in t for t in bullet_titles(page, med)),
-              "the bullet stands down where the conflict card makes the point",
-              str(bullet_titles(page, med)))
-    # The claims listed on the card must be exactly the answers it rests on,
-    # and every one of them must be a question the person was actually asked.
-    ids = analyse(page, med)["medical"]["ids"]
-    rep.check(sorted(ids) == sorted(BROOME.split("+") + ["no_difference"]),
-              "the card blames the neutral-range answers plus the No-Difference View",
-              str(sorted(ids)))
-    rep.check(all(i in QIDS for i in ids), "...all of which are real questions", str(ids))
+    # The same-number, different-people probe. It is the only comparison in the
+    # quiz where identity is the sole variable, so it is the one place an
+    # ordering that goes quiet across changes in who exists has to say so.
+    # It emits no edge by design; everything it does, it does in the bullets.
+    for val, phrase in [("none", "stopped counting"), ("equal", "stopped counting"),
+                        ("left", "worse-off future above"),
+                        ("right", None)]:
+        got = bullet_titles(page, dict(MODAL, same_number=val))
+        if phrase:
+            rep.check(any(phrase in t for t in got),
+                      f"same_number={val} draws its own bullet", str(got))
+        else:
+            rep.check(not any("stopped counting" in t or "worse-off future above" in t
+                              for t in got),
+                      "the unremarkable answer draws no bullet of its own", str(got))
+    # The two routes to declining must not be reported in the same words: one
+    # is silence, the other is a positive verdict that the lives count for zero.
+    bodies = page.evaluate("""(ps) => { const keep = ANS;
+        const out = ps.map(a => { ANS = a;
+            const b = bullets().find(x => x.t.includes('stopped counting'));
+            return b ? b.b : ''; });
+        ANS = keep; return out; }""",
+        [dict(MODAL, same_number="none"), dict(MODAL, same_number="equal")])
+    rep.check(bodies[0] != bodies[1] and all(bodies),
+              "declining and calling it a tie are described differently")
+
+    # Ranking the same-number case while ducking different-number ones is
+    # Parfit's shape, not a slip. It must be named only when both halves hold.
+    parfit = dict(MODAL, same_number="right", AvB="none", benign="none")
+    rep.check(any("Comparable when the numbers match" in t
+                  for t in bullet_titles(page, parfit)),
+              "the same-number/different-number asymmetry is named when it holds")
+    rep.check(not any("Comparable when the numbers match" in t
+                      for t in bullet_titles(page, dict(MODAL, same_number="right"))),
+              "...and not when every different-number pair was ranked too")
+    rep.check(not any("Comparable when the numbers match" in t
+                      for t in bullet_titles(page, dict(parfit, same_number="none"))),
+              "...nor when the same-number case was declined as well")
+
+    # The probe must stay out of the closure: its two futures share nobody with
+    # any other world in the quiz, so an edge from it could only ever be inert,
+    # and wiring one would invent conflicts the answers do not support.
+    unwired = page.evaluate("""(cfg) => cfg.vals.every(v =>
+        compile(Object.assign({}, cfg.base, {same_number: v}))
+          .every(e => !e.sup.includes('same_number')))""",
+        {"base": MODAL, "vals": PAIR_VALUES})
+    rep.check(unwired, "the probe emits no edge on any answer")
 
     # The point of the whole exercise: incomparability must be falsifiable.
     caught = page.evaluate("""(ps) => {
@@ -569,7 +581,6 @@ VIEW_PROBE = """(a) => {
                 .sort((x, y) => x.join().localeCompare(y.join())),
     alpha: !!r.alpha,
     collapse: !!r.collapse,
-    medical: !!r.medical,
     bullets: bullets().map(b => b.t)
   };
   ANS = keep;
@@ -1190,12 +1201,10 @@ def suite_views(page, rep):
         got = page.evaluate(VIEW_PROBE, view["answers"])
         rep.check(got["conflicts"] == want["conflicts"], f"{key}: same conflicts",
                   f"{got['conflicts']} vs {want['conflicts']}")
-        rep.check(got["alpha"] == want["alpha"] and got["collapse"] == want["collapse"]
-                  and got["medical"] == want["medical"],
-                  f"{key}: same separately-checked cards",
+        rep.check(got["alpha"] == want["alpha"] and got["collapse"] == want["collapse"],
+                  f"{key}: same choice-consistency cards",
                   f"alpha {got['alpha']}/{want['alpha']}, "
-                  f"collapse {got['collapse']}/{want['collapse']}, "
-                  f"medical {got['medical']}/{want['medical']}")
+                  f"collapse {got['collapse']}/{want['collapse']}")
         rep.check(got["bullets"] == want["bullets"], f"{key}: same bullets",
                   f"{got['bullets']} vs {want['bullets']}")
         rep.check(got["asked"] == want["asked"], f"{key}: same questions asked",
