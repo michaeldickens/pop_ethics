@@ -32,11 +32,21 @@ var K_BASE=[{n:500,w:55}];
 var K_BAD =[{n:500,w:55},{n:1,w:-40,tag:"Nadia"}];
 var K_MOD =[{n:500,w:55},{n:1,w:7,tag:"Nadia"}];
 var K_WOND=[{n:500,w:55},{n:1,w:70,tag:"Nadia"}];
-// One of K's own people harmed, with the modest addition alongside. K+- holds
-// the same 501 people as K+, Owen worse off in it, so Pareto ranks the two;
-// against K, which has no Nadia in it, there is no Pareto comparison at all.
-// That missing comparison is what the greediness argument turns on.
-var K_BOTH=[{n:499,w:55},{n:1,w:20,tag:"Owen"},{n:1,w:K_MOD[1].w,tag:"Nadia"}];
+// One of K's own people harmed, with an addition alongside. K+- holds the same
+// 501 people as K++, Owen worse off in it, so Pareto ranks the two; against K,
+// which has no Nadia in it, there is no Pareto comparison at all. That missing
+// comparison is what the greediness argument turns on.
+//
+// The addition is the wonderful life rather than the modest one, and that is
+// forced rather than chosen. What the argument needs is that the gap the
+// addition opens be wide enough to cover Owen's loss, and the only evidence of
+// its width is which additions the person called unrankable. Someone who calls
+// both the life at 7 and the life at 70 unrankable has told us their range of
+// critical levels reaches from 70 down to at least 7, so adding at 70 is worth
+// anywhere from nothing to 63 by their own account - which covers 35. Adding at
+// 7 would be worth at most 7 to them, and could not cover any harm worth
+// drawing.
+var K_BOTH=[{n:499,w:55},{n:1,w:20,tag:"Owen"},{n:1,w:K_WOND[1].w,tag:"Nadia"}];
 
 var PARETO_BEFORE=[{n:100,w:50}];
 var PARETO_AFTER =[{n:100,w:90}];
@@ -55,6 +65,19 @@ var QUESTIONS=[
         body:"Two futures contain <strong>exactly the same people</strong> \u2014 nobody extra, nobody missing. In the second, <strong>every single one of them has a better life</strong> than they do in the first.",
         ask:"Is the \"After\" future better?",
         opts:[["A","Yes","yes"],["B","No \u2013 they are equal or incomparable","no"]]
+    },
+    {
+        id:"same_number", kind:"pair", label:"The same number, different people",
+        // Deliberately the same two populations as the Pareto question, drawn
+        // the same way: the figure is identical because what separates the two
+        // questions is who the people are, and no arrangement of blocks can
+        // show that. It is the only same-number, different-people comparison
+        // in the quiz - every other pair changes the headcount - so it is the
+        // one place an ordering that declines to rank across changes in who
+        // exists has to say so plainly.
+        pops:[PARETO_BEFORE,PARETO_AFTER], names:["First","Second"],
+        title:"The same picture, and one difference it cannot draw.",
+        body:"Two futures again, 100 people in each, and again every one of them lives far better in the second. One thing has changed from the question before: <strong>these are not the same people</strong>. Not a single person exists in both — as happens whenever a choice made now shifts who is conceived, and so who is ever born. Every life in either future is clearly worth living."
     },
     {
         id:"AvB", kind:"pair", label:"A against B",
@@ -127,16 +150,33 @@ var QUESTIONS=[
     },
     {
         id:"greedy", kind:"pair", label:"A harm beside the addition",
+        // Nothing here can bite on someone who ranked both additions as plain
+        // improvements: the conflicts all run through a verdict that the
+        // addition is not a gain, and for a totalist K+- is simply a sum. The
+        // question stays live for everyone else, including the person who
+        // thinks an addition is bad.
+        when:function(a){ return a.neutral_mod!=="right" || a.neutral_wond!=="right"; },
         pops:[K_BASE,K_BOTH], names:["K","K±"],
         title:"One person harmed, one person added.",
-        body:"<strong>K</strong> once more, and beside it <strong>K±</strong>, which differs in exactly two ways. First, one of K’s own 500 — <strong>Owen</strong>, who is there in both futures — drops from 55 to "+K_BOTH[1].w+
-             ". Second, <strong>Nadia is added at "+K_MOD[1].w+"</strong>: the same modest good life you were asked about earlier. Nobody else is touched."
+        body:"<strong>K</strong> once more, and beside it <strong>K±</strong>, which differs in exactly two ways. First, one of K’s own 500 — <strong>Owen</strong>, who is there in both futures — drops from "+K_BASE[0].w+" to "+K_BOTH[1].w+
+             ". Second, <strong>Nadia is added at "+K_WOND[1].w+"</strong>: the same wonderful life you were asked about earlier. Nobody else is touched."
     },
     {
         id:"trans_gt", kind:"principle", label:"Transitivity of better-than",
         title:"Better than, and better than again.",
         body:"Take any three futures. Suppose the first is better than the second, and the second is better than the third.",
         ask:"Does it follow that the first is better than the third?",
+        opts:[["A","Yes, always","yes"],["B","No, not always","no"]]
+    },
+    {
+        id:"trans_none", kind:"principle", label:"Transitivity of not-worse-than",
+        // Only worth asking of someone whose gaps sit on the ladder with a
+        // verdict at the end of it: that is the one shape where chaining
+        // "not worse than" reaches anything.
+        when:function(a){ return !!zRankLadder(a); },
+        title:"Not worse than, and not worse than again.",
+        body:"Take any three futures. Suppose the first is <strong>not worse than</strong> the second, and the second is not worse than the third. Note that this is weaker than the last question: two futures you cannot rank at all are, among other things, not worse than one another.",
+        ask:"Does it follow that the first is not worse than the third?",
         opts:[["A","Yes, always","yes"],["B","No, not always","no"]]
     },
     {
@@ -217,12 +257,11 @@ function compile(ans){
         edge("gt","K++","K+",["pareto"]);
         edge("gt","K+","K-",["pareto"]);
         edge("gt","K++","K-",["pareto"]);
-        // K+- has the same 501 people as K+ and K++, with Owen worse off and
-        // nobody better, so Pareto ranks it below both. This is what makes
-        // Owen's loss a loss on the person's own accounting. Against K- it says
-        // nothing: Owen is better off there and Nadia far worse. Against K it
-        // says nothing either, which is the whole difficulty.
-        edge("gt","K+","K±",["pareto"]);
+        // K+- has the same 501 people as K++, with Owen worse off and nobody
+        // better, so Pareto ranks it below. This is what makes Owen's loss a
+        // loss on the person's own accounting. Against K+ and K- it says
+        // nothing - Nadia is better off in K+- and Owen worse - and against K
+        // it says nothing either, which is the whole difficulty.
         edge("gt","K++","K±",["pareto"]);
     }
 
@@ -412,6 +451,54 @@ function collapseCandidate(ans){
     return null;
 }
 
+/* ---------------------------------------------------------------
+   Ranking Z while declining to rank the steps that lead to it.
+
+   Two ways to get there, and they are not equally strong.
+
+   The ladder route is Parfit's own argument run on "not worse than" rather
+   than "better than", which is what lets it pass through a gap. Being
+   unrankable, A+ is not worse than A; B is better than A+, so B is not worse
+   than A+ either. Chain that down every rung and Z is not worse than A - but
+   judging A better than Z says Z is worse than A. Nothing about neutral
+   ranges or numbers is needed, only the chaining, which is why it is scored
+   only against someone who has been asked for it and said yes. Parfit's
+   answer was no: his claim is precisely that "not worse than" does not chain,
+   and that is why he thought mere addition was no paradox.
+
+   The misery route has no chain to run on and rests on a reading instead:
+   take a neutral range as Broome does, a range of critical levels shared by
+   every addition, a comparison coming out determinate only when it holds at
+   every level in the range. Then A vs Z turns over at 3.81, just under Z's
+   people at welfare 4, so ranking A above Z says every level you entertain
+   sits above 4 - while calling the addition of a life at -40 unrankable puts
+   one down at -40. The card says out loud that this one assumes the reading.
+
+   Neither is visible to the closure, which never sees an unrankable verdict.
+   What is no conflict at all is a gap at the top of the ladder with the
+   verdict flipping partway down: the chain breaks where it flips. bullets()
+   covers that case instead.
+--------------------------------------------------------------- */
+var Z_LEVEL=Z_POP[0].w;
+// Split out so the trans_none question can gate on the same shape it scores.
+// "Not worse than" needs every link: an unrankable benign step, a levelling
+// step that is not a step down, and the repetition that carries both to Z.
+function zRankLadder(ans){
+    return ans.AvZ==="left" && ans.benign==="none" &&
+           ans.nae!=="left" && ans.generalize==="yes";
+}
+function zRankCandidate(ans){
+    // Only a determinate "A is better" makes the claim. Ranking Z above A is
+    // consistent with any range whose levels all sit below Z.
+    if(ans.AvZ!=="left") return null;
+    if(zRankLadder(ans) && ans.trans_none==="yes")
+        return {via:"ladder", level:Z_LEVEL,
+                ids:["AvZ","benign","nae","generalize","trans_none"]};
+    if(ans.misery==="none")
+        return {via:"misery", level:K_BAD[1].w, ids:["AvZ","misery"]};
+    return null;
+}
+
 // Menu independence only bites if chaining equalities derives something.
 // Rather than enumerate the cases, run the closure both ways and see whether
 // any relation appears only when the chaining is allowed.
@@ -429,22 +516,92 @@ function eqChainMatters(ans){
 /* ---------------------------------------------------------------
    Broome's greediness of neutrality, checked outside the closure for the same
    reason as the collapsing principle: the verdict it needs - that adding
-   Nadia leaves K and K+ beyond ranking - emits no edge, so nothing the closure
+   Nadia leaves K and K++ beyond ranking - emits no edge, so nothing the closure
    can see is disturbed by what follows it.
 
    The dilemma only exists for the weak form. Someone who calls the addition
-   exactly as good as leaving her out already has Pareto's K+ > K+- to chain
+   exactly as good as leaving her out already has Pareto's K++ > K+- to chain
    with, and so derives K > K+- rather than helping themselves to it; if they
    then rank K+- level with K or above it, that is an ordinary cycle and the
    closure catches it. Someone who calls the addition unrankable derives
-   nothing, and a determinate K > K+- is a claim about Nadia's arrival that
-   their own neutrality denies them.
+   nothing, and a determinate K > K+- is a claim about how wide their own gap is.
+
+   Which is why both neutrality answers are required, and it is not caution.
+   Greediness is a claim about width: a gap swallows a harm only if the addition
+   could be worth more than the harm. Read the gaps as a range of critical
+   levels, and calling the life at 70 unrankable puts a level at or above 70,
+   while calling the life at 7 unrankable puts one at or below 7 - so adding at
+   70 is worth anywhere from nothing to 63 on the person's own account, and
+   Owen's 35 sits inside that. One answer alone fixes only one end of the range
+   and leaves the width unknown, and a range that stops just short of Nadia's
+   own level swallows nothing at all. The reading is stated on the card; it is
+   the same one the misery route above assumes.
 --------------------------------------------------------------- */
 function greedyCandidate(ans){
-    if(ans.neutral_mod!=="none") return null;   // weak-form neutrality only
+    // Both, and for the width rather than for emphasis: see above.
+    if(ans.neutral_mod!=="none" || ans.neutral_wond!=="none") return null;
     if(ans.greedy!=="left") return null;        // ...ranked determinately anyway
     if(ans.pareto!=="yes") return null;         // ...with the harm counting as one
-    return {level:K_MOD[1].w, from:K_BASE[0].w, to:K_BOTH[1].w};
+    return {level:K_WOND[1].w, floor:K_MOD[1].w, from:K_BASE[0].w, to:K_BOTH[1].w};
+}
+
+/* ---------------------------------------------------------------
+   The checks that run outside the closure. Each is a different reason a set of
+   answers can be in trouble without any pair of outcomes being ranked in both
+   directions at once, which is the only thing the closure can see:
+
+     alpha     a choice from three that reverses a choice from two
+     collapse  a gap with a determinate verdict one welfare unit away
+     zrank     a gap on the ladder with Z ranked at the end of it
+     greedy    a gap wide enough to swallow a harm, with the harm ranked anyway
+
+   They are listed rather than written out one after another because each one
+   used to be wired into five places - the analyse return, the headline tally,
+   the card's number, and both of the probes the tests and the catalogue run.
+   Numbering a card by hand is what makes a fifth check expensive: every earlier
+   card's number has to learn about it. Here a check is an entry, its card is an
+   entry in CARD_HTML beside the other cards, and nothing counts anything.
+--------------------------------------------------------------- */
+function alphaCandidate(ans){
+    var declined=function(v){ return !v||v==="none"||v==="abstain"; };
+    if(declined(ans.menu)) return null;
+    var pick=ans.menu;
+    // Picking Z from the three while ranking A above Z in the pair is a
+    // violation on its own terms. It turns on AvZ, not AvB, so it must not be
+    // gated behind AvB: an incomparabilist who declines A against B would
+    // otherwise walk through it.
+    if(pick==="Z" && ans.AvZ==="left")
+        return {picked:"Z", pairWinner:"A", third:"B", viaZ:true};
+    if(declined(ans.AvB)) return null;
+    var pairWinner = ans.AvB==="left" ? "A" : ans.AvB==="right" ? "B" : "tie";
+    if((pick==="A"||pick==="B") && pairWinner!=="tie" && pick!==pairWinner)
+        return {picked:pick, pairWinner:pairWinner, third:"Z"};
+    return null;
+}
+
+var EXTRA_CHECKS=[
+    // Contraction consistency (Sen's property alpha): a constraint on choice
+    // rather than on the betterness ordering.
+    {id:"alpha", run:alphaCandidate},
+    // Broome's collapsing principle (Weighing Lives ch. 12). Asked before it is
+    // scored, so an unasked or rejected principle cannot bite.
+    {id:"collapse", run:function(a){ return a.collapse==="yes" ? collapseCandidate(a) : null; }},
+    {id:"zrank", run:zRankCandidate},
+    {id:"greedy", run:greedyCandidate}
+];
+
+// Each check's result under its own name, plus the list of the ones that
+// fired, in order. Callers that want one check ask for it by name; callers
+// that want to count or render them all walk the list and stay correct when
+// the list grows.
+function runExtras(ans, into){
+    var out=[];
+    EXTRA_CHECKS.forEach(function(c){
+        var d=c.run(ans) || null;
+        into[c.id]=d;
+        if(d) out.push({id:c.id, data:d});
+    });
+    return out;
 }
 
 function analyse(ans){
@@ -474,26 +631,9 @@ function analyse(ans){
         });
     });
 
-    // Contraction consistency (Sen's property alpha), checked separately:
-    // it is a constraint on choice, not on the betterness ordering.
-    var alpha=null;
-    var declined=function(v){ return !v||v==="none"||v==="abstain"; };
-    if(!declined(ans.menu) && !declined(ans.AvB)){
-        var pick=ans.menu;
-        var pairWinner = ans.AvB==="left" ? "A" : ans.AvB==="right" ? "B" : "tie";
-        if((pick==="A"||pick==="B") && pairWinner!=="tie" && pick!==pairWinner){
-            alpha={picked:pick, pairWinner:pairWinner};
-        }
-        if(pick==="Z" && ans.AvZ==="left") alpha={picked:"Z", pairWinner:"A", viaZ:true};
-    }
-    // Broome's collapsing principle (Weighing Lives ch. 12), checked separately
-    // for the same reason as alpha: "cannot be ranked" emits no edge, so the
-    // closure machinery can never see it. Without this, an incomparabilist is
-    // unfalsifiable here no matter what else they say.
-    var collapse = ans.collapse==="yes" ? collapseCandidate(ans) : null;
-    var greedy = greedyCandidate(ans);
-
-    return {sets:sets, alpha:alpha, collapse:collapse, greedy:greedy, clashes:clashes};
+    var out={sets:sets, clashes:clashes};
+    out.extras=runExtras(ans, out);
+    return out;
 }
 /* ===ENGINE END=== */
 
@@ -978,13 +1118,16 @@ var LABELS={
         yes:"If the very same people all live better lives, that is better.",
         no:"A future need not be better even when the very same people are all better off in it.",
         abstain:"No view on whether the same people all being better off makes a future better."}[a]; },
+    same_number:function(a){ return "A future of 100 people is "+
+        ({left:"better than",right:"worse than",equal:"exactly as good as",none:"not rankable against"}[a])+
+        " a future of 100 entirely different people whose lives all go far better."; },
     AvB:function(a){ return "A is "+({left:"better than",right:"worse than",equal:"exactly as good as",none:"not rankable against"}[a])+" B."; },
     AvZ:function(a){ return "A is "+({left:"better than",right:"worse than",equal:"exactly as good as",none:"not rankable against"}[a])+" Z."; },
     misery:function(a){ return "Adding Nadia with a life of suffering makes the outcome "+({left:"worse",right:"better",equal:"neither better nor worse",none:"incomparable"}[a])+"."; },
     neutral_mod:function(a){ return "Adding Nadia with a modest good life makes the outcome "+({left:"worse",right:"better",equal:"neither better nor worse",none:"incomparable"}[a])+"."; },
     neutral_wond:function(a){ return "Adding Nadia with a wonderful life makes the outcome "+({left:"worse",right:"better",equal:"neither better nor worse",none:"incomparable"}[a])+"."; },
     greedy:function(a){ return "K is "+({left:"better than",right:"worse than",equal:"exactly as good as",none:"not rankable against"}[a])+
-        " K± — Owen down from "+K_BASE[0].w+" to "+K_BOTH[1].w+", and Nadia added at "+K_MOD[1].w+"."; },
+        " K± — Owen down from "+K_BASE[0].w+" to "+K_BOTH[1].w+", and Nadia added at "+K_WOND[1].w+"."; },
     benign:function(a){ return "A+ is "+({left:"worse than",right:"better than",equal:"exactly as good as",none:"not rankable against"}[a])+" A \u2014 everyone gains, and good new lives are added."; },
     nae:function(a){ return "B is "+({left:"worse than",right:"better than",equal:"exactly as good as",none:"not rankable against"}[a])+" A+ \u2014 same headcount, more total, more average, fully equal."; },
     generalize:function(a){ return {
@@ -1003,6 +1146,10 @@ var LABELS={
         yes:"\u201CBetter than\u201D is transitive.",
         no:"\u201CBetter than\u201D is not always transitive.",
         abstain:"No view on whether \u201Cbetter than\u201D is transitive."}[a]; },
+    trans_none:function(a){ return {
+        yes:"\u201CNot worse than\u201D is transitive.",
+        no:"\u201CNot worse than\u201D is not always transitive.",
+        abstain:"No view on whether \u201Cnot worse than\u201D is transitive."}[a]; },
     trans_eq:function(a){ return {
         yes:"\u201CExactly as good as\u201D is transitive.",
         no:"\u201CExactly as good as\u201D is not always transitive.",
@@ -1013,46 +1160,40 @@ function claimText(id){
     return (typeof v==="function") ? v(ANS[id]) : v;
 }
 
-/* K± meets the closure whenever the addition was ranked at all: the answer
-   supplies K = K+ or K > K+ (or the same at the wonderful level), Pareto
-   supplies K+ > K±, and between them K is better than K±. Ranking K± level
-   with K or above it then contradicts a verdict the person's own answers
-   deliver.
+/* K± meets the closure whenever the wonderful addition was ranked at all: the
+   answer supplies K = K++ or K > K++, Pareto supplies K++ > K±, and between
+   them K is better than K±. Ranking K± level with K or above it then
+   contradicts a verdict the person's own answers deliver.
 
-   Four sets, because the addition can be ranked at either welfare level and
-   because the contradiction is reached either by chaining equalities or in one
-   step of better-than. The sets do not line up with the answers, though: the
-   one-step set is reached from three different pairs of verdicts, so the prose
-   has to be read off the answers rather than off the set. All four are the
-   same complaint, so they share a group and are shown once. */
-function greedyPriced(via, over, level){
-    return function(chained){
-        return {
-            needs: chained ? ["greedy",via,"pareto","trans_eq","menu_eq"]
-                           : ["greedy",via,"pareto","trans_gt"],
-            title:"Your own answers already rank K above K±.",
-            because:function(a){
-                var said = a[via]==="equal"
-                    ? "You said adding Nadia at "+level+" is exactly as good as leaving her out, so K and "+over+" stand level."
-                    : "You said adding Nadia at "+level+" makes the outcome worse, so K stands above "+over+".";
-                var put = a.greedy==="equal" ? "exactly level with K" : "above K";
-                var moral = a[via]==="equal"
-                    ? "Nadia's arrival is being made to carry weight against Owen's loss that you denied it when she was the only thing that changed. That is the greediness of neutrality met from its other side: taken in the strong form the intuition does not swallow the harm, but only by pricing a life it called worthless."
-                    : "Her arrival is a cost by your own account, and Owen's loss is a second one. Two costs and no gain cannot leave the world level with K, let alone better than it.";
-                return said+" Pareto then puts "+over+" above K±: the same 501 people, Owen better off by "+
-                    (K_BASE[0].w-K_BOTH[1].w)+" in one of them and nobody worse. Between them those two give K better than K±, and you put K± "+
-                    put+" instead. "+moral;
-            },
-            group:"greedyPriced"
-        };
+   Two sets, because the contradiction is reached either by chaining equalities
+   or in one step of better-than. The sets do not line up with the answers,
+   though: the one-step set is reached from two different pairs of verdicts, so
+   the prose has to be read off the answers rather than off the set. Both are
+   the same complaint, so they share a group and are shown once. */
+function greedyPriced(chained){
+    return {
+        needs: chained ? ["greedy","neutral_wond","pareto","trans_eq","menu_eq"]
+                       : ["greedy","neutral_wond","pareto","trans_gt"],
+        title:"Your own answers already rank K above K±.",
+        because:function(a){
+            var said = a.neutral_wond==="equal"
+                ? "You said adding Nadia at "+K_WOND[1].w+" is exactly as good as leaving her out, so K and K++ stand level."
+                : "You said adding Nadia at "+K_WOND[1].w+" makes the outcome worse, so K stands above K++.";
+            var put = a.greedy==="equal" ? "exactly level with K" : "above K";
+            var moral = a.neutral_wond==="equal"
+                ? "Nadia's arrival is being made to carry weight against Owen's loss that you denied it when she was the only thing that changed. That is the greediness of neutrality met from its other side: taken in the strong form the intuition does not swallow the harm, but only by pricing a life it called worthless."
+                : "Her arrival is a cost by your own account, and Owen's loss is a second one. Two costs and no gain cannot leave the world level with K, let alone better than it.";
+            return said+" Pareto then puts K++ above K±: the same 501 people, Owen better off by "+
+                (K_BASE[0].w-K_BOTH[1].w)+" in one of them and nobody worse. Between them those two give K better than K±, and you put K± "+
+                put+" instead. "+moral;
+        },
+        group:"greedyPriced"
     };
 }
 
 var STORIES=[
-    greedyPriced("neutral_mod","K+",K_MOD[1].w)(false),
-    greedyPriced("neutral_mod","K+",K_MOD[1].w)(true),
-    greedyPriced("neutral_wond","K++",K_WOND[1].w)(false),
-    greedyPriced("neutral_wond","K++",K_WOND[1].w)(true),
+    greedyPriced(false),
+    greedyPriced(true),
     {
         needs:["benign","nae","trans_gt","AvB"],
         title:"The ladder reaches B, but you say B is worse.",
@@ -1068,6 +1209,7 @@ var STORIES=[
         needs:["misery","neutral_mod","pareto","trans_eq","menu_eq"],
         title:"Nadia cannot be worth nothing whichever way her life goes.",
         because:"You said K is exactly as good as the world where Nadia exists in agony, and exactly as good as the world where she exists with a decent life. Transitivity of equal-goodness makes those two worlds exactly as good as each other. But they contain the same 501 people, and Nadia is enormously better off in one of them. This is Broome's neutral-range argument run downwards: if bringing someone into existence is never better or worse, it cannot matter how their life then goes \u2014 and it plainly does.",
+        world:"If two carriers of the Tay-Sachs gene have a child, there's a one-in-four chance that the child develops normally for six months, then loses sight, hearing and movement, and dies by age four. Your answers say that conceiving that child makes the world no worse, and that conceiving a healthy one makes it no better.",
         // Same argument as the wonderful-life version below, just run at the
         // lower welfare level; if both trigger they should count once, not twice.
         group:"nadiaNeutralRange"
@@ -1076,12 +1218,14 @@ var STORIES=[
         needs:["misery","neutral_wond","pareto","trans_eq","menu_eq"],
         title:"Nadia cannot be worth nothing whichever way her life goes.",
         because:"You said K is exactly as good as the world where Nadia exists in agony, and exactly as good as the world where she exists with a wonderful life. Transitivity of equal-goodness makes those two worlds exactly as good as each other, yet they contain the same 501 people and Nadia is enormously better off in one. Whatever is attractive about \u201Cmerely possible people do not count\u201D, it cannot survive being applied at both ends of the scale at once.",
+        world:"If two carriers of the Tay-Sachs gene have a child, there's a one-in-four chance that the child develops normally for six months, then loses sight, hearing and movement, and dies by age four. Your answers say that conceiving that child makes the world no worse, and that conceiving a healthy one makes it no better.",
         group:"nadiaNeutralRange"
     },
     {
         needs:["neutral_mod","neutral_wond","trans_eq","menu_eq","pareto"],
         title:"Nadia's life cannot be worth nothing twice over.",
-        because:"You said K is exactly as good as the world with Nadia in it at welfare 7, and exactly as good as the world with Nadia in it at welfare 70. Transitivity of equal-goodness makes those two worlds exactly as good as each other. But they contain the same people, and Nadia is far better off in one. This is Broome's argument in <em>Weighing Lives</em> ch. 10 that there can be no neutral <em>range</em> \u2014 at most a neutral point."
+        because:"You said K is exactly as good as the world with Nadia in it at welfare 7, and exactly as good as the world with Nadia in it at welfare 70. Transitivity of equal-goodness makes those two worlds exactly as good as each other. But they contain the same people, and Nadia is far better off in one. This is Broome's argument in <em>Weighing Lives</em> ch. 10 that there can be no neutral <em>range</em> \u2014 at most a neutral point.",
+        world:"Boonin's \"Wilma and Pebbles\" problem: Wilma is told that if she conceives a child today, her child (to be named Pebbles) will be born blind. If she takes a pill daily for the next two months, she will conceive a different, healthy child (named \"Rocks\"). Most people say she should wait. However, waiting is not better <em>for</em> anyone: Pebbles (the blind child) would not be born otherwise, and so is not made worse off if Wilma has a child now.<br /><br /> Your answers say that creating a positive life is morally neutral in either case, so there cannot be anything wrong with Wilma choosing to have a child now instead of taking the pill first."
     }
 ];
 function storyFor(set){
@@ -1094,9 +1238,26 @@ function storyFor(set){
     return null;
 }
 
+// Conflicts and bullets are settled by the diagrams alone; a world note aims
+// the same point at a case outside them. Deliberately confined to the results
+// and kept out of compile() and the closure: real cases carry confounders the
+// diagrams do not — someone can resist the verdict on embryo selection for
+// reasons having nothing to do with population ethics — so an answer to one
+// could not be read as an edge in a betterness ordering without inventing
+// conflicts that are not there. These say what a position implies; they are
+// not further questions, and nothing here is scored.
+function worldNote(s){
+    return '<div class="world"><div class="tag"><div class="world-heading">Concrete Example</div></div><p>'+s+'</p></div>';
+}
+
 function bullets(){
     var out=[];
     if(ANS.trans_gt==="no") out.push({t:"You rejected transitivity of better-than.",b:"That is a live position \u2014 Temkin and Rachels both take it \u2014 and it defuses most of the paradoxes here at a stroke. The price is that \u201Cbetter than\u201D can now run in circles, which makes it hard to say what you should be aiming at: for any option there may be a better one that is in turn worse than where you started."});
+    // Every other principle draws a bullet when rejected, and this one is not
+    // the exception: it is only ever asked of someone the ladder has reached,
+    // so declining it is always load-bearing.
+    if(ANS.trans_none==="no") out.push({t:"You rejected transitivity of not-worse-than.",b:"This is Parfit\u2019s own resolution to the mere addition paradox: every rung leaves you not worse off, but \u201Cnot worse than\u201D does not chain, so the ladder never delivers Z. The move is open to you only because you deemed many pairs of outcomes incomparable.<br/><br/>What it costs: the final outcome Z is worse than where we started, even though no step along the way was the mistake."});
+
     if(ANS.menu_eq==="no"){
         // Naming the specific expansion failure is more use than the general
         // principle, so dig the actual pair of equalities out of the answers.
@@ -1109,7 +1270,7 @@ function bullets(){
               " exactly as good as K, and Pareto ranks them against each other, which together would be a contradiction. Denying menu independence is what lets all three stand, at the cost of saying that "+
               eqs[0].w+" and K are equally good only so long as "+eqs[1].w+" is not also on the table."
             : "";
-        out.push({t:"You denied that a verdict survives a wider menu.",b:"Your pairwise judgements no longer have to cohere into a single ordering: each one is indexed to the pair it was made in, and putting a third option on the table can revise it. This blocks the chaining that most of the conflicts here run on."+worked+" The cost is a known one: it is a violation of Sen\u2019s property &beta;, expansion consistency \u2014 the companion of the property &alpha; that the three-way choice tests. An option tied for best in a pair drops below its rival the moment a third arrives. You are also committed to there being no such thing as how good an outcome is <em>full stop</em>, only how good it is against a particular field."});
+        out.push({t:"You denied that a verdict survives a wider menu.",b:"Your pairwise judgements no longer cohere into a single ordering: each judgement depends on the pair it was made in, and putting a third option on the table can reverse it. This is a violation of Sen\u2019s property &beta;, which states that if two options are tied for best, then expanding the set of options cannot break the tie.<br/><br/>You are committed to there being no such thing as how good an outcome is <em>full stop</em>, only how good it is against a particular set of choices."});
     }
 
     if(ANS.trans_eq==="no") out.push({t:"You rejected transitivity of equal-goodness.",b:"This is the standard escape from the neutral-range argument, and it usually comes packaged as the claim that some outcomes are only <em>roughly</em> comparable rather than exactly equal. Be warned that it is not a way out of Broome generally: he devotes a later chapter to arguing that rough comparability cannot be a stable resting place either."});
@@ -1120,7 +1281,8 @@ function bullets(){
     // without these, a verdict like "her agony is a gain" could pass in silence.
     if(ANS.misery==="right") out.push({t:"You counted a life of suffering as a gain.",b:"When Nadia\u2019s life holds far more suffering than good \u2014 a life it would have been better for her never to have had \u2014 you judged the world better for containing it."});
 
-    if(ANS.neutral_mod==="left" || ANS.neutral_wond==="left") out.push({t:"You said a life worth living makes the world worse by being lived.",b:"This goes well past the Procreation Asymmetry, which claims only that creating a happy person is not <em>good</em>. You have said it is positively <em>bad</em>."});
+    if(ANS.neutral_mod==="left" || ANS.neutral_wond==="left") out.push({t:"You said a life worth living makes the world worse by being lived.",b:"This goes well past the Procreation Asymmetry, which claims only that creating a happy person is not <em>good</em>. You have said it is positively <em>bad</em>.",
+        world:"Imagine a couple who want a child, and would raise it well: you are committed to saying the child's birth is nonetheless bad for the world."});
 
     // Adding a better life should not be ranked below adding a worse one. Pareto
     // turns this into a conflict; without Pareto it is merely very hard to hold.
@@ -1138,29 +1300,44 @@ function bullets(){
     // is perfectly consistent, and that is the trouble with it: a loss to
     // somebody who exists either way has gone unsayable.
     var HARM=K_BASE[0].w-K_BOTH[1].w;
-    if(ANS.greedy==="none" && (ANS.neutral_mod==="none"||ANS.neutral_mod==="equal")){
+    if(ANS.greedy==="none" && (ANS.neutral_wond==="none"||ANS.neutral_wond==="equal")){
         out.push({t:"A neutral addition made a real harm unrankable.",
-            b:"Owen is one of K’s own 500 and is there in K± too, "+HARM+" points worse off. That is a loss to somebody who exists either way — not to a merely possible person, and not the kind of loss any of the views here dispute. Alongside it stands one addition you placed outside the ranking. Your ordering now declines to say the world is worse. This is Broome’s greediness objection: the intuition of neutrality does not confine itself to the person being added, and the size of the harm is not the point — nothing in the intuition caps it. Whatever fits inside the neutral range is absorbed by it, and the range has to be wide to be worth having."});
+            b:"Owen is one of K’s own 500 and is there in K± too, "+HARM+" points worse off. That is a loss to somebody who exists either way — not to a merely possible person, and not the kind of loss any of the views here dispute. Alongside it stands one addition you placed outside the ranking, and your ordering now declines to say the world is worse. This is Broome’s greediness objection, and it is the consistent answer rather than the evasive one: the gap you opened for Nadia is wide enough to cover Owen. What it costs is that the width is not yours to choose. The more generous you are about which lives are neutral to add, the larger the harm that disappears into the gap alongside one of them — and a neutral range narrow enough to swallow nothing is a range narrow enough to have a critical level, which is what calling it a range denied."});
     }
-    if(ANS.greedy==="right") out.push({t:"A harm and an addition together came out ahead.",
-        b:"K± holds less welfare than K in total and on average, and its worst-off person is far below K’s. You ranked it higher anyway, so Nadia’s arrival is worth more to you than "+HARM+" points of the life of somebody who exists either way. Whatever else that is, it is not neutrality: it is a strong claim about the value of creating people, and it should make the earlier additions better rather than merely not worse."});
+    // Not gated on much: K± holds more welfare in total than K, so a totalist
+    // ranking it above K is doing arithmetic rather than biting anything. It
+    // is the person who says her arrival is not a gain, and then spends it on
+    // Owen's loss, who owes an account.
+    if(ANS.greedy==="right" && ANS.neutral_wond==="none"){
+        out.push({t:"An addition you could not rank outweighed a harm you could.",
+            b:"You placed adding Nadia at "+K_WOND[1].w+" beyond ranking against leaving her out, and then ranked K± above K — which takes her arrival to be worth more than "+HARM+" points of the life of somebody who exists either way. An addition cannot be too indeterminate to compare against nothing and determinate enough to outweigh a named loss. If her arrival really is worth that much, the earlier question had an answer: it was better."});
+    }
     if(ANS.greedy==="equal") out.push({t:"You priced Nadia’s life at exactly Owen’s loss.",
-        b:"Two things separate K from K±: Owen loses "+HARM+" points, and Nadia arrives at "+K_MOD[1].w+
-          ". Calling the two worlds exactly as good sets the value of her arrival at precisely the loss it has to cancel — an oddly exact figure for a life."+
+        b:"Two things separate K from K±: Owen loses "+HARM+" points, and Nadia arrives at "+K_WOND[1].w+
+          ". Calling the two worlds exactly as good sets the value of her arrival at precisely the loss it has to cancel — an oddly exact figure for a life, and one that would have to move if Owen’s loss moved."+
           ((ANS.neutral_mod==="none"||ANS.neutral_wond==="none")
             ? " You also said an addition of hers cannot be ranked against leaving her out at all. The two verdicts pull opposite ways: one says her existence has no determinate value, the other fixes that value exactly."
             : "")});
 
-    if(ANS.benign==="left") out.push({t:"Everyone gains, good lives are added, and you called it worse.",b:"Every one of A\u2019s hundred is better off in A+, and a further hundred exist there with lives clearly worth living. Ranking that below A means the new lives are a cost heavy enough to outweigh a gain to every person who was already there. It does block Parfit\u2019s argument at the first rung, which is more than most escapes manage. The price is what it commits you to elsewhere: you would prefer the original hundred be worse off, so long as fewer people existed alongside them."});
+    if(ANS.benign==="left") out.push({t:"Everyone gains, good lives are added, and you called it worse.",b:"Every one of A\u2019s hundred is better off in A+, and a further hundred exist there with lives clearly worth living. Ranking that below A means the new lives are a cost heavy enough to outweigh a gain to every person who was already there.<br/><br/>Your answer does not force you to accept the mere addition paradox. However, the price is what it commits you to elsewhere: you would prefer the original hundred be worse off, so long as fewer people existed alongside them.",
+                                      world:"Distributing malaria nets leaves recipients healthier and better off, and also means more children survive to adulthood, but with worse lives than the global average. Your answer holds that distributing malaria nets may therefore be a <em>bad</em> thing."});
 
     if(ANS.nae!=="right") out.push({t:"You denied that levelling up improves things.",b:"B holds the same "+CHAIN[0].to.n+" people as A+, with more welfare in total, more on average, and more equality. There is a consistent motive available \u2014 the better-off group does lose, falling from "+CHAIN[0].plus[0].w+" to "+CHAIN[0].to.w+", while the worse-off rise from "+CHAIN[0].plus[1].w+" \u2014 so a view that weighs losses to the well-off heavily can resist it. But it sets you against totalism, averagism and egalitarianism in one move."});
 
-    var noneCount=0, PAIRQS=["AvB","AvZ","misery","neutral_mod","neutral_wond","benign","nae","greedy"];
+    // The coherent half of the conflict zRankCandidate catches. A gap at the
+    // top of the ladder and a verdict at the bottom is exactly what a neutral
+    // range with a floor above Z's welfare delivers - but only if the rung
+    // verdicts flip on the way down, which is what makes it worth naming.
+    if(ANS.AvZ==="left" && ANS.benign==="none" && ANS.generalize==="no"){
+        out.push({t:"Your gaps have a floor, and it is doing the work.",b:"You declined to rank the benign addition, said the verdict flips somewhere further down, and still ranked A above Z. Those fit together, and the natural thing that makes them fit is a neutral range with a <em>floor</em> \u2014 a welfare level below which an added life is no longer merely unrankable but determinately not worth adding. Above the floor the additions are a genuine open question, which is your gap at the top of the ladder; Z\u2019s "+Z_POP[0].n.toLocaleString()+" people live at "+Z_LEVEL+", beneath it, which is why Z is rankable at all. That commits you to two things worth seeing plainly. The rung where your verdict flips is not a matter of taste \u2014 it <em>is</em> the floor, and you are owed a reason why it sits there rather than a rung higher or lower. And the verdict against Z is not carried by the "+(Z_POP[0].n-A_POP[0].n).toLocaleString()+" lives you added: it is carried by A\u2019s original hundred, who are still in Z and have fallen from "+A_POP[0].w+" to "+Z_LEVEL+". Most people who answer this way believe the added lives are what makes Z worse. On your own view they cannot be."});
+    }
+
+    var noneCount=0, PAIRQS=["AvB","AvZ","misery","neutral_mod","neutral_wond","benign","nae","greedy","same_number"];
     PAIRQS.forEach(function(k){
         if(ANS[k]==="none") noneCount++;
     });
-    if(noneCount>=3) out.push({t:noneCount===PAIRQS.length?"You judged none of the eight pairs rankable.":"You judged "+noneCount+" of the "+PAIRQS.length+" pairs unrankable.",b:"You said that these pairs were not <em>equal</em>, but that no betterness relation holds either way. An ordering with widespread incomparability cannot do much practical work \u2014 it will stay silent on most of the choices you would want it to settle."});
-
+    if(noneCount>=3) out.push({t:noneCount===PAIRQS.length?"You judged none of the nine pairs rankable.":"You judged "+noneCount+" of the "+PAIRQS.length+" pairs unrankable.",b:"You said that these pairs were not <em>equal</em>, but that no betterness relation holds either way. An ordering with widespread incomparability cannot do much practical work \u2014 it will stay silent on most of the choices you would want it to settle.",
+                               world:"Parfit's Depletion problem. A country can burn through its natural resource reserves, raising living standards for a century but ruining the climate for future generations; or it can conserve resources and protect the environment. The choice changes who meets whom and when children are conceived, so the two futures are populated by entirely different people. No particular person is harmed by choosing to deplete resources, but it still seems that a wrong has been committed. Your answers force the conclusion that depleting the environment's resources is not wrong."});
     // The second half of the asymmetry is a negative claim - creating a happy
     // person is not *better* - and "cannot be ranked" delivers that as squarely
     // as "exactly as good" does. The two routes differ in what they cost, not in
@@ -1174,7 +1351,42 @@ function bullets(){
             : viaEq
             ? " You took it in the strong form: the addition is <em>exactly as good</em> as leaving her out. That is the form Broome\u2019s argument targets, and if you also kept Pareto and transitivity of equal-goodness it will have surfaced as a conflict above."
             : " You took it in the weak form: the addition is simply <em>not rankable</em> against leaving her out. Nothing is claimed to be exactly as good, so the neutral-range argument has nothing to chain through. That is the usual reason people retreat here \u2014 but it is not safety, only a different battlefield: Broome's collapsing principle is aimed squarely at it, which is what the boundary question was testing. What the retreat costs even if it works is silence: on a choice that plainly matters, your ordering declines to speak.";
-        out.push({t:"You hold the Procreation Asymmetry.",b:"Creating a miserable life is bad; creating a happy one is not good. This is what most people say, and it is not formally inconsistent on its own \u2014 which is why it is not scored as a conflict here. It is, however, notoriously hard to ground: the obvious explanations of the first half tend to imply the opposite of the second."+route});
+        out.push({t:"You hold the Procreation Asymmetry.",b:"Creating a miserable life is bad; creating a happy one is not good. This is what most people say, and it is not formally inconsistent on its own \u2014 which is why it is not scored as a conflict here. It is, however, notoriously hard to ground: the obvious explanations of the first half tend to imply the opposite of the second."+route,
+                  world:"The Procreation Asymmetry holds that human extinction need not be a bad thing: if future generations never come to exist, then no one has been harmed, so long as the currently-alive generations are happy."});
+    }
+
+    // The same-number, different-people probe. It emits no edge - the two
+    // futures share no people with anything else in the quiz, so a betterness
+    // link from it could never close into a cycle - and it is not meant to.
+    // Its job is to make an ordering state, on the one comparison where
+    // identity is the only variable, whether identity silences it. Every
+    // answer here is a position with a price, so each draws a bullet.
+    if(ANS.same_number==="none" || ANS.same_number==="equal"){
+        var sroute = ANS.same_number==="none"
+            ? "you declined to rank them at all"
+            : "you called them exactly as good as each other";
+        var scost = ANS.same_number==="none"
+            ? "Declining is the more cautious-looking of the two, but it is not caution: your ordering has gone quiet on the comparison rather than judged it a tie."
+            : "You did not merely decline — you returned a verdict, and the verdict is that a near-doubling of every life in the picture is worth precisely nothing.";
+        // The ground this covers is the Depletion case, which the unrankable-pairs
+        // bullet already carries as a world note; saying it twice for the people
+        // who draw both is worse than saying it once well, so this one keeps to
+        // what is peculiar to holding the number fixed.
+        out.push({t:"Once the people changed, how well the lives go stopped counting.",b:"Same headcount, every life in the second future far better than every life in the first, and not one person in both — and "+sroute+". This is the person-affecting thought at full strength: nothing is better or worse unless it is better or worse <em>for</em> somebody, and here there is nobody it could be better for. "+scost+" Note what is <em>not</em> doing the work, because it is what makes this the cleanest test of the thought in the quiz: nobody is added, nobody is missing, the numbers match, and no life here is anywhere near the level where it stops being worth living. Identity is the only variable left, and on your answer it is enough to silence the ordering by itself."});
+    }
+    // Ranking the same-number case while ducking the different-number ones is
+    // Parfit's shape rather than a slip, so it is named as such - and pressed
+    // where it is weakest, which is that the line falls between one headcount
+    // and the next.
+    var duckedDiffN=["AvB","AvZ","benign","misery","neutral_mod","neutral_wond"]
+        .filter(function(k){ return ANS[k]==="none"; });
+    if(ANS.same_number==="right" && duckedDiffN.length){
+        out.push({t:"Comparable when the numbers match, unrankable when they do not.",b:"You ranked the two futures of 100 determinately, and left "+
+            (duckedDiffN.length===1?"one comparison":duckedDiffN.length+" comparisons")+
+            " unrankable — every one of them a case where the two futures hold <em>different numbers</em> of people. That is a real position and a well-defended one: Parfit's Same Number Quality Claim settles same-number choices by how well the lives go, whoever lives them, and leaves the different-number cases imprecise. His own policy version of the same-number half is the two medical programmes in <em>Reasons and Persons</em>. What the view owes is an account of the line. On your answers, 100 people at 90 is determinately better than 100 different people at 50; put one more person into the better future and the comparison is supposed to fall silent, though nothing about the original hundred lives has changed. That is Broome's collapsing-principle objection pointed at headcount rather than wellbeing, and it is the hardest question this view faces."});
+    }
+    if(ANS.same_number==="left"){
+        out.push({t:"You ranked the worse-off future above the better-off one.",b:"The two futures hold the same number of people and share none of them, every life in both is worth living, and the only thing separating them is that the second group's lives go far better. You put the first group above them. Totalism, averagism, maximin and egalitarianism all deliver the opposite verdict here, and the person-affecting views deliver a tie or a refusal rather than a reversal — so this is not the cautious answer to the question, it is a stronger claim than any of them make."});
     }
     return out;
 }
@@ -1187,6 +1399,79 @@ function profile(){
     if(ANS.AvZ==="left" && ANS.benign==="right") return "Your answers pull toward a <strong>critical-level or lexical view</strong> \u2014 sufficiently good lives count, marginally good lives do not.";
     return "Your answers do not settle cleanly onto one of the standard views of population ethics.";
 }
+
+/* One card per check that fired, in EXTRA_CHECKS order. Each takes the check's
+   own result and the number the card carries on the page, so no card knows how
+   many came before it. */
+var CARD_HTML={
+    alpha:function(al, n){
+        var h='';
+        h+='<div class="hit"><div class="tag">Conflict '+n+' &middot; contraction inconsistency</div>';
+        h+='<h3 style="margin-top:10px">Adding a third option changed your mind about the first two.</h3>';
+        // The pair that was ranked is {pairWinner, picked} either way round:
+        // the A/B question when the pick came from there, A against Z when the
+        // pick was Z. The option left over is the one whose arrival is doing
+        // the damage, and it differs between the two.
+        h+='<ol class="claims"><li>Offered '+al.pairWinner+' and '+al.picked+
+           ' alone, you judged '+al.pairWinner+' the better of the two.</li>';
+        h+='<li>Offered A, B and Z together, you picked '+al.picked+' as best.</li></ol>';
+        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. '+al.third+'\u2019s presence cannot make '+al.picked+' beat '+al.pairWinner+' if it did not already.</p></div>';
+        return h;
+    },
+    collapse:function(cp, n){
+        var h='', vg=cp.vague, an=cp.anchor;
+        h+='<div class="hit"><div class="tag">Conflict '+n+' &middot; collapsing principle</div>';
+        h+='<h3 style="margin-top:10px">Your unrankable case has a determinate one right next to it.</h3>';
+        h+='<ol class="claims"><li>'+claimText(vg.id)+'</li><li>'+claimText(an.id)+'</li><li>'+claimText("collapse")+'</li></ol>';
+        h+='<p class="because">You placed '+vg.world+' beyond ranking against K, while '+an.world+
+           ' \u2014 the same world with Nadia\u2019s life going '+(cp.dir==="up"?"better":"worse")+
+           ' \u2014 you ranked determinately. Between welfare '+
+           Math.min(vg.w,an.w)+' and '+Math.max(vg.w,an.w)+' for her, then, lies a point where one unit of wellbeing '+
+           'converts \u201Cno fact of the matter\u201D into a settled verdict. You said that cannot happen. '+
+           'This is Broome\u2019s collapsing principle (<em>Weighing Lives</em> ch. 12), his argument that incomparability '+
+           'and vagueness cannot both live in one betterness ordering. Note it is a constraint on the <em>determinacy</em> '+
+           'of your ordering rather than on its content, so it is listed apart from the conflicts above \u2014 and it is '+
+           'contested: Carlson and others have argued the principle is too strong.</p></div>';
+        return h;
+    },
+    zrank:function(zr, n){
+        var h='';
+        h+='<div class="hit"><div class="tag">Conflict '+n+' &middot; '+
+           (zr.via==="ladder"?"chaining through the gap":"ranking below the gap")+'</div>';
+        h+='<h3 style="margin-top:10px">'+(zr.via==="ladder"
+            ? "Declining to rank the rungs does not stop the ladder."
+            : "You ranked Z, having put the boundary of your indeterminacy underneath it.")+'</h3>';
+        h+='<ol class="claims">';
+        zr.ids.forEach(function(id){ h+='<li>'+claimText(id)+'</li>'; });
+        h+='</ol>';
+        h+= zr.via==="ladder"
+          ? '<p class="because">This is Parfit\u2019s mere addition argument, but run on <em>not worse than</em> instead of <em>better than</em>. Being unrankable, A+ is not worse than A. B is better than A+, so B is not worse than A+ either. You said both verdicts repeat at every rung, and you said not-worse-than chains, so it chains all '+(2*CHAIN.length)+' steps down the ladder: Z is not worse than A. But you also judged A better than Z, which is to say Z <em>is</em> worse than A. Declining to rank the rungs did not stop the contradiction, because an unrankable pair is still a pair where neither is worse.</p></div>'
+          : '<p class="because">Take a neutral range as Broome does: a range of levels, shared by every addition, with a comparison coming out determinate only when it holds at every level in the range. Judging <strong>A better than Z</strong> then says something definite \u2014 that every level you would entertain sits <em>above</em> '+Z_LEVEL+
+            ', the level Z\u2019s '+Z_POP[0].n.toLocaleString()+' people live at. Below that, Z\u2019s numbers win: at any level under '+Z_LEVEL+
+            ' those lives are a gain, and '+Z_POP[0].n.toLocaleString()+' of them swamp what A\u2019s hundred lose. But calling the addition of a life at welfare '+zr.level+
+            ' unrankable puts a level down at '+zr.level+', which is not above '+Z_LEVEL+
+            '. You cannot have the boundary in both places. Note that this one, unlike the others, assumes your gaps come from a neutral range at all \u2014 so if you reject that picture, this is the conflict to argue with.</p></div>';
+        return h;
+    },
+    greedy:function(gr, n){
+        var h='', gh=gr.from-gr.to;
+        h+='<div class="hit"><div class="tag">Conflict '+n+
+           ' &middot; the greediness of neutrality</div>';
+        h+='<h3 style="margin-top:10px">Your gap is wider than the harm you put beside it.</h3>';
+        h+='<ol class="claims"><li>'+claimText("neutral_mod")+'</li><li>'+claimText("neutral_wond")+
+           '</li><li>'+claimText("pareto")+'</li><li>'+claimText("greedy")+'</li></ol>';
+        h+='<p class="because">Pareto puts K++ above K± — the same 501 people, Owen better off by '+gh+
+           ' in one of them and nobody worse — so Owen’s loss counts as a loss on your own accounting. '+
+           'What you do not have is any comparison between K and a world Nadia is in. Read your gaps the way Broome does, as a range of critical levels with a comparison coming out determinate only when it holds at every level in the range, and your two neutrality answers fix how wide that range is: calling the life at '+
+           gr.level+' unrankable puts a level at or above '+gr.level+', calling the life at '+gr.floor+
+           ' unrankable puts one at or below '+gr.floor+'. Adding Nadia at '+gr.level+
+           ' is therefore worth anywhere from nothing to '+(gr.level-gr.floor)+' by your own account — and Owen’s '+gh+
+           ' sits inside that. Whether K± falls below K depends on where in your own range the answer lands, so there is no fact of the matter about it, and you gave one anyway. '+
+           'This is what Broome calls the <em>greediness</em> of the intuition of neutrality: it does not stay confined to the person being added. The wider the range of lives you are willing to call neutral, the larger the harm that disappears into the gap beside one of them. '+
+           'Note that this one, like the misery route, assumes your gaps come from a neutral range at all — if you reject that picture, this is the conflict to argue with. What it is not is a way out through caution: the consistent answer is that K and K± cannot be ranked either, and that is a harm to somebody who exists either way going unsaid.</p></div>';
+        return h;
+    }
+};
 
 function showResults(){
     pruneInactive();
@@ -1227,7 +1512,10 @@ function showResults(){
         }
         return true;
     });
-    var nHits=R.sets.length + (R.alpha?1:0) + (R.collapse?1:0) + (R.greedy?1:0);
+    // Conflicts are numbered in one sequence: the closure's sets first, then
+    // one card per check that fired. cardNo carries the count across both, so
+    // adding a check cannot renumber anything by hand.
+    var nHits=R.sets.length + R.extras.length, cardNo=R.sets.length;
     var B=bullets();
     var h='';
     h+='<div class="hero" style="padding:6vh 0 0">';
@@ -1253,53 +1541,19 @@ function showResults(){
         // A story whose answers can differ behind one support set reads its
         // prose off the answers, so because may be a function of them.
         if(st){ h+='<p class="because">'+(typeof st.because==="function"?st.because(ANS):st.because)+'</p>'; }
-        else { h+='<p class="because">Closing your judgements under the transitivity principles you accepted produces a pair of outcomes ranked in both directions at once. Dropping any one of the answers above dissolves it; keeping all of them does not.</p>'; }
+        else { h+='<p class="because">If the principles of transitivity and menu-independence hold \u2014 and your answers said they do \u2014 then your ranking of outcomes contradicts itself.</p>'; }
         if(st&&st.chain){ h+='<div class="chainwrap">'+chainSVG(true)+'</div>'; }
+        if(st&&st.world){ h+=worldNote(st.world); }
         h+='</div>';
     });
 
-    if(R.alpha){
-        h+='<div class="hit"><div class="tag">Conflict '+(R.sets.length+1)+' &middot; contraction inconsistency</div>';
-        h+='<h3 style="margin-top:10px">Adding a third option changed your mind about the first two.</h3>';
-        h+='<ol class="claims"><li>Offered A and B alone, you judged '+R.alpha.pairWinner+' the better of the two.</li>';
-        h+='<li>Offered A, B and Z together, you picked '+R.alpha.picked+' as best.</li></ol>';
-        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. Z\u2019s presence cannot make '+R.alpha.picked+' beat '+R.alpha.pairWinner+' if it did not already. Note that this is a constraint on <em>choice</em> rather than on the betterness ordering \u2014 the choice-theoretic cousin of independence of irrelevant alternatives \u2014 so it is listed separately from the conflicts above.</p></div>';
-    }
-
-    if(R.collapse){
-        var vg=R.collapse.vague, an=R.collapse.anchor;
-        h+='<div class="hit"><div class="tag">Conflict '+(R.sets.length+(R.alpha?1:0)+1)+' &middot; collapsing principle</div>';
-        h+='<h3 style="margin-top:10px">Your unrankable case has a determinate one right next to it.</h3>';
-        h+='<ol class="claims"><li>'+claimText(vg.id)+'</li><li>'+claimText(an.id)+'</li><li>'+claimText("collapse")+'</li></ol>';
-        h+='<p class="because">You placed '+vg.world+' beyond ranking against K, while '+an.world+
-           ' \u2014 the same world with Nadia\u2019s life going '+(R.collapse.dir==="up"?"better":"worse")+
-           ' \u2014 you ranked determinately. Between welfare '+
-           Math.min(vg.w,an.w)+' and '+Math.max(vg.w,an.w)+' for her, then, lies a point where one unit of wellbeing '+
-           'converts \u201Cno fact of the matter\u201D into a settled verdict. You said that cannot happen. '+
-           'This is Broome\u2019s collapsing principle (<em>Weighing Lives</em> ch. 12), his argument that incomparability '+
-           'and vagueness cannot both live in one betterness ordering. Note it is a constraint on the <em>determinacy</em> '+
-           'of your ordering rather than on its content, so it is listed apart from the conflicts above \u2014 and it is '+
-           'contested: Carlson and others have argued the principle is too strong.</p></div>';
-    }
-
-    if(R.greedy){
-        h+='<div class="hit"><div class="tag">Conflict '+(R.sets.length+(R.alpha?1:0)+(R.collapse?1:0)+1)+
-           ' &middot; the greediness of neutrality</div>';
-        h+='<h3 style="margin-top:10px">The same addition, inert here and decisive there.</h3>';
-        h+='<ol class="claims"><li>'+claimText("neutral_mod")+'</li><li>'+claimText("pareto")+
-           '</li><li>'+claimText("greedy")+'</li></ol>';
-        h+='<p class="because">Pareto puts K+ above K± — the same 501 people, Owen better off by '+
-           (R.greedy.from-R.greedy.to)+' in one of them and nobody worse — so Owen’s loss counts as a loss on your own accounting. '+
-           'What you do not have is any comparison between K and a world Nadia is in: you placed K+ beyond ranking against K, and K± differs from K+ only by Owen’s '+
-           (R.greedy.from-R.greedy.to)+' points. A gap that swallowed Nadia’s whole existence is wide enough to swallow that as well. '+
-           'To rank K above K± anyway is to let her arrival make no difference at all to how the world compares with K — which is to treat it as exactly as good as her absence, the verdict you declined when her arrival was the only thing in question. '+
-           'This is what Broome calls the <em>greediness</em> of the intuition of neutrality: it will not stay confined to the person being added. Either it reaches across Owen’s harm and leaves you unable to say the world is worse, or it was never the weak, non-committal claim it looked like. '+
-           'Note that this bears on what your neutrality can mean rather than on the ordering it produces, so it is found separately from the conflicts the closure turns up — and the escape is the one Broome expects you to take: answer that K and K± cannot be ranked either, and accept what that costs.</p></div>';
-    }
+    R.extras.forEach(function(x){
+        h+=CARD_HTML[x.id](x.data, ++cardNo);
+    });
 
     if(B.length){
         h+='<hr class="rule thin" style="margin-top:44px"><div class="eyebrow">Bullets bitten</div>';
-        B.forEach(function(b){ h+='<div class="bullet"><div class="tag">Consistent, but costly</div><h3 style="margin-top:8px">'+b.t+'</h3><p class="qbody" style="font-size:17px">'+b.b+'</p></div>'; });
+        B.forEach(function(b){ h+='<div class="bullet"><div class="tag">Consistent, but costly</div><h3 style="margin-top:8px">'+b.t+'</h3><p class="qbody" style="font-size:17px">'+b.b+'</p>'+(b.world?worldNote(b.world):'')+'</div>'; });
     }
 
     h+='<hr class="rule" style="margin-top:44px"><div class="eyebrow">Where you landed</div>';

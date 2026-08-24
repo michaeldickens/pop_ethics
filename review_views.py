@@ -54,7 +54,13 @@ PROBE = """(a) => {
     collapse: r.collapse
       ? {vague: r.collapse.vague.id, anchor: r.collapse.anchor.id, dir: r.collapse.dir}
       : null,
-    greedy: r.greedy,
+    zrank: r.zrank ? {via: r.zrank.via, level: r.zrank.level} : null,
+    greedy: r.greedy ? {level: r.greedy.level, floor: r.greedy.floor,
+                        harm: r.greedy.from - r.greedy.to} : null,
+    // The checks that fired, in the order the results page shows them. Named
+    // fields above stay for the prose below; this is what the count runs on,
+    // so a new check needs no arithmetic here.
+    extras: r.extras.map(x => x.id),
     bullets: bullets().map(b => b.t)
   };
   ANS = keep;
@@ -92,9 +98,12 @@ def collect(path):
 
 def expect_body(r):
     return {"conflicts": [c["ids"] for c in r["conflicts"]],
-            "alpha": bool(r["alpha"]),
-            "collapse": bool(r["collapse"]),
-            "greedy": bool(r["greedy"]),
+            # Which checks fired, named by the engine. The one detail the
+            # names do not carry is which of zrank's two arguments landed, so
+            # that keeps a field of its own; nothing else needs one, and a new
+            # check needs no edit here at all.
+            "extras": r["extras"],
+            "zrank": r["zrank"]["via"] if r["zrank"] else None,
             "bullets": [strip_tags(b) for b in r["bullets"]],
             "asked": r["asked"]}
 
@@ -145,8 +154,7 @@ def as_markdown(results):
 
     doc += ["## Contents", ""]
     for view, r in results:
-        n = (len(r["conflicts"]) + bool(r["alpha"]) + bool(r["collapse"])
-             + bool(r["greedy"]))
+        n = len(r["conflicts"]) + len(r["extras"])
         summary = "clean" if n == 0 else ("%d conflict%s" % (n, "" if n == 1 else "s"))
         nb = len(r["bullets"])
         if nb:
@@ -161,14 +169,14 @@ def as_markdown(results):
                 "| Question | What this view says |", "| --- | --- |"]
         for qid, label, claim in r["claims"]:
             doc.append("| %s | %s |" % (label, strip_tags(claim)))
-        skipped = [q["id"] for q in [] ] or [
-            k for k in ("collapse", "menu_eq") if k not in r["asked"]]
+        skipped = [k for k in ("collapse", "greedy", "trans_none", "menu_eq")
+                   if k not in r["asked"]]
         if skipped:
             doc += ["", "Not asked: %s. These questions only appear when earlier "
                     "answers give them something to bite on." % ", ".join(skipped)]
 
         doc += ["", "### Verdict", ""]
-        if not any((r["conflicts"], r["alpha"], r["collapse"], r["greedy"])):
+        if not r["conflicts"] and not r["extras"]:
             doc.append("No conflicts.")
         for c in r["conflicts"]:
             doc.append("- **%s** " % (c["title"] or "(no story: generic card)")
@@ -182,11 +190,23 @@ def as_markdown(results):
                        "running %swards."
                        % (r["collapse"]["vague"], r["collapse"]["anchor"],
                           r["collapse"]["dir"]))
+        if r["zrank"]:
+            doc.append("- **%s** - %s"
+                       % ("Chaining through the gap"
+                          if r["zrank"]["via"] == "ladder"
+                          else "Ranking below the gap",
+                          "the ladder run on not-worse-than reaches Z, which was "
+                          "ranked below A"
+                          if r["zrank"]["via"] == "ladder"
+                          else "A ranked above Z while the unrankable agony "
+                               "addition places a critical level at %s, below "
+                               "Z's welfare" % r["zrank"]["level"]))
         if r["greedy"]:
-            doc.append("- **Greediness of neutrality** - the addition at %d is "
-                       "unrankable against leaving it out, and K is ranked above "
-                       "K+- all the same."
-                       % r["greedy"]["level"])
+            doc.append("- **Greediness of neutrality** - additions at %d and %d "
+                       "both unrankable, so the gap covers Owen's %d, and K is "
+                       "ranked above K+- all the same."
+                       % (r["greedy"]["floor"], r["greedy"]["level"],
+                          r["greedy"]["harm"]))
         if r["bullets"]:
             doc += ["", "Bullets bitten:", ""]
             doc += ["- %s" % strip_tags(b) for b in r["bullets"]]
