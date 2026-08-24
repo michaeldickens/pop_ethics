@@ -997,7 +997,10 @@ def suite_share(page, rep):
               "...and lands on the first unanswered question", fresh.inner_text("#counter"))
     rep.check(bool(fresh.query_selector(".notice")), "...saying why")
     rep.check("&q=r" not in fresh.url, "...and the view marker leaves the URL", fresh.url)
-    rep.check(fresh.evaluate("() => missingActive().length") == len(QIDS) - 3,
+    # Everything but pareto is a hole, and no conditional question is live on
+    # an answer sheet that empty, so neither is counted against the total.
+    rep.check(fresh.evaluate("() => missingActive().length")
+              == len(QIDS) - 1 - len(CONDITIONAL),
               "...counting only the questions that are live",
               str(fresh.evaluate("() => missingActive().length")))
 
