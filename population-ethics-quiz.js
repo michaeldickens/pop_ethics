@@ -392,6 +392,47 @@ function collapseCandidate(ans){
     return null;
 }
 
+/* ---------------------------------------------------------------
+   Ranking Z while declining to rank the steps that lead to it.
+
+   Read a neutral range the way Broome does - as a range of critical levels
+   [a,b], one level shared by every addition, a comparison coming out
+   determinate only if it holds on every level in the range. Then each pair
+   here is settled by where one welfare level falls relative to that range,
+   because the difference between two populations is linear in the level:
+
+       A vs Z   turns over at 3.81, just under Z's people at welfare 4
+       A vs A+  turns over at 1 + the welfare of the group that rung adds
+
+   So "A is better than Z" says every level you would entertain sits above 4.
+   Anything that plants a level at or below 4 contradicts it outright:
+
+     - Calling the addition of a life of agony unrankable plants one at -40.
+     - Calling the benign addition unrankable at *every* rung plants one below
+       the welfare of the last rung's addition, which is 1. The bottom rungs
+       are what does it: a gap there means entertaining a level beneath them.
+
+   Both are conflicts. What is not a conflict is a gap at the top of the
+   ladder with the verdict flipping partway down - that is the same view with
+   a range whose floor lies above Z, and the rung where it flips is the floor.
+   The bullet in bullets() covers that case; this only catches the two that
+   cannot be satisfied at all. Like alpha and the collapsing principle it has
+   to live outside the closure, which never sees an unrankable verdict.
+--------------------------------------------------------------- */
+var Z_LEVEL=Z_POP[0].w;
+var LAST_ADDED_LEVEL=CHAIN[CHAIN.length-1].plus[1].w;
+function zRankCandidate(ans){
+    // Only a determinate "A is better" makes the claim. Ranking Z above A is
+    // consistent with any range whose levels all sit below Z.
+    if(ans.AvZ!=="left") return null;
+    if(ans.misery==="none")
+        return {via:"misery", level:K_BAD[1].w, ids:["AvZ","misery"]};
+    if(ans.benign==="none" && ans.generalize==="yes")
+        return {via:"ladder", level:LAST_ADDED_LEVEL,
+                ids:["AvZ","benign","generalize"]};
+    return null;
+}
+
 // Menu independence only bites if chaining equalities derives something.
 // Rather than enumerate the cases, run the closure both ways and see whether
 // any relation appears only when the chaining is allowed.
@@ -437,21 +478,31 @@ function analyse(ans){
     // it is a constraint on choice, not on the betterness ordering.
     var alpha=null;
     var declined=function(v){ return !v||v==="none"||v==="abstain"; };
-    if(!declined(ans.menu) && !declined(ans.AvB)){
+    if(!declined(ans.menu)){
         var pick=ans.menu;
-        var pairWinner = ans.AvB==="left" ? "A" : ans.AvB==="right" ? "B" : "tie";
-        if((pick==="A"||pick==="B") && pairWinner!=="tie" && pick!==pairWinner){
-            alpha={picked:pick, pairWinner:pairWinner};
+        if(!declined(ans.AvB)){
+            var pairWinner = ans.AvB==="left" ? "A" : ans.AvB==="right" ? "B" : "tie";
+            if((pick==="A"||pick==="B") && pairWinner!=="tie" && pick!==pairWinner){
+                alpha={picked:pick, pairWinner:pairWinner, third:"Z"};
+            }
         }
-        if(pick==="Z" && ans.AvZ==="left") alpha={picked:"Z", pairWinner:"A", viaZ:true};
+        // Picking Z from the three while ranking A above Z in the pair is a
+        // violation on its own terms. It turns on AvZ, not AvB, so it must not
+        // be gated behind AvB: an incomparabilist who declines A against B
+        // would otherwise walk through it.
+        if(pick==="Z" && ans.AvZ==="left")
+            alpha={picked:"Z", pairWinner:"A", third:"B", viaZ:true};
     }
     // Broome's collapsing principle (Weighing Lives ch. 12), checked separately
     // for the same reason as alpha: "cannot be ranked" emits no edge, so the
     // closure machinery can never see it. Without this, an incomparabilist is
     // unfalsifiable here no matter what else they say.
     var collapse = ans.collapse==="yes" ? collapseCandidate(ans) : null;
+    // Same reason again: this one is about where an unrankable verdict places
+    // the boundary of the indeterminacy, which no edge records.
+    var zrank = zRankCandidate(ans);
 
-    return {sets:sets, alpha:alpha, collapse:collapse, clashes:clashes};
+    return {sets:sets, alpha:alpha, collapse:collapse, zrank:zrank, clashes:clashes};
 }
 /* ===ENGINE END=== */
 
@@ -1042,6 +1093,14 @@ function bullets(){
 
     if(ANS.nae!=="right") out.push({t:"You denied that levelling up improves things.",b:"B holds the same "+CHAIN[0].to.n+" people as A+, with more welfare in total, more on average, and more equality. There is a consistent motive available \u2014 the better-off group does lose, falling from "+CHAIN[0].plus[0].w+" to "+CHAIN[0].to.w+", while the worse-off rise from "+CHAIN[0].plus[1].w+" \u2014 so a view that weighs losses to the well-off heavily can resist it. But it sets you against totalism, averagism and egalitarianism in one move."});
 
+    // The coherent half of the conflict zRankCandidate catches. A gap at the
+    // top of the ladder and a verdict at the bottom is exactly what a neutral
+    // range with a floor above Z's welfare delivers - but only if the rung
+    // verdicts flip on the way down, which is what makes it worth naming.
+    if(ANS.AvZ==="left" && ANS.benign==="none" && ANS.generalize==="no"){
+        out.push({t:"Your gaps have a floor, and it is doing the work.",b:"You declined to rank the benign addition, said the verdict flips somewhere further down, and still ranked A above Z. Those fit together, and only one thing makes them fit: a neutral range with a <em>floor</em> \u2014 a welfare level below which an added life is no longer merely unrankable but determinately not worth adding. Above the floor the additions are a genuine open question, which is your gap at the top of the ladder; Z\u2019s "+Z_POP[0].n.toLocaleString()+" people live at "+Z_LEVEL+", beneath it, which is why Z is rankable at all. That commits you to two things worth seeing plainly. The rung where your verdict flips is not a matter of taste \u2014 it <em>is</em> the floor, and you are owed a reason why it sits there rather than a rung higher or lower. And the verdict against Z is not carried by the "+(Z_POP[0].n-A_POP[0].n).toLocaleString()+" lives you added: it is carried by A\u2019s original hundred, who are still in Z and have fallen from "+A_POP[0].w+" to "+Z_LEVEL+". Most people who answer this way believe the added lives are what makes Z worse. On your own view they cannot be."});
+    }
+
     var noneCount=0;
     ["AvB","AvZ","misery","neutral_mod","neutral_wond","benign","nae"].forEach(function(k){
         if(ANS[k]==="none") noneCount++;
@@ -1113,7 +1172,7 @@ function showResults(){
         }
         return true;
     });
-    var nHits=R.sets.length + (R.alpha?1:0) + (R.collapse?1:0);
+    var nHits=R.sets.length + (R.alpha?1:0) + (R.collapse?1:0) + (R.zrank?1:0);
     var B=bullets();
     var h='';
     h+='<div class="hero" style="padding:6vh 0 0">';
@@ -1145,9 +1204,14 @@ function showResults(){
     if(R.alpha){
         h+='<div class="hit"><div class="tag">Conflict '+(R.sets.length+1)+' &middot; contraction inconsistency</div>';
         h+='<h3 style="margin-top:10px">Adding a third option changed your mind about the first two.</h3>';
-        h+='<ol class="claims"><li>Offered A and B alone, you judged '+R.alpha.pairWinner+' the better of the two.</li>';
+        // The pair that was ranked is {pairWinner, picked} either way round:
+        // the A/B question when the pick came from there, A against Z when the
+        // pick was Z. The option left over is the one whose arrival is doing
+        // the damage, and it differs between the two.
+        h+='<ol class="claims"><li>Offered '+R.alpha.pairWinner+' and '+R.alpha.picked+
+           ' alone, you judged '+R.alpha.pairWinner+' the better of the two.</li>';
         h+='<li>Offered A, B and Z together, you picked '+R.alpha.picked+' as best.</li></ol>';
-        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. Z\u2019s presence cannot make '+R.alpha.picked+' beat '+R.alpha.pairWinner+' if it did not already. Note that this is a constraint on <em>choice</em> rather than on the betterness ordering \u2014 the choice-theoretic cousin of independence of irrelevant alternatives \u2014 so it is listed separately from the conflicts above.</p></div>';
+        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. '+R.alpha.third+'\u2019s presence cannot make '+R.alpha.picked+' beat '+R.alpha.pairWinner+' if it did not already. Note that this is a constraint on <em>choice</em> rather than on the betterness ordering \u2014 the choice-theoretic cousin of independence of irrelevant alternatives \u2014 so it is listed separately from the conflicts above.</p></div>';
     }
 
     if(R.collapse){
@@ -1164,6 +1228,24 @@ function showResults(){
            'and vagueness cannot both live in one betterness ordering. Note it is a constraint on the <em>determinacy</em> '+
            'of your ordering rather than on its content, so it is listed apart from the conflicts above \u2014 and it is '+
            'contested: Carlson and others have argued the principle is too strong.</p></div>';
+    }
+
+    if(R.zrank){
+        var zr=R.zrank;
+        h+='<div class="hit"><div class="tag">Conflict '+
+           (R.sets.length+(R.alpha?1:0)+(R.collapse?1:0)+1)+' &middot; ranking below the gap</div>';
+        h+='<h3 style="margin-top:10px">You ranked Z, having put the boundary of your indeterminacy underneath it.</h3>';
+        h+='<ol class="claims">';
+        zr.ids.forEach(function(id){ h+='<li>'+claimText(id)+'</li>'; });
+        h+='</ol>';
+        h+='<p class="because">Take a neutral range as Broome does: a range of levels, shared by every addition, with a comparison coming out determinate only when it holds at every level in the range. Judging <strong>A better than Z</strong> then says something definite \u2014 that every level you would entertain sits <em>above</em> '+Z_LEVEL+
+           ', the level Z\u2019s '+Z_POP[0].n.toLocaleString()+' people live at. Below that, Z\u2019s numbers win: at any level under '+Z_LEVEL+
+           ' those lives are a gain, and '+Z_POP[0].n.toLocaleString()+' of them swamp what A\u2019s hundred lose. '+
+           (zr.via==="misery"
+            ? 'But calling the addition of a life at welfare '+zr.level+' unrankable puts a level down at '+zr.level+', which is not above '+Z_LEVEL+'.'
+            : 'But holding the benign addition unrankable at <em>every</em> rung puts a level below '+zr.level+
+              ', the welfare of the group the last rung adds \u2014 a gap there means entertaining a level beneath them.')+
+           ' You cannot have the boundary in both places. Note this one assumes your gaps come from a neutral range at all, which the other conflicts do not assume about anything \u2014 so if you reject that picture, this is the conflict to argue with.</p></div>';
     }
 
     if(B.length){

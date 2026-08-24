@@ -11,7 +11,7 @@ Read each view's description against the answers below it, then against the verd
 - [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 2 bullets
 - [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 1 bullet
 - [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
-- [Imprecise comparability](#rough) - clean, 2 bullets
+- [Imprecise comparability](#rough) - 1 conflict, 2 bullets
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 1 bullet
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 1 bullet
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
@@ -22,6 +22,8 @@ Read each view's description against the answers below it, then against the verd
 - [The untutored intuitive package (A > B)](#intuitive-v1) - 2 conflicts
 - [The untutored intuitive package (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 2 bullets
+- [A neutral range with a floor](#imprecise-critical-level) - clean, 4 bullets
+- [Gaps all the way down, and Z still ranked](#unbounded-gap-ranks-Z) - 1 conflict, 1 bullet
 - [Declining to rank anything](#quietist) - clean, 3 bullets
 
 <a id="total"></a>
@@ -329,7 +331,7 @@ Not asked: collapse, menu_eq. These questions only appear when earlier answers g
 
 ### Verdict
 
-No conflicts.
+- **Ranking below the gap** - A ranked above Z while an unrankable benign addition at every rung places a critical level at 1, below Z's welfare.
 
 Bullets bitten:
 
@@ -700,6 +702,89 @@ Bullets bitten:
 
 - You accepted the repugnant conclusion.
 - You counted a life of suffering as a gain.
+
+<a id="imprecise-critical-level"></a>
+
+## A neutral range with a floor
+
+Broome's neutral range taken as a range of critical levels rather than a single one,
+with a comparison coming out determinate only when it holds at every level in the range.
+Adding a life is an open question while its welfare falls inside the range, which is why
+the benign addition cannot be ranked and A cannot be ranked against B - B's people live
+at 64, well inside any plausible range. It stops being open once the added lives fall
+beneath the range's floor, which is why the rung verdicts flip partway down the ladder
+and why Z, whose people live at 4, is rankable at all. The verdict against Z is then
+carried entirely by A's original hundred, who are still there and have fallen from 100
+to 4. Coherent throughout: this profile should draw no conflict, only the bullet naming
+what the floor commits it to.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| A against B | A is not rankable against B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
+| Benign addition | A+ is not rankable against A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Somewhere on the ladder those two verdicts flip. |
+| A against Z | A is better than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | A is the best of A, B and Z. |
+
+Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+No conflicts.
+
+Bullets bitten:
+
+- You said the verdict flips somewhere on the ladder.
+- Your gaps have a floor, and it is doing the work.
+- You judged 4 of the 7 pairs unrankable.
+- You hold the Procreation Asymmetry.
+
+<a id="unbounded-gap-ranks-Z"></a>
+
+## Gaps all the way down, and Z still ranked
+
+The same shape as the view above, but claiming the benign addition is unrankable at
+every rung rather than flipping partway down - and, separately, that adding a life of
+agony cannot be ranked against not adding it either. Each of those plants a critical
+level below the welfare Z's people live at, while ranking A above Z says every level
+sits above it. This is the profile the 'ranking below the gap' check exists for: it
+should draw that conflict where the view above draws none.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| A against B | A is not rankable against B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome incomparable. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
+| Benign addition | A+ is not rankable against A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is better than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | A is the best of A, B and Z. |
+
+Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+- **Ranking below the gap** - A ranked above Z while the agony addition is unrankable places a critical level at -40, below Z's welfare.
+
+Bullets bitten:
+
+- You judged 5 of the 7 pairs unrankable.
 
 <a id="quietist"></a>
 

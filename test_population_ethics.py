@@ -100,7 +100,7 @@ def analyse(page, answers):
     return page.evaluate(
         """a => { const r = analyse(a);
                   return {sets: r.sets.map(s => [...s].sort().join('+')).sort(),
-                          alpha: r.alpha, collapse: r.collapse,
+                          alpha: r.alpha, collapse: r.collapse, zrank: r.zrank,
                           clashes: r.clashes.length}; }""", answers)
 
 
@@ -165,6 +165,28 @@ def suite_engine(page, rep):
     r = analyse(page, dict(TOTALIST, AvB="right", menu="A"))
     rep.check(r["alpha"] and r["alpha"]["picked"] == "A" and r["alpha"]["pairWinner"] == "B",
               "contraction inconsistency detected (Sen's alpha)")
+
+    # Picking Z while ranking A above it in the pair turns on AvZ alone. Gating
+    # it behind AvB let anyone who declined that pair walk through unnoticed.
+    r = analyse(page, dict(MODAL, AvB="none", AvZ="left", menu="Z"))
+    rep.check(r["alpha"] and r["alpha"]["viaZ"] and r["alpha"]["picked"] == "Z",
+              "picking Z over a ranked A is caught with A/B declined")
+
+    # Ranking below the gap: "A is better than Z" says every critical level you
+    # entertain sits above Z's welfare, so nothing may plant one beneath it.
+    gaps = dict(MODAL, AvB="none", benign="none", AvZ="left", menu="A")
+    r = analyse(page, dict(gaps, generalize="yes"))
+    rep.check(r["zrank"] and r["zrank"]["via"] == "ladder",
+              "unrankable benign addition at every rung collides with ranking Z")
+    r = analyse(page, dict(gaps, generalize="no"))
+    rep.check(r["zrank"] is None,
+              "...but not once the rung verdicts flip, which is where the floor is")
+    r = analyse(page, dict(gaps, generalize="no", misery="none"))
+    rep.check(r["zrank"] and r["zrank"]["via"] == "misery",
+              "an unrankable agony addition collides with ranking Z on its own")
+    r = analyse(page, dict(gaps, generalize="yes", misery="none", AvZ="right"))
+    rep.check(r["zrank"] is None,
+              "...and none of it bites on someone who ranks Z above A")
 
     # Rejecting a principle always draws a bullet. A revisionary verdict used to
     # draw nothing, so answers like "her agony improves the world" could pass
@@ -530,6 +552,7 @@ VIEW_PROBE = """(a) => {
                 .sort((x, y) => x.join().localeCompare(y.join())),
     alpha: !!r.alpha,
     collapse: !!r.collapse,
+    zrank: r.zrank ? r.zrank.via : null,
     bullets: bullets().map(b => b.t)
   };
   ANS = keep;
