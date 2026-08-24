@@ -11,7 +11,7 @@ Read each view's description against the answers below it, then against the verd
 - [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 2 bullets
 - [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 1 bullet
 - [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
-- [Imprecise comparability](#rough) - 1 conflict, 2 bullets
+- [Imprecise comparability](#rough) - clean, 2 bullets
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 1 bullet
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 1 bullet
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
@@ -23,7 +23,8 @@ Read each view's description against the answers below it, then against the verd
 - [The untutored intuitive package (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 2 bullets
 - [A neutral range with a floor](#imprecise-critical-level) - clean, 4 bullets
-- [Gaps all the way down, and Z still ranked](#unbounded-gap-ranks-Z) - 1 conflict, 1 bullet
+- [Imprecise comparability, without Parfit's escape](#rough-transitive) - 1 conflict, 2 bullets
+- [Creating is never better or worse, and Z is worse](#symmetric-gap-ranks-Z) - 1 conflict, 3 bullets
 - [Declining to rank anything](#quietist) - clean, 3 bullets
 
 <a id="total"></a>
@@ -53,7 +54,7 @@ transitive ordering.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -90,7 +91,7 @@ for being below par.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -128,7 +129,7 @@ it, and it is committed to some lives worth living being not worth adding.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -168,7 +169,7 @@ and is told instead what its verdicts commit it to.
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -208,7 +209,7 @@ violates Sen's property beta.
 | Verdicts across a wider menu | A third option can change how the first two compare. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -248,7 +249,7 @@ very different quality cannot both be exactly worth nothing.
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -285,7 +286,7 @@ Increasing total utility in a single step is good (B > A), but Z is worse than A
 | Verdicts across a wider menu | A third option can change how the first two compare. |
 | Choosing from three | B is the best of A, B and Z. |
 
-Not asked: collapse. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -306,9 +307,11 @@ worth living and harm nobody -- but neither is it better, nor exactly as good. A
 are imprecisely comparable, which is Chang's parity applied to populations. Levelling up
 from A+ to B is a clear improvement, and A is still better than B and than Z. The chain
 therefore breaks at its first rung rather than at transitivity, and the view should come
-out consistent. Note what the quiz cannot see: Parfit's distinctive claim is that 'not
-worse than' fails to be transitive, and there is no question about that relation, so an
-unrankable verdict simply contributes no link.
+out consistent. What makes it consistent is the answer to the not-worse-than question,
+which is Parfit's distinctive claim: an unrankable A+ is still not worse than A, so the
+ladder can be run on that relation straight through the gap, and only denying that it
+chains stops it. Answer yes there instead and the same profile collides -- see the view
+below.
 
 ### Answers
 
@@ -324,6 +327,7 @@ unrankable verdict simply contributes no link.
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of not-worse-than | "Not worse than" is not always transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
@@ -331,7 +335,7 @@ Not asked: collapse, menu_eq. These questions only appear when earlier answers g
 
 ### Verdict
 
-- **Ranking below the gap** - A ranked above Z while an unrankable benign addition at every rung places a critical level at 1, below Z's welfare.
+No conflicts.
 
 Bullets bitten:
 
@@ -366,7 +370,7 @@ the collapsing question should catch.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
 
-Not asked: menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -403,7 +407,7 @@ difference between being caught by the collapsing principle and not.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -443,7 +447,7 @@ better-than does nothing to touch.
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -479,7 +483,7 @@ allowing verdicts to change when the menu changes.
 | Verdicts across a wider menu | A third option can change how the first two compare. |
 | Choosing from three | None of A, B and Z is best. |
 
-Not asked: collapse. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -517,7 +521,7 @@ without limit, and the best world contains nobody.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -552,7 +556,7 @@ of happiness.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -587,7 +591,7 @@ Happiness is not good, but suffering is bad.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -626,7 +630,7 @@ collision should not fire - the ladder ones should, twice.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -660,7 +664,7 @@ should not fire - the ladder ones should, twice.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -692,7 +696,7 @@ able to pass without comment.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -735,7 +739,7 @@ what the floor commits it to.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -748,16 +752,60 @@ Bullets bitten:
 - You judged 4 of the 7 pairs unrankable.
 - You hold the Procreation Asymmetry.
 
-<a id="unbounded-gap-ranks-Z"></a>
+<a id="rough-transitive"></a>
 
-## Gaps all the way down, and Z still ranked
+## Imprecise comparability, without Parfit's escape
 
-The same shape as the view above, but claiming the benign addition is unrankable at
-every rung rather than flipping partway down - and, separately, that adding a life of
-agony cannot be ranked against not adding it either. Each of those plants a critical
-level below the welfare Z's people live at, while ranking A above Z says every level
-sits above it. This is the profile the 'ranking below the gap' check exists for: it
-should draw that conflict where the view above draws none.
+The view above, one answer different: not-worse-than is taken to chain. That is the
+answer most people give without thinking about it, and it is the one Parfit spent the
+argument denying. Every rung is unrankable rather than an improvement, which looks like
+it should stop the ladder, and does stop it for better-than. It does not stop it for
+not-worse-than: an unrankable A+ is not worse than A, B is better than A+ and so not
+worse than it either, and the chain reaches Z. Ranking A above Z then says Z is worse
+than A after all. Should collide on the ladder route, where the view above comes out
+clean.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| A against B | A is better than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
+| Benign addition | A+ is not rankable against A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is better than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of not-worse-than | "Not worse than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | A is the best of A, B and Z. |
+
+Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+- **Chaining through the gap** - the ladder run on not-worse-than reaches Z, which was ranked below A
+
+Bullets bitten:
+
+- You judged 3 of the 7 pairs unrankable.
+- You hold the Procreation Asymmetry.
+
+<a id="symmetric-gap-ranks-Z"></a>
+
+## Creating is never better or worse, and Z is worse
+
+A person-affecting view with no asymmetry: adding a life is beyond ranking whichever way
+it goes, agony included. The ladder route does not reach this one, because the rung
+verdicts are said to flip partway down and the chain stops where they do. The other
+route does. Read the gaps as a neutral range -- a range of critical levels, a comparison
+determinate only when it holds at every level in it -- and calling the agony addition
+unrankable puts a level at -40, while ranking A above Z says every level sits above 4,
+the welfare Z's people live at. Should collide on the misery route, and be told that
+route assumes the reading.
 
 ### Answers
 
@@ -769,21 +817,23 @@ should draw that conflict where the view above draws none.
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
 | Benign addition | A+ is not rankable against A -- everyone gains, and good new lives are added. |
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
-| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| Repeating the moves | Somewhere on the ladder those two verdicts flip. |
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
-- **Ranking below the gap** - A ranked above Z while the agony addition is unrankable places a critical level at -40, below Z's welfare.
+- **Ranking below the gap** - A ranked above Z while the unrankable agony addition places a critical level at -40, below Z's welfare
 
 Bullets bitten:
 
+- You said the verdict flips somewhere on the ladder.
+- Your gaps have a floor, and it is doing the work.
 - You judged 5 of the 7 pairs unrankable.
 
 <a id="quietist"></a>
@@ -812,7 +862,7 @@ something is wrong.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | None of A, B and Z is best. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 

@@ -161,8 +161,8 @@ def as_markdown(results):
                 "| Question | What this view says |", "| --- | --- |"]
         for qid, label, claim in r["claims"]:
             doc.append("| %s | %s |" % (label, strip_tags(claim)))
-        skipped = [q["id"] for q in [] ] or [
-            k for k in ("collapse", "menu_eq") if k not in r["asked"]]
+        skipped = [k for k in ("collapse", "trans_none", "menu_eq")
+                   if k not in r["asked"]]
         if skipped:
             doc += ["", "Not asked: %s. These questions only appear when earlier "
                     "answers give them something to bite on." % ", ".join(skipped)]
@@ -184,12 +184,16 @@ def as_markdown(results):
                        % (r["collapse"]["vague"], r["collapse"]["anchor"],
                           r["collapse"]["dir"]))
         if r["zrank"]:
-            doc.append("- **Ranking below the gap** - A ranked above Z while %s "
-                       "places a critical level at %s, below Z's welfare."
-                       % ("the agony addition is unrankable"
-                          if r["zrank"]["via"] == "misery"
-                          else "an unrankable benign addition at every rung",
-                          r["zrank"]["level"]))
+            doc.append("- **%s** - %s"
+                       % ("Chaining through the gap"
+                          if r["zrank"]["via"] == "ladder"
+                          else "Ranking below the gap",
+                          "the ladder run on not-worse-than reaches Z, which was "
+                          "ranked below A"
+                          if r["zrank"]["via"] == "ladder"
+                          else "A ranked above Z while the unrankable agony "
+                               "addition places a critical level at %s, below "
+                               "Z's welfare" % r["zrank"]["level"]))
         if r["bullets"]:
             doc += ["", "Bullets bitten:", ""]
             doc += ["- %s" % strip_tags(b) for b in r["bullets"]]

@@ -128,6 +128,17 @@ var QUESTIONS=[
         opts:[["A","Yes, always","yes"],["B","No, not always","no"]]
     },
     {
+        id:"trans_none", kind:"principle", label:"Transitivity of not-worse-than",
+        // Only worth asking of someone whose gaps sit on the ladder with a
+        // verdict at the end of it: that is the one shape where chaining
+        // "not worse than" reaches anything.
+        when:function(a){ return !!zRankLadder(a); },
+        title:"Not worse than, and not worse than again.",
+        body:"Take any three futures. Suppose the first is <strong>not worse than</strong> the second, and the second is not worse than the third. Note that this is weaker than the last question: two futures you cannot rank at all are, among other things, not worse than one another.",
+        ask:"Does it follow that the first is not worse than the third?",
+        opts:[["A","Yes, always","yes"],["B","No, not always","no"]]
+    },
+    {
         id:"trans_eq", kind:"principle", label:"Transitivity of equal-goodness",
         title:"Exactly as good, twice over.",
         body:"Take any three futures. Suppose the first is exactly as good as the second \u2014 neither better nor worse \u2014 and the second is exactly as good as the third.",
@@ -395,41 +406,48 @@ function collapseCandidate(ans){
 /* ---------------------------------------------------------------
    Ranking Z while declining to rank the steps that lead to it.
 
-   Read a neutral range the way Broome does - as a range of critical levels
-   [a,b], one level shared by every addition, a comparison coming out
-   determinate only if it holds on every level in the range. Then each pair
-   here is settled by where one welfare level falls relative to that range,
-   because the difference between two populations is linear in the level:
+   Two ways to get there, and they are not equally strong.
 
-       A vs Z   turns over at 3.81, just under Z's people at welfare 4
-       A vs A+  turns over at 1 + the welfare of the group that rung adds
+   The ladder route is Parfit's own argument run on "not worse than" rather
+   than "better than", which is what lets it pass through a gap. Being
+   unrankable, A+ is not worse than A; B is better than A+, so B is not worse
+   than A+ either. Chain that down every rung and Z is not worse than A - but
+   judging A better than Z says Z is worse than A. Nothing about neutral
+   ranges or numbers is needed, only the chaining, which is why it is scored
+   only against someone who has been asked for it and said yes. Parfit's
+   answer was no: his claim is precisely that "not worse than" does not chain,
+   and that is why he thought mere addition was no paradox.
 
-   So "A is better than Z" says every level you would entertain sits above 4.
-   Anything that plants a level at or below 4 contradicts it outright:
+   The misery route has no chain to run on and rests on a reading instead:
+   take a neutral range as Broome does, a range of critical levels shared by
+   every addition, a comparison coming out determinate only when it holds at
+   every level in the range. Then A vs Z turns over at 3.81, just under Z's
+   people at welfare 4, so ranking A above Z says every level you entertain
+   sits above 4 - while calling the addition of a life at -40 unrankable puts
+   one down at -40. The card says out loud that this one assumes the reading.
 
-     - Calling the addition of a life of agony unrankable plants one at -40.
-     - Calling the benign addition unrankable at *every* rung plants one below
-       the welfare of the last rung's addition, which is 1. The bottom rungs
-       are what does it: a gap there means entertaining a level beneath them.
-
-   Both are conflicts. What is not a conflict is a gap at the top of the
-   ladder with the verdict flipping partway down - that is the same view with
-   a range whose floor lies above Z, and the rung where it flips is the floor.
-   The bullet in bullets() covers that case; this only catches the two that
-   cannot be satisfied at all. Like alpha and the collapsing principle it has
-   to live outside the closure, which never sees an unrankable verdict.
+   Neither is visible to the closure, which never sees an unrankable verdict.
+   What is no conflict at all is a gap at the top of the ladder with the
+   verdict flipping partway down: the chain breaks where it flips. bullets()
+   covers that case instead.
 --------------------------------------------------------------- */
 var Z_LEVEL=Z_POP[0].w;
-var LAST_ADDED_LEVEL=CHAIN[CHAIN.length-1].plus[1].w;
+// Split out so the trans_none question can gate on the same shape it scores.
+// "Not worse than" needs every link: an unrankable benign step, a levelling
+// step that is not a step down, and the repetition that carries both to Z.
+function zRankLadder(ans){
+    return ans.AvZ==="left" && ans.benign==="none" &&
+           ans.nae!=="left" && ans.generalize==="yes";
+}
 function zRankCandidate(ans){
     // Only a determinate "A is better" makes the claim. Ranking Z above A is
     // consistent with any range whose levels all sit below Z.
     if(ans.AvZ!=="left") return null;
+    if(zRankLadder(ans) && ans.trans_none==="yes")
+        return {via:"ladder", level:Z_LEVEL,
+                ids:["AvZ","benign","nae","generalize","trans_none"]};
     if(ans.misery==="none")
         return {via:"misery", level:K_BAD[1].w, ids:["AvZ","misery"]};
-    if(ans.benign==="none" && ans.generalize==="yes")
-        return {via:"ladder", level:LAST_ADDED_LEVEL,
-                ids:["AvZ","benign","generalize"]};
     return null;
 }
 
@@ -997,6 +1015,10 @@ var LABELS={
         yes:"\u201CBetter than\u201D is transitive.",
         no:"\u201CBetter than\u201D is not always transitive.",
         abstain:"No view on whether \u201Cbetter than\u201D is transitive."}[a]; },
+    trans_none:function(a){ return {
+        yes:"\u201CNot worse than\u201D is transitive.",
+        no:"\u201CNot worse than\u201D is not always transitive.",
+        abstain:"No view on whether \u201Cnot worse than\u201D is transitive."}[a]; },
     trans_eq:function(a){ return {
         yes:"\u201CExactly as good as\u201D is transitive.",
         no:"\u201CExactly as good as\u201D is not always transitive.",
@@ -1098,7 +1120,7 @@ function bullets(){
     // range with a floor above Z's welfare delivers - but only if the rung
     // verdicts flip on the way down, which is what makes it worth naming.
     if(ANS.AvZ==="left" && ANS.benign==="none" && ANS.generalize==="no"){
-        out.push({t:"Your gaps have a floor, and it is doing the work.",b:"You declined to rank the benign addition, said the verdict flips somewhere further down, and still ranked A above Z. Those fit together, and only one thing makes them fit: a neutral range with a <em>floor</em> \u2014 a welfare level below which an added life is no longer merely unrankable but determinately not worth adding. Above the floor the additions are a genuine open question, which is your gap at the top of the ladder; Z\u2019s "+Z_POP[0].n.toLocaleString()+" people live at "+Z_LEVEL+", beneath it, which is why Z is rankable at all. That commits you to two things worth seeing plainly. The rung where your verdict flips is not a matter of taste \u2014 it <em>is</em> the floor, and you are owed a reason why it sits there rather than a rung higher or lower. And the verdict against Z is not carried by the "+(Z_POP[0].n-A_POP[0].n).toLocaleString()+" lives you added: it is carried by A\u2019s original hundred, who are still in Z and have fallen from "+A_POP[0].w+" to "+Z_LEVEL+". Most people who answer this way believe the added lives are what makes Z worse. On your own view they cannot be."});
+        out.push({t:"Your gaps have a floor, and it is doing the work.",b:"You declined to rank the benign addition, said the verdict flips somewhere further down, and still ranked A above Z. Those fit together, and the natural thing that makes them fit is a neutral range with a <em>floor</em> \u2014 a welfare level below which an added life is no longer merely unrankable but determinately not worth adding. Above the floor the additions are a genuine open question, which is your gap at the top of the ladder; Z\u2019s "+Z_POP[0].n.toLocaleString()+" people live at "+Z_LEVEL+", beneath it, which is why Z is rankable at all. That commits you to two things worth seeing plainly. The rung where your verdict flips is not a matter of taste \u2014 it <em>is</em> the floor, and you are owed a reason why it sits there rather than a rung higher or lower. And the verdict against Z is not carried by the "+(Z_POP[0].n-A_POP[0].n).toLocaleString()+" lives you added: it is carried by A\u2019s original hundred, who are still in Z and have fallen from "+A_POP[0].w+" to "+Z_LEVEL+". Most people who answer this way believe the added lives are what makes Z worse. On your own view they cannot be."});
     }
 
     var noneCount=0;
@@ -1233,19 +1255,21 @@ function showResults(){
     if(R.zrank){
         var zr=R.zrank;
         h+='<div class="hit"><div class="tag">Conflict '+
-           (R.sets.length+(R.alpha?1:0)+(R.collapse?1:0)+1)+' &middot; ranking below the gap</div>';
-        h+='<h3 style="margin-top:10px">You ranked Z, having put the boundary of your indeterminacy underneath it.</h3>';
+           (R.sets.length+(R.alpha?1:0)+(R.collapse?1:0)+1)+' &middot; '+
+           (zr.via==="ladder"?"chaining through the gap":"ranking below the gap")+'</div>';
+        h+='<h3 style="margin-top:10px">'+(zr.via==="ladder"
+            ? "Declining to rank the rungs does not stop the ladder."
+            : "You ranked Z, having put the boundary of your indeterminacy underneath it.")+'</h3>';
         h+='<ol class="claims">';
         zr.ids.forEach(function(id){ h+='<li>'+claimText(id)+'</li>'; });
         h+='</ol>';
-        h+='<p class="because">Take a neutral range as Broome does: a range of levels, shared by every addition, with a comparison coming out determinate only when it holds at every level in the range. Judging <strong>A better than Z</strong> then says something definite \u2014 that every level you would entertain sits <em>above</em> '+Z_LEVEL+
-           ', the level Z\u2019s '+Z_POP[0].n.toLocaleString()+' people live at. Below that, Z\u2019s numbers win: at any level under '+Z_LEVEL+
-           ' those lives are a gain, and '+Z_POP[0].n.toLocaleString()+' of them swamp what A\u2019s hundred lose. '+
-           (zr.via==="misery"
-            ? 'But calling the addition of a life at welfare '+zr.level+' unrankable puts a level down at '+zr.level+', which is not above '+Z_LEVEL+'.'
-            : 'But holding the benign addition unrankable at <em>every</em> rung puts a level below '+zr.level+
-              ', the welfare of the group the last rung adds \u2014 a gap there means entertaining a level beneath them.')+
-           ' You cannot have the boundary in both places. Note this one assumes your gaps come from a neutral range at all, which the other conflicts do not assume about anything \u2014 so if you reject that picture, this is the conflict to argue with.</p></div>';
+        h+= zr.via==="ladder"
+          ? '<p class="because">This is Parfit\u2019s argument again, run on <em>not worse than</em> instead of <em>better than</em> \u2014 which is what lets it pass straight through a gap. Being unrankable, A+ is not worse than A. B is better than A+, so B is not worse than A+ either. You said both verdicts repeat at every rung, and you said not-worse-than chains, so it chains all '+(2*CHAIN.length)+' steps down the ladder: Z is not worse than A. But you also judged A better than Z, which is to say Z <em>is</em> worse than A. Note what this did not need \u2014 no neutral range, no critical level, nothing about Z\u2019s numbers. Declining to rank the rungs does not stop the argument, because an unrankable pair is still a pair where neither is worse. Parfit\u2019s own escape was the answer you did not give: that not-worse-than fails to chain, which is why he came to think mere addition was no paradox at all.</p></div>'
+          : '<p class="because">Take a neutral range as Broome does: a range of levels, shared by every addition, with a comparison coming out determinate only when it holds at every level in the range. Judging <strong>A better than Z</strong> then says something definite \u2014 that every level you would entertain sits <em>above</em> '+Z_LEVEL+
+            ', the level Z\u2019s '+Z_POP[0].n.toLocaleString()+' people live at. Below that, Z\u2019s numbers win: at any level under '+Z_LEVEL+
+            ' those lives are a gain, and '+Z_POP[0].n.toLocaleString()+' of them swamp what A\u2019s hundred lose. But calling the addition of a life at welfare '+zr.level+
+            ' unrankable puts a level down at '+zr.level+', which is not above '+Z_LEVEL+
+            '. You cannot have the boundary in both places. Note that this one, unlike the others, assumes your gaps come from a neutral range at all \u2014 so if you reject that picture, this is the conflict to argue with.</p></div>';
     }
 
     if(B.length){
