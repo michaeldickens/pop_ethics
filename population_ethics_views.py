@@ -176,12 +176,19 @@ VIEWS = [
             to populations. Levelling up from A+ to B is a clear improvement,
             and A is still better than B and than Z. The chain therefore breaks
             at its first rung rather than at transitivity, and the view should
-            come out consistent. What makes it consistent is the answer to the
-            not-worse-than question, which is Parfit's distinctive claim: an
-            unrankable A+ is still not worse than A, so the ladder can be run
-            on that relation straight through the gap, and only denying that
-            it chains stops it. Answer yes there instead and the same profile
-            collides -- see the view below.""",
+            not reach Z. What stops it is the answer to the not-worse-than
+            question, which is Parfit's distinctive claim: an unrankable A+ is
+            still not worse than A, so the ladder can be run on that relation
+            straight through the gap, and only denying that it chains stops it.
+            Answer yes there instead and the ladder arrives -- see the view
+            below. What neither answer stops is the pair the gap was opened
+            for: A is better than B and B is better than A+, so transitivity of
+            better-than alone -- which this view keeps -- ranks A above A+, and
+            the view had just said those two cannot be ranked. Note what that
+            turns on. The quiz reads 'cannot be ranked' as the strong claim,
+            not better and not worse and not equal, so a derived verdict
+            contradicts it; Parfit's own claim about mere addition is the
+            weaker 'not worse than', which no option here states on its own.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="none", benign="none", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="none", collapse="no", greedy="none",
@@ -201,9 +208,10 @@ VIEWS = [
             critical levels runs from 70 down to at least 7, so adding at 70 is
             worth anywhere from nothing to 63 -- and Owen's 35 is inside that,
             which leaves no fact of the matter about which world is better.
-            Should draw the greediness card, and nothing else: the ladder is
-            blocked at not-worse-than, so this profile is clean everywhere the
-            other gap views collide.""",
+            Should draw the greediness card. The ladder is blocked at
+            not-worse-than, so nothing arrives at Z; what it does not escape is
+            the denied benign step, which every view holding a gap there
+            collides on.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="none", benign="none", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="none", collapse="no", greedy="left",
@@ -411,7 +419,9 @@ VIEWS = [
             worse than A, B is better than A+ and so not worse than it either,
             and the chain reaches Z. Ranking A above Z then says Z is worse
             than A after all. Should collide on the ladder route, where the
-            view above comes out clean.""",
+            view above comes out clean -- and on the denied benign step as
+            well, which both views share and which neither answer to the
+            not-worse-than question touches.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="none", benign="none", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="none", collapse="no", greedy="none",
@@ -470,8 +480,8 @@ EXPECT = {
     'asymmetry_menu': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'asymmetry_equal': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt'], ['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'extras': [], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'asymmetry_B': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
-    'rough': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'A neutral addition made a real harm unrankable.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
-    'wide-gaps-harm-still-counts': {'conflicts': [], 'extras': ['greedy'], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
+    'rough': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'A neutral addition made a real harm unrankable.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
+    'wide-gaps-harm-still-counts': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': ['greedy'], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
     'vague_boundary': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': ['collapse'], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'vague_boundary_ok': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'nontransitive': {'conflicts': [['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of better-than.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
@@ -483,7 +493,7 @@ EXPECT = {
     'intuitive-v2': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': [], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'misery_gain': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You counted a life of suffering as a gain.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'imprecise-critical-level': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said the verdict flips somewhere on the ladder.', 'A neutral addition made a real harm unrankable.', 'Your gaps have a floor, and it is doing the work.', 'You judged 5 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
-    'rough-transitive': {'conflicts': [], 'extras': ['zrank'], 'zrank': 'ladder', 'bullets': ['A neutral addition made a real harm unrankable.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
+    'rough-transitive': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': ['zrank'], 'zrank': 'ladder', 'bullets': ['A neutral addition made a real harm unrankable.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
     'symmetric-gap-ranks-Z': {'conflicts': [], 'extras': ['zrank'], 'zrank': 'misery', 'bullets': ['You said the verdict flips somewhere on the ladder.', 'A neutral addition made a real harm unrankable.', 'Your gaps have a floor, and it is doing the work.', 'You judged 7 of the 9 pairs unrankable.', 'Once the people changed, how well the lives go stopped counting.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'quietist': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', 'A neutral addition made a real harm unrankable.', 'You denied that levelling up improves things.', 'You judged none of the nine pairs rankable.', 'Once the people changed, how well the lives go stopped counting.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
 }
