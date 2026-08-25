@@ -76,7 +76,7 @@ var QUESTIONS=[
         // one place an ordering that declines to rank across changes in who
         // exists has to say so plainly.
         pops:[PARETO_BEFORE,PARETO_AFTER], names:["First","Second"],
-        title:"The same picture, and one difference it cannot draw.",
+        title:"A better-off world, but not the same people.",
         body:"Two futures again, 100 people in each, and again every one of them lives far better in the second. One thing has changed from the question before: <strong>these are not the same people</strong>. Not a single person exists in both — as happens whenever a choice made now shifts who is conceived, and so who is ever born. Every life in either future is clearly worth living."
     },
     {
@@ -157,8 +157,8 @@ var QUESTIONS=[
         // thinks an addition is bad.
         when:function(a){ return a.neutral_mod!=="right" || a.neutral_wond!=="right"; },
         pops:[K_BASE,K_BOTH], names:["K","K±"],
-        title:"One person harmed, one person added.",
-        body:"<strong>K</strong> once more, and beside it <strong>K±</strong>, which differs in exactly two ways. First, one of K’s own 500 — <strong>Owen</strong>, who is there in both futures — drops from "+K_BASE[0].w+" to "+K_BOTH[1].w+
+        title:"One person worse off, one person added.",
+        body:"<strong>K</strong> once more, and beside it <strong>K±</strong>, which differs in exactly two ways. First, person — <strong>Owen</strong>, who is there in both futures — drops from "+K_BASE[0].w+" to "+K_BOTH[1].w+
              ". Second, <strong>Nadia is added at "+K_WOND[1].w+"</strong>: the same wonderful life you were asked about earlier. Nobody else is touched."
     },
     {
@@ -1310,7 +1310,7 @@ function bullets(){
     // Owen's loss, who owes an account.
     if(ANS.greedy==="right" && ANS.neutral_wond==="none"){
         out.push({t:"An addition you could not rank outweighed a harm you could.",
-            b:"You placed adding Nadia at "+K_WOND[1].w+" beyond ranking against leaving her out, and then ranked K± above K — which takes her arrival to be worth more than "+HARM+" points of the life of somebody who exists either way. An addition cannot be too indeterminate to compare against nothing and determinate enough to outweigh a named loss. If her arrival really is worth that much, the earlier question had an answer: it was better."});
+                  b:"You said that adding Nadia at "+K_WOND[1].w+" was incomparable to leaving her out, and then ranked K± above K — which takes her arrival to justify making Owen worse off, when he would have existed either way. An addition cannot be too indeterminate to compare against nothing and determinate enough to outweigh a named loss. If her arrival really is worth that much, the earlier question had an answer: it was better."});
     }
     if(ANS.greedy==="equal") out.push({t:"You priced Nadia’s life at exactly Owen’s loss.",
         b:"Two things separate K from K±: Owen loses "+HARM+" points, and Nadia arrives at "+K_WOND[1].w+
