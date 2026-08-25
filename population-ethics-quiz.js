@@ -1608,7 +1608,7 @@ function showResults(){
     h+='<p class="qbody" style="max-width:62ch">A <strong>conflict</strong> is a set of your answers that cannot all be true together. A <strong>bullet</strong> is a position of yours that is perfectly consistent, but implies a result that many find unpleasant or counterintuitive.</p>';
 
     if(nHits===0){
-        h+='<div class="clean"><div class="eyebrow" style="color:var(--blue)">Clean crossing</div><h3 style="margin-top:8px">Nothing you said collides with anything else you said.</h3><p class="qbody">That is rarer than it sounds, and it is worth knowing how you managed it. Look at the bullets below: consistency in population ethics is always bought somewhere, and those are the places you spent.</p></div>';
+        h+='<div class="clean"><div class="eyebrow" style="color:var(--blue)">Clean crossing</div><h3 style="margin-top:8px">Nothing you said collides with anything else you said.</h3><p class="qbody">That\'s rarer than you might think. But consistency in population ethics must be bought with counterintuitive conclusions. The bullets you\'ve bitten are listed below.</p></div>';
     }
 
     R.sets.forEach(function(S,i){
