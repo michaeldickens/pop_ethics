@@ -77,7 +77,7 @@ var QUESTIONS=[
         // exists has to say so plainly.
         pops:[PARETO_BEFORE,PARETO_AFTER], names:["First","Second"],
         title:"A better-off world, but not the same people.",
-        body:"Two futures again, 100 people in each, and again every one of them lives far better in the second. One thing has changed from the question before: <strong>these are not the same people</strong>. Not a single person exists in both — as happens whenever a choice made now shifts who is conceived, and so who is ever born. Every life in either future is clearly worth living."
+        body:"Two futures again, 100 people in each, and again every person in the second is far better off than those in the first. However: <strong>these are not the same people</strong>. Not a single person exists in both — branching futures and butterfly effects led to an entirely different set of people being born."
     },
     {
         id:"AvB", kind:"pair", label:"A against B",
@@ -1210,23 +1210,22 @@ function greedyPriced(needs){
                 var put=a.greedy==="right" ? "above K" : "exactly level with K";
                 return "You placed K and K++ beyond ranking: not better, not worse, not equal. But you put K± "+put+
                     ", and "+pareto+" Between them those two say K++ is better than K, which is a ranking of the pair you had just declined to rank. "+
-                    "This is the greediness dilemma with the horns swapped: rather than let the gap swallow Owen's loss, you spent the gap on it — and an addition cannot be too indeterminate to compare against nothing and determinate enough to outweigh a named loss.";
+                    "An addition of a life cannot be indeterminate when compared against nothing, yet determinate enough to outweigh a named loss.";
             }
             if(a.greedy==="none"){
                 var said=a.neutral_wond==="equal"
                     ? "exactly as good as leaving her out, so K and K++ stand level"
                     : "worse than leaving her out, so K stands above K++";
-                return "You placed K and K± beyond ranking. But you said adding Nadia at "+K_WOND[1].w+" is "+
-                    said+", and "+pareto+" Between them those two give K better than K± — a ranking of the pair you had just declined to rank. "+
-                    "Declining is the consistent answer to the greediness dilemma only while nothing else in your answers settles the comparison, and here something does.";
+                return "You judged the ranking of K and K± to be indeterminate. But you said adding Nadia at "+K_WOND[1].w+" is "+
+                    said+", and "+pareto+" Between them those two give K better than K± — a ranking of the pair you had just declined to rank.";
             }
             var said = a.neutral_wond==="equal"
                 ? "You said adding Nadia at "+K_WOND[1].w+" is exactly as good as leaving her out, so K and K++ stand level."
                 : "You said adding Nadia at "+K_WOND[1].w+" makes the outcome worse, so K stands above K++.";
             var put = a.greedy==="equal" ? "exactly level with K" : "above K";
             var moral = a.neutral_wond==="equal"
-                ? "Nadia's arrival is being made to carry weight against Owen's loss that you denied it when she was the only thing that changed. That is the greediness of neutrality met from its other side: taken in the strong form the intuition does not swallow the harm, but only by pricing a life it called worthless."
-                : "Her arrival is a cost by your own account, and Owen's loss is a second one. Two costs and no gain cannot leave the world level with K, let alone better than it.";
+                ? "Nadia's arrival is judged to outweigh the loss of Owen's welfare, but you denied that Nadia's arrival made things better when all else was held fixed."
+                : "Her arrival is a cost by your own account, and Owen's loss is a second one. Two costs and no gain cannot leave the world better off.";
             return said+" "+pareto+" Between them those two give K better than K±, and you put K± "+put+" instead. "+moral;
         },
         group:"greedyPriced"
@@ -1254,7 +1253,7 @@ var STORIES=[
         needs:["benign","nae","trans_gt","AvB"],
         when:function(a){ return a.benign==="none" && a.AvB==="left" && a.nae==="right"; },
         title:"The rungs rank the step you declined to rank.",
-        because:"You placed A and A+ beyond ranking: not better, not worse, not equal. But you judged A better than B, and B better than A+, and better-than chains \u2014 so A is better than A+, which is a verdict on the very pair you had just declined to give one about. Notice what this argument does <em>not</em> use: nothing about not-worse-than, and nothing about numbers or neutral ranges. Parfit\u2019s escape from the mere addition paradox is to deny that \u201Cnot worse than\u201D chains, and that does stop the ladder reaching Z \u2014 but the ladder is not what is happening here, and denying it leaves this untouched. What this does turn on is the strength of \u201Ccannot be ranked\u201D. Taken as the strong claim, it is contradicted by any verdict your other answers deliver; taken as Parfit\u2019s weaker \u201CA+ is not worse than A\u201D, it says less, and no option here states only that."
+        because:"You judged A to be incomparable against A+: not better, not worse, not equal. But you judged A better than B, and B better than A+, and better-than chains \u2014 so A is better than A+, which is a verdict on the very pair you had just judged indeterminate."
     },
     {
         needs:["benign","nae","generalize","trans_gt","AvZ"],
