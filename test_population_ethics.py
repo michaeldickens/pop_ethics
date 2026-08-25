@@ -466,7 +466,7 @@ def suite_engine(page, rep):
     # quiz where identity is the sole variable, so it is the one place an
     # ordering that goes quiet across changes in who exists has to say so.
     # It emits no edge by design; everything it does, it does in the bullets.
-    for val, phrase in [("none", "stopped counting"), ("equal", "stopped counting"),
+    for val, phrase in [("none", "not judged better"), ("equal", "not judged better"),
                         ("left", "worse-off future above"),
                         ("right", None)]:
         got = bullet_titles(page, dict(MODAL, same_number=val))
@@ -474,14 +474,14 @@ def suite_engine(page, rep):
             rep.check(any(phrase in t for t in got),
                       f"same_number={val} draws its own bullet", str(got))
         else:
-            rep.check(not any("stopped counting" in t or "worse-off future above" in t
+            rep.check(not any("not judged better" in t or "worse-off future above" in t
                               for t in got),
                       "the unremarkable answer draws no bullet of its own", str(got))
     # The two routes to declining must not be reported in the same words: one
     # is silence, the other is a positive verdict that the lives count for zero.
     bodies = page.evaluate("""(ps) => { const keep = ANS;
         const out = ps.map(a => { ANS = a;
-            const b = bullets().find(x => x.t.includes('stopped counting'));
+            const b = bullets().find(x => x.t.includes('not judged better'));
             return b ? b.b : ''; });
         ANS = keep; return out; }""",
         [dict(MODAL, same_number="none"), dict(MODAL, same_number="equal")])

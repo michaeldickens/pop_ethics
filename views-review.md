@@ -784,7 +784,7 @@ Bullets bitten:
 - You rejected the Pareto principle.
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
-- Once the people changed, how well the lives go stopped counting.
+- When the people change, a world with uniformly better-off people is not judged better.
 
 <a id="intuitive-v1"></a>
 
@@ -1046,7 +1046,7 @@ Bullets bitten:
 - A neutral addition made a real harm unrankable.
 - Your gaps have a floor, and it is doing the work.
 - You judged 7 of the 9 pairs unrankable.
-- Once the people changed, how well the lives go stopped counting.
+- When the people change, a world with uniformly better-off people is not judged better.
 
 <a id="quietist"></a>
 
@@ -1090,4 +1090,4 @@ Bullets bitten:
 - A neutral addition made a real harm unrankable.
 - You denied that levelling up improves things.
 - You judged none of the nine pairs rankable.
-- Once the people changed, how well the lives go stopped counting.
+- When the people change, a world with uniformly better-off people is not judged better.
