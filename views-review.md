@@ -13,6 +13,7 @@ Read each view's description against the answers below it, then against the verd
 - [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
 - [Imprecise comparability](#rough) - 1 conflict, 5 bullets
 - [Wide gaps, and the harm still counts](#wide-gaps-harm-still-counts) - 2 conflicts, 4 bullets
+- [Wide gaps, but spent on the harm anyway](#wide-gaps-spent-anyway) - 1 conflict, 3 bullets
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 2 bullets
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 2 bullets
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
@@ -428,6 +429,54 @@ Bullets bitten:
 
 - You rejected transitivity of not-worse-than.
 - You judged 3 of the 9 pairs unrankable.
+- You hold the Procreation Asymmetry.
+- Comparable when the numbers match, unrankable when they do not.
+
+<a id="wide-gaps-spent-anyway"></a>
+
+## Wide gaps, but spent on the harm anyway
+
+Totalist everywhere except one question: adding Nadia at 70 is left unrankable rather
+than called an improvement, while every other addition and every rung of the ladder is
+answered the totalist way. K+- is then ranked above K anyway -- the natural totalist
+answer, since K+- really does hold more welfare in total. That one ranking is the whole
+problem. Pareto puts K++ above K+-, and a ranking of K+- above K chains straight through
+to K++ above K, which is a verdict on the very pair -- K against K++ -- that was just
+declined. Nothing about the modest addition, nothing about how wide any range is: one
+denied pair and one derived relation, and they are the same pair. The companion view
+above shows the position this collides with is not a dead end -- decline K against K+-
+as well, and both cards fall silent.
+
+Open it: append `#a=yrrlnrryrn-ry-y-z` to the quiz URL.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
+| A against B | A is worse than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
+| Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is worse than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| A harm beside the addition | K is worse than K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | Z is the best of A, B and Z. |
+
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+- **You ranked K± in a way that ranks K++ after all.** `greedy+neutral_wond+pareto+trans_gt`
+
+Bullets bitten:
+
+- You accepted the repugnant conclusion.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
 

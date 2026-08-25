@@ -42,6 +42,15 @@ declining to rank them is the other horn, scored as a bullet because it is
 perfectly consistent. The question is not put to a view that ranks both
 additions as plain improvements, since nothing in it can bite there.
 
+There is a second, more direct route to the same complaint, and it needs only
+one gap rather than two. "Cannot be ranked" is read by the closure as the
+strong claim -- not better, not worse, not equal -- so it collides with any
+relation the rest of the answers derive between that pair. Leave the wonderful
+addition unrankable (K vs K++) and rank K+- determinately against K anyway, and
+Pareto's K++ > K+- chains with that ranking to a verdict on K vs K++, which is
+the pair just declined. This needs nothing about the modest addition or about
+how wide the range is: one denied pair and one derived relation are enough.
+
 same_number holds the headcount fixed and varies who the people are. It emits
 no edge and settles nothing in the closure: it is there to make an ordering say
 whether identity alone silences it.
@@ -217,6 +226,29 @@ VIEWS = [
                      AvZ="left", neutral_wond="none", collapse="no", greedy="left",
                      trans_gt="yes", trans_none="no", trans_eq="yes", menu_eq="yes",
                      menu="A"),
+    ),
+
+    dict(
+        key="wide-gaps-spent-anyway",
+        name="Wide gaps, but spent on the harm anyway",
+        blurb="""Totalist everywhere except one question: adding Nadia at 70 is
+            left unrankable rather than called an improvement, while every
+            other addition and every rung of the ladder is answered the
+            totalist way. K+- is then ranked above K anyway -- the natural
+            totalist answer, since K+- really does hold more welfare in total.
+            That one ranking is the whole problem. Pareto puts K++ above K+-,
+            and a ranking of K+- above K chains straight through to K++ above
+            K, which is a verdict on the very pair -- K against K++ -- that
+            was just declined. Nothing about the modest addition, nothing
+            about how wide any range is: one denied pair and one derived
+            relation, and they are the same pair. The companion view above
+            shows the position this collides with is not a dead end -- decline
+            K against K+- as well, and both cards fall silent.""",
+        answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
+                     neutral_mod="none", benign="right", nae="right", generalize="yes",
+                     AvZ="right", neutral_wond="none", collapse="yes", greedy="right",
+                     trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
+                     menu="Z"),
     ),
 
     dict(
@@ -482,6 +514,7 @@ EXPECT = {
     'asymmetry_B': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'rough': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'A neutral addition made a real harm unrankable.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
     'wide-gaps-harm-still-counts': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': ['greedy'], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
+    'wide-gaps-spent-anyway': {'conflicts': [['greedy', 'neutral_wond', 'pareto', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'vague_boundary': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': ['collapse'], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'vague_boundary_ok': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'nontransitive': {'conflicts': [['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of better-than.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
