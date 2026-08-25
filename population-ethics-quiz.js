@@ -1350,7 +1350,7 @@ function bullets(){
     if(ANS.misery==="right") out.push({t:"You counted a life of suffering as a gain.",b:"When Nadia\u2019s life holds far more suffering than good \u2014 a life it would have been better for her never to have had \u2014 you judged the world better for containing it."});
 
     if(ANS.neutral_mod==="left" || ANS.neutral_wond==="left") out.push({t:"You said a life worth living makes the world worse by being lived.",b:"This goes well past the Procreation Asymmetry, which claims only that creating a happy person is not <em>good</em>. You have said it is positively <em>bad</em>.",
-        world:"Imagine a couple who want a child, and would raise it well: you are committed to saying the child's birth is nonetheless bad for the world."});
+        world:"Think of a couple who want a child, and would raise it well: you are committed to saying the child's birth is nonetheless bad for the world."});
 
     // Adding a better life should not be ranked below adding a worse one. Pareto
     // turns this into a conflict; without Pareto it is merely very hard to hold.
@@ -1370,7 +1370,7 @@ function bullets(){
     var HARM=K_BASE[0].w-K_BOTH[1].w;
     if(ANS.greedy==="none" && (ANS.neutral_wond==="none"||ANS.neutral_wond==="equal")){
         out.push({t:"A neutral addition made a real harm unrankable.",
-                  b:"Owen is one of the 500 people in K, and he's there in K± too, "+HARM+" points worse off. That is a loss to somebody who exists either way — not to a merely possible person. Alongside it stands one addition you placed outside the ranking, and your ordering now declines to say the world is worse. This is Broome’s greediness objection. Your answer is not inconsistent, but the cost is that adding Nadia \"swallows\" the harm to Owen – adding Nadia isn't good, but it cases the harm to Owen to stop being bad."});
+                  b:"Owen is one of the 500 people in K, and he's there in K± too, "+HARM+" points worse off. That is a loss to somebody who exists either way — not to a merely possible person. Alongside it stands one addition you placed outside the ranking, and your ordering now declines to say the world is worse. This is Broome’s greediness objection. Your answer is not inconsistent, but the cost is that adding a new person \"swallows\" the harm to Owen – on this view, adding Nadia isn't good, but it causes the harm to Owen to stop being bad."});
     }
     // K± holds more welfare in total than K, so a totalist ranking it above K
     // is doing arithmetic rather than biting anything. It is the person who
