@@ -1370,7 +1370,7 @@ function bullets(){
     var HARM=K_BASE[0].w-K_BOTH[1].w;
     if(ANS.greedy==="none" && (ANS.neutral_wond==="none"||ANS.neutral_wond==="equal")){
         out.push({t:"A neutral addition made a real harm unrankable.",
-            b:"Owen is one of K’s own 500 and is there in K± too, "+HARM+" points worse off. That is a loss to somebody who exists either way — not to a merely possible person, and not the kind of loss any of the views here dispute. Alongside it stands one addition you placed outside the ranking, and your ordering now declines to say the world is worse. This is Broome’s greediness objection, and it is the consistent answer rather than the evasive one: the gap you opened for Nadia is wide enough to cover Owen. What it costs is that the width is not yours to choose. The more generous you are about which lives are neutral to add, the larger the harm that disappears into the gap alongside one of them — and a neutral range narrow enough to swallow nothing is a range narrow enough to have a critical level, which is what calling it a range denied."});
+                  b:"Owen is one of the 500 people in K, and he's there in K± too, "+HARM+" points worse off. That is a loss to somebody who exists either way — not to a merely possible person. Alongside it stands one addition you placed outside the ranking, and your ordering now declines to say the world is worse. This is Broome’s greediness objection. Your answer is not inconsistent, but the cost is that adding Nadia \"swallows\" the harm to Owen – adding Nadia isn't good, but it cases the harm to Owen to stop being bad."});
     }
     // K± holds more welfare in total than K, so a totalist ranking it above K
     // is doing arithmetic rather than biting anything. It is the person who
@@ -1384,9 +1384,9 @@ function bullets(){
     }
     if(ANS.greedy==="equal") out.push({t:"You priced Nadia’s life at exactly Owen’s loss.",
         b:"Two things separate K from K±: Owen loses "+HARM+" points, and Nadia arrives at "+K_WOND[1].w+
-          ". Calling the two worlds exactly as good sets the value of her arrival at precisely the loss it has to cancel — an oddly exact figure for a life, and one that would have to move if Owen’s loss moved."+
+          ". Calling the two worlds exactly as good sets the two changes to cancel out — an oddly exact figure for a life, and one that would have to move if Owen’s loss moved."+
           ((ANS.neutral_mod==="none"||ANS.neutral_wond==="none")
-            ? " You also said an addition of hers cannot be ranked against leaving her out at all. The two verdicts pull opposite ways: one says her existence has no determinate value, the other fixes that value exactly."
+            ? " You also said that adding Nadia cannot be ranked against leaving her out. The two verdicts pull opposite ways: one says her existence has no determinate value, the other says it exactly equals the negated value of the harm to Owen."
             : "")});
 
     if(ANS.benign==="left") out.push({t:"Everyone gains, good lives are added, and you called it worse.",b:"Every one of A\u2019s hundred is better off in A+, and a further hundred exist there with lives clearly worth living. Ranking that below A means the new lives are a cost heavy enough to outweigh a gain to every person who was already there.<br/><br/>Your answer does not force you to accept the mere addition paradox. However, the price is what it commits you to elsewhere: you would prefer the original hundred be worse off, so long as fewer people existed alongside them.",
@@ -1456,12 +1456,13 @@ function bullets(){
     var duckedDiffN=["AvB","AvZ","benign","misery","neutral_mod","neutral_wond"]
         .filter(function(k){ return ANS[k]==="none"; });
     if(ANS.same_number==="right" && duckedDiffN.length){
-        out.push({t:"Comparable when the numbers match, unrankable when they do not.",b:"You ranked the two futures of 100 determinately, and left "+
+        out.push({t:"Comparable when the numbers match, unrankable when they do not.",b:"You determinately ranked two futures when they each had 100 people, while leaving "+
             (duckedDiffN.length===1?"one comparison":duckedDiffN.length+" comparisons")+
-            " unrankable — every one of them a case where the two futures hold <em>different numbers</em> of people. That is a real position and a well-defended one: Parfit's Same Number Quality Claim settles same-number choices by how well the lives go, whoever lives them, and leaves the different-number cases imprecise. His own policy version of the same-number half is the two medical programmes in <em>Reasons and Persons</em>. What the view owes is an account of the line. On your answers, 100 people at 90 is determinately better than 100 different people at 50; put one more person into the better future and the comparison is supposed to fall silent, though nothing about the original hundred lives has changed. That is Broome's collapsing-principle objection pointed at headcount rather than wellbeing, and it is the hardest question this view faces."});
+                  " unrankable where the two futures held <em>different numbers</em> of people. Your answers match Parfit's Same Number Quality Claim: same-number choices are decided by how well the lives go, but different-number cases are left indeterminate.<br><br>"+
+                  "What the view owes is an account of the line. On your answers, 100 people at 90 is determinately better than 100 different people at 50; put one more person into the better future and the comparison falls silent, though nothing about the original hundred lives has changed. That is Broome's collapsing-principle objection pointed at headcount rather than wellbeing."});
     }
     if(ANS.same_number==="left"){
-        out.push({t:"You ranked the worse-off future above the better-off one.",b:"The two futures hold the same number of people and share none of them, every life in both is worth living, and the only thing separating them is that the second group's lives go far better. You put the first group above them. Totalism, averagism, maximin and egalitarianism all deliver the opposite verdict here, and the person-affecting views deliver a tie or a refusal rather than a reversal — so this is not the cautious answer to the question, it is a stronger claim than any of them make."});
+        out.push({t:"You ranked the worse-off future above the better-off one.",b:"The two futures hold 100 people each, but no single person lives in both futures. Every life in both is worth living, and the only thing separating them is that the second group's lives go better. You ranked the first group above them. Totalism, averagism, maximin and egalitarianism all deliver the opposite verdict here, and the person-affecting views deliver a tie or a refusal rather than a reversal — this is an answer that no reasonable view gives."});
     }
     return out;
 }
