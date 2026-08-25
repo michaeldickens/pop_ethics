@@ -36,42 +36,53 @@ import pathlib
 import sys
 from playwright.sync_api import sync_playwright
 
-QIDS = ["pareto", "AvB", "misery", "neutral_mod", "benign", "nae", "generalize",
-        "AvZ", "neutral_wond", "collapse", "trans_gt", "trans_none", "trans_eq",
-        "menu_eq", "menu"]
-PAIRS = ["AvB", "misery", "neutral_mod", "benign", "nae", "AvZ", "neutral_wond"]
+QIDS = ["pareto", "same_number", "AvB", "misery", "neutral_mod", "benign", "nae",
+        "generalize", "AvZ", "neutral_wond", "collapse", "greedy", "trans_gt",
+        "trans_none", "trans_eq", "menu_eq", "menu"]
+PAIRS = ["same_number", "AvB", "misery", "neutral_mod", "benign", "nae", "AvZ",
+         "neutral_wond", "greedy"]
 PRINCIPLES = ["pareto", "generalize", "collapse", "trans_gt", "trans_none",
               "trans_eq", "menu_eq"]
-CONDITIONAL = ("collapse", "trans_none", "menu_eq")
+CONDITIONAL = ("collapse", "greedy", "trans_none", "menu_eq")
 PAIR_VALUES = ["left", "right", "equal", "none"]
 PRINCIPLE_VALUES = ["yes", "no"]
 MENU_VALUES = ["A", "B", "Z", "none"]
 
 # Index of the answer button to click, per question, for named profiles.
-CLICK_MODAL = {"pareto": 0, "AvB": 0, "misery": 0, "neutral_mod": 2, "benign": 1,
-               "nae": 1, "generalize": 0, "AvZ": 0, "neutral_wond": 2, "collapse": 0,
-               "trans_gt": 0, "trans_none": 0, "trans_eq": 0, "menu_eq": 0, "menu": 0}
-CLICK_TOTALIST = {"pareto": 0, "AvB": 1, "misery": 0, "neutral_mod": 1, "benign": 1,
-                  "nae": 1, "generalize": 0, "AvZ": 1, "neutral_wond": 1, "collapse": 0,
-                  "trans_gt": 0, "trans_none": 0, "trans_eq": 0, "menu_eq": 0, "menu": 2}
+CLICK_MODAL = {"pareto": 0, "same_number": 1, "AvB": 0, "misery": 0, "neutral_mod": 2,
+               "benign": 1, "nae": 1, "generalize": 0, "AvZ": 0, "neutral_wond": 2,
+               "collapse": 0, "greedy": 0, "trans_gt": 0, "trans_none": 0,
+               "trans_eq": 0, "menu_eq": 0, "menu": 0}
+CLICK_TOTALIST = {"pareto": 0, "same_number": 1, "AvB": 1, "misery": 0, "neutral_mod": 1,
+                  "benign": 1, "nae": 1, "generalize": 0, "AvZ": 1, "neutral_wond": 1,
+                  "collapse": 0, "greedy": 1, "trans_gt": 0, "trans_none": 0,
+                  "trans_eq": 0, "menu_eq": 0, "menu": 2}
 CLICK_ALPHA = dict(CLICK_TOTALIST, menu=0)
 # Accepting every principle but declaring every pair unrankable. Index 3 on a
 # pair is "neither - they cannot be ranked", the only way to decline.
 CLICK_UNRANKABLE = {q: (0 if q in PRINCIPLES else 3) for q in QIDS}
 CLICK_REJECT = {q: (1 if q in PRINCIPLES else 0) for q in QIDS}
 
-MODAL = {"pareto": "yes", "AvB": "left", "misery": "left", "neutral_mod": "equal",
-         "benign": "right", "nae": "right", "generalize": "yes", "AvZ": "left",
-         "neutral_wond": "equal", "collapse": "yes", "trans_gt": "yes",
-         "trans_none": "yes", "trans_eq": "yes", "menu_eq": "yes", "menu": "A"}
-TOTALIST = {"pareto": "yes", "AvB": "right", "misery": "left", "neutral_mod": "right",
-            "benign": "right", "nae": "right", "generalize": "yes", "AvZ": "right",
-            "neutral_wond": "right", "collapse": "yes", "trans_gt": "yes", "trans_none": "yes",
-            "trans_eq": "yes", "menu_eq": "yes", "menu": "Z"}
+MODAL = {"pareto": "yes", "same_number": "right", "AvB": "left", "misery": "left",
+         "neutral_mod": "equal", "benign": "right", "nae": "right", "generalize": "yes",
+         "AvZ": "left", "neutral_wond": "equal", "collapse": "yes", "greedy": "left",
+         "trans_gt": "yes", "trans_none": "yes", "trans_eq": "yes", "menu_eq": "yes",
+         "menu": "A"}
+# K+- holds 35 more welfare than K in total, so the totalist ranks it above K.
+TOTALIST = {"pareto": "yes", "same_number": "right", "AvB": "right", "misery": "left",
+            "neutral_mod": "right", "benign": "right", "nae": "right",
+            "generalize": "yes", "AvZ": "right", "neutral_wond": "right",
+            "collapse": "yes", "greedy": "right", "trans_gt": "yes",
+            "trans_none": "yes", "trans_eq": "yes", "menu_eq": "yes", "menu": "Z"}
 
 LADDER_SHORT = "AvB+benign+nae+trans_gt"
 LADDER_FULL = "AvZ+benign+generalize+nae+trans_gt"
 BROOME = "menu_eq+neutral_mod+neutral_wond+pareto+trans_eq"
+# The two ways K+- can contradict a ranked addition: put level with K (which
+# needs the equalities chained) or above it (which does not). Both key on the
+# wonderful life, since that is the addition K+- carries.
+PRICED_EQ = "greedy+menu_eq+neutral_wond+pareto+trans_eq"
+PRICED_GT = "greedy+neutral_wond+pareto+trans_gt"
 
 
 class Report:
@@ -104,6 +115,7 @@ def analyse(page, answers):
         """a => { const r = analyse(a);
                   return {sets: r.sets.map(s => [...s].sort().join('+')).sort(),
                           alpha: r.alpha, collapse: r.collapse, zrank: r.zrank,
+                          greedy: r.greedy, extras: r.extras.map(x => x.id),
                           clashes: r.clashes.length}; }""", answers)
 
 
@@ -161,9 +173,23 @@ def suite_engine(page, rep):
     r = analyse(page, abstain)
     rep.check(not r["sets"] and not r["alpha"], "declining every comparison yields no hits")
 
+    # Declining a pair does not remove the hit that needed it. The rungs still
+    # deliver B over A; saying A and B cannot be ranked denies a verdict the
+    # answers make, which is the same four answers colliding for a new reason.
     mixed = dict(MODAL, AvB="none")
-    rep.check(LADDER_SHORT not in analyse(page, mixed)["sets"],
-              "declaring a pair unrankable removes the hit that needed it")
+    rep.check(LADDER_SHORT in analyse(page, mixed)["sets"],
+              "declining a ranked pair collides rather than escaping",
+              str(analyse(page, mixed)["sets"]))
+    told = page.evaluate("""a => { const S = analyse(a).sets.find(
+                              x => [...x].sort().join('+') === 'AvB+benign+nae+trans_gt');
+                            const st = S && storyFor(S, a);
+                            return st ? (typeof st.title === 'function'
+                                           ? st.title(a) : st.title) : null; }""", mixed)
+    rep.check(told is None,
+              "...and is not told the ladder story, which describes other answers", str(told))
+    rep.check(LADDER_SHORT not in analyse(page, dict(mixed, trans_gt="no"))["sets"],
+              "a denied verdict needs the transitivity that derived it",
+              str(analyse(page, dict(mixed, trans_gt="no"))["sets"]))
 
     r = analyse(page, dict(TOTALIST, AvB="right", menu="A"))
     rep.check(r["alpha"] and r["alpha"]["picked"] == "A" and r["alpha"]["pairWinner"] == "B",
@@ -251,7 +277,8 @@ def suite_engine(page, rep):
     watch = [["misery", "right"], ["neutral_mod", "left"], ["neutral_wond", "left"],
              ["benign", "left"], ["nae", "left"], ["pareto", "no"], ["trans_gt", "no"],
              ["trans_eq", "no"], ["trans_none", "no"], ["generalize", "no"],
-             ["AvZ", "right"]]
+             ["AvZ", "right"], ["greedy", "equal"], ["same_number", "left"],
+             ["same_number", "none"], ["same_number", "equal"]]
     silent = page.evaluate("""(cfg) => {
       const keep = ANS, bad = new Set();
       cfg.profiles.forEach(a => {
@@ -338,6 +365,151 @@ def suite_engine(page, rep):
     rep.check(levels[0] < 0 < levels[1] < levels[2],
               "the three Nadia levels still straddle zero as the check assumes", str(levels))
 
+    # Broome ch.12 again: the greediness of neutrality. K+- is K with Owen down
+    # 35 and Nadia added at 70, so a gap wide enough to cover the harm has to
+    # say something about it, and everything it can say costs.
+    weak = dict(MODAL, neutral_mod="none", neutral_wond="none")
+    r = analyse(page, dict(weak, greedy="left"))
+    rep.check(bool(r["greedy"]), "greediness fires: gaps at both levels, determinate K > K+-")
+    rep.check(not any("greedy" in s for s in r["sets"]),
+              "...and does it outside the closure, which sees no edge to worry about",
+              str(r["sets"]))
+    # The width of the gap is what the argument runs on, and one unrankable
+    # answer fixes only one end of the range. Neither alone may fire.
+    for label, prof in [
+            ("only the modest addition is unrankable",
+             dict(MODAL, neutral_mod="none", greedy="left")),
+            ("only the wonderful addition is unrankable",
+             dict(MODAL, neutral_wond="none", greedy="left")),
+            ("both additions were called exactly as good", dict(MODAL, greedy="left")),
+            ("K+- was not ranked determinately", dict(weak, greedy="none")),
+            ("K+- was ranked the other way", dict(weak, greedy="right")),
+            ("Pareto is rejected, so Owen's loss is not conceded",
+             dict(weak, pareto="no", greedy="left"))]:
+        rep.check(not analyse(page, prof)["greedy"], f"greediness stays quiet: {label}")
+
+    # The strong form does not escape either, but it is caught by the closure:
+    # K = K++ chains with Pareto's K++ > K+- to deliver K > K+-.
+    rep.check(PRICED_GT in analyse(page, dict(MODAL, greedy="right"))["sets"],
+              "ranking K+- above K contradicts calling the addition worth nothing",
+              str(analyse(page, dict(MODAL, greedy="right"))["sets"]))
+    rep.check(PRICED_EQ in analyse(page, dict(MODAL, greedy="equal"))["sets"],
+              "so does ranking it exactly level with K",
+              str(analyse(page, dict(MODAL, greedy="equal"))["sets"]))
+    rep.check(not any("greedy" in s for s in analyse(page, MODAL)["sets"]),
+              "...while K > K+-, which those answers actually entail, is clean")
+    rep.check(not any("greedy" in s for s in
+                      analyse(page, dict(MODAL, pareto="no", greedy="right"))["sets"]),
+              "both need Pareto, which is what makes Owen's loss a loss")
+
+    # Pareto ranks K+- below the one world holding the same 501 people with
+    # nobody worse off, and nowhere else: K has no Nadia in it at all, and in
+    # K+ and K- she is worse off than in K+- while Owen is better.
+    kpm = page.evaluate("""() => {
+      const e = compile({pareto: 'yes'}).filter(x => x.a === 'K\\u00B1' || x.b === 'K\\u00B1');
+      return e.map(x => x.a + '>' + x.b).sort();
+    }""")
+    rep.check(kpm == ["K++>K±"], "Pareto places K+- below K++ and nowhere else", str(kpm))
+
+    # The arithmetic the sizing rests on: the harm has to fit inside the gap
+    # the person's own answers open, or ranking K above K+- is no error at all.
+    sizes = page.evaluate("""() => ({harm: K_BASE[0].w - K_BOTH[1].w,
+                                     added: K_BOTH[2].w, floor: K_MOD[1].w})""")
+    rep.check(sizes["harm"] < sizes["added"] - sizes["floor"],
+              "the harm fits inside the gap both unrankable answers imply",
+              f"harm {sizes['harm']}, gap up to {sizes['added'] - sizes['floor']}")
+
+    # Both horns have to say something. Silence here is the failure mode the
+    # whole addition exists to fix.
+    horns = bullet_titles(page, dict(weak, greedy="none"))
+    rep.check(any("unrankable" in t for t in horns),
+              "declining to rank K against K+- draws the swallowed-harm bullet", str(horns))
+    got = bullet_titles(page, dict(MODAL, greedy="equal"))
+    rep.check(any("priced" in t for t in got),
+              "greedy bullet: priced at exactly the harm", str(got))
+    # Unrankable against nothing, yet decisive against a named loss, is not a
+    # bullet while Pareto is accepted: K++ > K+- and K+- > K rank the pair the
+    # unrankable answer declined, so it is a conflict and the bullet stands
+    # down. Without Pareto nothing derives the ranking and the bullet is all
+    # there is to say.
+    both = dict(weak, greedy="right")
+    rep.check("greedy+neutral_wond+pareto+trans_gt" in analyse(page, both)["sets"],
+              "an unrankable addition that outweighs a harm is a conflict",
+              str(analyse(page, both)["sets"]))
+    rep.check(not any("outweighed a harm" in t for t in bullet_titles(page, both)),
+              "...and the bullet stands down where the conflict speaks")
+    noP = dict(both, pareto="no")
+    rep.check(any("outweighed a harm" in t for t in bullet_titles(page, noP))
+              and not any("greedy" in x for x in analyse(page, noP)["sets"]),
+              "...and is a bullet again with Pareto rejected",
+              str(bullet_titles(page, noP)))
+    # K+- really does hold more welfare than K, so the totalist's "K+- is
+    # better" is arithmetic rather than a bullet, and must not draw one.
+    rep.check(not any("outweighed a harm" in t for t in bullet_titles(page, TOTALIST)),
+              "ranking K+- above K is not scored against someone who thinks the addition a gain")
+
+    # The profile the quiz used to have nothing at all to say to: gaps
+    # everywhere the additions are, everything else modal.
+    quiet_before = dict(MODAL, neutral_mod="none", neutral_wond="none", benign="none",
+                        collapse="no", trans_none="no", greedy="left", AvB="left")
+    r = analyse(page, quiet_before)
+    rep.check(r["extras"] == ["greedy"],
+              "the weak-form neutralist who escaped everything else draws the card",
+              f"sets {r['sets']}, extras {r['extras']}")
+    # And the gap on the ladder is no longer free either: A over B and B over
+    # A+ rank the pair that gap declined.
+    rep.check(LADDER_SHORT in r["sets"],
+              "...and the unrankable benign step collides with the rungs around it",
+              str(r["sets"]))
+
+    # The same-number, different-people probe. It is the only comparison in the
+    # quiz where identity is the sole variable, so it is the one place an
+    # ordering that goes quiet across changes in who exists has to say so.
+    # It emits no edge by design; everything it does, it does in the bullets.
+    for val, phrase in [("none", "not judged better"), ("equal", "not judged better"),
+                        ("left", "worse-off future above"),
+                        ("right", None)]:
+        got = bullet_titles(page, dict(MODAL, same_number=val))
+        if phrase:
+            rep.check(any(phrase in t for t in got),
+                      f"same_number={val} draws its own bullet", str(got))
+        else:
+            rep.check(not any("not judged better" in t or "worse-off future above" in t
+                              for t in got),
+                      "the unremarkable answer draws no bullet of its own", str(got))
+    # The two routes to declining must not be reported in the same words: one
+    # is silence, the other is a positive verdict that the lives count for zero.
+    bodies = page.evaluate("""(ps) => { const keep = ANS;
+        const out = ps.map(a => { ANS = a;
+            const b = bullets().find(x => x.t.includes('not judged better'));
+            return b ? b.b : ''; });
+        ANS = keep; return out; }""",
+        [dict(MODAL, same_number="none"), dict(MODAL, same_number="equal")])
+    rep.check(bodies[0] != bodies[1] and all(bodies),
+              "declining and calling it a tie are described differently")
+
+    # Ranking the same-number case while ducking different-number ones is
+    # Parfit's shape, not a slip. It must be named only when both halves hold.
+    parfit = dict(MODAL, same_number="right", AvB="none", benign="none")
+    rep.check(any("Comparable when the numbers match" in t
+                  for t in bullet_titles(page, parfit)),
+              "the same-number/different-number asymmetry is named when it holds")
+    rep.check(not any("Comparable when the numbers match" in t
+                      for t in bullet_titles(page, dict(MODAL, same_number="right"))),
+              "...and not when every different-number pair was ranked too")
+    rep.check(not any("Comparable when the numbers match" in t
+                      for t in bullet_titles(page, dict(parfit, same_number="none"))),
+              "...nor when the same-number case was declined as well")
+
+    # The probe must stay out of the closure: its two futures share nobody with
+    # any other world in the quiz, so an edge from it could only ever be inert,
+    # and wiring one would invent conflicts the answers do not support.
+    unwired = page.evaluate("""(cfg) => cfg.vals.every(v =>
+        compile(Object.assign({}, cfg.base, {same_number: v}))
+          .every(e => !e.sup.includes('same_number')))""",
+        {"base": MODAL, "vals": PAIR_VALUES})
+    rep.check(unwired, "the probe emits no edge on any answer")
+
     # The point of the whole exercise: incomparability must be falsifiable.
     caught = page.evaluate("""(ps) => {
       const keep = ANS; let ever = 0, tot = 0;
@@ -347,6 +519,8 @@ def suite_engine(page, rep):
         const sup = new Set();
         r.sets.forEach(s => s.forEach(x => sup.add(x)));
         if (r.collapse) { sup.add(r.collapse.vague.id); sup.add(r.collapse.anchor.id); }
+        // The greediness card is charged to the unrankable addition it turns on.
+        if (r.greedy) { sup.add('neutral_mod'); sup.add('greedy'); }
         Object.keys(a).forEach(q => { if (a[q] === 'none') { tot++; if (sup.has(q)) ever++; } });
       });
       ANS = keep; return {ever, tot};
@@ -405,10 +579,14 @@ NAIVE_ORACLE = """
 def naive_clashes(edges, use_gt, use_eq):
     # Deliberately dumb: no provenance, no pruning, no Floyd-Warshall, just
     # relax until nothing changes. Slow, but obviously correct.
-    gt, eq = set(), set()
+    gt, eq, ne = set(), set(), set()
     for e in edges:
         if e["type"] == "gt":
             gt.add((e["a"], e["b"]))
+        elif e["type"] == "ne":
+            # Inert: a denial licenses nothing, so it never joins the relaxing.
+            ne.add((e["a"], e["b"]))
+            ne.add((e["b"], e["a"]))
         else:
             eq.add((e["a"], e["b"]))
             eq.add((e["b"], e["a"]))
@@ -433,6 +611,12 @@ def naive_clashes(edges, use_gt, use_eq):
         # node gt_and_eq as well would double-count one contradiction.
         if (a, b) in eq and a != b:
             out.add("~".join(sorted((a, b)) + ["gt_and_eq"]))
+        # A pair called unrankable that the closure ranks anyway.
+        if (a, b) in ne:
+            out.add("~".join(sorted((a, b)) + ["denied"]))
+    for a, b in eq:
+        if (a, b) in ne and a != b:
+            out.add("~".join(sorted((a, b)) + ["denied"]))
     return out
 
 
@@ -505,15 +689,34 @@ FUZZ_JS = r"""
     const flat = analyse(Object.assign({}, ans, {trans_gt: 'no', trans_eq: 'no'}));
     if (flat.sets.length) bad('hit survives with both transitivity principles rejected');
 
-    // 7. monotonicity — refusing to rank a pair can never create a contradiction.
+    // 7. a denied pair is a claim, and the claim is about that pair only.
+    //    Refusing to rank a pair may now create a contradiction - that is the
+    //    point of the ne edge - but only one the refusal is party to. Any
+    //    clash that appears when a pair is weakened to "none" has to name that
+    //    pair; a refusal cannot manufacture trouble elsewhere in the ordering.
     //    Clash identity is orientation-independent, so normalise the pair.
     const cid = c => [c.a, c.b].sort().join('~') + '~' + c.kind;
     const victim = pick(pairs);
     if (ans[victim] !== 'none') {
       const before = new Set(analyse(ans).clashes.map(cid));
-      const after  = analyse(Object.assign({}, ans, {[victim]: 'none'})).clashes.map(cid);
-      for (const c of after) if (!before.has(c)) bad('weakening ' + victim + ' created clash ' + c);
+      const weakened = Object.assign({}, ans, {[victim]: 'none'});
+      const after = analyse(weakened);
+      for (const c of after.clashes)
+        if (!before.has(cid(c)) && c.kind !== 'denied')
+          bad('weakening ' + victim + ' created clash ' + cid(c));
+      // Not checked at the level of blame sets: closeUp keeps the cheapest
+      // derivation it finds for each relation, so dropping an edge can change
+      // which route is reported for a contradiction that was already there,
+      // and the set changes name without anything having been created.
     }
+
+    // 8. a denied pair collides only with a relation actually derived between
+    //    its own two worlds, so declining every pair at once - which licenses
+    //    nothing anywhere - must stay clean however the principles are set.
+    const allNone = Object.assign({}, ans);
+    pairs.forEach(k => allNone[k] = 'none');
+    if (analyse(allNone).sets.length) bad('declining every pair produced a conflict');
+
     if (fails.length > 40) break;
   }
   return {fails, dist};
@@ -543,7 +746,9 @@ PROBE_FIGURE = """
   const svg = f.querySelector('svg'), vb = svg.viewBox.baseVal;
   return {
     vbW: vb.width, vbH: vb.height,
-    rects: [...svg.querySelectorAll('rect')].map(r => {
+    // .mask rects are the patches of panel that keep a leader line from
+    // running through a neighbouring caption; they are not part of the data.
+    rects: [...svg.querySelectorAll('rect:not(.mask)')].map(r => {
       const b = r.getBoundingClientRect();
       return {w: +r.getAttribute('width'), h: +r.getAttribute('height'),
               px: +b.width.toFixed(1), py: +b.height.toFixed(1)};
@@ -588,6 +793,7 @@ VIEW_PROBE = """(a) => {
     alpha: !!r.alpha,
     collapse: !!r.collapse,
     zrank: r.zrank ? r.zrank.via : null,
+    extras: r.extras.map(x => x.id),
     bullets: bullets().map(b => b.t)
   };
   ANS = keep;
@@ -677,6 +883,18 @@ def suite_geometry(page, rep):
                   f"{qid}: the added person carries a caption")
         rep.check(len(d["rects"]) == 3, f"{qid}: the added person is drawn as its own bar",
                   f"{len(d['rects'])} bars")
+
+    # K+- carries two single people, a person's width apart. Both must be drawn
+    # and both captioned; the overlap check above is what keeps the two captions
+    # off each other, since they cannot fit side by side on one line.
+    d = figures["greedy"]
+    for caption in ("Owen", "Nadia"):
+        rep.check(any(caption == t["s"] for t in d["texts"]),
+                  f"greedy: {caption} carries a caption")
+    rep.check(len(d["rects"]) == 4, "greedy: both single people are drawn as their own bars",
+              f"{len(d['rects'])} bars")
+    rows = sorted({round(t["ink1"]) for t in d["texts"] if t["s"] in ("Owen", "Nadia")})
+    rep.check(len(rows) == 2, "greedy: the two captions sit on separate rows", str(rows))
 
     # Above the knee the blocks stop encoding total welfare as area, so those
     # figures carry a to-scale bar row instead. That row has to be exact.
@@ -1013,10 +1231,14 @@ def suite_share(page, rep):
               "...and lands on the first unanswered question", fresh.inner_text("#counter"))
     rep.check(bool(fresh.query_selector(".notice")), "...saying why")
     rep.check("&q=r" not in fresh.url, "...and the view marker leaves the URL", fresh.url)
-    # Everything but pareto is a hole, and no conditional question is live on
-    # an answer sheet that empty, so neither is counted against the total.
-    rep.check(fresh.evaluate("() => missingActive().length")
-              == len(QIDS) - 1 - len(CONDITIONAL),
+    # Everything but pareto is a hole. Some conditional questions are not live
+    # on an answer sheet that empty, and those are not counted against the
+    # total -- which is the property under test, so the count is taken against
+    # the live ones rather than against a number that every new conditional
+    # question would move.
+    live = fresh.evaluate("() => QUESTIONS.filter(isActive).length")
+    rep.check(live < len(QIDS)
+              and fresh.evaluate("() => missingActive().length") == live - 1,
               "...counting only the questions that are live",
               str(fresh.evaluate("() => missingActive().length")))
 
@@ -1093,11 +1315,16 @@ def suite_conditional(page, rep):
     rep.suite("conditional")
 
     # Each conditional question must appear exactly when it can bite, and the
-    # two must gate independently of one another.
+    # four must gate independently of one another.
     for label, clicks, want in [
-            ("unrankable beside a determinate verdict", CLICK_VAGUE, {"collapse"}),
-            ("two chaining equalities", CLICK_MODAL, {"menu_eq"}),
-            ("equalities that cannot chain", CLICK_NO_CHAIN, set())]:
+            ("unrankable beside a determinate verdict", CLICK_VAGUE,
+             {"collapse", "greedy"}),
+            ("two chaining equalities", CLICK_MODAL, {"menu_eq", "greedy"}),
+            ("equalities that cannot chain", CLICK_NO_CHAIN, {"greedy"}),
+            # Nothing in the greediness case can bite on someone who ranked
+            # both additions as plain gains, so it is the one profile that is
+            # asked none of the four.
+            ("both additions ranked as gains", CLICK_TOTALIST, set())]:
         walk(page, clicks)
         got = {q for q in CONDITIONAL if q in walk.asked}
         rep.check(got == want, f"{label}: asks {sorted(want) or 'none of them'}",
@@ -1215,10 +1442,12 @@ def suite_views(page, rep):
         got = page.evaluate(VIEW_PROBE, view["answers"])
         rep.check(got["conflicts"] == want["conflicts"], f"{key}: same conflicts",
                   f"{got['conflicts']} vs {want['conflicts']}")
-        rep.check(got["alpha"] == want["alpha"] and got["collapse"] == want["collapse"],
-                  f"{key}: same choice-consistency cards",
-                  f"alpha {got['alpha']}/{want['alpha']}, "
-                  f"collapse {got['collapse']}/{want['collapse']}")
+        # One comparison for every check outside the closure, named by the
+        # engine rather than listed here, so a new check is covered the moment
+        # the expectations are regenerated.
+        rep.check(got["extras"] == want["extras"],
+                  f"{key}: same cards from the checks outside the closure",
+                  f"{got['extras']} vs {want['extras']}")
         rep.check(got["bullets"] == want["bullets"], f"{key}: same bullets",
                   f"{got['bullets']} vs {want['bullets']}")
         rep.check(got["asked"] == want["asked"], f"{key}: same questions asked",

@@ -40,6 +40,11 @@ PROBE = """(a) => {
   const r = analyse(eff);
   const out = {
     asked: asked,
+    // The share fragment for these answers, so the entry below can be opened
+    // in a browser and read as the person taking the quiz would see it.
+    // Taken after pruning, so a question the view is never shown encodes as a
+    // gap rather than as an answer nobody was asked for.
+    code: encodeAns(),
     claims: asked.map(id => [id, QUESTIONS.find(q => q.id === id).label,
       id === 'menu'
         ? (eff.menu === 'none' ? 'None of A, B and Z is best.'
@@ -47,14 +52,23 @@ PROBE = """(a) => {
         : claimText(id)]),
     conflicts: r.sets.map(S => {
       const ids = [...S].sort();
-      const story = storyFor(S);
-      return {ids: ids, title: story ? story.title : null};
+      const story = storyFor(S, eff);
+      return {ids: ids,
+              title: story ? (typeof story.title === 'function'
+                                ? story.title(eff) : story.title)
+                           : null};
     }).sort((x, y) => x.ids.join().localeCompare(y.ids.join())),
     alpha: r.alpha ? {picked: r.alpha.picked, over: r.alpha.pairWinner} : null,
     collapse: r.collapse
       ? {vague: r.collapse.vague.id, anchor: r.collapse.anchor.id, dir: r.collapse.dir}
       : null,
     zrank: r.zrank ? {via: r.zrank.via, level: r.zrank.level} : null,
+    greedy: r.greedy ? {level: r.greedy.level, floor: r.greedy.floor,
+                        harm: r.greedy.from - r.greedy.to} : null,
+    // The checks that fired, in the order the results page shows them. Named
+    // fields above stay for the prose below; this is what the count runs on,
+    // so a new check needs no arithmetic here.
+    extras: r.extras.map(x => x.id),
     bullets: bullets().map(b => b.t)
   };
   ANS = keep;
@@ -92,8 +106,11 @@ def collect(path):
 
 def expect_body(r):
     return {"conflicts": [c["ids"] for c in r["conflicts"]],
-            "alpha": bool(r["alpha"]),
-            "collapse": bool(r["collapse"]),
+            # Which checks fired, named by the engine. The one detail the
+            # names do not carry is which of zrank's two arguments landed, so
+            # that keeps a field of its own; nothing else needs one, and a new
+            # check needs no edit here at all.
+            "extras": r["extras"],
             "zrank": r["zrank"]["via"] if r["zrank"] else None,
             "bullets": [strip_tags(b) for b in r["bullets"]],
             "asked": r["asked"]}
@@ -145,8 +162,7 @@ def as_markdown(results):
 
     doc += ["## Contents", ""]
     for view, r in results:
-        n = (len(r["conflicts"]) + bool(r["alpha"]) + bool(r["collapse"])
-             + bool(r["zrank"]))
+        n = len(r["conflicts"]) + len(r["extras"])
         summary = "clean" if n == 0 else ("%d conflict%s" % (n, "" if n == 1 else "s"))
         nb = len(r["bullets"])
         if nb:
@@ -157,19 +173,19 @@ def as_markdown(results):
     for view, r in results:
         doc += ['<a id="%s"></a>' % view["key"], "", "## %s" % view["name"], "",
                 textwrap.fill(" ".join(view["blurb"].split()), 88), "",
+                "Open it: append `#a=%s` to the quiz URL." % r["code"], "",
                 "### Answers", "",
                 "| Question | What this view says |", "| --- | --- |"]
         for qid, label, claim in r["claims"]:
             doc.append("| %s | %s |" % (label, strip_tags(claim)))
-        skipped = [k for k in ("collapse", "trans_none", "menu_eq")
+        skipped = [k for k in ("collapse", "greedy", "trans_none", "menu_eq")
                    if k not in r["asked"]]
         if skipped:
             doc += ["", "Not asked: %s. These questions only appear when earlier "
                     "answers give them something to bite on." % ", ".join(skipped)]
 
         doc += ["", "### Verdict", ""]
-        if (not r["conflicts"] and not r["alpha"] and not r["collapse"]
-                and not r["zrank"]):
+        if not r["conflicts"] and not r["extras"]:
             doc.append("No conflicts.")
         for c in r["conflicts"]:
             doc.append("- **%s** " % (c["title"] or "(no story: generic card)")
@@ -194,6 +210,12 @@ def as_markdown(results):
                           else "A ranked above Z while the unrankable agony "
                                "addition places a critical level at %s, below "
                                "Z's welfare" % r["zrank"]["level"]))
+        if r["greedy"]:
+            doc.append("- **Greediness of neutrality** - additions at %d and %d "
+                       "both unrankable, so the gap covers Owen's %d, and K is "
+                       "ranked above K+- all the same."
+                       % (r["greedy"]["floor"], r["greedy"]["level"],
+                          r["greedy"]["harm"]))
         if r["bullets"]:
             doc += ["", "Bullets bitten:", ""]
             doc += ["- %s" % strip_tags(b) for b in r["bullets"]]
