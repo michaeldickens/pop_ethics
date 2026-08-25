@@ -16,7 +16,7 @@ Read each view's description against the answers below it, then against the verd
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 2 bullets
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 2 bullets
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
-- [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 4 bullets
+- [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 5 bullets
 - [Antinatalism](#antinatalist) - clean, 2 bullets
 - [Negative-leaning](#negative-leaning) - clean, 3 bullets
 - [Hard negative utilitarianism](#hard-negative) - clean, 4 bullets
@@ -37,6 +37,8 @@ addition of a life worth living is an improvement, and enough of them outweigh a
 in quality, so Z beats A and is chosen from the menu. Parfit's own statement of the view
 that generates the Repugnant Conclusion. Internally consistent: it is a complete,
 transitive ordering.
+
+Open it: append `#a=yrrlrrryrr--y-y-z` to the quiz URL.
 
 ### Answers
 
@@ -75,6 +77,8 @@ population averaging 100. Adding Nadia at 7 lowers the average and so makes thin
 worse; at 70 it raises the average and makes things better. Consistent, but it has to
 deny benign addition, and it implies that a life well worth living can be a loss purely
 for being below par.
+
+Open it: append `#a=yrllllrylr-ly-y-a` to the quiz URL.
 
 ### Answers
 
@@ -116,6 +120,8 @@ fall below it, so Z is worse than A and the moves cannot be repeated indefinitel
 best of the three and is chosen. Blocking the ladder at 'the moves repeat' is what saves
 it, and it is committed to some lives worth living being not worth adding.
 
+Open it: append `#a=yrrlrrrxlr--y-y-b` to the quiz URL.
+
 ### Answers
 
 | Question | What this view says |
@@ -155,6 +161,8 @@ floor exactly where it was, so K and K++ come out equally good. Worth noting tha
 does not collide with Pareto here: the Pareto question is about the same people, one of
 them better off, and K++ contains a person K does not. So maximin comes out consistent,
 and is told instead what its verdicts commit it to.
+
+Open it: append `#a=yrllllryle-ly-yya` to the quiz URL.
 
 ### Answers
 
@@ -198,6 +206,8 @@ the table and K+ falls below the other two. Denying that a verdict survives a wi
 is what lets all three stand. Should escape the neutral-range collision and be told it
 violates Sen's property beta.
 
+Open it: append `#a=yrllerryle-ly-yxa` to the quiz URL.
+
 ### Answers
 
 | Question | What this view says |
@@ -240,6 +250,8 @@ Existing people still matter, so benign addition and levelling up are both impro
 but A > B. Should collide twice over: once on the ladder, and once because two lives of
 very different quality cannot both be exactly worth nothing.
 
+Open it: append `#a=yrllerryle-ly-yya` to the quiz URL.
+
 ### Answers
 
 | Question | What this view says |
@@ -278,6 +290,8 @@ Bullets bitten:
 
 Common-sense person-affecting view #1. Adding a happy life is neither good nor badr.
 Increasing total utility in a single step is good (B > A), but Z is worse than A.
+
+Open it: append `#a=yrrlerryle-ly-yxb` to the quiz URL.
 
 ### Answers
 
@@ -325,6 +339,8 @@ which is Parfit's distinctive claim: an unrankable A+ is still not worse than A,
 ladder can be run on that relation straight through the gap, and only denying that it
 chains stops it. Answer yes there instead and the same profile collides -- see the view
 below.
+
+Open it: append `#a=yrllnnryln-nyxy-a` to the quiz URL.
 
 ### Answers
 
@@ -374,6 +390,8 @@ leaves no fact of the matter about which world is better. Should draw the greedi
 card, and nothing else: the ladder is blocked at not-worse-than, so this profile is
 clean everywhere the other gap views collide.
 
+Open it: append `#a=yrllnnryln-lyxy-a` to the quiz URL.
+
 ### Answers
 
 | Question | What this view says |
@@ -417,6 +435,8 @@ convert 'no fact of the matter' into a settled verdict. Those three cannot all s
 Broome's collapsing principle is aimed exactly here. The one profile in this list that
 the collapsing question should catch.
 
+Open it: append `#a=yrrlnrrylryly-y-b` to the quiz URL.
+
 ### Answers
 
 | Question | What this view says |
@@ -456,6 +476,8 @@ Bullets bitten:
 The same answers as the previous view, except that a sharp boundary between 'unrankable'
 and 'better' is accepted as the price of vagueness. That single change should be the
 difference between being caught by the collapsing principle and not.
+
+Open it: append `#a=yrllnrrylrxly-y-a` to the quiz URL.
 
 ### Answers
 
@@ -500,6 +522,8 @@ neutrality answers are stipulated rather than drawn from Temkin, and are here to
 the contrast: the remaining collision turns on equality, which rejecting transitivity of
 better-than does nothing to touch.
 
+Open it: append `#a=yrllerryle-lx-yya` to the quiz URL.
+
 ### Answers
 
 | Question | What this view says |
@@ -541,6 +565,8 @@ buys the escape from the neutral-range collision, which needs two equalities to 
 before it can bite. Declines to rank A against B or against Z, and picks nothing from
 the three.
 
+Open it: append `#a=yrnlernyne-ly-yxn` to the quiz URL.
+
 ### Answers
 
 | Question | What this view says |
@@ -551,7 +577,7 @@ the three.
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
 | Adding a modest good life | Adding Nadia with a modest good life makes the outcome neither better nor worse. |
 | Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
-| Levelling up | B is undefined A+ -- same headcount, more total, more average, fully equal. |
+| Levelling up | B is not rankable against A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
@@ -571,6 +597,7 @@ Bullets bitten:
 
 - You denied that a verdict survives a wider menu.
 - You denied that levelling up improves things.
+- You judged 3 of the 9 pairs unrankable.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
 
@@ -582,6 +609,8 @@ Benatar's view: coming into existence is always a harm, so any addition makes th
 worse, whether the life goes badly or wonderfully. Among people who exist anyway, more
 wellbeing is still better, so levelling up improves things. Fewer people is better
 without limit, and the best world contains nobody.
+
+Open it: append `#a=yrllllryll-ly-y-a` to the quiz URL.
 
 ### Answers
 
@@ -623,6 +652,8 @@ than by their own welfare, which is why a life at 7 comes out a loss and a life 
 gain, and why levelling up is refused: B's two hundred at 64 hold more shortfall between
 them than A+'s better-off hundred do. Not a standard view so much as the shape a good
 many people's answers take once the suffering is made vivid.
+
+Open it: append `#a=yrlllllylr-ly-y-a` to the quiz URL.
 
 ### Answers
 
@@ -666,6 +697,8 @@ source of suffering and so a loss, whatever the life contains, and two futures o
 hundred people apiece come out exactly as good when neither holds any suffering to tell
 them apart.
 
+Open it: append `#a=xellllryll-ly-y-a` to the quiz URL.
+
 ### Answers
 
 | Question | What this view says |
@@ -708,6 +741,8 @@ the ladder looks right; better-than obviously chains; and yet A is plainly bette
 and vastly better than Z. No view about neutrality here at all, so the neutral-range
 collision should not fire - the ladder ones should, twice.
 
+Open it: append `#a=yrllrrrylr--y-y-a` to the quiz URL.
+
 ### Answers
 
 | Question | What this view says |
@@ -743,6 +778,8 @@ the ladder looks right; better-than obviously chains; B is better than A; and ye
 worse than A or B. No view about neutrality here at all, so the neutral-range collision
 should not fire - the ladder ones should, twice.
 
+Open it: append `#a=yrrlrrrylr--y-y-b` to the quiz URL.
+
 ### Answers
 
 | Question | What this view says |
@@ -775,6 +812,8 @@ Included as a check on the quiz rather than as a position anyone holds: it says 
 of unrelieved agony makes the world better by being lived. Almost nothing in the
 literature goes here, and even totalism enters that life as a negative. It should not be
 able to pass without comment.
+
+Open it: append `#a=yrrrrrryrr--y-y-z` to the quiz URL.
 
 ### Answers
 
@@ -819,6 +858,8 @@ and why Z, whose people live at 4, is rankable at all. The verdict against Z is 
 carried entirely by A's original hundred, who are still there and have fallen from 100
 to 4. Coherent throughout: this profile should draw no conflict, only the bullet naming
 what the floor commits it to.
+
+Open it: append `#a=yrnlnnrxln-ny-y-a` to the quiz URL.
 
 ### Answers
 
@@ -867,6 +908,8 @@ worse than it either, and the chain reaches Z. Ranking A above Z then says Z is 
 than A after all. Should collide on the ladder route, where the view above comes out
 clean.
 
+Open it: append `#a=yrllnnryln-nyyy-a` to the quiz URL.
+
 ### Answers
 
 | Question | What this view says |
@@ -913,6 +956,8 @@ unrankable puts a level at -40, while ranking A above Z says every level sits ab
 the welfare Z's people live at. Should collide on the misery route, and be told that
 route assumes the reading.
 
+Open it: append `#a=ynnnnnrxln-ny-y-a` to the quiz URL.
+
 ### Answers
 
 | Question | What this view says |
@@ -954,6 +999,8 @@ Answers 'cannot be ranked' to every comparison and rejects every structural prin
 boundary case: there is nothing to be inconsistent with, so the quiz should find no
 collisions, and should not manufacture one. If this profile ever produces a conflict,
 something is wrong.
+
+Open it: append `#a=xnnnnnnynn-ny-y-n` to the quiz URL.
 
 ### Answers
 

@@ -40,6 +40,11 @@ PROBE = """(a) => {
   const r = analyse(eff);
   const out = {
     asked: asked,
+    // The share fragment for these answers, so the entry below can be opened
+    // in a browser and read as the person taking the quiz would see it.
+    // Taken after pruning, so a question the view is never shown encodes as a
+    // gap rather than as an answer nobody was asked for.
+    code: encodeAns(),
     claims: asked.map(id => [id, QUESTIONS.find(q => q.id === id).label,
       id === 'menu'
         ? (eff.menu === 'none' ? 'None of A, B and Z is best.'
@@ -165,6 +170,7 @@ def as_markdown(results):
     for view, r in results:
         doc += ['<a id="%s"></a>' % view["key"], "", "## %s" % view["name"], "",
                 textwrap.fill(" ".join(view["blurb"].split()), 88), "",
+                "Open it: append `#a=%s` to the quiz URL." % r["code"], "",
                 "### Answers", "",
                 "| Question | What this view says |", "| --- | --- |"]
         for qid, label, claim in r["claims"]:
