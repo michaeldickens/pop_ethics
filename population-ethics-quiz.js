@@ -158,7 +158,7 @@ var QUESTIONS=[
         when:function(a){ return a.neutral_mod!=="right" || a.neutral_wond!=="right"; },
         pops:[K_BASE,K_BOTH], names:["K","K±"],
         title:"One person worse off, one person added.",
-        body:"<strong>K</strong> once more, and beside it <strong>K±</strong>, which differs in exactly two ways. First, person — <strong>Owen</strong>, who is there in both futures — drops from "+K_BASE[0].w+" to "+K_BOTH[1].w+
+        body:"<strong>K</strong> once more, and beside it <strong>K±</strong>, which differs in exactly two ways. First, one person — <strong>Owen</strong>, who is there in both futures — drops from "+K_BASE[0].w+" to "+K_BOTH[1].w+
              ". Second, <strong>Nadia is added at "+K_WOND[1].w+"</strong>: the same wonderful life you were asked about earlier. Nobody else is touched."
     },
     {
