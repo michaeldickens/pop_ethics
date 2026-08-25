@@ -11,8 +11,8 @@ Read each view's description against the answers below it, then against the verd
 - [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 2 bullets
 - [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 1 bullet
 - [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
-- [Imprecise comparability](#rough) - clean, 5 bullets
-- [Wide gaps, and the harm still counts](#wide-gaps-harm-still-counts) - 1 conflict, 4 bullets
+- [Imprecise comparability](#rough) - 1 conflict, 5 bullets
+- [Wide gaps, and the harm still counts](#wide-gaps-harm-still-counts) - 2 conflicts, 4 bullets
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 2 bullets
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 2 bullets
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
@@ -24,7 +24,7 @@ Read each view's description against the answers below it, then against the verd
 - [The untutored intuitive package (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 2 bullets
 - [A neutral range with a floor](#imprecise-critical-level) - clean, 6 bullets
-- [Imprecise comparability, without Parfit's escape](#rough-transitive) - 1 conflict, 4 bullets
+- [Imprecise comparability, without Parfit's escape](#rough-transitive) - 2 conflicts, 4 bullets
 - [Creating is never better or worse, and Z is worse](#symmetric-gap-ranks-Z) - 1 conflict, 5 bullets
 - [Declining to rank anything](#quietist) - clean, 5 bullets
 
@@ -333,12 +333,17 @@ a paradox after all. Mere addition is not worse than A -- the extra people have 
 worth living and harm nobody -- but neither is it better, nor exactly as good. A+ and A
 are imprecisely comparable, which is Chang's parity applied to populations. Levelling up
 from A+ to B is a clear improvement, and A is still better than B and than Z. The chain
-therefore breaks at its first rung rather than at transitivity, and the view should come
-out consistent. What makes it consistent is the answer to the not-worse-than question,
-which is Parfit's distinctive claim: an unrankable A+ is still not worse than A, so the
-ladder can be run on that relation straight through the gap, and only denying that it
-chains stops it. Answer yes there instead and the same profile collides -- see the view
-below.
+therefore breaks at its first rung rather than at transitivity, and the view should not
+reach Z. What stops it is the answer to the not-worse-than question, which is Parfit's
+distinctive claim: an unrankable A+ is still not worse than A, so the ladder can be run
+on that relation straight through the gap, and only denying that it chains stops it.
+Answer yes there instead and the ladder arrives -- see the view below. What neither
+answer stops is the pair the gap was opened for: A is better than B and B is better than
+A+, so transitivity of better-than alone -- which this view keeps -- ranks A above A+,
+and the view had just said those two cannot be ranked. Note what that turns on. The quiz
+reads 'cannot be ranked' as the strong claim, not better and not worse and not equal, so
+a derived verdict contradicts it; Parfit's own claim about mere addition is the weaker
+'not worse than', which no option here states on its own.
 
 Open it: append `#a=yrllnnryln-nyxy-a` to the quiz URL.
 
@@ -366,7 +371,7 @@ Not asked: collapse, menu_eq. These questions only appear when earlier answers g
 
 ### Verdict
 
-No conflicts.
+- **The rungs rank the step you declined to rank.** `AvB+benign+nae+trans_gt`
 
 Bullets bitten:
 
@@ -387,8 +392,8 @@ be bad. It is the answer the view cannot have. Calling both the life at 7 and th
 at 70 unrankable says the range of critical levels runs from 70 down to at least 7, so
 adding at 70 is worth anywhere from nothing to 63 -- and Owen's 35 is inside that, which
 leaves no fact of the matter about which world is better. Should draw the greediness
-card, and nothing else: the ladder is blocked at not-worse-than, so this profile is
-clean everywhere the other gap views collide.
+card. The ladder is blocked at not-worse-than, so nothing arrives at Z; what it does not
+escape is the denied benign step, which every view holding a gap there collides on.
 
 Open it: append `#a=yrllnnryln-lyxy-a` to the quiz URL.
 
@@ -416,6 +421,7 @@ Not asked: collapse, menu_eq. These questions only appear when earlier answers g
 
 ### Verdict
 
+- **The rungs rank the step you declined to rank.** `AvB+benign+nae+trans_gt`
 - **Greediness of neutrality** - additions at 7 and 70 both unrankable, so the gap covers Owen's 35, and K is ranked above K+- all the same.
 
 Bullets bitten:
@@ -906,7 +912,8 @@ it should stop the ladder, and does stop it for better-than. It does not stop it
 not-worse-than: an unrankable A+ is not worse than A, B is better than A+ and so not
 worse than it either, and the chain reaches Z. Ranking A above Z then says Z is worse
 than A after all. Should collide on the ladder route, where the view above comes out
-clean.
+clean -- and on the denied benign step as well, which both views share and which neither
+answer to the not-worse-than question touches.
 
 Open it: append `#a=yrllnnryln-nyyy-a` to the quiz URL.
 
@@ -934,6 +941,7 @@ Not asked: collapse, menu_eq. These questions only appear when earlier answers g
 
 ### Verdict
 
+- **The rungs rank the step you declined to rank.** `AvB+benign+nae+trans_gt`
 - **Chaining through the gap** - the ladder run on not-worse-than reaches Z, which was ranked below A
 
 Bullets bitten:

@@ -52,8 +52,11 @@ PROBE = """(a) => {
         : claimText(id)]),
     conflicts: r.sets.map(S => {
       const ids = [...S].sort();
-      const story = storyFor(S);
-      return {ids: ids, title: story ? story.title : null};
+      const story = storyFor(S, eff);
+      return {ids: ids,
+              title: story ? (typeof story.title === 'function'
+                                ? story.title(eff) : story.title)
+                           : null};
     }).sort((x, y) => x.ids.join().localeCompare(y.ids.join())),
     alpha: r.alpha ? {picked: r.alpha.picked, over: r.alpha.pairWinner} : null,
     collapse: r.collapse

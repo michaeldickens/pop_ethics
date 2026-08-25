@@ -173,9 +173,23 @@ def suite_engine(page, rep):
     r = analyse(page, abstain)
     rep.check(not r["sets"] and not r["alpha"], "declining every comparison yields no hits")
 
+    # Declining a pair does not remove the hit that needed it. The rungs still
+    # deliver B over A; saying A and B cannot be ranked denies a verdict the
+    # answers make, which is the same four answers colliding for a new reason.
     mixed = dict(MODAL, AvB="none")
-    rep.check(LADDER_SHORT not in analyse(page, mixed)["sets"],
-              "declaring a pair unrankable removes the hit that needed it")
+    rep.check(LADDER_SHORT in analyse(page, mixed)["sets"],
+              "declining a ranked pair collides rather than escaping",
+              str(analyse(page, mixed)["sets"]))
+    told = page.evaluate("""a => { const S = analyse(a).sets.find(
+                              x => [...x].sort().join('+') === 'AvB+benign+nae+trans_gt');
+                            const st = S && storyFor(S, a);
+                            return st ? (typeof st.title === 'function'
+                                           ? st.title(a) : st.title) : null; }""", mixed)
+    rep.check(told is None,
+              "...and is not told the ladder story, which describes other answers", str(told))
+    rep.check(LADDER_SHORT not in analyse(page, dict(mixed, trans_gt="no"))["sets"],
+              "a denied verdict needs the transitivity that derived it",
+              str(analyse(page, dict(mixed, trans_gt="no"))["sets"]))
 
     r = analyse(page, dict(TOTALIST, AvB="right", menu="A"))
     rep.check(r["alpha"] and r["alpha"]["picked"] == "A" and r["alpha"]["pairWinner"] == "B",
@@ -410,11 +424,25 @@ def suite_engine(page, rep):
     horns = bullet_titles(page, dict(weak, greedy="none"))
     rep.check(any("unrankable" in t for t in horns),
               "declining to rank K against K+- draws the swallowed-harm bullet", str(horns))
-    for prof, phrase, name in [
-            (dict(weak, greedy="right"), "outweighed a harm", "unrankable, then decisive"),
-            (dict(MODAL, greedy="equal"), "priced", "priced at exactly the harm")]:
-        got = bullet_titles(page, prof)
-        rep.check(any(phrase in t for t in got), f"greedy bullet: {name}", str(got))
+    got = bullet_titles(page, dict(MODAL, greedy="equal"))
+    rep.check(any("priced" in t for t in got),
+              "greedy bullet: priced at exactly the harm", str(got))
+    # Unrankable against nothing, yet decisive against a named loss, is not a
+    # bullet while Pareto is accepted: K++ > K+- and K+- > K rank the pair the
+    # unrankable answer declined, so it is a conflict and the bullet stands
+    # down. Without Pareto nothing derives the ranking and the bullet is all
+    # there is to say.
+    both = dict(weak, greedy="right")
+    rep.check("greedy+neutral_wond+pareto+trans_gt" in analyse(page, both)["sets"],
+              "an unrankable addition that outweighs a harm is a conflict",
+              str(analyse(page, both)["sets"]))
+    rep.check(not any("outweighed a harm" in t for t in bullet_titles(page, both)),
+              "...and the bullet stands down where the conflict speaks")
+    noP = dict(both, pareto="no")
+    rep.check(any("outweighed a harm" in t for t in bullet_titles(page, noP))
+              and not any("greedy" in x for x in analyse(page, noP)["sets"]),
+              "...and is a bullet again with Pareto rejected",
+              str(bullet_titles(page, noP)))
     # K+- really does hold more welfare than K, so the totalist's "K+- is
     # better" is arithmetic rather than a bullet, and must not draw one.
     rep.check(not any("outweighed a harm" in t for t in bullet_titles(page, TOTALIST)),
@@ -425,9 +453,14 @@ def suite_engine(page, rep):
     quiet_before = dict(MODAL, neutral_mod="none", neutral_wond="none", benign="none",
                         collapse="no", trans_none="no", greedy="left", AvB="left")
     r = analyse(page, quiet_before)
-    rep.check(not r["sets"] and r["extras"] == ["greedy"],
-              "the weak-form neutralist who escaped everything else is caught here, once",
+    rep.check(r["extras"] == ["greedy"],
+              "the weak-form neutralist who escaped everything else draws the card",
               f"sets {r['sets']}, extras {r['extras']}")
+    # And the gap on the ladder is no longer free either: A over B and B over
+    # A+ rank the pair that gap declined.
+    rep.check(LADDER_SHORT in r["sets"],
+              "...and the unrankable benign step collides with the rungs around it",
+              str(r["sets"]))
 
     # The same-number, different-people probe. It is the only comparison in the
     # quiz where identity is the sole variable, so it is the one place an
@@ -546,10 +579,14 @@ NAIVE_ORACLE = """
 def naive_clashes(edges, use_gt, use_eq):
     # Deliberately dumb: no provenance, no pruning, no Floyd-Warshall, just
     # relax until nothing changes. Slow, but obviously correct.
-    gt, eq = set(), set()
+    gt, eq, ne = set(), set(), set()
     for e in edges:
         if e["type"] == "gt":
             gt.add((e["a"], e["b"]))
+        elif e["type"] == "ne":
+            # Inert: a denial licenses nothing, so it never joins the relaxing.
+            ne.add((e["a"], e["b"]))
+            ne.add((e["b"], e["a"]))
         else:
             eq.add((e["a"], e["b"]))
             eq.add((e["b"], e["a"]))
@@ -574,6 +611,12 @@ def naive_clashes(edges, use_gt, use_eq):
         # node gt_and_eq as well would double-count one contradiction.
         if (a, b) in eq and a != b:
             out.add("~".join(sorted((a, b)) + ["gt_and_eq"]))
+        # A pair called unrankable that the closure ranks anyway.
+        if (a, b) in ne:
+            out.add("~".join(sorted((a, b)) + ["denied"]))
+    for a, b in eq:
+        if (a, b) in ne and a != b:
+            out.add("~".join(sorted((a, b)) + ["denied"]))
     return out
 
 
@@ -646,15 +689,34 @@ FUZZ_JS = r"""
     const flat = analyse(Object.assign({}, ans, {trans_gt: 'no', trans_eq: 'no'}));
     if (flat.sets.length) bad('hit survives with both transitivity principles rejected');
 
-    // 7. monotonicity — refusing to rank a pair can never create a contradiction.
+    // 7. a denied pair is a claim, and the claim is about that pair only.
+    //    Refusing to rank a pair may now create a contradiction - that is the
+    //    point of the ne edge - but only one the refusal is party to. Any
+    //    clash that appears when a pair is weakened to "none" has to name that
+    //    pair; a refusal cannot manufacture trouble elsewhere in the ordering.
     //    Clash identity is orientation-independent, so normalise the pair.
     const cid = c => [c.a, c.b].sort().join('~') + '~' + c.kind;
     const victim = pick(pairs);
     if (ans[victim] !== 'none') {
       const before = new Set(analyse(ans).clashes.map(cid));
-      const after  = analyse(Object.assign({}, ans, {[victim]: 'none'})).clashes.map(cid);
-      for (const c of after) if (!before.has(c)) bad('weakening ' + victim + ' created clash ' + c);
+      const weakened = Object.assign({}, ans, {[victim]: 'none'});
+      const after = analyse(weakened);
+      for (const c of after.clashes)
+        if (!before.has(cid(c)) && c.kind !== 'denied')
+          bad('weakening ' + victim + ' created clash ' + cid(c));
+      // Not checked at the level of blame sets: closeUp keeps the cheapest
+      // derivation it finds for each relation, so dropping an edge can change
+      // which route is reported for a contradiction that was already there,
+      // and the set changes name without anything having been created.
     }
+
+    // 8. a denied pair collides only with a relation actually derived between
+    //    its own two worlds, so declining every pair at once - which licenses
+    //    nothing anywhere - must stay clean however the principles are set.
+    const allNone = Object.assign({}, ans);
+    pairs.forEach(k => allNone[k] = 'none');
+    if (analyse(allNone).sets.length) bad('declining every pair produced a conflict');
+
     if (fails.length > 40) break;
   }
   return {fails, dist};
