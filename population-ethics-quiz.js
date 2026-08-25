@@ -1453,7 +1453,11 @@ function bullets(){
     // Parfit's shape rather than a slip, so it is named as such - and pressed
     // where it is weakest, which is that the line falls between one headcount
     // and the next.
-    var duckedDiffN=["AvB","AvZ","benign","misery","neutral_mod","neutral_wond"]
+    // Every pair whose two futures differ in headcount. K against K+- belongs
+    // here too - 500 people against 501 - and was missed when that question
+    // was added, which undercounted the very thing this bullet is counting.
+    // nae is the one pair that does not belong: A+ and B hold the same 200.
+    var duckedDiffN=["AvB","AvZ","benign","misery","neutral_mod","neutral_wond","greedy"]
         .filter(function(k){ return ANS[k]==="none"; });
     if(ANS.same_number==="right" && duckedDiffN.length){
         out.push({t:"Comparable when the numbers match, unrankable when they do not.",b:"You ranked the two futures of 100 determinately, and left "+
