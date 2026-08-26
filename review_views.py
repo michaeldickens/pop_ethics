@@ -78,10 +78,19 @@ PROBE = """(a) => {
 
 def strip_tags(s):
     s = re.sub(r"<[^>]+>", "", s)
-    for a, b in [("&alpha;", "alpha"), ("&beta;", "beta"), ("&middot;", "-"),
-                 ("&amp;", "&"), ("&rarr;", "->"), ("&larr;", "<-"),
-                 ("\u2014", "--"), ("\u2019", "'"), ("\u201c", '"'),
-                 ("\u201d", '"'), ("\u2212", "-")]:
+    for a, b in [
+        ("&alpha;", "alpha"),
+        ("&beta;", "beta"),
+        ("&middot;", "-"),
+        ("&amp;", "&"),
+        ("&rarr;", "->"),
+        ("&larr;", "<-"),
+        ("\u2014", "--"),
+        ("\u2019", "'"),
+        ("\u201c", '"'),
+        ("\u201d", '"'),
+        ("\u2212", "-"),
+    ]:
         s = s.replace(a, b)
     return " ".join(s.split())
 
@@ -105,15 +114,17 @@ def collect(path):
 
 
 def expect_body(r):
-    return {"conflicts": [c["ids"] for c in r["conflicts"]],
-            # Which checks fired, named by the engine. The one detail the
-            # names do not carry is which of zrank's two arguments landed, so
-            # that keeps a field of its own; nothing else needs one, and a new
-            # check needs no edit here at all.
-            "extras": r["extras"],
-            "zrank": r["zrank"]["via"] if r["zrank"] else None,
-            "bullets": [strip_tags(b) for b in r["bullets"]],
-            "asked": r["asked"]}
+    return {
+        "conflicts": [c["ids"] for c in r["conflicts"]],
+        # Which checks fired, named by the engine. The one detail the
+        # names do not carry is which of zrank's two arguments landed, so
+        # that keeps a field of its own; nothing else needs one, and a new
+        # check needs no edit here at all.
+        "extras": r["extras"],
+        "zrank": r["zrank"]["via"] if r["zrank"] else None,
+        "bullets": [strip_tags(b) for b in r["bullets"]],
+        "asked": r["asked"],
+    }
 
 
 def as_expect(results):
@@ -154,11 +165,17 @@ def as_diff(results):
 
 
 def as_markdown(results):
-    doc = ["# Named views, and what the quiz says about them", "",
-           "Read each view's description against the answers below it, then "
-           "against the verdict. A description that does not match its answers "
-           "is a bug in the catalogue; answers that do not match the verdict "
-           "are a bug in the quiz.", ""]
+    doc = [
+        "# Named views, and what the quiz says about them",
+        "",
+        "Read each view's description against the answers below it, then "
+        "against the verdict. Answers that do not match the verdict "
+        "are a bug in the quiz.",
+        "",
+        "The answers were manually vetted by a human; the explanations "
+        "of each view were AI-generated with minimal human revision."
+        "",
+    ]
 
     doc += ["## Contents", ""]
     for view, r in results:
@@ -171,51 +188,84 @@ def as_markdown(results):
     doc.append("")
 
     for view, r in results:
-        doc += ['<a id="%s"></a>' % view["key"], "", "## %s" % view["name"], "",
-                textwrap.fill(" ".join(view["blurb"].split()), 88), "",
-                "Open it: append `#a=%s` to the quiz URL." % r["code"], "",
-                "### Answers", "",
-                "| Question | What this view says |", "| --- | --- |"]
+        doc += [
+            '<a id="%s"></a>' % view["key"],
+            "",
+            "## %s" % view["name"],
+            "",
+            textwrap.fill(" ".join(view["blurb"].split()), 88),
+            "",
+            "Open it: append `#a=%s` to the quiz URL." % r["code"],
+            "",
+            "### Answers",
+            "",
+            "| Question | What this view says |",
+            "| --- | --- |",
+        ]
         for qid, label, claim in r["claims"]:
             doc.append("| %s | %s |" % (label, strip_tags(claim)))
-        skipped = [k for k in ("collapse", "greedy", "trans_none", "menu_eq")
-                   if k not in r["asked"]]
+        skipped = [
+            k
+            for k in ("collapse", "greedy", "trans_none", "menu_eq")
+            if k not in r["asked"]
+        ]
         if skipped:
-            doc += ["", "Not asked: %s. These questions only appear when earlier "
-                    "answers give them something to bite on." % ", ".join(skipped)]
+            doc += [
+                "",
+                "Not asked: %s. These questions only appear when earlier "
+                "answers give them something to bite on." % ", ".join(skipped),
+            ]
 
         doc += ["", "### Verdict", ""]
         if not r["conflicts"] and not r["extras"]:
             doc.append("No conflicts.")
         for c in r["conflicts"]:
-            doc.append("- **%s** " % (c["title"] or "(no story: generic card)")
-                       + "`%s`" % "+".join(c["ids"]))
+            doc.append(
+                "- **%s** " % (c["title"] or "(no story: generic card)")
+                + "`%s`" % "+".join(c["ids"])
+            )
         if r["alpha"]:
-            doc.append("- **Contraction consistency (Sen's alpha)** - picked %s "
-                       "over %s, having ranked %s higher in the pair."
-                       % (r["alpha"]["picked"], r["alpha"]["over"], r["alpha"]["over"]))
+            doc.append(
+                "- **Contraction consistency (Sen's alpha)** - picked %s "
+                "over %s, having ranked %s higher in the pair."
+                % (r["alpha"]["picked"], r["alpha"]["over"], r["alpha"]["over"])
+            )
         if r["collapse"]:
-            doc.append("- **Collapsing principle** - %s unrankable, %s determinate, "
-                       "running %swards."
-                       % (r["collapse"]["vague"], r["collapse"]["anchor"],
-                          r["collapse"]["dir"]))
+            doc.append(
+                "- **Collapsing principle** - %s unrankable, %s determinate, "
+                "running %swards."
+                % (
+                    r["collapse"]["vague"],
+                    r["collapse"]["anchor"],
+                    r["collapse"]["dir"],
+                )
+            )
         if r["zrank"]:
-            doc.append("- **%s** - %s"
-                       % ("Chaining through the gap"
-                          if r["zrank"]["via"] == "ladder"
-                          else "Ranking below the gap",
-                          "the ladder run on not-worse-than reaches Z, which was "
-                          "ranked below A"
-                          if r["zrank"]["via"] == "ladder"
-                          else "A ranked above Z while the unrankable agony "
-                               "addition places a critical level at %s, below "
-                               "Z's welfare" % r["zrank"]["level"]))
+            doc.append(
+                "- **%s** - %s"
+                % (
+                    (
+                        "Chaining through the gap"
+                        if r["zrank"]["via"] == "ladder"
+                        else "Ranking below the gap"
+                    ),
+                    (
+                        "the ladder run on not-worse-than reaches Z, which was "
+                        "ranked below A"
+                        if r["zrank"]["via"] == "ladder"
+                        else "A ranked above Z while the unrankable agony "
+                        "addition places a critical level at %s, below "
+                        "Z's welfare" % r["zrank"]["level"]
+                    ),
+                )
+            )
         if r["greedy"]:
-            doc.append("- **Greediness of neutrality** - additions at %d and %d "
-                       "both unrankable, so the gap covers Owen's %d, and K is "
-                       "ranked above K+- all the same."
-                       % (r["greedy"]["floor"], r["greedy"]["level"],
-                          r["greedy"]["harm"]))
+            doc.append(
+                "- **Greediness of neutrality** - additions at %d and %d "
+                "both unrankable, so the gap covers Owen's %d, and K is "
+                "ranked above K+- all the same."
+                % (r["greedy"]["floor"], r["greedy"]["level"], r["greedy"]["harm"])
+            )
         if r["bullets"]:
             doc += ["", "Bullets bitten:", ""]
             doc += ["- %s" % strip_tags(b) for b in r["bullets"]]
@@ -228,8 +278,11 @@ def main():
     ap.add_argument("--file", default="population-ethics-quiz.html")
     ap.add_argument("-o", "--out", default="views-review.md")
     mode = ap.add_mutually_exclusive_group()
-    mode.add_argument("--expect", action="store_true",
-                       help="print the expectations literal instead of the document")
+    mode.add_argument(
+        "--expect",
+        action="store_true",
+        help="print the expectations literal instead of the document",
+    )
     args = ap.parse_args()
 
     results = collect(args.file)
@@ -240,7 +293,9 @@ def main():
     if diff is None:
         print("Expected views match actual views according to the quiz.")
     else:
-        print("WARNING: Expected views do not match actual views according to the quiz.")
+        print(
+            "WARNING: Expected views do not match actual views according to the quiz."
+        )
         print(diff)
 
     pathlib.Path(args.out).write_text(as_markdown(results))

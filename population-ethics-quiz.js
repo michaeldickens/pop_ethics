@@ -158,7 +158,6 @@ var QUESTIONS=[
         when:function(a){ return a.neutral_mod!=="right" || a.neutral_wond!=="right"; },
         pops:[K_BASE,K_BOTH], names:["K","K±"],
         title:"One person worse off, one person added.",
-        /* REVISE_ME */
         body:"<strong>K</strong> once more, and beside it <strong>K±</strong>, which differs in exactly two ways. First, one person — <strong>Owen</strong>, who is there in both futures — drops from "+K_BASE[0].w+" to "+K_BOTH[1].w+
              ". Second, <strong>Nadia is added at "+K_WOND[1].w+"</strong>: the same wonderful life you were asked about earlier. Nobody else is touched."
     },
@@ -176,8 +175,7 @@ var QUESTIONS=[
         // "not worse than" reaches anything.
         when:function(a){ return !!zRankLadder(a); },
         title:"Not worse than, and not worse than again.",
-        /* REVISE_ME */
-        body:"Take any three futures. Suppose the first is <strong>not worse than</strong> the second, and the second is not worse than the third. Note that this is weaker than the last question: two futures you cannot rank at all are, among other things, not worse than one another.",
+        body:"Take any three futures. Suppose the first is <strong>not worse than</strong> the second, and the second is not worse than the third. Note that this is weaker than the last question: if two futures cannot be ranked, then the first is not worse than the second.",
         ask:"Does it follow that the first is not worse than the third?",
         opts:[["A","Yes, always","yes"],["B","No, not always","no"]]
     },
@@ -1204,7 +1202,6 @@ function greedyPriced(needs){
                 ? "You declined a comparison your other answers had already made."
                 : "Your own answers already rank K above K±.";
         },
-        /* REVISE_ME */
         because:function(a){
             var harm=K_BASE[0].w-K_BOTH[1].w;
             var pareto="Pareto puts K++ above K±: the same 501 people, Owen better off by "+
@@ -1212,8 +1209,8 @@ function greedyPriced(needs){
             if(a.neutral_wond==="none"){
                 var put=a.greedy==="right" ? "above K" : "exactly level with K";
                 return "You placed K and K++ beyond ranking: not better, not worse, not equal. But you put K± "+put+
-                    ", and "+pareto+" Between them those two say K++ is better than K, which is a ranking of the pair you had just declined to rank. "+
-                    "An addition of a life cannot be indeterminate when compared against nothing, yet determinate enough to outweigh a named loss.";
+                    ", and "+pareto+" Taken together, those two say K++ is better than K, which is the pair you had just declined to rank. "+
+                    "If adding a good life is enough to outweigh a loss, then it must also be better than no change.";
             }
             if(a.greedy==="none"){
                 var said=a.neutral_wond==="equal"
@@ -1269,7 +1266,6 @@ var STORIES=[
         needs:["misery","neutral_mod","pareto","trans_eq","menu_eq"],
         when:function(a){ return a.misery==="equal" && a.neutral_mod==="equal"; },
         title:"Nadia cannot be worth nothing whichever way her life goes.",
-        /* REVISE_ME */
         because:"You said K is exactly as good as the world where Nadia exists in agony, and exactly as good as the world where she exists with a decent life. Transitivity of equal-goodness makes those two worlds exactly as good as each other. But they contain the same 501 people, and Nadia is enormously better off in one of them. This is Broome's neutral-range argument run downwards: if bringing someone into existence is never better or worse, it cannot matter how their life then goes \u2014 and it plainly does.",
         world:"If two carriers of the Tay-Sachs gene have a child, there's a one-in-four chance that the child develops normally for six months, then loses sight, hearing and movement, and dies by age four. Your answers say that conceiving that child makes the world no worse, and that conceiving a healthy one makes it no better.",
         // Same argument as the wonderful-life version below, just run at the
