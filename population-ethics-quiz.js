@@ -909,7 +909,16 @@ function popSVG(popsList, names, opts){
 
     blocks.forEach(function(bl){
         var bx=x, tagRow=0, tagS="";
-        bl.p.slice().sort(function(a,b){return b.w-a.w;}).forEach(function(g){
+        // The untagged bulk group first, then tagged individuals in the order
+        // they were authored - never by height, which used to put whichever
+        // of Owen or Nadia was drawn taller on the left. That made Nadia's
+        // bar swap sides between figures depending on the welfare level being
+        // asked about (compare K++, where she is the tall one, against K+,
+        // where she is not), and put Owen right of Nadia in K+- despite Owen
+        // being listed first. Sort is stable, so a tie on the tag key keeps
+        // groups in array order; nothing here currently has two untagged
+        // groups to order by height in the first place.
+        bl.p.slice().sort(function(a,b){return (a.tag?1:0)-(b.tag?1:0);}).forEach(function(g){
             var gw=wpx(g.n), h=Math.abs(g.w)*SC, pos=g.w>=0, y=pos? baseY-h : baseY;
             var cx=bx+(gw-2)/2;
             s+='<rect x="'+bx.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+(gw-2).toFixed(1)+
