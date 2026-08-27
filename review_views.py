@@ -172,8 +172,11 @@ def as_markdown(results):
         "against the verdict. Answers that do not match the verdict "
         "are a bug in the quiz.",
         "",
-        "The answers were manually vetted by a human; the explanations "
-        "of each view were AI-generated with minimal human revision."
+        "The answers were manually vetted by a human (namely me, Michael Dickens); "
+        "the explanations of each view were AI-generated with minimal human revision.",
+        "",
+        "The list of views to include was initially AI-generated, and then "
+        "a human added a few more to fill in the gaps.",
         "",
     ]
 
