@@ -184,7 +184,7 @@ var QUESTIONS=[
         // left live rather than assumed.
         when:function(a){ return a.neutral_mod==="none" && a.greedy==="left"; },
         pops:[K_MOD_OWEN,K_BOTH], names:["K+","K±"],
-        title:"Two ways to bring Nadia in.",
+        title:"Two ways to add Nadia.",
         body:"<strong>K+</strong> has the same 500 people as K, plus Nadia at "+K_MOD[1].w+
             ". <strong>K±</strong> has Owen — one of the people from K — down to "+K_BOTH[1].w+", and Nadia added at "+K_WOND[1].w+" instead. <strong>K± has higher total welfare, but with Owen worse off.</strong>"
     },
