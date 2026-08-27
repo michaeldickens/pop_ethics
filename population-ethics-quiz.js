@@ -49,7 +49,7 @@ var K_WOND=[{n:500,w:55},{n:1,w:70,tag:"Nadia"}];
 // asking about both would only usually change which addition the harm sits
 // beside, not whether the argument goes through, so the wonderful life is used
 // throughout for one world instead of two.
-var K_BOTH=[{n:499,w:55},{n:1,w:20,tag:"Owen"},{n:1,w:K_WOND[1].w,tag:"Nadia"}];
+var K_BOTH=[{n:499,w:55},{n:1,w:20,tag:"Owen",side:"left"},{n:1,w:K_WOND[1].w,tag:"Nadia"}];
 
 var PARETO_BEFORE=[{n:100,w:50}];
 var PARETO_AFTER =[{n:100,w:90}];
@@ -909,16 +909,19 @@ function popSVG(popsList, names, opts){
 
     blocks.forEach(function(bl){
         var bx=x, tagRow=0, tagS="";
-        // The untagged bulk group first, then tagged individuals in the order
-        // they were authored - never by height, which used to put whichever
+        // The untagged bulk group in the middle, tagged individuals pinned to
+        // either side of it - never by height, which used to put whichever
         // of Owen or Nadia was drawn taller on the left. That made Nadia's
         // bar swap sides between figures depending on the welfare level being
         // asked about (compare K++, where she is the tall one, against K+,
-        // where she is not), and put Owen right of Nadia in K+- despite Owen
-        // being listed first. Sort is stable, so a tie on the tag key keeps
-        // groups in array order; nothing here currently has two untagged
-        // groups to order by height in the first place.
-        bl.p.slice().sort(function(a,b){return (a.tag?1:0)-(b.tag?1:0);}).forEach(function(g){
+        // where she is not). A group opts into the left side with `side:
+        // "left"` (Owen, in K+-); every other tagged group - Nadia,
+        // everywhere she appears - defaults to the right, away from the bulk
+        // group's own captions and (in K+-) away from Owen's, rather than
+        // squeezed between them where the two leader lines are hard to tell
+        // apart. Sort is stable, so ties keep their authored order.
+        function side(g){ return g.side==="left" ? 0 : (g.tag ? 2 : 1); }
+        bl.p.slice().sort(function(a,b){return side(a)-side(b);}).forEach(function(g){
             var gw=wpx(g.n), h=Math.abs(g.w)*SC, pos=g.w>=0, y=pos? baseY-h : baseY;
             var cx=bx+(gw-2)/2;
             s+='<rect x="'+bx.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+(gw-2).toFixed(1)+
