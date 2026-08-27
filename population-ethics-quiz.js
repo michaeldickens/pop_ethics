@@ -35,17 +35,20 @@ var K_WOND=[{n:500,w:55},{n:1,w:70,tag:"Nadia"}];
 // One of K's own people harmed, with an addition alongside. K+- holds the same
 // 501 people as K++, Owen worse off in it, so Pareto ranks the two; against K,
 // which has no Nadia in it, there is no Pareto comparison at all. That missing
-// comparison is what the greediness argument turns on.
+// comparison is what the greediness argument turns on, and the quiz reaches it
+// two ways - see greedyPriced and plusVsBothPriced below. Ranking K± above or
+// level with K while calling the wonderful addition unrankable routes through
+// Pareto's K++ > K±. Ranking K above K± while calling the modest addition
+// unrankable instead asks the person to price K+ against K± directly
+// (plusVsBoth), since Owen down and Nadia up is not a Pareto comparison and
+// nothing forces an answer for them the way Pareto forces one for K++.
 //
-// The addition is the wonderful life rather than the modest one, and that is
-// forced rather than chosen. What the argument needs is that the gap the
-// addition opens be wide enough to cover Owen's loss, and the only evidence of
-// its width is which additions the person called unrankable. Someone who calls
-// both the life at 7 and the life at 70 unrankable has told us their range of
-// critical levels reaches from 70 down to at least 7, so adding at 70 is worth
-// anywhere from nothing to 63 by their own account - which covers 35. Adding at
-// 7 would be worth at most 7 to them, and could not cover any harm worth
-// drawing.
+// The addition is the wonderful life rather than the modest one because the
+// Pareto route needs it: K± has to hold the same Nadia as K++ for Pareto to
+// rank the two at all. The other route does not depend on that pairing, but
+// asking about both would only usually change which addition the harm sits
+// beside, not whether the argument goes through, so the wonderful life is used
+// throughout for one world instead of two.
 var K_BOTH=[{n:499,w:55},{n:1,w:20,tag:"Owen"},{n:1,w:K_WOND[1].w,tag:"Nadia"}];
 
 var PARETO_BEFORE=[{n:100,w:50}];
@@ -162,6 +165,21 @@ var QUESTIONS=[
              ". Second, <strong>Nadia is added at "+K_WOND[1].w+"</strong>: the same wonderful life you were asked about earlier. Nobody else is touched."
     },
     {
+        id:"plusVsBoth", kind:"pair", label:"The modest addition against the harm",
+        // Only relevant to someone who has declined to rank the modest
+        // addition (so there is a denial for a derived verdict to collide
+        // with) and ranked K above K± determinately anyway (so there is a
+        // verdict to derive). Nothing else the closure can already do without
+        // this answer reaches that pair, and a denial or a determinate loss
+        // for K here settles the same question the other way, so both are
+        // left live rather than assumed.
+        when:function(a){ return a.neutral_mod==="none" && a.greedy==="left"; },
+        pops:[K_MOD,K_BOTH], names:["K+","K±"],
+        title:"Two ways to bring Nadia in.",
+        body:"One more comparison, between two futures you have already ranked against <strong>K</strong> separately. <strong>K+</strong> has the same 500 people as K, completely unaffected, plus Nadia at "+K_MOD[1].w+
+             ". <strong>K±</strong> has Owen — one of that same 500 — down to "+K_BOTH[1].w+", and Nadia added at "+K_WOND[1].w+" instead."
+    },
+    {
         id:"trans_gt", kind:"principle", label:"Transitivity of better-than",
         title:"Better than, and better than again.",
         body:"Take any three futures. Suppose the first is better than the second, and the second is better than the third.",
@@ -243,6 +261,7 @@ function compile(ans){
     fromPair("neutral_mod","K","K+",["neutral_mod"]);
     fromPair("neutral_wond","K","K++",["neutral_wond"]);
     fromPair("greedy","K","K±",["greedy"]);
+    fromPair("plusVsBoth","K+","K±",["plusVsBoth"]);
 
     // Rung 0 of the ladder, stated directly.
     fromPair("benign","A","A+",["benign"]);
@@ -533,38 +552,6 @@ function eqChainMatters(ans){
 }
 
 /* ---------------------------------------------------------------
-   Broome's greediness of neutrality, checked outside the closure for the same
-   reason as the collapsing principle: the verdict it needs - that adding
-   Nadia leaves K and K++ beyond ranking - emits no edge, so nothing the closure
-   can see is disturbed by what follows it.
-
-   The dilemma only exists for the weak form. Someone who calls the addition
-   exactly as good as leaving her out already has Pareto's K++ > K+- to chain
-   with, and so derives K > K+- rather than helping themselves to it; if they
-   then rank K+- level with K or above it, that is an ordinary cycle and the
-   closure catches it. Someone who calls the addition unrankable derives
-   nothing, and a determinate K > K+- is a claim about how wide their own gap is.
-
-   Which is why both neutrality answers are required, and it is not caution.
-   Greediness is a claim about width: a gap swallows a harm only if the addition
-   could be worth more than the harm. Read the gaps as a range of critical
-   levels, and calling the life at 70 unrankable puts a level at or above 70,
-   while calling the life at 7 unrankable puts one at or below 7 - so adding at
-   70 is worth anywhere from nothing to 63 on the person's own account, and
-   Owen's 35 sits inside that. One answer alone fixes only one end of the range
-   and leaves the width unknown, and a range that stops just short of Nadia's
-   own level swallows nothing at all. The reading is stated on the card; it is
-   the same one the misery route above assumes.
---------------------------------------------------------------- */
-function greedyCandidate(ans){
-    // Both, and for the width rather than for emphasis: see above.
-    if(ans.neutral_mod!=="none" || ans.neutral_wond!=="none") return null;
-    if(ans.greedy!=="left") return null;        // ...ranked determinately anyway
-    if(ans.pareto!=="yes") return null;         // ...with the harm counting as one
-    return {level:K_WOND[1].w, floor:K_MOD[1].w, from:K_BASE[0].w, to:K_BOTH[1].w};
-}
-
-/* ---------------------------------------------------------------
    The checks that run outside the closure. Each is a different reason a set of
    answers can be in trouble without any pair of outcomes being ranked in both
    directions at once, which is the only thing the closure can see:
@@ -572,7 +559,12 @@ function greedyCandidate(ans){
      alpha     a choice from three that reverses a choice from two
      collapse  a gap with a determinate verdict one welfare unit away
      zrank     a gap on the ladder with Z ranked at the end of it
-     greedy    a gap wide enough to swallow a harm, with the harm ranked anyway
+
+   Broome's greediness of neutrality used to live here too, priced off a range
+   of critical levels the two neutrality answers were read as implying. It
+   does not any more: plusVsBoth asks the comparison the argument actually
+   needs directly, so the closure sees a real edge and derives the same
+   conflict itself - see STORIES' plusVsBothPriced, below.
 
    They are listed rather than written out one after another because each one
    used to be wired into five places - the analyse return, the headline tally,
@@ -605,8 +597,7 @@ var EXTRA_CHECKS=[
     // Broome's collapsing principle (Weighing Lives ch. 12). Asked before it is
     // scored, so an unasked or rejected principle cannot bite.
     {id:"collapse", run:function(a){ return a.collapse==="yes" ? collapseCandidate(a) : null; }},
-    {id:"zrank", run:zRankCandidate},
-    {id:"greedy", run:greedyCandidate}
+    {id:"zrank", run:zRankCandidate}
 ];
 
 // Each check's result under its own name, plus the list of the ones that
@@ -1147,6 +1138,8 @@ var LABELS={
     neutral_wond:function(a){ return "Adding Nadia with a wonderful life makes the outcome "+({left:"worse",right:"better",equal:"neither better nor worse",none:"incomparable"}[a])+"."; },
     greedy:function(a){ return "K is "+({left:"better than",right:"worse than",equal:"exactly as good as",none:"not rankable against"}[a])+
         " K± — Owen down from "+K_BASE[0].w+" to "+K_BOTH[1].w+", and Nadia added at "+K_WOND[1].w+"."; },
+    plusVsBoth:function(a){ return "K+ is "+({left:"better than",right:"worse than",equal:"exactly as good as",none:"not rankable against"}[a])+
+        " K± — Nadia added at "+K_MOD[1].w+" against Owen down and Nadia added at "+K_WOND[1].w+"."; },
     benign:function(a){ return "A+ is "+({left:"worse than",right:"better than",equal:"exactly as good as",none:"not rankable against"}[a])+" A \u2014 everyone gains, and good new lives are added."; },
     nae:function(a){ return "B is "+({left:"worse than",right:"better than",equal:"exactly as good as",none:"not rankable against"}[a])+" A+ \u2014 same headcount, more total, more average, fully equal."; },
     generalize:function(a){ return {
@@ -1232,12 +1225,43 @@ function greedyPriced(needs){
     };
 }
 
+/* The other horn of the same argument, and the one that needed a question of
+   its own: someone who ranks K above K± while leaving the modest addition
+   unrankable has usually also priced K± against K+ - the very comparison
+   Broome's own proof turns on - without being asked. plusVsBoth asks it
+   directly, so an answer that puts K± level with or above K+ chains straight
+   through greedy's K > K± to K > K+, which collides with the denial neutral_mod
+   just gave. Nothing about K++ or the wonderful addition's range is needed
+   here; ranking K+ above K± instead, or declining to rank the two at all, both
+   block the chain and are left unscored - see the top-of-file note on why. */
+function plusVsBothPriced(needs){
+    return {
+        needs: needs,
+        title:"Your own answers already rank K above K+.",
+        // The verdict this collides with need not be "unrankable" - the same
+        // chain trips just as well against "exactly as good", which is why
+        // this reads back whatever neutral_mod actually said rather than
+        // assuming which denial it was.
+        because:function(a){
+            var harm=K_BASE[0].w-K_BOTH[1].w;
+            var said=a.plusVsBoth==="equal" ? "exactly as good as K+" : "better than K+";
+            return "You ranked K± "+said+", and separately ranked K above K± — Owen down "+
+                harm+" points from "+K_BASE[0].w+", Nadia added at "+K_WOND[1].w+
+                ". Chain those two and K comes out better than K+, which collides with what you said above about adding Nadia at "+K_MOD[1].w+".";
+        },
+        group:"plusVsBothPriced"
+    };
+}
+
 var STORIES=[
     // One entry per route to the same complaint: better-than in a single step,
     // equalities chained, or a chain that also crosses a denied verdict.
     greedyPriced(["greedy","neutral_wond","pareto","trans_gt"]),
     greedyPriced(["greedy","neutral_wond","pareto","trans_eq","menu_eq"]),
     greedyPriced(["greedy","neutral_wond","pareto","trans_eq","menu_eq","trans_gt"]),
+    plusVsBothPriced(["greedy","neutral_mod","plusVsBoth","trans_gt"]),
+    plusVsBothPriced(["greedy","neutral_mod","plusVsBoth","trans_eq","trans_gt"]),
+    plusVsBothPriced(["greedy","neutral_mod","plusVsBoth","trans_eq","menu_eq","trans_gt"]),
     {
         needs:["benign","nae","trans_gt","AvB"],
         // Only for the shape the prose describes: two improvements and a
@@ -1531,24 +1555,6 @@ var CARD_HTML={
             ' those lives are a gain, and '+Z_POP[0].n.toLocaleString()+' of them swamp what A\u2019s hundred lose. But calling the addition of a life at welfare '+zr.level+
             ' unrankable puts a level down at '+zr.level+', which is not above '+Z_LEVEL+
             '. You cannot have the boundary in both places. Note that this one, unlike the others, assumes your gaps come from a neutral range at all \u2014 so if you reject that picture, this is the conflict to argue with.</p></div>';
-        return h;
-    },
-    greedy:function(gr, n){
-        var h='', gh=gr.from-gr.to;
-        h+='<div class="hit"><div class="tag">Conflict '+n+
-           ' &middot; the greediness of neutrality</div>';
-        h+='<h3 style="margin-top:10px">Your gap is wider than the harm you put beside it.</h3>';
-        h+='<ol class="claims"><li>'+claimText("neutral_mod")+'</li><li>'+claimText("neutral_wond")+
-           '</li><li>'+claimText("pareto")+'</li><li>'+claimText("greedy")+'</li></ol>';
-        h+='<p class="because">Pareto puts K++ above K± — the same 501 people, Owen better off by '+gh+
-           ' in one of them and nobody worse — so Owen’s loss counts as a loss on your own accounting. '+
-           'What you do not have is any comparison between K and a world Nadia is in. Read your gaps the way Broome does, as a range of critical levels with a comparison coming out determinate only when it holds at every level in the range, and your two neutrality answers fix how wide that range is: calling the life at '+
-           gr.level+' unrankable puts a level at or above '+gr.level+', calling the life at '+gr.floor+
-           ' unrankable puts one at or below '+gr.floor+'. Adding Nadia at '+gr.level+
-           ' is therefore worth anywhere from nothing to '+(gr.level-gr.floor)+' by your own account — and Owen’s '+gh+
-           ' sits inside that. Whether K± falls below K depends on where in your own range the answer lands, so there is no fact of the matter about it, and you gave one anyway. '+
-           'This is what Broome calls the <em>greediness</em> of the intuition of neutrality: it does not stay confined to the person being added. The wider the range of lives you are willing to call neutral, the larger the harm that disappears into the gap beside one of them. '+
-           'Note that this one, like the misery route, assumes your gaps come from a neutral range at all — if you reject that picture, this is the conflict to argue with. What it is not is a way out through caution: the consistent answer is that K and K± cannot be ranked either, and that is a harm to somebody who exists either way going unsaid.</p></div>';
         return h;
     }
 };

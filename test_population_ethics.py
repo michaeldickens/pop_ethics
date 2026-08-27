@@ -37,13 +37,13 @@ import sys
 from playwright.sync_api import sync_playwright
 
 QIDS = ["pareto", "same_number", "AvB", "misery", "neutral_mod", "benign", "nae",
-        "generalize", "AvZ", "neutral_wond", "collapse", "greedy", "trans_gt",
-        "trans_none", "trans_eq", "menu_eq", "menu"]
+        "generalize", "AvZ", "neutral_wond", "collapse", "greedy", "plusVsBoth",
+        "trans_gt", "trans_none", "trans_eq", "menu_eq", "menu"]
 PAIRS = ["same_number", "AvB", "misery", "neutral_mod", "benign", "nae", "AvZ",
-         "neutral_wond", "greedy"]
+         "neutral_wond", "greedy", "plusVsBoth"]
 PRINCIPLES = ["pareto", "generalize", "collapse", "trans_gt", "trans_none",
               "trans_eq", "menu_eq"]
-CONDITIONAL = ("collapse", "greedy", "trans_none", "menu_eq")
+CONDITIONAL = ("collapse", "greedy", "plusVsBoth", "trans_none", "menu_eq")
 PAIR_VALUES = ["left", "right", "equal", "none"]
 PRINCIPLE_VALUES = ["yes", "no"]
 MENU_VALUES = ["A", "B", "Z", "none"]
@@ -51,11 +51,11 @@ MENU_VALUES = ["A", "B", "Z", "none"]
 # Index of the answer button to click, per question, for named profiles.
 CLICK_MODAL = {"pareto": 0, "same_number": 1, "AvB": 0, "misery": 0, "neutral_mod": 2,
                "benign": 1, "nae": 1, "generalize": 0, "AvZ": 0, "neutral_wond": 2,
-               "collapse": 0, "greedy": 0, "trans_gt": 0, "trans_none": 0,
+               "collapse": 0, "greedy": 0, "plusVsBoth": 0, "trans_gt": 0, "trans_none": 0,
                "trans_eq": 0, "menu_eq": 0, "menu": 0}
 CLICK_TOTALIST = {"pareto": 0, "same_number": 1, "AvB": 1, "misery": 0, "neutral_mod": 1,
                   "benign": 1, "nae": 1, "generalize": 0, "AvZ": 1, "neutral_wond": 1,
-                  "collapse": 0, "greedy": 1, "trans_gt": 0, "trans_none": 0,
+                  "collapse": 0, "greedy": 1, "plusVsBoth": 0, "trans_gt": 0, "trans_none": 0,
                   "trans_eq": 0, "menu_eq": 0, "menu": 2}
 CLICK_ALPHA = dict(CLICK_TOTALIST, menu=0)
 # Accepting every principle but declaring every pair unrankable. Index 3 on a
@@ -83,6 +83,10 @@ BROOME = "menu_eq+neutral_mod+neutral_wond+pareto+trans_eq"
 # wonderful life, since that is the addition K+- carries.
 PRICED_EQ = "greedy+menu_eq+neutral_wond+pareto+trans_eq"
 PRICED_GT = "greedy+neutral_wond+pareto+trans_gt"
+# The other horn: K ranked above K+- while the modest addition is unrankable,
+# closed by pricing K+ against K+- directly instead of routing through K++.
+PRICED_MOD_EQ = "greedy+menu_eq+neutral_mod+plusVsBoth+trans_eq+trans_gt"
+PRICED_MOD_GT = "greedy+neutral_mod+plusVsBoth+trans_gt"
 
 
 class Report:
@@ -366,27 +370,47 @@ def suite_engine(page, rep):
               "the three Nadia levels still straddle zero as the check assumes", str(levels))
 
     # Broome ch.12 again: the greediness of neutrality. K+- is K with Owen down
-    # 35 and Nadia added at 70, so a gap wide enough to cover the harm has to
-    # say something about it, and everything it can say costs.
+    # 35 and Nadia added at 70. Ranking K above K+- while calling the modest
+    # addition unrankable is a conflict once the person has also priced K+
+    # against K+- - Broome's own comparison - and put K+- level with or above
+    # K+. Unlike the K++ route below, this one needs no Pareto step: the
+    # ranking of K+ against K+- comes straight from the person's own answer.
     weak = dict(MODAL, neutral_mod="none", neutral_wond="none")
-    r = analyse(page, dict(weak, greedy="left"))
-    rep.check(bool(r["greedy"]), "greediness fires: gaps at both levels, determinate K > K+-")
-    rep.check(not any("greedy" in s for s in r["sets"]),
-              "...and does it outside the closure, which sees no edge to worry about",
+    r = analyse(page, dict(weak, greedy="left", plusVsBoth="right"))
+    rep.check(PRICED_MOD_GT in r["sets"],
+              "ranking K+- at least as good as K+ contradicts K above K+-, priced K+'s way",
               str(r["sets"]))
-    # The width of the gap is what the argument runs on, and one unrankable
-    # answer fixes only one end of the range. Neither alone may fire.
+    r = analyse(page, dict(weak, greedy="left", plusVsBoth="equal"))
+    rep.check(PRICED_MOD_EQ in r["sets"],
+              "so does putting K+- exactly level with K+",
+              str(r["sets"]))
+    # Declining that comparison, or answering it the other way, blocks the
+    # chain rather than escaping it.
     for label, prof in [
-            ("only the modest addition is unrankable",
-             dict(MODAL, neutral_mod="none", greedy="left")),
-            ("only the wonderful addition is unrankable",
-             dict(MODAL, neutral_wond="none", greedy="left")),
-            ("both additions were called exactly as good", dict(MODAL, greedy="left")),
-            ("K+- was not ranked determinately", dict(weak, greedy="none")),
-            ("K+- was ranked the other way", dict(weak, greedy="right")),
-            ("Pareto is rejected, so Owen's loss is not conceded",
-             dict(weak, pareto="no", greedy="left"))]:
-        rep.check(not analyse(page, prof)["greedy"], f"greediness stays quiet: {label}")
+            ("K+ was ranked above K+-", dict(weak, greedy="left", plusVsBoth="left")),
+            ("K+ against K+- was declined", dict(weak, greedy="left", plusVsBoth="none")),
+            ("K+- was not ranked determinately, so nothing to chain through",
+             dict(weak, greedy="none", plusVsBoth="right"))]:
+        rep.check(not any("plusVsBoth" in s for s in analyse(page, prof)["sets"]),
+                  f"the K+ route stays quiet: {label}", str(analyse(page, prof)["sets"]))
+    # compile() reads plusVsBoth off the answers directly, same as every other
+    # question, so it is not limited to the "unrankable" denial the question
+    # is asked over: forcing it alongside a modest addition ranked "exactly as
+    # good" collides just the same, because the chain now contradicts an
+    # equality rather than a denial. The quiz only ever asks the question when
+    # neutral_mod is "none", so this profile could not arise from answering
+    # the quiz in order - but the closure does not get to assume that, and
+    # must still catch it if some other edit produced it.
+    r = analyse(page, dict(MODAL, neutral_wond="none", greedy="left", plusVsBoth="right"))
+    rep.check(PRICED_MOD_GT in r["sets"],
+              "the same chain also contradicts an 'exactly as good' verdict on K vs K+",
+              str(r["sets"]))
+    # Unlike the K++ route, this one does not lean on Pareto at all: the
+    # ranking of K+- against K+ is the person's own answer, not a dominance
+    # step, so rejecting Pareto does not touch it.
+    r = analyse(page, dict(weak, pareto="no", greedy="left", plusVsBoth="right"))
+    rep.check(PRICED_MOD_GT in r["sets"],
+              "...and rejecting Pareto does not save the K+ route either", str(r["sets"]))
 
     # The strong form does not escape either, but it is caught by the closure:
     # K = K++ chains with Pareto's K++ > K+- to deliver K > K+-.
@@ -410,14 +434,6 @@ def suite_engine(page, rep):
       return e.map(x => x.a + '>' + x.b).sort();
     }""")
     rep.check(kpm == ["K++>K±"], "Pareto places K+- below K++ and nowhere else", str(kpm))
-
-    # The arithmetic the sizing rests on: the harm has to fit inside the gap
-    # the person's own answers open, or ranking K above K+- is no error at all.
-    sizes = page.evaluate("""() => ({harm: K_BASE[0].w - K_BOTH[1].w,
-                                     added: K_BOTH[2].w, floor: K_MOD[1].w})""")
-    rep.check(sizes["harm"] < sizes["added"] - sizes["floor"],
-              "the harm fits inside the gap both unrankable answers imply",
-              f"harm {sizes['harm']}, gap up to {sizes['added'] - sizes['floor']}")
 
     # Both horns have to say something. Silence here is the failure mode the
     # whole addition exists to fix.
@@ -451,11 +467,14 @@ def suite_engine(page, rep):
     # The profile the quiz used to have nothing at all to say to: gaps
     # everywhere the additions are, everything else modal.
     quiet_before = dict(MODAL, neutral_mod="none", neutral_wond="none", benign="none",
-                        collapse="no", trans_none="no", greedy="left", AvB="left")
+                        collapse="no", trans_none="no", greedy="left",
+                        plusVsBoth="right", AvB="left")
     r = analyse(page, quiet_before)
-    rep.check(r["extras"] == ["greedy"],
-              "the weak-form neutralist who escaped everything else draws the card",
-              f"sets {r['sets']}, extras {r['extras']}")
+    rep.check(PRICED_MOD_GT in r["sets"],
+              "the weak-form neutralist who prices K+- against K+ draws the conflict",
+              f"sets {r['sets']}")
+    rep.check(not r["extras"],
+              "...found by the closure now, not the old extras mechanism", str(r["extras"]))
     # And the gap on the ladder is no longer free either: A over B and B over
     # A+ rank the pair that gap declined.
     rep.check(LADDER_SHORT in r["sets"],
@@ -519,8 +538,6 @@ def suite_engine(page, rep):
         const sup = new Set();
         r.sets.forEach(s => s.forEach(x => sup.add(x)));
         if (r.collapse) { sup.add(r.collapse.vague.id); sup.add(r.collapse.anchor.id); }
-        // The greediness card is charged to the unrankable addition it turns on.
-        if (r.greedy) { sup.add('neutral_mod'); sup.add('greedy'); }
         Object.keys(a).forEach(q => { if (a[q] === 'none') { tot++; if (sup.has(q)) ever++; } });
       });
       ANS = keep; return {ever, tot};
@@ -1315,15 +1332,15 @@ def suite_conditional(page, rep):
     rep.suite("conditional")
 
     # Each conditional question must appear exactly when it can bite, and the
-    # four must gate independently of one another.
+    # five must gate independently of one another.
     for label, clicks, want in [
             ("unrankable beside a determinate verdict", CLICK_VAGUE,
-             {"collapse", "greedy"}),
+             {"collapse", "greedy", "plusVsBoth"}),
             ("two chaining equalities", CLICK_MODAL, {"menu_eq", "greedy"}),
             ("equalities that cannot chain", CLICK_NO_CHAIN, {"greedy"}),
             # Nothing in the greediness case can bite on someone who ranked
             # both additions as plain gains, so it is the one profile that is
-            # asked none of the four.
+            # asked none of the five.
             ("both additions ranked as gains", CLICK_TOTALIST, set())]:
         walk(page, clicks)
         got = {q for q in CONDITIONAL if q in walk.asked}

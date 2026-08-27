@@ -30,26 +30,34 @@ is better, "right" the second, "equal" exactly as good, "none" unrankable.
     benign       A  vs A+         neutral_mod   K vs K+
     nae          A+ vs B          neutral_wond  K vs K++
     AvZ          A  vs Z          greedy        K vs K+-
+                                    plusVsBoth    K+ vs K+-
                                     same_number   two disjoint hundreds
 
 K+- is Broome's greediness case: one bad thing (a harm to somebody who exists
 either way) beside one thing the intuition of neutrality calls neutral. The
-addition is the life at 70 rather than the one at 7 because what the argument
-needs is a gap wide enough to cover Owen's 35, and only a view that calls both
-additions unrankable has told us its range of critical levels is that wide.
-Ranking K above K+- from inside that view is what the greediness check catches;
-declining to rank them is the other horn, scored as a bullet because it is
-perfectly consistent. The question is not put to a view that ranks both
-additions as plain improvements, since nothing in it can bite there.
+question is not put to a view that ranks both additions as plain improvements,
+since nothing in it can bite there. Two routes reach a conflict from there,
+neither needing the other:
 
-There is a second, more direct route to the same complaint, and it needs only
-one gap rather than two. "Cannot be ranked" is read by the closure as the
+Route one runs through K++. "Cannot be ranked" is read by the closure as the
 strong claim -- not better, not worse, not equal -- so it collides with any
 relation the rest of the answers derive between that pair. Leave the wonderful
 addition unrankable (K vs K++) and rank K+- determinately against K anyway, and
 Pareto's K++ > K+- chains with that ranking to a verdict on K vs K++, which is
-the pair just declined. This needs nothing about the modest addition or about
-how wide the range is: one denied pair and one derived relation are enough.
+the pair just declined. This needs nothing about the modest addition: one
+denied pair and one derived relation are enough.
+
+Route two runs through K+, and it is what plusVsBoth is for. Leave the modest
+addition unrankable (K vs K+) and rank K above K+- anyway; Owen down and Nadia
+up is not a Pareto comparison, so nothing forces a verdict on K+- against K+
+the way Pareto forces one for K++ -- plusVsBoth asks for it directly. Put K+-
+level with or above K+ there and that chains with K above K+- to K above K+,
+the pair just declined. Ranking K+ above K+-, or declining that comparison
+too, blocks the chain instead, and is not scored either way: it is a hard
+question in its own right (roughly, whether a big enough gain to one person
+can outweigh a smaller loss to another absent Pareto), and answering it either
+way here would be crediting or charging a view for a position on a different
+argument entirely.
 
 same_number holds the headcount fixed and varies who the people are. It emits
 no edge and settles nothing in the closure: it is there to make an ordering say
@@ -71,7 +79,7 @@ VIEWS = [
             consistent: it is a complete, transitive ordering.""",
         answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
                      neutral_mod="right", benign="right", nae="right", generalize="yes",
-                     AvZ="right", neutral_wond="right", collapse="yes", greedy="right",
+                     AvZ="right", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="Z"),
     ),
@@ -87,7 +95,7 @@ VIEWS = [
             be a loss purely for being below par.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="left", benign="left", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="right", collapse="yes", greedy="left",
+                     AvZ="left", neutral_wond="right", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -104,7 +112,7 @@ VIEWS = [
             worth living being not worth adding.""",
         answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
                      neutral_mod="right", benign="right", nae="right", generalize="no",
-                     AvZ="left", neutral_wond="right", collapse="yes", greedy="right",
+                     AvZ="left", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="B"),
     ),
@@ -123,7 +131,7 @@ VIEWS = [
             consistent, and is told instead what its verdicts commit it to.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="left", benign="left", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="equal", collapse="yes", greedy="left",
+                     AvZ="left", neutral_wond="equal", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -139,7 +147,7 @@ VIEWS = [
             collision and be told it violates Sen's property beta.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="equal", benign="right", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="equal", collapse="yes", greedy="left",
+                     AvZ="left", neutral_wond="equal", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="no",
                      menu="A"),
     ),
@@ -156,7 +164,7 @@ VIEWS = [
             worth nothing.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="equal", benign="right", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="equal", collapse="yes", greedy="left",
+                     AvZ="left", neutral_wond="equal", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -169,7 +177,7 @@ VIEWS = [
         good (B > A), but Z is worse than A.""",
         answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
                      neutral_mod="equal", benign="right", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="equal", collapse="yes", greedy="left",
+                     AvZ="left", neutral_wond="equal", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="no",
                      menu="B"),
     ),
@@ -200,7 +208,7 @@ VIEWS = [
             weaker 'not worse than', which no option here states on its own.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="none", benign="none", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="none", collapse="no", greedy="none",
+                     AvZ="left", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="no", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -210,20 +218,19 @@ VIEWS = [
         name="Wide gaps, and the harm still counts",
         blurb="""The imprecise view above, one answer different: K is ranked
             above K+- rather than left unranked. That is the answer almost
-            everyone gives, because the move from K to K+- is one bad thing
-            and one thing the view itself calls neutral, and bad plus neutral
-            ought to be bad. It is the answer the view cannot have. Calling
-            both the life at 7 and the life at 70 unrankable says the range of
-            critical levels runs from 70 down to at least 7, so adding at 70 is
-            worth anywhere from nothing to 63 -- and Owen's 35 is inside that,
-            which leaves no fact of the matter about which world is better.
-            Should draw the greediness card. The ladder is blocked at
+            everyone gives, because the view is totalist everywhere except at
+            the two additions, and totalled K+- beats K+ -- Nadia's gain of 63
+            outweighs Owen's loss of 35. It is the answer the view cannot have:
+            pricing K+- above K+ that way, together with ranking K above K+-,
+            forces K above K+ by transitivity -- the very pair the view just
+            called unrankable, not better, not worse, not equal. Should draw a
+            real conflict now, not a bullet. The ladder is blocked at
             not-worse-than, so nothing arrives at Z; what it does not escape is
             the denied benign step, which every view holding a gap there
             collides on.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="none", benign="none", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="none", collapse="no", greedy="left",
+                     AvZ="left", neutral_wond="none", collapse="no", greedy="left", plusVsBoth="right",
                      trans_gt="yes", trans_none="no", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -246,7 +253,7 @@ VIEWS = [
             K against K+- as well, and both cards fall silent.""",
         answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
                      neutral_mod="none", benign="right", nae="right", generalize="yes",
-                     AvZ="right", neutral_wond="none", collapse="yes", greedy="right",
+                     AvZ="right", neutral_wond="none", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="Z"),
     ),
@@ -262,7 +269,7 @@ VIEWS = [
             profile in this list that the collapsing question should catch.""",
         answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
                      neutral_mod="none", benign="right", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="right", collapse="yes", greedy="left",
+                     AvZ="left", neutral_wond="right", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="B"),
     ),
@@ -276,7 +283,7 @@ VIEWS = [
             being caught by the collapsing principle and not.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="none", benign="right", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="right", collapse="no", greedy="left",
+                     AvZ="left", neutral_wond="right", collapse="no", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -294,7 +301,7 @@ VIEWS = [
             nothing to touch.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="equal", benign="right", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="equal", collapse="yes", greedy="left",
+                     AvZ="left", neutral_wond="equal", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="no", trans_none="no", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -311,7 +318,7 @@ VIEWS = [
         answers=dict(pareto="yes", same_number="right", AvB="none", misery="left",
                      neutral_mod="equal", benign="right", nae="none",
                      generalize="yes", AvZ="none", neutral_wond="equal", collapse="yes",
-                     greedy="left", trans_gt="yes", trans_none="yes", trans_eq="yes",
+                     greedy="left", plusVsBoth="left", trans_gt="yes", trans_none="yes", trans_eq="yes",
                      menu_eq="no", menu="none"),
     ),
 
@@ -325,7 +332,7 @@ VIEWS = [
             without limit, and the best world contains nobody.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="left", benign="left", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="left", collapse="yes", greedy="left",
+                     AvZ="left", neutral_wond="left", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -344,7 +351,7 @@ VIEWS = [
             vivid.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="left", benign="left", nae="left", generalize="yes",
-                     AvZ="left", neutral_wond="right", collapse="yes", greedy="left",
+                     AvZ="left", neutral_wond="right", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -362,7 +369,7 @@ VIEWS = [
             apart.""",
         answers=dict(pareto="no", same_number="equal", AvB="left", misery="left",
                      neutral_mod="left", benign="left", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="left", collapse="yes", greedy="left",
+                     AvZ="left", neutral_wond="left", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -379,7 +386,7 @@ VIEWS = [
             should, twice.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="right", benign="right", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="right", collapse="yes", greedy="right",
+                     AvZ="left", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -396,7 +403,7 @@ VIEWS = [
             should, twice.""",
         answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
                      neutral_mod="right", benign="right", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="right", collapse="yes", greedy="right",
+                     AvZ="left", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="B"),
     ),
@@ -411,7 +418,7 @@ VIEWS = [
             able to pass without comment.""",
         answers=dict(pareto="yes", same_number="right", AvB="right", misery="right",
                      neutral_mod="right", benign="right", nae="right", generalize="yes",
-                     AvZ="right", neutral_wond="right", collapse="yes", greedy="right",
+                     AvZ="right", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="Z"),
     ),
@@ -434,7 +441,7 @@ VIEWS = [
             the floor commits it to.""",
         answers=dict(pareto="yes", same_number="right", AvB="none", misery="left",
                      neutral_mod="none", benign="none", nae="right", generalize="no",
-                     AvZ="left", neutral_wond="none", collapse="no", greedy="none",
+                     AvZ="left", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="no", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -456,7 +463,7 @@ VIEWS = [
             not-worse-than question touches.""",
         answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
                      neutral_mod="none", benign="none", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="none", collapse="no", greedy="none",
+                     AvZ="left", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -476,7 +483,7 @@ VIEWS = [
             misery route, and be told that route assumes the reading.""",
         answers=dict(pareto="yes", same_number="none", AvB="none", misery="none",
                      neutral_mod="none", benign="none", nae="right", generalize="no",
-                     AvZ="left", neutral_wond="none", collapse="no", greedy="none",
+                     AvZ="left", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
                      menu="A"),
     ),
@@ -491,7 +498,7 @@ VIEWS = [
             conflict, something is wrong.""",
         answers=dict(pareto="no", same_number="none", AvB="none", misery="none",
                      neutral_mod="none", benign="none", nae="none", generalize="yes",
-                     AvZ="none", neutral_wond="none", collapse="no", greedy="none",
+                     AvZ="none", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="no",
                      menu="none"),
     ),
@@ -513,10 +520,10 @@ EXPECT = {
     'asymmetry_equal': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt'], ['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'extras': [], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'asymmetry_B': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'rough': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'A neutral addition made a real harm unrankable.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
-    'wide-gaps-harm-still-counts': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': ['greedy'], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
+    'wide-gaps-harm-still-counts': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['greedy', 'neutral_mod', 'plusVsBoth', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
     'wide-gaps-spent-anyway': {'conflicts': [['greedy', 'neutral_wond', 'pareto', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
-    'vague_boundary': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': ['collapse'], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
-    'vague_boundary_ok': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
+    'vague_boundary': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': ['collapse'], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_eq', 'menu']},
+    'vague_boundary_ok': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_eq', 'menu']},
     'nontransitive': {'conflicts': [['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of better-than.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'nontransitive-non-independent': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You denied that levelling up improves things.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'antinatalist': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
