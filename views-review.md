@@ -41,7 +41,7 @@ in quality, so Z beats A and is chosen from the menu. Parfit's own statement of 
 that generates the Repugnant Conclusion. Internally consistent: it is a complete,
 transitive ordering.
 
-Open it: append `#a=yrrlrrryrr---y-y-z` to the quiz URL.
+Open it: append `#a=yrrlrrryrr---y-y-z-` to the quiz URL.
 
 ### Answers
 
@@ -81,7 +81,7 @@ worse; at 70 it raises the average and makes things better. Consistent, but it h
 deny benign addition, and it implies that a life well worth living can be a loss purely
 for being below par.
 
-Open it: append `#a=yrllllrylr-l-y-y-a` to the quiz URL.
+Open it: append `#a=yrllllrylr-l-y-y-a-` to the quiz URL.
 
 ### Answers
 
@@ -123,7 +123,7 @@ fall below it, so Z is worse than A and the moves cannot be repeated indefinitel
 best of the three and is chosen. Blocking the ladder at 'the moves repeat' is what saves
 it, and it is committed to some lives worth living being not worth adding.
 
-Open it: append `#a=yrrlrrrxlr---y-y-b` to the quiz URL.
+Open it: append `#a=yrrlrrrxlr---y-y-b-` to the quiz URL.
 
 ### Answers
 
@@ -165,7 +165,7 @@ does not collide with Pareto here: the Pareto question is about the same people,
 them better off, and K++ contains a person K does not. So maximin comes out consistent,
 and is told instead what its verdicts commit it to.
 
-Open it: append `#a=yrllllryle-l-y-yya` to the quiz URL.
+Open it: append `#a=yrllllryle-l-y-yya-` to the quiz URL.
 
 ### Answers
 
@@ -209,7 +209,7 @@ the table and K+ falls below the other two. Denying that a verdict survives a wi
 is what lets all three stand. Should escape the neutral-range collision and be told it
 violates Sen's property beta.
 
-Open it: append `#a=yrllerryle-l-y-yxa` to the quiz URL.
+Open it: append `#a=yrllerryle-l-y-yxa-` to the quiz URL.
 
 ### Answers
 
@@ -253,7 +253,7 @@ Existing people still matter, so benign addition and levelling up are both impro
 but A > B. Should collide twice over: once on the ladder, and once because two lives of
 very different quality cannot both be exactly worth nothing.
 
-Open it: append `#a=yrllerryle-l-y-yya` to the quiz URL.
+Open it: append `#a=yrllerryle-l-y-yya-` to the quiz URL.
 
 ### Answers
 
@@ -294,7 +294,7 @@ Bullets bitten:
 Common-sense person-affecting view #1. Adding a happy life is neither good nor badr.
 Increasing total utility in a single step is good (B > A), but Z is worse than A.
 
-Open it: append `#a=yrrlerryle-l-y-yxb` to the quiz URL.
+Open it: append `#a=yrrlerryle-l-y-yxb-` to the quiz URL.
 
 ### Answers
 
@@ -348,7 +348,7 @@ reads 'cannot be ranked' as the strong claim, not better and not worse and not e
 a derived verdict contradicts it; Parfit's own claim about mere addition is the weaker
 'not worse than', which no option here states on its own.
 
-Open it: append `#a=yrllnnryln-n-yxy-a` to the quiz URL.
+Open it: append `#a=yrllnnryln-n-yxy-a-` to the quiz URL.
 
 ### Answers
 
@@ -399,7 +399,7 @@ a real conflict now, not a bullet. The ladder is blocked at not-worse-than, so n
 arrives at Z; what it does not escape is the denied benign step, which every view
 holding a gap there collides on.
 
-Open it: append `#a=yrllnnryln-lryxy-a` to the quiz URL.
+Open it: append `#a=yrllnnryln-lryxy-a-` to the quiz URL.
 
 ### Answers
 
@@ -449,7 +449,7 @@ needs a ranked verdict on both rungs to chain through and the greediness story d
 go anywhere near nae. What is left is a single, clean case of Broome's argument, with
 nothing else riding along.
 
-Open it: append `#a=yrllnnnyln-lryxy-a` to the quiz URL.
+Open it: append `#a=yrllnnnyln-lryxy-a-` to the quiz URL.
 
 ### Answers
 
@@ -502,7 +502,7 @@ denied pair and one derived relation, and they are the same pair. The companion 
 above shows the position this collides with is not a dead end -- decline K against K+-
 as well, and both cards fall silent.
 
-Open it: append `#a=yrrlnrryrn-r-y-y-z` to the quiz URL.
+Open it: append `#a=yrrlnrryrn-r-y-y-z-` to the quiz URL.
 
 ### Answers
 
@@ -547,7 +547,7 @@ could' bullet the companion view earns only once Pareto is off the table too. Re
 Pareto is a steep price on its own, but it is worth seeing that it is doing real work
 here, not just sitting unused.
 
-Open it: append `#a=xrrlnrryrn-r-y-y-z` to the quiz URL.
+Open it: append `#a=xrrlnrryrn-r-y-y-z-` to the quiz URL.
 
 ### Answers
 
@@ -595,7 +595,7 @@ its own bullet for passing on a dominance result -- a smaller one than ranking K
 K+- would, since it never claims identity should decide value, but a bullet all the
 same.
 
-Open it: append `#a=yrrlnrrylrylny-y-b` to the quiz URL.
+Open it: append `#a=yrrlnrrylrylny-y-b-` to the quiz URL.
 
 ### Answers
 
@@ -639,7 +639,7 @@ The same answers as the previous view, except that a sharp boundary between 'unr
 and 'better' is accepted as the price of vagueness. That single change should be the
 difference between being caught by the collapsing principle and not.
 
-Open it: append `#a=yrllnrrylrxlny-y-a` to the quiz URL.
+Open it: append `#a=yrllnrrylrxlny-y-a-` to the quiz URL.
 
 ### Answers
 
@@ -686,7 +686,7 @@ neutrality answers are stipulated rather than drawn from Temkin, and are here to
 the contrast: the remaining collision turns on equality, which rejecting transitivity of
 better-than does nothing to touch.
 
-Open it: append `#a=yrllerryle-l-x-yya` to the quiz URL.
+Open it: append `#a=yrllerryle-l-x-yya-` to the quiz URL.
 
 ### Answers
 
@@ -729,7 +729,7 @@ buys the escape from the neutral-range collision, which needs two equalities to 
 before it can bite. Declines to rank A against B or against Z, and so rules none of the
 three out.
 
-Open it: append `#a=yrnlernyne-l-y-yxn` to the quiz URL.
+Open it: append `#a=yrnlernyne-l-y-yxn-` to the quiz URL.
 
 ### Answers
 
@@ -774,7 +774,7 @@ worse, whether the life goes badly or wonderfully. Among people who exist anyway
 wellbeing is still better, so levelling up improves things. Fewer people is better
 without limit, and the best world contains nobody.
 
-Open it: append `#a=yrllllryll-l-y-y-a` to the quiz URL.
+Open it: append `#a=yrllllryll-l-y-y-a-` to the quiz URL.
 
 ### Answers
 
@@ -817,7 +817,7 @@ gain, and why levelling up is refused: B's two hundred at 64 hold more shortfall
 them than A+'s better-off hundred do. Not a standard view so much as the shape a good
 many people's answers take once the suffering is made vivid.
 
-Open it: append `#a=yrlllllylr-l-y-y-a` to the quiz URL.
+Open it: append `#a=yrlllllylr-l-y-y-a-` to the quiz URL.
 
 ### Answers
 
@@ -861,7 +861,7 @@ source of suffering and so a loss, whatever the life contains, and two futures o
 hundred people apiece come out exactly as good when neither holds any suffering to tell
 them apart.
 
-Open it: append `#a=xellllryll-l-y-y-a` to the quiz URL.
+Open it: append `#a=xellllryll-l-y-y-a-` to the quiz URL.
 
 ### Answers
 
@@ -905,7 +905,7 @@ the ladder looks right; better-than obviously chains; and yet A is plainly bette
 and vastly better than Z. No view about neutrality here at all, so the neutral-range
 collision should not fire - the ladder ones should, twice.
 
-Open it: append `#a=yrllrrrylr---y-y-a` to the quiz URL.
+Open it: append `#a=yrllrrrylr---y-y-a-` to the quiz URL.
 
 ### Answers
 
@@ -942,7 +942,7 @@ the ladder looks right; better-than obviously chains; B is better than A; and ye
 worse than A or B. No view about neutrality here at all, so the neutral-range collision
 should not fire - the ladder ones should, twice.
 
-Open it: append `#a=yrrlrrrylr---y-y-b` to the quiz URL.
+Open it: append `#a=yrrlrrrylr---y-y-b-` to the quiz URL.
 
 ### Answers
 
@@ -977,7 +977,7 @@ of unrelieved agony makes the world better by being lived. Almost nothing in the
 literature goes here, and even totalism enters that life as a negative. It should not be
 able to pass without comment.
 
-Open it: append `#a=yrrrrrryrr---y-y-z` to the quiz URL.
+Open it: append `#a=yrrrrrryrr---y-y-z-` to the quiz URL.
 
 ### Answers
 
@@ -1026,7 +1026,7 @@ no conflict, only the bullets naming what the gaps cost it. Offered all three it
 and B together: the open question between them does not close because Z joined the
 table, and Z is out either way.
 
-Open it: append `#a=yrnlnnrxln-n-y-y-p` to the quiz URL.
+Open it: append `#a=yrnlnnrxln-n-y-y-p-` to the quiz URL.
 
 ### Answers
 
@@ -1076,7 +1076,7 @@ than A after all. Should collide on the ladder route, where the view above comes
 clean -- and on the denied benign step as well, which both views share and which neither
 answer to the not-worse-than question touches.
 
-Open it: append `#a=yrllnnryln-n-yyy-a` to the quiz URL.
+Open it: append `#a=yrllnnryln-n-yyy-a-` to the quiz URL.
 
 ### Answers
 
@@ -1126,7 +1126,7 @@ the welfare Z's people live at. Should collide on the misery route, and be told 
 route assumes the reading. Picks A and B together from the three, as any view that
 declines to rank them against each other but ranks both above Z has to.
 
-Open it: append `#a=ynnnnnrxln-n-y-y-p` to the quiz URL.
+Open it: append `#a=ynnnnnrxln-n-y-y-p-` to the quiz URL.
 
 ### Answers
 
@@ -1169,7 +1169,7 @@ boundary case: there is nothing to be inconsistent with, so the quiz should find
 collisions, and should not manufacture one. If this profile ever produces a conflict,
 something is wrong.
 
-Open it: append `#a=xnnnnnnynn-n-y-y-n` to the quiz URL.
+Open it: append `#a=xnnnnnnynn-n-y-y-n-` to the quiz URL.
 
 ### Answers
 
