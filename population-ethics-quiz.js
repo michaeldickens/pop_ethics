@@ -1258,8 +1258,8 @@ var STORIES=[
     {
         needs:["benign","nae","generalize","trans_gt","AvZ"],
         when:function(a){ return a.benign==="right" && a.nae==="right" && a.AvZ==="left"; },
-        title:"The ladder reaches Z, and the loop closes.",
-        because:"This is Parfit's mere addition argument. Each rung is a step you endorsed and said you would endorse again; transitivity chains them the whole way down; and the last judgement swings back from the bottom of the ladder to the top. The relation \u201Cbetter than\u201D now runs in a circle.",
+        title:"Each rung of the ladder is an improvement, but you end up worse than you started.",
+        because:"This is Parfit's mere addition argument. You said A is better than B, and that you'd make the same judgment at each rung; transitivity chains them the whole way down; but at the end, you preferred A to Z. The relation \u201Cbetter than\u201D now runs in a circle.",
         chain:true
     },
     {
