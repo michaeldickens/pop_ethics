@@ -1460,10 +1460,11 @@ function bullets(){
     // also hold, same as greedy==="equal" above: the conflict shows the
     // chain, this names what the "equal" verdict itself is committed to.
     if(ANS.plusVsBoth==="equal" && ANS.pareto==="yes"){
-        out.push({t:"You priced K+- as exactly tied with K+.",
-                  b:"Sorted, K+-'s welfare levels beat K+'s at both ends — "+K_BOTH[1].w+" over "+K_MOD[1].w+
+        out.push({t:"You priced K± as exactly tied with K+.",
+                  b:"K±'s welfare levels beat K+'s at both ends — "+K_BOTH[1].w+" over "+K_MOD[1].w+
                     " at the bottom, "+K_WOND[1].w+" over "+K_BASE[0].w+
-                    " at the top — with the same 501 people throughout and nobody worse off once you stop tracking who is who. That is a strict gain at every level that moves, not a wash. Calling the two worlds exactly as good says an anonymous Pareto improvement buys nothing — a more exact claim than declining to rank them, and pointed the same way ranking K+ above K+- is, just by a smaller margin."});
+                    " at the top — with the same 501 people throughout. All that changes is Nadia and Owen switch positions.<br><br>"+
+                  "A view that rejects interpersonal welfare aggregation might judge these outcomes incomparable. But you didn't — you said they're <em>exactly equal</em>. You judged that Owen's smaller loss of welfare was exactly balanced out by Nadia's larger gain. That's not inconsistent, but it requires assigning greater worth to Owen's welfare."});
     }
 
     if(ANS.benign==="left") out.push({t:"Everyone gains, good lives are added, and you called it worse.",b:"Every one of A\u2019s hundred is better off in A+, and a further hundred exist there with lives clearly worth living. Ranking that below A means the new lives are a cost heavy enough to outweigh a gain to every person who was already there.<br/><br/>Your answer does not force you to accept the mere addition paradox. However, the price is what it commits you to elsewhere: you would prefer the original hundred be worse off, so long as fewer people existed alongside them.",
