@@ -1480,12 +1480,17 @@ function bullets(){
 
     if(ANS.nae!=="right") out.push({t:"You denied that levelling up improves things.",b:"B holds the same "+CHAIN[0].to.n+" people as A+, with more welfare in total, more on average, and more equality. There is a consistent motive available \u2014 the better-off group does lose, falling from "+CHAIN[0].plus[0].w+" to "+CHAIN[0].to.w+", while the worse-off rise from "+CHAIN[0].plus[1].w+" \u2014 so a view that weighs losses to the well-off heavily can resist it. But it sets you against totalism, averagism and egalitarianism in one move."});
 
-    // The coherent half of the conflict zRankCandidate catches. A gap at the
-    // top of the ladder and a verdict at the bottom is exactly what a neutral
-    // range with a floor above Z's welfare delivers - but only if the rung
-    // verdicts flip on the way down, which is what makes it worth naming.
-    if(ANS.AvZ==="left" && ANS.benign==="none" && ANS.generalize==="no"){
-        out.push({t:"Your gaps have a floor, and it is doing the work.",b:"You declined to rank the benign addition, said the verdict flips somewhere further down, and still ranked A above Z. Those fit together, and the natural thing that makes them fit is a neutral range with a <em>floor</em> \u2014 a welfare level below which an added life is no longer merely unrankable but determinately not worth adding. Above the floor the additions are a genuine open question, which is your gap at the top of the ladder; Z\u2019s "+Z_POP[0].n.toLocaleString()+" people live at "+Z_LEVEL+", beneath it, which is why Z is rankable at all. That commits you to two things worth seeing plainly. The rung where your verdict flips is not a matter of taste \u2014 it <em>is</em> the floor, and you are owed a reason why it sits there rather than a rung higher or lower. And the verdict against Z is not carried by the "+(Z_POP[0].n-A_POP[0].n).toLocaleString()+" lives you added: it is carried by A\u2019s original hundred, who are still in Z and have fallen from "+A_POP[0].w+" to "+Z_LEVEL+". Most people who answer this way believe the added lives are what makes Z worse. On your own view they cannot be."});
+    // What the ladder gaps buy, stated without borrowing a premise nobody was
+    // asked for. It is tempting to say the flip has to go downward, since a
+    // flip to "better" would only carry you further down the ladder - but that
+    // reasoning needs the rungs to chain, and here they do not: the gaps break
+    // every path from A to Z on their own, whatever the flipped rung says. So
+    // the flip's direction is not forced, and neither is any verdict further
+    // down. What is forced is only the shape below, which needs nothing.
+    // Never beside the conflict it is the consistent counterpart of: a profile
+    // the engine has just called impossible is not one to price as a cost.
+    if(ANS.AvZ==="left" && ANS.benign==="none" && !zRankCandidate(ANS)){
+        out.push({t:"You ranked the two ends of the ladder but not a single step of it.",b:"A against Z you settled: two populations "+CHAIN.length+" rungs and "+(Z_POP[0].n-A_POP[0].n).toLocaleString()+" people apart. A against A+ you did not: one step, one small gain to each of a hundred people, one group of a hundred added. The larger comparison came out easier than the smaller one contained inside it.<br/><br/>That is not a contradiction, and the gaps are what make it work \u2014 an unrankable rung is a broken link, so no chain of steps ever carries you from A down to Z, and the two answers never meet. It is worth seeing what it says about the gaps themselves. Whatever generates them is not tracking how far apart two futures are, since it falls silent on the near comparison and speaks confidently on the distant one. Any account you give of <em>why</em> A and A+ cannot be ranked has to be one that stops applying by the time the ladder reaches Z."});
     }
 
     var noneCount=0, PAIRQS=["AvB","AvZ","misery","neutral_mod","neutral_wond","benign","nae","greedy","same_number"];
