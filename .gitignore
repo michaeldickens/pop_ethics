@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Quiz response log (contains visitor IPs and answers - never commit)
+quiz-log.jsonl
+*.jsonl

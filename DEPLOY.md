@@ -14,6 +14,14 @@ This keeps the Python process off the public internet, restarts it on crash,
 and starts it on boot. Paths below assume the quiz lives at
 `https://your-domain/pop-ethics/`; adjust to taste.
 
+One rule runs through the whole setup: **nothing but the two static files is
+reachable over HTTP.** The response log in particular holds visitors' IP
+addresses and answers, so it lives outside the web root entirely (`/var/lib`,
+not `/var/www`) and nginx is told to serve two exact filenames rather than a
+directory. `serve_quiz.py` enforces the same allowlist for anything it serves
+itself, but nginx serves the static files directly, so the restriction has to
+be stated in both places.
+
 ## 1. Put the files on the server
 
 ```bash
@@ -21,8 +29,14 @@ cd /var/www
 git clone https://github.com/michaeldickens/pop_ethics.git
 sudo mv pop_ethics pop-ethics
 
-# The service writes the log as www-data, so that user must own the directory.
-sudo chown -R www-data:www-data /var/www/pop-ethics
+# The checkout stays root-owned and read-only to the service: www-data should
+# not be able to rewrite the code it executes, or the git repo it pulls into.
+sudo chown -R root:root /var/www/pop-ethics
+
+# The log goes somewhere nginx never looks, owned by the user that writes it.
+sudo mkdir -p /var/lib/pop-ethics
+sudo chown www-data:www-data /var/lib/pop-ethics
+sudo chmod 750 /var/lib/pop-ethics
 ```
 
 The client posts to `LOG_ENDPOINT="log"` (relative to the page, set near the
@@ -45,11 +59,12 @@ Group=www-data
 WorkingDirectory=/var/www/pop-ethics
 ExecStart=/usr/bin/python3 /var/www/pop-ethics/serve_quiz.py \
     --host 127.0.0.1 --port 8137 \
-    --log /var/www/pop-ethics/quiz-log.jsonl
+    --log /var/lib/pop-ethics/quiz-log.jsonl
 Restart=on-failure
 NoNewPrivileges=true
 PrivateTmp=true
-ProtectSystem=full
+ProtectSystem=strict
+ReadWritePaths=/var/lib/pop-ethics
 
 [Install]
 WantedBy=multi-user.target
@@ -69,15 +84,27 @@ Inside the `server { ... }` block for your domain (the one that already
 terminates TLS), add:
 
 ```nginx
-# Static quiz files
-location /pop-ethics/ {
-    root  /var/www;                          # files live in /var/www/pop-ethics/
-    index population-ethics-quiz.html;
-    try_files $uri $uri/ =404;
+# Static quiz files - exactly two of them. A plain `location /pop-ethics/`
+# with a `root` would hand out everything else in the directory too: the
+# response log, the Python source, the tests, and .git.
+location = /pop-ethics/ {
+    root /var/www;                           # files live in /var/www/pop-ethics/
+    try_files /pop-ethics/population-ethics-quiz.html =404;
 }
 
-# The one dynamic path: forward the answer POSTs to the logger.
-# Exact match, so it wins over the prefix location above.
+location ~ ^/pop-ethics/population-ethics-quiz\.(html|js)$ {
+    root /var/www;
+    try_files $uri =404;
+}
+
+# Anything else under /pop-ethics/ that is not matched above (and not the
+# exact-match /log below) does not exist as far as the web is concerned.
+location /pop-ethics/ {
+    return 404;
+}
+
+# The one dynamic path: forward the answer POSTs to the logger. Exact match,
+# so it wins over both the regex and the catch-all 404 above.
 location = /pop-ethics/log {
     proxy_pass http://127.0.0.1:8137/log;
     proxy_set_header Host              $host;
@@ -87,7 +114,21 @@ location = /pop-ethics/log {
 ```
 
 `X-Forwarded-For` is what carries the visitor's real IP to the logger;
-without it every row would read `127.0.0.1` (nginx itself). Then:
+without it every row would read `127.0.0.1` (nginx itself).
+
+Consider rate-limiting `/log` while you are in here. The endpoint takes
+unauthenticated writes, and while each request is capped at 64 KB there is
+nothing stopping someone from sending a great many of them:
+
+```nginx
+# in the http { } block
+limit_req_zone $binary_remote_addr zone=poplog:1m rate=10r/m;
+
+# in the location = /pop-ethics/log block
+limit_req zone=poplog burst=5 nodelay;
+```
+
+Then:
 
 ```bash
 sudo nginx -t && sudo systemctl reload nginx
@@ -96,7 +137,7 @@ sudo nginx -t && sudo systemctl reload nginx
 Visit `https://your-domain/pop-ethics/`, take the quiz to the end, and:
 
 ```bash
-tail -f /var/www/pop-ethics/quiz-log.jsonl
+tail -f /var/lib/pop-ethics/quiz-log.jsonl
 ```
 
 should show one JSON line appear when you hit the verdict.
@@ -130,7 +171,7 @@ Keep the log from growing forever with logrotate. Create
 `/etc/logrotate.d/pop-ethics`:
 
 ```
-/var/www/pop-ethics/quiz-log.jsonl {
+/var/lib/pop-ethics/quiz-log.jsonl {
     weekly
     rotate 12
     compress
@@ -148,6 +189,10 @@ place (rather than renaming) avoids having to restart it.
 - **No CORS needed:** the page and `/log` are the same origin.
 - **Privacy:** you're logging IP addresses, which are personal data in some
   jurisdictions. If the quiz is public, a line in a privacy note is worth it.
+  Keep the log out of `/var/www` (step 1) so it can't be fetched over HTTP,
+  and out of git - `quiz-log.jsonl` is in `.gitignore`, but note the deploy
+  directory is a live checkout, so a stray `git add -A` there is the other
+  way it could end up published.
 - **Disabling logging:** set `LOG_ENDPOINT=""` at the top of the JS, or just
   stop the service — the client's POST fails silently and the quiz is
   unaffected.
@@ -156,7 +201,7 @@ place (rather than renaming) avoids having to restart it.
 (this section was written by MD)
 
 ```
-ssh root@mdickens.me
+ssh root@your-server
 cd /var/www/pop-ethics
 git pull
 ```
