@@ -901,17 +901,18 @@ def suite_geometry(page, rep):
         rep.check(len(d["rects"]) == 3, f"{qid}: the added person is drawn as its own bar",
                   f"{len(d['rects'])} bars")
 
-    # K+- carries two single people, a person's width apart. Both must be drawn
-    # and both captioned; the overlap check above is what keeps the two captions
-    # off each other, since they cannot fit side by side on one line.
+    # K carries Owen split out at his unchanged level, and K+- carries both
+    # Owen and Nadia, a person's width apart. All three must be drawn and
+    # captioned; the overlap check above is what keeps captions within a
+    # panel off each other, since two on one row cannot fit side by side.
     d = figures["greedy"]
     for caption in ("Owen", "Nadia"):
         rep.check(any(caption == t["s"] for t in d["texts"]),
                   f"greedy: {caption} carries a caption")
-    rep.check(len(d["rects"]) == 4, "greedy: both single people are drawn as their own bars",
+    rep.check(len(d["rects"]) == 5, "greedy: Owen (both panels) and Nadia are each drawn as their own bar",
               f"{len(d['rects'])} bars")
     rows = sorted({round(t["ink1"]) for t in d["texts"] if t["s"] in ("Owen", "Nadia")})
-    rep.check(len(rows) == 2, "greedy: the two captions sit on separate rows", str(rows))
+    rep.check(len(rows) == 2, "greedy: same-panel captions still land on separate rows", str(rows))
 
     # Above the knee the blocks stop encoding total welfare as area, so those
     # figures carry a to-scale bar row instead. That row has to be exact.

@@ -55,6 +55,10 @@ var K_BOTH=[{n:499,w:55},{n:1,w:20,tag:"Owen",side:"left"},{n:1,w:K_WOND[1].w,ta
 // so it is visually obvious there that he is one of K's own people carried
 // over unaffected, not someone new standing next to Nadia.
 var K_MOD_OWEN=[{n:499,w:55},{n:1,w:K_BASE[0].w,tag:"Owen",side:"left"},{n:1,w:K_MOD[1].w,tag:"Nadia"}];
+// Same idea for the greedy figure's K side: split Owen out of the 500 at his
+// unchanged level, so his bar visibly drops to K±'s rather than appearing
+// out of nowhere there.
+var K_BASE_OWEN=[{n:499,w:55},{n:1,w:K_BASE[0].w,tag:"Owen",side:"left"}];
 
 var PARETO_BEFORE=[{n:100,w:50}];
 var PARETO_AFTER =[{n:100,w:90}];
@@ -164,7 +168,7 @@ var QUESTIONS=[
         // question stays live for everyone else, including the person who
         // thinks an addition is bad.
         when:function(a){ return a.neutral_mod!=="right" || a.neutral_wond!=="right"; },
-        pops:[K_BASE,K_BOTH], names:["K","K±"],
+        pops:[K_BASE_OWEN,K_BOTH], names:["K","K±"],
         title:"One person worse off, one person added.",
         body:"<strong>K</strong> once more, and beside it <strong>K±</strong>, which differs in exactly two ways. First, one person — <strong>Owen</strong>, who is there in both futures — drops from "+K_BASE[0].w+" to "+K_BOTH[1].w+
              ". Second, <strong>Nadia is added at "+K_WOND[1].w+"</strong>: the same wonderful life you were asked about earlier. Nobody else is touched."
