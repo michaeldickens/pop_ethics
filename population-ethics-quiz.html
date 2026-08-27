@@ -111,6 +111,12 @@ button{font-family:var(--mono);font-size:13px;letter-spacing:.08em;cursor:pointe
 .opt .key{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--blue);flex:0 0 auto;padding-top:2px}
 .opt.sel{background:var(--blue);border-color:var(--blue);color:var(--paper)}
 .opt.sel .key{color:var(--paper)}
+/* Read-only: a question opened from someone else's shared run shows what they
+   answered, so the options must not read as anything you can press. */
+.opt[disabled]{cursor:default;opacity:1;color:var(--ink)}
+.opt[disabled].sel{color:var(--paper)}
+.opt[disabled]:hover{border-color:var(--hair);background:transparent}
+.opt[disabled].sel:hover{border-color:var(--blue);background:var(--blue)}
 .nav{display:flex;justify-content:space-between;gap:12px;margin-top:30px;align-items:center}
 
 /* ---------- results ---------- */

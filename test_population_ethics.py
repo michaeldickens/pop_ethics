@@ -1295,6 +1295,57 @@ def suite_share(page, rep):
     rep.check(strip(replayed) == strip(original),
               "the share link reproduces the whole results page")
 
+    # Every question in the review table is a link back to the question that
+    # asked it, on your own run and on someone else's alike. The difference is
+    # the "&s=1" marker, which is what keeps a shared run read-only once you
+    # follow one in.
+    href = "e => e.map(x => x.getAttribute('href'))"
+    mine = page.eval_on_selector_all("table.rev td.a a", href)
+    theirs = fresh.eval_on_selector_all("table.rev td.a a", href)
+    rows = page.eval_on_selector_all("table.rev td.a", "e => e.length")
+    rep.check(len(mine) == rows and len(theirs) == rows,
+              "every answer in the review table links to its question, shared or not",
+              f"{len(mine)} of {rows} own, {len(theirs)} of {rows} shared")
+    rep.check(all("&s=1" not in h for h in mine),
+              "your own review links open the question for editing", str(mine[:2]))
+    rep.check(all(h.endswith("&s=1") for h in theirs),
+              "a shared run's review links are marked as someone else's", str(theirs[:2]))
+
+    # Following one shows the question as it was answered, and nothing on it
+    # can be pressed: the answers belong to whoever sent the link.
+    was = fresh.evaluate("() => JSON.stringify(ANS)")
+    fresh.click("table.rev td.a a")
+    fresh.wait_for_timeout(450)
+    rep.check(fresh.evaluate("() => VIEW") == "quiz" and fresh.evaluate("() => SHARED"),
+              "a shared review link opens the question, still as a shared run",
+              f"{fresh.evaluate('() => VIEW')} / {fresh.evaluate('() => SHARED')}")
+    rep.check(fresh.eval_on_selector_all(".opt", "e => e.every(x => x.disabled)"),
+              "...with every option locked")
+    rep.check(fresh.eval_on_selector_all(".opt", "e => e.some(x => x.classList.contains('sel'))"),
+              "...and the answer that was given on show")
+    rep.check(bool(fresh.query_selector("#qslot .shared")),
+              "...labelled as someone else's run")
+    fresh.query_selector_all(".opt")[0].click(force=True)
+    fresh.keyboard.press("B")
+    fresh.wait_for_timeout(400)
+    rep.check(fresh.evaluate("() => JSON.stringify(ANS)") == was,
+              "neither a click nor a keystroke can rewrite a shared answer")
+
+    # And back out again to the verdict it came from, unchanged.
+    fresh.click("#back")
+    fresh.wait_for_selector(DONE, timeout=5000)
+    rep.check(fresh.evaluate("() => SHARED") and bool(fresh.query_selector(".shared"))
+              and not fresh.query_selector("#rback"),
+              "stepping back out of a shared question returns to the shared verdict")
+    rep.check(strip(fresh.inner_text("#results")) == strip(replayed),
+              "...with the same results on it")
+    # The marker is in the URL, so a reload of the page you were sent is still
+    # someone else's run rather than one you are free to edit.
+    fresh.goto(fresh.url)
+    fresh.wait_for_selector(DONE, timeout=5000)
+    rep.check(fresh.evaluate("() => SHARED") and bool(fresh.query_selector(".shared")),
+              "reloading a shared results page keeps it shared", fresh.url.split("#")[-1])
+
     # Deep links, including into a question you have not reached.
     blank = "-" * len(QIDS)
     fresh.goto(f"{base}#a={blank}&q=8")
