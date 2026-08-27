@@ -1372,16 +1372,24 @@ function storyFor(set, ans){
 // conflicts that are not there. These say what a position implies; they are
 // not further questions, and nothing here is scored.
 function worldNote(s){
-    return '<div class="world"><div class="tag"><div class="world-heading">Concrete Example</div></div><p>'+s+'</p></div>';
+    return '<div class="world"><div class="tag"><div class="world-heading">Concrete Problem</div></div><p>'+s+'</p></div>';
 }
 
 function bullets(){
     var out=[];
-    if(ANS.trans_gt==="no") out.push({t:"You rejected transitivity of better-than.",b:"That is a live position \u2014 Temkin and Rachels both take it \u2014 and it defuses most of the paradoxes here at a stroke. The price is that \u201Cbetter than\u201D can now run in circles, which makes it hard to say what you should be aiming at: for any option there may be a better one that is in turn worse than where you started."});
+    if(ANS.trans_gt==="no") out.push({
+        t:"You rejected transitivity of better-than.",
+        b:"That is a live position \u2014 Temkin and Rachels both take it \u2014 and it defuses most of the paradoxes here at a stroke. The price is that \u201Cbetter than\u201D can now run in circles, which makes it hard to say what you should be aiming at: for any option there may be a better one that is in turn worse than where you started.",
+        world:"<strong>You can be money-pumped.</strong> There are some three outcomes A, B, and C such that you'd pay $20 to move from A to B, another $20 to move from B to C, and then $20 to move from C back to A. Nothing has changed, except that you're out $60."
+    });
     // Every other principle draws a bullet when rejected, and this one is not
     // the exception: it is only ever asked of someone the ladder has reached,
     // so declining it is always load-bearing.
-    if(ANS.trans_none==="no") out.push({t:"You rejected transitivity of not-worse-than.",b:"This is Parfit\u2019s own resolution to the mere addition paradox: every rung leaves you not worse off, but \u201Cnot worse than\u201D does not chain, so the ladder never delivers Z. The move is open to you only because you deemed many pairs of outcomes incomparable.<br/><br/>What it costs: the final outcome Z is worse than where we started, even though no step along the way was the mistake."});
+    if(ANS.trans_none==="no") out.push({
+        t:"You rejected transitivity of not-worse-than.",
+        b:"This is one possible resolution to the mere addition paradox: every rung leaves you not worse off, but \u201Cnot worse than\u201D does not chain, so the ladder never delivers Z. The move is open to you only because you deemed many pairs of outcomes incomparable.<br/><br/>What it costs: the final outcome Z is worse than where we started, even though no step along the way was a mistake.",
+        world:"<strong>You can be money-pumped.</strong> There are some three outcomes A, B, and C such that you'd accept a move from A to B — you believe B is not worse than A — and likewise you'd accept a move from B to C. Having arrived at C, you'd want to pay $20 to move back to A. Nothing has changed, except that you're out $20."
+    });
 
     if(ANS.menu_eq==="no"){
         // Naming the specific expansion failure is more use than the general
@@ -1476,7 +1484,7 @@ function bullets(){
         if(ANS[k]==="none") noneCount++;
     });
     if(noneCount>=3) out.push({t:noneCount===PAIRQS.length?"You judged none of the nine pairs rankable.":"You judged "+noneCount+" of the "+PAIRQS.length+" pairs unrankable.",b:"You said that these pairs were not <em>equal</em>, but that no betterness relation holds either way. An ordering with widespread incomparability cannot do much practical work \u2014 it will stay silent on most of the choices you would want it to settle.",
-                               world:"Parfit's Depletion problem. A country can burn through its natural resource reserves, raising living standards for a century but ruining the climate for future generations; or it can conserve resources and protect the environment. The choice changes who meets whom and when children are conceived, so the two futures are populated by entirely different people. No particular person is harmed by choosing to deplete resources, but it still seems that a wrong has been committed. Your answers force the conclusion that depleting the environment's resources is not wrong."});
+                               world:"<strong>Parfit's Depletion problem.</strong> A country can burn through its natural resource reserves, raising living standards for a century but ruining the climate for future generations; or it can conserve resources and protect the environment. The choice changes who meets whom and when children are conceived, so the two futures are populated by entirely different people. No particular person is harmed by choosing to deplete resources, but it still seems that a wrong has been committed. Your answers force the conclusion that depleting the environment's resources is not wrong."});
     // The second half of the asymmetry is a negative claim - creating a happy
     // person is not *better* - and "cannot be ranked" delivers that as squarely
     // as "exactly as good" does. The two routes differ in what they cost, not in
@@ -1607,9 +1615,10 @@ var CARD_HTML={
         h+='<div class="hit"><div class="tag">Conflict '+n+' &middot; treating Owen and Nadia unequally</div>';
         h+='<h3 style="margin-top:10px">You treated Owen\u2019s welfare as more important than Nadia\u2019s.</h3>';
         h+='<ol class="claims"><li>'+claimText("pareto")+'</li><li>'+claimText("plusVsBoth")+'</li></ol>';
-        h+='<p class="because">You ranked K+ '+said+' K\u00b1. The two outcomes differ only in Owen and Nadia: Owen goes from '+K_BASE[0].w+' to '+K_BOTH[1].w+
-           ', Nadia from '+K_MOD[1].w+' to '+K_WOND[1].w+'. No person is added or removed. From an anonymous perspective, K\u00b1 is a Pareto improvement over K+: the worst-off person\u2019s welfare increases from '+K_MOD[1].w+' to '+K_BOTH[1].w+
-           ', and the best-off goes from '+K_BASE[0].w+' to '+K_WOND[1].w+'. All that changes are the names. Nothing about Owen or Nadia beyond that has been given \u2014 no relationship, no history, nothing \u2014 so there is no fact this verdict could be tracking.</p></div>';
+        h+='<p class="because">You ranked K+ '+said+' K\u00b1. The two outcomes differ only in Owen and Nadia: Owen\'s welfare goes from '+K_BASE[0].w+' to '+K_BOTH[1].w+
+           ', Nadia\'s from '+K_MOD[1].w+' to '+K_WOND[1].w+'. No person is added or removed. From an anonymous perspective, K\u00b1 is a Pareto improvement over K+: the worst-off person\u2019s welfare increases from '+K_MOD[1].w+' to '+K_BOTH[1].w+
+           ', and the best-off goes from '+K_BASE[0].w+' to '+K_WOND[1].w+'. All that changes are the names.<br><br>'+
+            'No other information about Owen or Nadia has been given \u2014 no relationship, no personal background, nothing \u2014 so there is no fact this verdict could be tracking. Switching the names alone cannot change the verdict.</p></div>';
         return h;
     }
 };
