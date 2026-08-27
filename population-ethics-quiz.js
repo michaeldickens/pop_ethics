@@ -1423,6 +1423,24 @@ function bullets(){
             ? " You also said that adding Nadia cannot be ranked against leaving her out. The two verdicts pull opposite ways: one says her existence has no determinate value, the other says it exactly equals the negated value of the harm to Owen."
             : "")});
 
+    // K+ and K+- hold the same 501 people; only Owen and Nadia move. Sorted,
+    // K+-'s welfare levels beat K+'s at both ends - Owen's new level tops
+    // Nadia's old one, and Nadia's new level tops what anyone in K+ has - so
+    // any view that does not care which named person holds which level, and
+    // treats more welfare for someone with nobody worse off as a gain, has to
+    // rank K+- at least as good. Totalism, averagism, prioritarianism and
+    // maximin all agree here; there is no ordinary reading on which this is a
+    // close call. Ranking K+ above K+- anyway means value is tracking whose
+    // name is attached to which number - swap "Owen" and "Nadia" throughout
+    // and the two worlds are unchanged, yet the verdict flips.
+    if(ANS.plusVsBoth==="left"){
+        out.push({t:"You ranked K+ above K+- — sorted, K+- wins at both ends.",
+                  b:"K+ and K+- differ only in Owen and Nadia: Owen goes from "+K_BASE[0].w+" to "+K_BOTH[1].w+
+                    ", Nadia from "+K_MOD[1].w+" to "+K_WOND[1].w+". Sort each world's welfare levels from the bottom: K+-'s lowest person ("+
+                    K_BOTH[1].w+") beats K+'s lowest ("+K_MOD[1].w+"), and K+-'s highest ("+K_WOND[1].w+
+                    ") beats K+'s highest ("+K_BASE[0].w+"). That is dominance, not a close call — any anonymous, Pareto-respecting view has to rank K+- at least as good, whatever else it believes. Swap the names “Owen” and “Nadia” throughout and you get the same two worlds back, so this verdict cannot be about weighing their interests. It can only be tracking identity itself."});
+    }
+
     if(ANS.benign==="left") out.push({t:"Everyone gains, good lives are added, and you called it worse.",b:"Every one of A\u2019s hundred is better off in A+, and a further hundred exist there with lives clearly worth living. Ranking that below A means the new lives are a cost heavy enough to outweigh a gain to every person who was already there.<br/><br/>Your answer does not force you to accept the mere addition paradox. However, the price is what it commits you to elsewhere: you would prefer the original hundred be worse off, so long as fewer people existed alongside them.",
                                       world:"Distributing malaria nets leaves recipients healthier and better off, and also means more children survive to adulthood, but with worse lives than the global average. Your answer holds that distributing malaria nets may therefore be a <em>bad</em> thing."});
 
@@ -1501,6 +1519,26 @@ function bullets(){
     }
     if(ANS.same_number==="left"){
         out.push({t:"You ranked the worse-off future above the better-off one.",b:"The two futures hold 100 people each, but no single person lives in both futures. Every life in both is worth living, and the only thing separating them is that the second group's lives go better. You ranked the first group above them. Totalism, averagism, maximin and egalitarianism all deliver the opposite verdict here, and the person-affecting views deliver a tie or a refusal rather than a reversal — this is an answer that no reasonable view gives."});
+    }
+    return out;
+}
+
+/* ---------------------------------------------------------------
+   Lighter than a bullet: not a costly commitment, just a gap worth flagging.
+   Declining K+ against K+- is not the mistake ranking K+ above it is - it
+   does not claim identity should decide value - but it is still passing on a
+   dominance result rather than declining a genuinely balanced comparison, so
+   it earns a note rather than silence. Kept out of bullets() so it is not
+   counted in the bullet tally: it is not costing anything, it is just worth
+   seeing.
+--------------------------------------------------------------- */
+function notes(){
+    var out=[];
+    if(ANS.plusVsBoth==="none"){
+        out.push({t:"K+ against K+- is not a genuine toss-up.",
+                  b:"Sorted, K+-'s welfare levels beat K+'s at both ends — "+K_BOTH[1].w+" over "+K_MOD[1].w+
+                    " at the bottom, "+K_WOND[1].w+" over "+K_BASE[0].w+
+                    " at the top — with the same 501 people throughout and nobody worse off once you stop tracking who is who. Declining to rank the pair does not claim that whose name is on which number should decide value, the way ranking K+ above K+- does. But it does mean passing on a verdict every anonymous, Pareto-respecting view would give."});
     }
     return out;
 }
@@ -1654,6 +1692,12 @@ function showResults(){
     if(B.length){
         h+='<hr class="rule thin" style="margin-top:44px"><div class="eyebrow">Bullets bitten</div>';
         B.forEach(function(b){ h+='<div class="bullet"><div class="tag">Consistent, but costly</div><h3 style="margin-top:8px">'+b.t+'</h3><p class="qbody" style="font-size:17px">'+b.b+'</p>'+(b.world?worldNote(b.world):'')+'</div>'; });
+    }
+
+    var N=notes();
+    if(N.length){
+        h+='<hr class="rule thin" style="margin-top:44px"><div class="eyebrow">Worth noting</div>';
+        N.forEach(function(n){ h+='<div class="world"><div class="tag"><div class="world-heading">'+n.t+'</div></div><p>'+n.b+'</p></div>'; });
     }
 
     h+='<hr class="rule" style="margin-top:44px"><div class="eyebrow">Where you landed</div>';

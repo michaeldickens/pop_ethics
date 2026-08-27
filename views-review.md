@@ -61,7 +61,7 @@ Open it: append `#a=yrrlrrryrr---y-y-z` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
 
-Not asked: collapse, greedy, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -102,7 +102,7 @@ Open it: append `#a=yrllllrylr-l-y-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -143,7 +143,7 @@ Open it: append `#a=yrrlrrrxlr---y-y-b` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
 
-Not asked: collapse, greedy, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -187,7 +187,7 @@ Open it: append `#a=yrllllryle-l-y-yya` to the quiz URL.
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -231,7 +231,7 @@ Open it: append `#a=yrllerryle-l-y-yxa` to the quiz URL.
 | Verdicts across a wider menu | A third option can change how the first two compare. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -275,7 +275,7 @@ Open it: append `#a=yrllerryle-l-y-yya` to the quiz URL.
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -316,7 +316,7 @@ Open it: append `#a=yrrlerryle-l-y-yxb` to the quiz URL.
 | Verdicts across a wider menu | A third option can change how the first two compare. |
 | Choosing from three | B is the best of A, B and Z. |
 
-Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -370,7 +370,7 @@ Open it: append `#a=yrllnnryln-n-yxy-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -520,7 +520,7 @@ Open it: append `#a=yrrlnrryrn-r-y-y-z` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -565,7 +565,7 @@ Open it: append `#a=xrrlnrryrn-r-y-y-z` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -587,9 +587,11 @@ Holds that adding Nadia at 7 does not rank against leaving her out, but that add
 at 70 is determinately better, and accepts that no hair's improvement to a life can
 convert 'no fact of the matter' into a settled verdict. Those three cannot all stand:
 Broome's collapsing principle is aimed exactly here. The one profile in this list that
-the collapsing question should catch.
+the collapsing question should catch. K+ against K+- is left unrankable too, which draws
+only the lighter note (dominance passed on, not denied) rather than the bullet ranking
+K+ above K+- would.
 
-Open it: append `#a=yrrlnrrylrylly-y-b` to the quiz URL.
+Open it: append `#a=yrrlnrrylrylny-y-b` to the quiz URL.
 
 ### Answers
 
@@ -607,7 +609,7 @@ Open it: append `#a=yrrlnrrylrylly-y-b` to the quiz URL.
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life cannot turn "unrankable" into a determinate verdict. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
-| The modest addition against the harm | K+ is better than K± -- Nadia added at 7 against Owen down and Nadia added at 70. |
+| The modest addition against the harm | K+ is not rankable against K± -- Nadia added at 7 against Owen down and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
@@ -624,6 +626,10 @@ Bullets bitten:
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
 
+Worth noting:
+
+- K+ against K+- is not a genuine toss-up.
+
 <a id="vague_boundary_ok"></a>
 
 ## Unrankable below, and boundaries fall where they fall
@@ -632,7 +638,7 @@ The same answers as the previous view, except that a sharp boundary between 'unr
 and 'better' is accepted as the price of vagueness. That single change should be the
 difference between being caught by the collapsing principle and not.
 
-Open it: append `#a=yrllnrrylrxlly-y-a` to the quiz URL.
+Open it: append `#a=yrllnrrylrxlny-y-a` to the quiz URL.
 
 ### Answers
 
@@ -650,7 +656,7 @@ Open it: append `#a=yrllnrrylrxlly-y-a` to the quiz URL.
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life can turn "unrankable" into a determinate verdict. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
-| The modest addition against the harm | K+ is better than K± -- Nadia added at 7 against Owen down and Nadia added at 70. |
+| The modest addition against the harm | K+ is not rankable against K± -- Nadia added at 7 against Owen down and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -666,6 +672,10 @@ Bullets bitten:
 
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
+
+Worth noting:
+
+- K+ against K+- is not a genuine toss-up.
 
 <a id="nontransitive"></a>
 
@@ -700,7 +710,7 @@ Open it: append `#a=yrllerryle-l-x-yya` to the quiz URL.
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -743,7 +753,7 @@ Open it: append `#a=yrnlernyne-l-y-yxn` to the quiz URL.
 | Verdicts across a wider menu | A third option can change how the first two compare. |
 | Choosing from three | None of A, B and Z is best. |
 
-Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -787,7 +797,7 @@ Open it: append `#a=yrllllryll-l-y-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -830,7 +840,7 @@ Open it: append `#a=yrlllllylr-l-y-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -874,7 +884,7 @@ Open it: append `#a=xellllryll-l-y-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -917,7 +927,7 @@ Open it: append `#a=yrllrrrylr---y-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, greedy, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -954,7 +964,7 @@ Open it: append `#a=yrrlrrrylr---y-y-b` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
 
-Not asked: collapse, greedy, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -989,7 +999,7 @@ Open it: append `#a=yrrrrrryrr---y-y-z` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
 
-Not asked: collapse, greedy, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -1036,7 +1046,7 @@ Open it: append `#a=yrnlnnrxln-n-y-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -1087,7 +1097,7 @@ Open it: append `#a=yrllnnryln-n-yyy-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -1135,7 +1145,7 @@ Open it: append `#a=ynnnnnrxln-n-y-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -1179,7 +1189,7 @@ Open it: append `#a=xnnnnnnynn-n-y-y-n` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | None of A, B and Z is best. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
