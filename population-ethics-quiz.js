@@ -1704,11 +1704,21 @@ function showResults(){
     h+='<p class="qbody" style="font-size:19px">'+profile()+'</p>';
 
     h+='<hr class="rule thin"><div class="eyebrow">Your answers in full</div><table class="rev">';
-    QUESTIONS.forEach(function(q){
-        if(q.id==="menu" || ANS[q.id]===undefined) return;
-        h+='<tr><td class="a">'+q.label+'</td><td>'+claimText(q.id)+'</td></tr>';
+    // Each label links back to its question with this run's answers already
+    // encoded, so following it lands you there instead of at question one -
+    // the same "&q=" deep link a bookmark or share URL carries. Not offered
+    // on a shared run: clicking in and changing an answer would edit someone
+    // else's results, which is exactly what the missing Back button avoids too.
+    var revCode=encodeAns(), menuIdx=-1;
+    function revLabel(text,i){
+        return SHARED ? text : '<a href="#a='+revCode+'&q='+(i+1)+'">'+text+'</a>';
+    }
+    QUESTIONS.forEach(function(q,i){
+        if(q.id==="menu"){ menuIdx=i; return; }
+        if(ANS[q.id]===undefined) return;
+        h+='<tr><td class="a">'+revLabel(q.label,i)+'</td><td>'+claimText(q.id)+'</td></tr>';
     });
-    if(ANS.menu) h+='<tr><td class="a">Choosing from three</td><td>'+(
+    if(ANS.menu) h+='<tr><td class="a">'+revLabel("Choosing from three",menuIdx)+'</td><td>'+(
         ANS.menu==="none"    ? "None of A, B and Z is best." :
             ANS.menu==="abstain" ? "No view offered on which of A, B and Z is best." :
             ANS.menu+" is the best of A, B and Z.")+'</td></tr>';
