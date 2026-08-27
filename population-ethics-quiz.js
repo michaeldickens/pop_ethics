@@ -821,7 +821,10 @@ function logAnswers(){
 var LASTHASH="";
 function fragment(){
     if(VIEW==="intro") return "";
-    return "#a="+encodeAns()+"&q="+(VIEW==="results"?"r":IDX+1);
+    // "&s=1" says these answers are someone else's, being read rather than
+    // given. Without it a reload of a shared run - or a click into one of its
+    // questions - would come back as your own run, open for editing.
+    return "#a="+encodeAns()+"&q="+(VIEW==="results"?"r":IDX+1)+(SHARED?"&s=1":"");
 }
 function baseURL(){ return location.href.split("#")[0]; }
 function shareURL(){ return baseURL()+"#a="+encodeAns(); }
@@ -907,13 +910,18 @@ function boot(){
     // which carries answers and no marker at all - go through showResults, which
     // turns back at the first gap rather than scoring one.
     if(p.q==="r" || p.q===undefined){
-        // No &q on a complete profile means the link came from someone else.
-        SHARED = p.q===undefined && !missingActive().length;
+        // No &q on a complete profile means the link came from someone else;
+        // &s=1 says so outright, which is how a shared run survives a reload
+        // and a trip into one of its questions and back.
+        SHARED = (p.q===undefined || p.s==="1") && !missingActive().length;
         IDX=stepTo(QUESTIONS.length-1,-1);
         showResults();
         return;
     }
-    SHARED=false;
+    // A question reached from a shared run is read-only: the answers on show
+    // are someone else's, so renderQ offers no way to change them. An
+    // incomplete code is nobody's finished run, so it opens as your own.
+    SHARED = p.s==="1" && !missingActive().length;
     IDX = (n>=1 && n<=QUESTIONS.length) ? stepTo(n-1,1) : firstUnanswered();
     show("quiz"); renderQ();
 }
@@ -1137,17 +1145,21 @@ function renderQ(){
     // question, and must not follow the person down the rest of the quiz.
     var html = NOTICE ? '<p class="notice">'+NOTICE+'</p>' : '';
     NOTICE="";
+    if(SHARED) html+='<div class="shared">Shared answers &middot; someone else\u2019s run, shown as they gave it</div>';
     html+='<div class="q"><h2 class="qtitle">'+q.title+'</h2>'+
         '<p class="qbody">'+(typeof q.body==="function"?q.body(ANS):q.body)+'</p>'+fig+
         '<p class="qbody" style="margin-top:20px"><strong>'+ask+'</strong></p><div class="opts">';
     opts.forEach(function(o){
         var sel = ANS[q.id]===o[2] ? " sel":"";
-        html+='<button class="opt'+sel+'" data-v="'+o[2]+'"><span class="key">'+o[0]+'</span><span>'+o[1]+'</span></button>';
+        html+='<button class="opt'+sel+'" data-v="'+o[2]+'"'+(SHARED?' disabled':'')+
+            '><span class="key">'+o[0]+'</span><span>'+o[1]+'</span></button>';
     });
     html+='</div></div>';
     $("#qslot").innerHTML=html;
 
-    Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(b){
+    // No handlers at all on a shared run, so the options are a record of what
+    // was answered rather than a control that would rewrite it.
+    if(!SHARED) Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(b){
         b.addEventListener("click",function(){
             ANS[q.id]=b.dataset.v;
             Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(x){x.classList.remove("sel");});
@@ -1157,9 +1169,14 @@ function renderQ(){
             setTimeout(function(){ if(ANS[q.id]) advance(); },260);
         });
     });
-    $("#next").disabled = !ANS[q.id];
-    $("#back").style.visibility = pos===0 ? "hidden":"visible";
-    $("#next").textContent = pos===A.length-1 ? "See the verdict \u2192" : "Next \u2192";
+    $("#next").disabled = !SHARED && !ANS[q.id];
+    // Reading someone else's run, both ends of the walk lead back to their
+    // verdict; taking your own, there is nothing behind question one.
+    $("#back").style.visibility = (pos===0 && !SHARED) ? "hidden":"visible";
+    $("#back").textContent = (SHARED && pos===0) ? "\u2190 The verdict" : "\u2190 Back";
+    $("#next").textContent = pos===A.length-1
+        ? (SHARED ? "The verdict \u2192" : "See the verdict \u2192")
+        : "Next \u2192";
     syncHash();
 }
 
@@ -1177,6 +1194,9 @@ function advance(){
         return;
     }
     if(pos>=0 && pos<A.length-1){ IDX=A[pos+1]; renderQ(); window.scrollTo({top:0,behavior:"smooth"}); }
+    // A shared run has no name to ask for and nothing new to log: past the last
+    // question is the verdict you came from.
+    else if(SHARED){ showResults(); }
     else { showNameStep(); }
 }
 
@@ -1213,9 +1233,11 @@ $("#back").addEventListener("click",function(){
     RETURNING=false;
     var A=activeIdx(), pos=A.indexOf(IDX);
     if(pos>0){ IDX=A[pos-1]; renderQ(); window.scrollTo({top:0,behavior:"smooth"}); }
+    else if(SHARED){ showResults(); }
 });
 document.addEventListener("keydown",function(e){
     if($("#quiz").classList.contains("hide")) return;
+    if(SHARED) return;              // nothing to pick on someone else's run
     var k=e.key.toUpperCase(), map={A:0,B:1,C:2,D:3,E:4};
     if(k in map){ var bs=document.querySelectorAll(".opt"); if(bs[map[k]]) bs[map[k]].click(); }
 });
@@ -1814,12 +1836,13 @@ function showResults(){
     h+='<hr class="rule thin"><div class="eyebrow">Your answers in full</div><table class="rev">';
     // Each label links back to its question with this run's answers already
     // encoded, so following it lands you there instead of at question one -
-    // the same "&q=" deep link a bookmark or share URL carries. Not offered
-    // on a shared run: clicking in and changing an answer would edit someone
-    // else's results, which is exactly what the missing Back button avoids too.
+    // the same "&q=" deep link a bookmark or share URL carries. On a shared
+    // run the link carries "&s=1" as well, which opens the question read-only:
+    // you can see what was asked without editing someone else's results, which
+    // is the same thing the missing Back button below protects.
     var revCode=encodeAns();
     function revLabel(text,i){
-        return SHARED ? text : '<a href="#a='+revCode+'&q='+(i+1)+'">'+text+'</a>';
+        return '<a href="#a='+revCode+'&q='+(i+1)+(SHARED?'&s=1':'')+'">'+text+'</a>';
     }
     QUESTIONS.forEach(function(q,i){
         if(ANS[q.id]===undefined) return;
