@@ -171,7 +171,7 @@ var QUESTIONS=[
         pops:[K_BASE_OWEN,K_BOTH], names:["K","K±"],
         title:"One person worse off, one person added.",
         body:"<strong>K</strong> once more, and beside it <strong>K±</strong>, which differs in exactly two ways. First, one person — <strong>Owen</strong>, who is there in both futures — drops from "+K_BASE[0].w+" to "+K_BOTH[1].w+
-             ". Second, <strong>Nadia is added at "+K_WOND[1].w+"</strong>: the same wonderful life you were asked about earlier. Nobody else is touched."
+            ". Second, <strong>Nadia is added at "+K_WOND[1].w+"</strong>: the same wonderful life you were asked about earlier. Nobody else is touched."
     },
     {
         id:"plusVsBoth", kind:"pair", label:"The modest addition against the harm",
@@ -224,12 +224,37 @@ var QUESTIONS=[
               ["B","No \u2014 a third option can change how the first two compare","no"]]
     },
     {
+        // The one question that is a choice rather than a comparison, and the
+        // only source of an alpha violation (see alphaCandidate).
+        //
+        // Hence the shape of the options. What alpha needs to know is which of
+        // the three are among the best. "A and B are exactly as good" and "A
+        // and B cannot be ranked against each other" both name the choice set
+        // {A,B} as the best. Likewise "all three are equal" and "the three
+        // cannot be ranked" both name {A,B,Z}.
         id:"menu", kind:"menu", label:"Choosing from three",
         pops:[A_POP,B_POP,Z_POP], names:["A","B","Z"], totals:true,
         title:"All three at once.",
         body:"The three futures you have already seen, now offered together: <strong>A</strong> with its 100 excellent lives, <strong>B</strong> with its 200 good ones, <strong>Z</strong> with its "+last.n.toLocaleString()+" barely-good ones.",
         ask:"Which is the best of the three?",
-        opts:[["A","A","A"],["B","B","B"],["C","Z","Z"],["D","None \u2014 they cannot be ranked","none"]]
+        opts:[["A","A","A"],["B","B","B"],["C","Z","Z"],
+              ["D","A and B both \u2014 Z is worse than each of them","AB"],
+              ["E","All three \u2014 none of them is worse than the others","all"]]
+    },
+    {
+        // Ask about Sen's property alpha. It comes after the menu question
+        // because it is only worth asking of someone whose menu answer actually
+        // collides with a pair. menu_eq, the other menu-independence question,
+        // covers Sen's beta. Denying beta is a claim about ties breaking, which
+        // says nothing about whether a winner keeps winning as the menu
+        // shrinks.
+        id:"menu_alpha", kind:"principle", label:"Best of three, best of two",
+        when:function(a){ return !!alphaCandidate(a); },
+        title:"Does the best of three stay best in a pair?",
+        body:"Take any three futures {A, B, C}, where <strong>A</strong> is best of the three. Now take <strong>C</strong> off the table.",
+        ask:"Must <strong>A</strong> still be better than <strong>B</strong>?",
+        opts:[["A","Yes \u2014 removing an option cannot dethrone what was already best","yes"],
+              ["B","No \u2014 which option is best can depend on the whole set offered","no"]]
     }
 ];
 
@@ -582,20 +607,49 @@ function eqChainMatters(ans){
    card's number has to learn about it. Here a check is an entry, its card is an
    entry in CARD_HTML beside the other cards, and nothing counts anything.
 --------------------------------------------------------------- */
+// The choice set each menu answer names. Two of the five name more than one
+// world, which is the only reason this is a table rather than a single pick:
+// "A and B both" is {A,B}, and "all three" - whether because the three are
+// equal or because they cannot be ranked, a difference alpha cannot see - is
+// {A,B,Z}. An unanswered question names no set and is absent, which is what
+// leaves it inert.
+var MENU_SETS={A:["A"], B:["B"], Z:["Z"], AB:["A","B"], all:["A","B","Z"]};
+
+// Sen's property alpha: anything you pick out of the three has to survive
+// being offered a subset it belongs to. So every pair the quiz put determinately
+// is a constraint on the menu answer - if the pair has a winner, the loser is
+// not among the best of any larger set containing it, and picking it from the
+// three takes it back.
+//
+// Only two pairs qualify. A against B and A against Z were both asked; B
+// against Z never was, so no verdict exists there to be contradicted. A pair
+// answered "exactly as good" or "cannot be ranked" constrains nothing either:
+// neither option is excluded, so neither can be wrongly picked later.
+//
+// Read this way, the two old cases fall out as instances rather than as
+// special rules - picking Z having ranked A above it, and picking the loser of
+// the A/B question - and one gap closes: picking A having ranked Z above it
+// was a violation of exactly the same shape that nothing used to catch.
 function alphaCandidate(ans){
-    var declined=function(v){ return !v||v==="none"||v==="abstain"; };
-    if(declined(ans.menu)) return null;
-    var pick=ans.menu;
-    // Picking Z from the three while ranking A above Z in the pair is a
-    // violation on its own terms. It turns on AvZ, not AvB, so it must not be
-    // gated behind AvB: an incomparabilist who declines A against B would
-    // otherwise walk through it.
-    if(pick==="Z" && ans.AvZ==="left")
-        return {picked:"Z", pairWinner:"A", third:"B", viaZ:true};
-    if(declined(ans.AvB)) return null;
-    var pairWinner = ans.AvB==="left" ? "A" : ans.AvB==="right" ? "B" : "tie";
-    if((pick==="A"||pick==="B") && pairWinner!=="tie" && pick!==pairWinner)
-        return {picked:pick, pairWinner:pairWinner, third:"Z"};
+    var picked=MENU_SETS[ans.menu];
+    if(!picked) return null;
+    var ASKED=[{q:"AvB", left:"A", right:"B", third:"Z"},
+               {q:"AvZ", left:"A", right:"Z", third:"B"}];
+    for(var i=0;i<ASKED.length;i++){
+        var p=ASKED[i], v=ans[p.q];
+        if(v!=="left" && v!=="right") continue;
+        var winner = v==="left" ? p.left : p.right,
+            loser  = v==="left" ? p.right : p.left;
+        if(picked.indexOf(loser)===-1) continue;
+        // viaZ marks which pair was contradicted rather than which world was
+        // picked - the card wants the pair either way round, and only the
+        // tests read it. several says the answer named more than one world as
+        // best, which the card has to word differently; it is carried here
+        // rather than read back off ANS so the check stays a function of the
+        // answers it was handed.
+        return {picked:loser, pairWinner:winner, third:p.third,
+                viaZ:p.q==="AvZ", several:picked.length>1};
+    }
     return null;
 }
 
@@ -624,7 +678,7 @@ function plusVsBothCandidate(ans){
 var EXTRA_CHECKS=[
     // Contraction consistency (Sen's property alpha): a constraint on choice
     // rather than on the betterness ordering.
-    {id:"alpha", run:alphaCandidate},
+    {id:"alpha", run:function(a){ return a.menu_alpha==="yes" ? alphaCandidate(a) : null; }},
     // Broome's collapsing principle (Weighing Lives ch. 12). Asked before it is
     // scored, so an unasked or rejected principle cannot bite.
     {id:"collapse", run:function(a){ return a.collapse==="yes" ? collapseCandidate(a) : null; }},
@@ -701,7 +755,7 @@ var $=function(s){return document.querySelector(s);};
    --------------------------------------------------------------- */
 var CODES={
     pair: {left:"l", right:"r", equal:"e", none:"n"},
-    menu: {A:"a", B:"b", Z:"z", none:"n"},
+    menu: {A:"a", B:"b", Z:"z", AB:"p", all:"n"},
     principle: {yes:"y", no:"x"}
 };
 var DECODES={};
@@ -1162,7 +1216,7 @@ $("#back").addEventListener("click",function(){
 });
 document.addEventListener("keydown",function(e){
     if($("#quiz").classList.contains("hide")) return;
-    var k=e.key.toUpperCase(), map={A:0,B:1,C:2,D:3};
+    var k=e.key.toUpperCase(), map={A:0,B:1,C:2,D:3,E:4};
     if(k in map){ var bs=document.querySelectorAll(".opt"); if(bs[map[k]]) bs[map[k]].click(); }
 });
 
@@ -1198,6 +1252,10 @@ var LABELS={
         yes:"A verdict reached between two options still holds when a third joins them.",
         no:"A third option can change how the first two compare.",
         abstain:"No view on whether verdicts survive a wider menu."}[a]; },
+    menu_alpha:function(a){ return {
+        yes:"What is best of three is still best when one of the others is taken away.",
+        no:"Which option is best can depend on the whole set of options offered.",
+        abstain:"No view on whether the best of three stays best in a pair."}[a]; },
     trans_gt:function(a){ return {
         yes:"\u201CBetter than\u201D is transitive.",
         no:"\u201CBetter than\u201D is not always transitive.",
@@ -1214,6 +1272,20 @@ var LABELS={
 function claimText(id){
     var v=LABELS[id];
     return (typeof v==="function") ? v(ANS[id]) : v;
+}
+
+// The menu question sits outside LABELS: its answers name sets of worlds
+// rather than a relation between two, so there is no one sentence with a word
+// swapped into it. Kept as a function all the same, because the results table
+// and review_views.py both have to say it and had drifted apart when they each
+// spelled it out.
+function menuClaimText(v){
+    return {A:"A is the best of A, B and Z.",
+            B:"B is the best of A, B and Z.",
+            Z:"Z is the best of A, B and Z.",
+            AB:"A and B are the best of A, B and Z, with Z below them.",
+            all:"None of A, B and Z can be ruled out as best.",
+            abstain:"No view offered on which of A, B and Z is best."}[v] || "";
 }
 
 /* K± meets the closure whenever the wonderful addition was ranked at all: the
@@ -1415,6 +1487,14 @@ function bullets(){
         out.push({t:"You denied that a verdict survives a wider menu.",b:"Your pairwise judgements no longer cohere into a single ordering: each judgement depends on the pair it was made in, and putting a third option on the table can reverse it. This is a violation of Sen\u2019s property &beta;, which states that if two options are tied for best, then expanding the set of options cannot break the tie.<br/><br/>You are committed to there being no such thing as how good an outcome is <em>full stop</em>, only how good it is against a particular set of choices."});
     }
 
+    // Only ever asked of someone whose menu answer already collides with a
+    // pair, so answering "no" is never idle: it is the answer that turns a
+    // conflict into a cost, and it should be named as the cost it is.
+    if(ANS.menu_alpha==="no") out.push({
+        t:"You denied that the best of a set stays best in a subset.",
+        b:"You picked from the three in a way that reverses a verdict you gave on a pair, and when asked whether that was allowed, you said it was. This is a violation of Sen\u2019s property &alpha;: if a choice is best in a set, then it is still best in any subset that contains it.<br/><br/>What you would pick depends on what else is on the table, so there is no fact about which future is best, only about which you would take from a given menu.",
+        world:"<strong>You can be money-pumped.</strong> Say you rank A > B in the presence of C, but B > A when considered alone. If C is removed, you'd pay $20 to move from A to B; then if C is re-introduced, you'd pay $20 to move back to A."});
+
     if(ANS.trans_eq==="no") out.push({t:"You rejected transitivity of equal-goodness.",b:"This is the standard escape from the neutral-range argument, and it usually comes packaged as the claim that some outcomes are only <em>roughly</em> comparable rather than exactly equal. Be warned that it is not a way out of Broome generally: he devotes a later chapter to arguing that rough comparability cannot be a stable resting place either."});
     if(ANS.pareto==="no") out.push({t:"You rejected the Pareto principle.",b:"Denying that a world is better when the very same people are all better off in it is about as revisionary as population ethics gets. Almost every theory in the field takes this as a fixed point."});
     if(ANS.AvZ==="right") out.push({t:"You accepted the repugnant conclusion.",b:"You judged Z better than A: enough lives barely worth living outweigh a small number of superb ones. This is the totalist's answer and it is entirely consistent \u2014 Tännsjö, Huemer and others defend it explicitly. It also means there is in principle no quality of life so marginal that sheer numbers cannot compensate."});
@@ -1585,8 +1665,12 @@ var CARD_HTML={
         // the damage, and it differs between the two.
         h+='<ol class="claims"><li>Offered '+al.pairWinner+' and '+al.picked+
            ' alone, you judged '+al.pairWinner+' the better of the two.</li>';
-        h+='<li>Offered A, B and Z together, you picked '+al.picked+' as best.</li></ol>';
-        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. '+al.third+'\u2019s presence cannot make '+al.picked+' beat '+al.pairWinner+' if it did not already.</p></div>';
+        h+='<li>Offered A, B and Z together, you ranked '+al.picked+
+           (al.several ? ' as not worse.' : ' at the top.')+'</li>';
+        h+='<li>'+claimText("menu_alpha")+'</li></ol>';
+        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. '+al.third+'\u2019s presence cannot '+
+           (al.several ? 'put '+al.picked+' alongside ' : 'make '+al.picked+' beat ')+al.pairWinner+
+           ' if it did not already.</p></div>';
         return h;
     },
     collapse:function(cp, n){
@@ -1733,19 +1817,15 @@ function showResults(){
     // the same "&q=" deep link a bookmark or share URL carries. Not offered
     // on a shared run: clicking in and changing an answer would edit someone
     // else's results, which is exactly what the missing Back button avoids too.
-    var revCode=encodeAns(), menuIdx=-1;
+    var revCode=encodeAns();
     function revLabel(text,i){
         return SHARED ? text : '<a href="#a='+revCode+'&q='+(i+1)+'">'+text+'</a>';
     }
     QUESTIONS.forEach(function(q,i){
-        if(q.id==="menu"){ menuIdx=i; return; }
         if(ANS[q.id]===undefined) return;
-        h+='<tr><td class="a">'+revLabel(q.label,i)+'</td><td>'+claimText(q.id)+'</td></tr>';
+        h+='<tr><td class="a">'+revLabel(q.label,i)+'</td><td>'+
+           (q.id==="menu" ? menuClaimText(ANS.menu) : claimText(q.id))+'</td></tr>';
     });
-    if(ANS.menu) h+='<tr><td class="a">'+revLabel("Choosing from three",menuIdx)+'</td><td>'+(
-        ANS.menu==="none"    ? "None of A, B and Z is best." :
-            ANS.menu==="abstain" ? "No view offered on which of A, B and Z is best." :
-            ANS.menu+" is the best of A, B and Z.")+'</td></tr>';
     h+='</table>';
 
     h+='<hr class="rule thin" style="margin-top:44px"><div class="eyebrow">Save or share</div>';

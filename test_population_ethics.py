@@ -38,15 +38,16 @@ from playwright.sync_api import sync_playwright
 
 QIDS = ["pareto", "same_number", "AvB", "misery", "neutral_mod", "benign", "nae",
         "generalize", "AvZ", "neutral_wond", "collapse", "greedy", "plusVsBoth",
-        "trans_gt", "trans_none", "trans_eq", "menu_eq", "menu"]
+        "trans_gt", "trans_none", "trans_eq", "menu_eq", "menu", "menu_alpha"]
 PAIRS = ["same_number", "AvB", "misery", "neutral_mod", "benign", "nae", "AvZ",
          "neutral_wond", "greedy", "plusVsBoth"]
 PRINCIPLES = ["pareto", "generalize", "collapse", "trans_gt", "trans_none",
-              "trans_eq", "menu_eq"]
-CONDITIONAL = ("collapse", "greedy", "plusVsBoth", "trans_none", "menu_eq")
+              "trans_eq", "menu_eq", "menu_alpha"]
+CONDITIONAL = ("collapse", "greedy", "plusVsBoth", "trans_none", "menu_eq",
+               "menu_alpha")
 PAIR_VALUES = ["left", "right", "equal", "none"]
 PRINCIPLE_VALUES = ["yes", "no"]
-MENU_VALUES = ["A", "B", "Z", "none"]
+MENU_VALUES = ["A", "B", "Z", "AB", "all"]
 
 # Index of the answer button to click, per question, for named profiles.
 CLICK_MODAL = {"pareto": 0, "same_number": 1, "AvB": 0, "misery": 0, "neutral_mod": 2,
@@ -57,10 +58,15 @@ CLICK_TOTALIST = {"pareto": 0, "same_number": 1, "AvB": 1, "misery": 0, "neutral
                   "benign": 1, "nae": 1, "generalize": 0, "AvZ": 1, "neutral_wond": 1,
                   "collapse": 0, "greedy": 1, "plusVsBoth": 0, "trans_gt": 0, "trans_none": 0,
                   "trans_eq": 0, "menu_eq": 0, "menu": 2}
-CLICK_ALPHA = dict(CLICK_TOTALIST, menu=0)
+# menu=0 picks A, reversing this profile's own "B is better" - and index 0 on
+# menu_alpha affirms the principle that makes it a conflict rather than a cost.
+CLICK_ALPHA = dict(CLICK_TOTALIST, menu=0, menu_alpha=0)
 # Accepting every principle but declaring every pair unrankable. Index 3 on a
 # pair is "neither - they cannot be ranked", the only way to decline.
 CLICK_UNRANKABLE = {q: (0 if q in PRINCIPLES else 3) for q in QIDS}
+# The menu question is not a pair: the answer that rules nothing out ("all
+# three") sits last of five, after the A-and-B-both option.
+CLICK_UNRANKABLE["menu"] = 4
 CLICK_REJECT = {q: (1 if q in PRINCIPLES else 0) for q in QIDS}
 
 MODAL = {"pareto": "yes", "same_number": "right", "AvB": "left", "misery": "left",
@@ -173,7 +179,7 @@ def suite_engine(page, rep):
     rep.check(not r["sets"] and not r["alpha"], "consistent totalist crosses clean")
 
     abstain = {q: ("none" if q in PAIRS else "abstain") for q in QIDS}
-    abstain["menu"] = "none"
+    abstain["menu"] = "all"
     r = analyse(page, abstain)
     rep.check(not r["sets"] and not r["alpha"], "declining every comparison yields no hits")
 
@@ -195,15 +201,66 @@ def suite_engine(page, rep):
               "a denied verdict needs the transitivity that derived it",
               str(analyse(page, dict(mixed, trans_gt="no"))["sets"]))
 
-    r = analyse(page, dict(TOTALIST, AvB="right", menu="A"))
+    alpha_yes = dict(TOTALIST, AvB="right", menu="A", menu_alpha="yes")
+    r = analyse(page, alpha_yes)
     rep.check(r["alpha"] and r["alpha"]["picked"] == "A" and r["alpha"]["pairWinner"] == "B",
               "contraction inconsistency detected (Sen's alpha)")
 
+    # Alpha is a violation of a principle, not a contradiction in the ranking,
+    # so it is only charged to someone who says they hold the principle. The
+    # question is asked precisely when the violation is pending, and answering
+    # "no" turns the conflict into a cost.
+    r = analyse(page, dict(alpha_yes, menu_alpha="no"))
+    rep.check(r["alpha"] is None, "denying alpha retires the contraction conflict")
+    rep.check(any("best of a set stays best" in t for t in bullet_titles(page, dict(alpha_yes, menu_alpha="no"))),
+              "...and is named as a cost instead")
+    asked = page.evaluate(
+        "a => { const keep = ANS; ANS = Object.assign({}, a); pruneInactive();"
+        "       const q = QUESTIONS.filter(x => isActive(x)).map(x => x.id);"
+        "       ANS = keep; return q.includes('menu_alpha'); }", alpha_yes)
+    rep.check(asked, "the alpha principle is asked of someone whose answers violate it")
+    unasked = page.evaluate(
+        "a => { const keep = ANS; ANS = Object.assign({}, a); pruneInactive();"
+        "       const q = QUESTIONS.filter(x => isActive(x)).map(x => x.id);"
+        "       ANS = keep; return q.includes('menu_alpha'); }", dict(TOTALIST, menu="Z"))
+    rep.check(not unasked, "...and not of someone whose answers do not")
+
     # Picking Z while ranking A above it in the pair turns on AvZ alone. Gating
     # it behind AvB let anyone who declined that pair walk through unnoticed.
-    r = analyse(page, dict(MODAL, AvB="none", AvZ="left", menu="Z"))
+    r = analyse(page, dict(MODAL, AvB="none", AvZ="left", menu="Z", menu_alpha="yes"))
     rep.check(r["alpha"] and r["alpha"]["viaZ"] and r["alpha"]["picked"] == "Z",
               "picking Z over a ranked A is caught with A/B declined")
+
+    # The mirror of that case, which nothing used to catch: ranking Z above A
+    # in the pair and then putting A at the top of the three is the same
+    # violation with the two worlds swapped.
+    r = analyse(page, dict(MODAL, AvZ="right", menu="A", menu_alpha="yes"))
+    rep.check(r["alpha"] and r["alpha"]["viaZ"] and r["alpha"]["picked"] == "A"
+              and r["alpha"]["pairWinner"] == "Z",
+              "picking A over a pair that ranked Z above it is caught too")
+
+    # "A and B both" names a two-world choice set. It is the honest answer for
+    # anyone who declines to rank A against B while ranking both above Z, and
+    # it must cost such a person nothing.
+    both = dict(MODAL, AvB="none", AvZ="left", menu="AB", menu_alpha="yes")
+    rep.check(analyse(page, both)["alpha"] is None,
+              "naming A and B together is clean when neither pair excludes either")
+
+    # ...but it is a claim, not a shrug: it puts B among the best, so a
+    # determinate A-over-B verdict contradicts it exactly as picking B would.
+    r = analyse(page, dict(MODAL, AvB="left", AvZ="left", menu="AB", menu_alpha="yes"))
+    rep.check(r["alpha"] and r["alpha"]["picked"] == "B"
+              and r["alpha"]["pairWinner"] == "A" and r["alpha"]["several"],
+              "naming A and B together collides with having ranked A above B")
+
+    # "All three" rules nothing out, so any pair with a winner contradicts it:
+    # the loser of that pair is one of the three it refuses to rule out.
+    r = analyse(page, dict(MODAL, AvB="left", AvZ="left", menu="all", menu_alpha="yes"))
+    rep.check(r["alpha"] and r["alpha"]["picked"] == "B" and r["alpha"]["several"],
+              "refusing to rule any of the three out collides with a ranked pair")
+    rep.check(analyse(page, dict(MODAL, AvB="none", AvZ="none", menu="all",
+                             menu_alpha="yes"))["alpha"] is None,
+              "...and costs nothing to someone who ranked neither pair")
 
     # Ranking below the gap. The ladder route is Parfit's argument run on "not
     # worse than": an unrankable pair is still a pair where neither is worse,
@@ -1098,7 +1155,9 @@ def suite_flow(page, rep):
         counts[current_qid(page)] = len(page.query_selector_all(".opt"))
         answer(page, CLICK_MODAL)
     page.wait_for_selector(DONE, timeout=5000)
-    want = {q: (2 if q in PRINCIPLES else 4) for q in counts}
+    # Principles are yes/no, pairs offer the four relations, and the menu
+    # question offers five of the seven choice sets over three worlds.
+    want = {q: 2 if q in PRINCIPLES else 5 if q == "menu" else 4 for q in counts}
     rep.check(counts == want, "option counts are as designed", f"{counts} vs {want}")
     # The quiz deliberately has no escape hatch: every answer is a commitment,
     # and "cannot be ranked" is a claim about the outcomes, not about confidence.
@@ -1129,7 +1188,15 @@ def suite_flow(page, rep):
     # Changing that answer has to move the engine, or back would be cosmetic.
     page.click("#rback")
     page.wait_for_timeout(400)
-    page.query_selector_all(".opt")[2].click()
+    page.query_selector_all(".opt")[2].click()      # Z, which this profile ranked A above
+    page.wait_for_timeout(400)
+    # Picking Z having ranked A above it is a contraction violation, and that is
+    # exactly when the alpha principle is put to the person - so editing the menu
+    # answer opens a follow-up here rather than ending the walk.
+    rep.check(current_qid(page) == "menu_alpha",
+              "editing the menu answer into a violation opens the alpha question",
+              current_qid(page))
+    page.query_selector_all(".opt")[0].click()      # yes, best of three stays best of two
     page.wait_for_selector("#namestep:not(.hide)", timeout=5000)
     page.click("#namenext")
     page.wait_for_selector(DONE, timeout=5000)
@@ -1150,7 +1217,7 @@ def suite_flow(page, rep):
 ROUNDTRIP_JS = """
 () => {
   const vals = {pair: ['left', 'right', 'equal', 'none'],
-                menu: ['A', 'B', 'Z', 'none'],
+                menu: ['A', 'B', 'Z', 'AB', 'all'],
                 principle: ['yes', 'no']};
   const keep = ANS, bad = [];
   ANS = {};
