@@ -356,12 +356,12 @@ VIEWS = [
             menu changes. Denying menu independence is what buys the escape
             from the neutral-range collision, which needs two equalities to
             chain before it can bite. Declines to rank A against B or against
-            Z, and picks nothing from the three.""",
+            Z, and so rules none of the three out.""",
         answers=dict(pareto="yes", same_number="right", AvB="none", misery="left",
                      neutral_mod="equal", benign="right", nae="none",
                      generalize="yes", AvZ="none", neutral_wond="equal", collapse="yes",
                      greedy="left", plusVsBoth="left", trans_gt="yes", trans_none="yes", trans_eq="yes",
-                     menu_eq="no", menu="none"),
+                     menu_eq="no", menu="all"),
     ),
 
     dict(
@@ -480,12 +480,14 @@ VIEWS = [
             against Z is then carried entirely by A's original hundred, who are
             still there and have fallen from 100 to 4. Coherent throughout:
             this profile should draw no conflict, only the bullet naming what
-            the floor commits it to.""",
+            the floor commits it to. Offered all three it names A and B
+            together: the open question between them does not close because Z
+            joined the table, and Z is out either way.""",
         answers=dict(pareto="yes", same_number="right", AvB="none", misery="left",
                      neutral_mod="none", benign="none", nae="right", generalize="no",
                      AvZ="left", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="no", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="AB"),
     ),
 
     dict(
@@ -522,12 +524,14 @@ VIEWS = [
             every level in it -- and calling the agony addition unrankable
             puts a level at -40, while ranking A above Z says every level sits
             above 4, the welfare Z's people live at. Should collide on the
-            misery route, and be told that route assumes the reading.""",
+            misery route, and be told that route assumes the reading. Picks A
+            and B together from the three, as any view that declines to rank
+            them against each other but ranks both above Z has to.""",
         answers=dict(pareto="yes", same_number="none", AvB="none", misery="none",
                      neutral_mod="none", benign="none", nae="right", generalize="no",
                      AvZ="left", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="AB"),
     ),
 
     dict(
@@ -542,7 +546,7 @@ VIEWS = [
                      neutral_mod="none", benign="none", nae="none", generalize="yes",
                      AvZ="none", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="no",
-                     menu="none"),
+                     menu="all"),
     ),
 ]
 

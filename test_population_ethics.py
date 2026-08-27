@@ -46,7 +46,7 @@ PRINCIPLES = ["pareto", "generalize", "collapse", "trans_gt", "trans_none",
 CONDITIONAL = ("collapse", "greedy", "plusVsBoth", "trans_none", "menu_eq")
 PAIR_VALUES = ["left", "right", "equal", "none"]
 PRINCIPLE_VALUES = ["yes", "no"]
-MENU_VALUES = ["A", "B", "Z", "none"]
+MENU_VALUES = ["A", "B", "Z", "AB", "all"]
 
 # Index of the answer button to click, per question, for named profiles.
 CLICK_MODAL = {"pareto": 0, "same_number": 1, "AvB": 0, "misery": 0, "neutral_mod": 2,
@@ -61,6 +61,9 @@ CLICK_ALPHA = dict(CLICK_TOTALIST, menu=0)
 # Accepting every principle but declaring every pair unrankable. Index 3 on a
 # pair is "neither - they cannot be ranked", the only way to decline.
 CLICK_UNRANKABLE = {q: (0 if q in PRINCIPLES else 3) for q in QIDS}
+# The menu question is not a pair: the answer that rules nothing out ("all
+# three") sits last of five, after the A-and-B-both option.
+CLICK_UNRANKABLE["menu"] = 4
 CLICK_REJECT = {q: (1 if q in PRINCIPLES else 0) for q in QIDS}
 
 MODAL = {"pareto": "yes", "same_number": "right", "AvB": "left", "misery": "left",
@@ -173,7 +176,7 @@ def suite_engine(page, rep):
     rep.check(not r["sets"] and not r["alpha"], "consistent totalist crosses clean")
 
     abstain = {q: ("none" if q in PAIRS else "abstain") for q in QIDS}
-    abstain["menu"] = "none"
+    abstain["menu"] = "all"
     r = analyse(page, abstain)
     rep.check(not r["sets"] and not r["alpha"], "declining every comparison yields no hits")
 
@@ -204,6 +207,36 @@ def suite_engine(page, rep):
     r = analyse(page, dict(MODAL, AvB="none", AvZ="left", menu="Z"))
     rep.check(r["alpha"] and r["alpha"]["viaZ"] and r["alpha"]["picked"] == "Z",
               "picking Z over a ranked A is caught with A/B declined")
+
+    # The mirror of that case, which nothing used to catch: ranking Z above A
+    # in the pair and then putting A at the top of the three is the same
+    # violation with the two worlds swapped.
+    r = analyse(page, dict(MODAL, AvZ="right", menu="A"))
+    rep.check(r["alpha"] and r["alpha"]["viaZ"] and r["alpha"]["picked"] == "A"
+              and r["alpha"]["pairWinner"] == "Z",
+              "picking A over a pair that ranked Z above it is caught too")
+
+    # "A and B both" names a two-world choice set. It is the honest answer for
+    # anyone who declines to rank A against B while ranking both above Z, and
+    # it must cost such a person nothing.
+    both = dict(MODAL, AvB="none", AvZ="left", menu="AB")
+    rep.check(analyse(page, both)["alpha"] is None,
+              "naming A and B together is clean when neither pair excludes either")
+
+    # ...but it is a claim, not a shrug: it puts B among the best, so a
+    # determinate A-over-B verdict contradicts it exactly as picking B would.
+    r = analyse(page, dict(MODAL, AvB="left", AvZ="left", menu="AB"))
+    rep.check(r["alpha"] and r["alpha"]["picked"] == "B"
+              and r["alpha"]["pairWinner"] == "A" and r["alpha"]["several"],
+              "naming A and B together collides with having ranked A above B")
+
+    # "All three" rules nothing out, so any pair with a winner contradicts it:
+    # the loser of that pair is one of the three it refuses to rule out.
+    r = analyse(page, dict(MODAL, AvB="left", AvZ="left", menu="all"))
+    rep.check(r["alpha"] and r["alpha"]["picked"] == "B" and r["alpha"]["several"],
+              "refusing to rule any of the three out collides with a ranked pair")
+    rep.check(analyse(page, dict(MODAL, AvB="none", AvZ="none", menu="all"))["alpha"] is None,
+              "...and costs nothing to someone who ranked neither pair")
 
     # Ranking below the gap. The ladder route is Parfit's argument run on "not
     # worse than": an unrankable pair is still a pair where neither is worse,
@@ -1086,7 +1119,9 @@ def suite_flow(page, rep):
         counts[current_qid(page)] = len(page.query_selector_all(".opt"))
         answer(page, CLICK_MODAL)
     page.wait_for_selector(DONE, timeout=5000)
-    want = {q: (2 if q in PRINCIPLES else 4) for q in counts}
+    # Principles are yes/no, pairs offer the four relations, and the menu
+    # question offers five of the seven choice sets over three worlds.
+    want = {q: 2 if q in PRINCIPLES else 5 if q == "menu" else 4 for q in counts}
     rep.check(counts == want, "option counts are as designed", f"{counts} vs {want}")
     # The quiz deliberately has no escape hatch: every answer is a commitment,
     # and "cannot be ranked" is a claim about the outcomes, not about confidence.
@@ -1138,7 +1173,7 @@ def suite_flow(page, rep):
 ROUNDTRIP_JS = """
 () => {
   const vals = {pair: ['left', 'right', 'equal', 'none'],
-                menu: ['A', 'B', 'Z', 'none'],
+                menu: ['A', 'B', 'Z', 'AB', 'all'],
                 principle: ['yes', 'no']};
   const keep = ANS, bad = [];
   ANS = {};

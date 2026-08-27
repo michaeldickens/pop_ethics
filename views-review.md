@@ -723,8 +723,8 @@ Bullets bitten:
 Eitan's view: avoid asserting that Nadia's wonderful life is equal to her modest life by
 allowing verdicts to change when the menu changes. Denying menu independence is what
 buys the escape from the neutral-range collision, which needs two equalities to chain
-before it can bite. Declines to rank A against B or against Z, and picks nothing from
-the three.
+before it can bite. Declines to rank A against B or against Z, and so rules none of the
+three out.
 
 Open it: append `#a=yrnlernyne-l-y-yxn` to the quiz URL.
 
@@ -746,7 +746,7 @@ Open it: append `#a=yrnlernyne-l-y-yxn` to the quiz URL.
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Verdicts across a wider menu | A third option can change how the first two compare. |
-| Choosing from three | None of A, B and Z is best. |
+| Choosing from three | None of A, B and Z can be ruled out as best. |
 
 Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
@@ -1018,9 +1018,11 @@ beneath the range's floor, which is why the rung verdicts flip partway down the 
 and why Z, whose people live at 4, is rankable at all. The verdict against Z is then
 carried entirely by A's original hundred, who are still there and have fallen from 100
 to 4. Coherent throughout: this profile should draw no conflict, only the bullet naming
-what the floor commits it to.
+what the floor commits it to. Offered all three it names A and B together: the open
+question between them does not close because Z joined the table, and Z is out either
+way.
 
-Open it: append `#a=yrnlnnrxln-n-y-y-a` to the quiz URL.
+Open it: append `#a=yrnlnnrxln-n-y-y-p` to the quiz URL.
 
 ### Answers
 
@@ -1039,7 +1041,7 @@ Open it: append `#a=yrnlnnrxln-n-y-y-a` to the quiz URL.
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
-| Choosing from three | A is the best of A, B and Z. |
+| Choosing from three | A and B are the best of A, B and Z, with Z below them. |
 
 Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
@@ -1117,9 +1119,10 @@ route does. Read the gaps as a neutral range -- a range of critical levels, a co
 determinate only when it holds at every level in it -- and calling the agony addition
 unrankable puts a level at -40, while ranking A above Z says every level sits above 4,
 the welfare Z's people live at. Should collide on the misery route, and be told that
-route assumes the reading.
+route assumes the reading. Picks A and B together from the three, as any view that
+declines to rank them against each other but ranks both above Z has to.
 
-Open it: append `#a=ynnnnnrxln-n-y-y-a` to the quiz URL.
+Open it: append `#a=ynnnnnrxln-n-y-y-p` to the quiz URL.
 
 ### Answers
 
@@ -1138,7 +1141,7 @@ Open it: append `#a=ynnnnnrxln-n-y-y-a` to the quiz URL.
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
-| Choosing from three | A is the best of A, B and Z. |
+| Choosing from three | A and B are the best of A, B and Z, with Z below them. |
 
 Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
@@ -1182,7 +1185,7 @@ Open it: append `#a=xnnnnnnynn-n-y-y-n` to the quiz URL.
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
-| Choosing from three | None of A, B and Z is best. |
+| Choosing from three | None of A, B and Z can be ruled out as best. |
 
 Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 

@@ -224,12 +224,40 @@ var QUESTIONS=[
               ["B","No \u2014 a third option can change how the first two compare","no"]]
     },
     {
+        // The one question that is a choice rather than a comparison, and the
+        // only source of an alpha violation. It contributes no edges to the
+        // closure - a choice from a menu is not a betterness claim, so there
+        // is nothing for it to contradict transitively. What it does instead
+        // is name a *choice set*, which the pairwise questions can then
+        // contradict directly: see alphaCandidate.
+        //
+        // Hence the shape of the options. What alpha needs to know is which
+        // of the three are among the best, not why. "A and B are exactly as
+        // good" and "A and B cannot be ranked against each other" name the
+        // same choice set and carry the same alpha commitments, and the
+        // difference between them was already asked in the A-against-B
+        // question, so one option covers both. Likewise "all three are equal"
+        // and "the three cannot be ranked" both name {A,B,Z}. Three views that
+        // look distinct therefore cost two options, not three.
+        //
+        // Five of the seven non-empty choice sets are offered. {A,Z} and {B,Z}
+        // are missing: they need Z among the best with one of A and B kept out
+        // of it, and nobody holds that. Someone who did would fall back on the
+        // single winner they do have, which draws no false hit, so leaving
+        // them out costs a little expressiveness and no correctness.
+        //
+        // None of the five is a shrug. Every one names a set the pairwise
+        // answers can contradict, which is the same bargain the rest of the
+        // quiz makes: "cannot be ranked" is a claim about the outcomes, not a
+        // way of declining to have a view.
         id:"menu", kind:"menu", label:"Choosing from three",
         pops:[A_POP,B_POP,Z_POP], names:["A","B","Z"], totals:true,
         title:"All three at once.",
         body:"The three futures you have already seen, now offered together: <strong>A</strong> with its 100 excellent lives, <strong>B</strong> with its 200 good ones, <strong>Z</strong> with its "+last.n.toLocaleString()+" barely-good ones.",
         ask:"Which is the best of the three?",
-        opts:[["A","A","A"],["B","B","B"],["C","Z","Z"],["D","None \u2014 they cannot be ranked","none"]]
+        opts:[["A","A","A"],["B","B","B"],["C","Z","Z"],
+              ["D","A and B both \u2014 Z is worse than each of them","AB"],
+              ["E","All three \u2014 none of them can be ruled out","all"]]
     }
 ];
 
@@ -582,20 +610,49 @@ function eqChainMatters(ans){
    card's number has to learn about it. Here a check is an entry, its card is an
    entry in CARD_HTML beside the other cards, and nothing counts anything.
 --------------------------------------------------------------- */
+// The choice set each menu answer names. Two of the five name more than one
+// world, which is the only reason this is a table rather than a single pick:
+// "A and B both" is {A,B}, and "all three" - whether because the three are
+// equal or because they cannot be ranked, a difference alpha cannot see - is
+// {A,B,Z}. An unanswered question names no set and is absent, which is what
+// leaves it inert.
+var MENU_SETS={A:["A"], B:["B"], Z:["Z"], AB:["A","B"], all:["A","B","Z"]};
+
+// Sen's property alpha: anything you pick out of the three has to survive
+// being offered a subset it belongs to. So every pair the quiz put determinately
+// is a constraint on the menu answer - if the pair has a winner, the loser is
+// not among the best of any larger set containing it, and picking it from the
+// three takes it back.
+//
+// Only two pairs qualify. A against B and A against Z were both asked; B
+// against Z never was, so no verdict exists there to be contradicted. A pair
+// answered "exactly as good" or "cannot be ranked" constrains nothing either:
+// neither option is excluded, so neither can be wrongly picked later.
+//
+// Read this way, the two old cases fall out as instances rather than as
+// special rules - picking Z having ranked A above it, and picking the loser of
+// the A/B question - and one gap closes: picking A having ranked Z above it
+// was a violation of exactly the same shape that nothing used to catch.
 function alphaCandidate(ans){
-    var declined=function(v){ return !v||v==="none"||v==="abstain"; };
-    if(declined(ans.menu)) return null;
-    var pick=ans.menu;
-    // Picking Z from the three while ranking A above Z in the pair is a
-    // violation on its own terms. It turns on AvZ, not AvB, so it must not be
-    // gated behind AvB: an incomparabilist who declines A against B would
-    // otherwise walk through it.
-    if(pick==="Z" && ans.AvZ==="left")
-        return {picked:"Z", pairWinner:"A", third:"B", viaZ:true};
-    if(declined(ans.AvB)) return null;
-    var pairWinner = ans.AvB==="left" ? "A" : ans.AvB==="right" ? "B" : "tie";
-    if((pick==="A"||pick==="B") && pairWinner!=="tie" && pick!==pairWinner)
-        return {picked:pick, pairWinner:pairWinner, third:"Z"};
+    var picked=MENU_SETS[ans.menu];
+    if(!picked) return null;
+    var ASKED=[{q:"AvB", left:"A", right:"B", third:"Z"},
+               {q:"AvZ", left:"A", right:"Z", third:"B"}];
+    for(var i=0;i<ASKED.length;i++){
+        var p=ASKED[i], v=ans[p.q];
+        if(v!=="left" && v!=="right") continue;
+        var winner = v==="left" ? p.left : p.right,
+            loser  = v==="left" ? p.right : p.left;
+        if(picked.indexOf(loser)===-1) continue;
+        // viaZ marks which pair was contradicted rather than which world was
+        // picked - the card wants the pair either way round, and only the
+        // tests read it. several says the answer named more than one world as
+        // best, which the card has to word differently; it is carried here
+        // rather than read back off ANS so the check stays a function of the
+        // answers it was handed.
+        return {picked:loser, pairWinner:winner, third:p.third,
+                viaZ:p.q==="AvZ", several:picked.length>1};
+    }
     return null;
 }
 
@@ -701,7 +758,7 @@ var $=function(s){return document.querySelector(s);};
    --------------------------------------------------------------- */
 var CODES={
     pair: {left:"l", right:"r", equal:"e", none:"n"},
-    menu: {A:"a", B:"b", Z:"z", none:"n"},
+    menu: {A:"a", B:"b", Z:"z", AB:"p", all:"n"},
     principle: {yes:"y", no:"x"}
 };
 var DECODES={};
@@ -1162,7 +1219,7 @@ $("#back").addEventListener("click",function(){
 });
 document.addEventListener("keydown",function(e){
     if($("#quiz").classList.contains("hide")) return;
-    var k=e.key.toUpperCase(), map={A:0,B:1,C:2,D:3};
+    var k=e.key.toUpperCase(), map={A:0,B:1,C:2,D:3,E:4};
     if(k in map){ var bs=document.querySelectorAll(".opt"); if(bs[map[k]]) bs[map[k]].click(); }
 });
 
@@ -1214,6 +1271,20 @@ var LABELS={
 function claimText(id){
     var v=LABELS[id];
     return (typeof v==="function") ? v(ANS[id]) : v;
+}
+
+// The menu question sits outside LABELS: its answers name sets of worlds
+// rather than a relation between two, so there is no one sentence with a word
+// swapped into it. Kept as a function all the same, because the results table
+// and review_views.py both have to say it and had drifted apart when they each
+// spelled it out.
+function menuClaimText(v){
+    return {A:"A is the best of A, B and Z.",
+            B:"B is the best of A, B and Z.",
+            Z:"Z is the best of A, B and Z.",
+            AB:"A and B are the best of A, B and Z, with Z below them.",
+            all:"None of A, B and Z can be ruled out as best.",
+            abstain:"No view offered on which of A, B and Z is best."}[v] || "";
 }
 
 /* K± meets the closure whenever the wonderful addition was ranked at all: the
@@ -1580,8 +1651,11 @@ var CARD_HTML={
         // the damage, and it differs between the two.
         h+='<ol class="claims"><li>Offered '+al.pairWinner+' and '+al.picked+
            ' alone, you judged '+al.pairWinner+' the better of the two.</li>';
-        h+='<li>Offered A, B and Z together, you picked '+al.picked+' as best.</li></ol>';
-        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. '+al.third+'\u2019s presence cannot make '+al.picked+' beat '+al.pairWinner+' if it did not already.</p></div>';
+        h+='<li>Offered A, B and Z together, you put '+al.picked+
+           (al.several ? ' among the best.' : ' at the top.')+'</li></ol>';
+        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. '+al.third+'\u2019s presence cannot '+
+           (al.several ? 'put '+al.picked+' alongside ' : 'make '+al.picked+' beat ')+al.pairWinner+
+           ' if it did not already.</p></div>';
         return h;
     },
     collapse:function(cp, n){
@@ -1737,10 +1811,8 @@ function showResults(){
         if(ANS[q.id]===undefined) return;
         h+='<tr><td class="a">'+revLabel(q.label,i)+'</td><td>'+claimText(q.id)+'</td></tr>';
     });
-    if(ANS.menu) h+='<tr><td class="a">'+revLabel("Choosing from three",menuIdx)+'</td><td>'+(
-        ANS.menu==="none"    ? "None of A, B and Z is best." :
-            ANS.menu==="abstain" ? "No view offered on which of A, B and Z is best." :
-            ANS.menu+" is the best of A, B and Z.")+'</td></tr>';
+    if(ANS.menu) h+='<tr><td class="a">'+revLabel("Choosing from three",menuIdx)+
+        '</td><td>'+menuClaimText(ANS.menu)+'</td></tr>';
     h+='</table>';
 
     h+='<hr class="rule thin" style="margin-top:44px"><div class="eyebrow">Save or share</div>';
