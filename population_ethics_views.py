@@ -236,6 +236,25 @@ VIEWS = [
     ),
 
     dict(
+        key="wide-gaps-only-that-conflict",
+        name="Wide gaps, and only that conflict",
+        blurb="""The view above bundles two separate collisions: the
+            greediness one, and a leftover from declining benign addition
+            while still ranking A above B and B above A+ -- those two rungs
+            chain to A above A+, the very step just declined. Declining
+            levelling up (nae) as well removes the second collision without
+            touching the first, since the ladder story needs a ranked verdict
+            on both rungs to chain through and the greediness story does not
+            go anywhere near nae. What is left is a single, clean case of
+            Broome's argument, with nothing else riding along.""",
+        answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
+                     neutral_mod="none", benign="none", nae="none", generalize="yes",
+                     AvZ="left", neutral_wond="none", collapse="no", greedy="left", plusVsBoth="right",
+                     trans_gt="yes", trans_none="no", trans_eq="yes", menu_eq="yes",
+                     menu="A"),
+    ),
+
+    dict(
         key="wide-gaps-spent-anyway",
         name="Wide gaps, but spent on the harm anyway",
         blurb="""Totalist everywhere except one question: adding Nadia at 70 is
@@ -252,6 +271,25 @@ VIEWS = [
             shows the position this collides with is not a dead end -- decline
             K against K+- as well, and both cards fall silent.""",
         answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
+                     neutral_mod="none", benign="right", nae="right", generalize="yes",
+                     AvZ="right", neutral_wond="none", collapse="yes", greedy="right", plusVsBoth="left",
+                     trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
+                     menu="Z"),
+    ),
+
+    dict(
+        key="wide-gaps-spent-no-pareto",
+        name="Wide gaps, spent on the harm anyway, without Pareto to spend it",
+        blurb="""The view above, with Pareto rejected. K++ > K+- was doing
+            all the work: without it, ranking K+- above K is just an answer,
+            not a step that chains anywhere, so nothing connects it back to
+            the declined K against K++. The conflict card falls silent and a
+            bullet takes its place -- the same 'an addition you could not
+            rank outweighed a harm you could' bullet the companion view earns
+            only once Pareto is off the table too. Rejecting Pareto is a
+            steep price on its own, but it is worth seeing that it is doing
+            real work here, not just sitting unused.""",
+        answers=dict(pareto="no", same_number="right", AvB="right", misery="left",
                      neutral_mod="none", benign="right", nae="right", generalize="yes",
                      AvZ="right", neutral_wond="none", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
@@ -521,7 +559,9 @@ EXPECT = {
     'asymmetry_B': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'rough': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'A neutral addition made a real harm unrankable.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
     'wide-gaps-harm-still-counts': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['greedy', 'neutral_mod', 'plusVsBoth', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
+    'wide-gaps-only-that-conflict': {'conflicts': [['greedy', 'neutral_mod', 'plusVsBoth', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You denied that levelling up improves things.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
     'wide-gaps-spent-anyway': {'conflicts': [['greedy', 'neutral_wond', 'pareto', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
+    'wide-gaps-spent-no-pareto': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', 'You accepted the repugnant conclusion.', 'An addition you could not rank outweighed a harm you could.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'vague_boundary': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': ['collapse'], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_eq', 'menu']},
     'vague_boundary_ok': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_eq', 'menu']},
     'nontransitive': {'conflicts': [['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of better-than.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
