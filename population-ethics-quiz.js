@@ -1436,17 +1436,19 @@ function bullets(){
     if(ANS.plusVsBoth==="left"){
         out.push({t:"You treated Owen's welfare as more important than Nadia's.",
                   b:"You ranked K+ as better than K±. The two outcomes differ only in Owen and Nadia: Owen goes from "+K_BASE[0].w+" to "+K_BOTH[1].w+
-                  ", Nadia from "+K_MOD[1].w+" to "+K_WOND[1].w+". No person is added or removed. From an impartial perspective, K± is a Pareto improvement over K+: the worst-off person's welfare increases from 7 to 20, and the best-off goes from 55 to 70. All that changes are the names."});
+                  ", Nadia from "+K_MOD[1].w+" to "+K_WOND[1].w+". No person is added or removed. From an anonymous perspective, K± is a Pareto improvement over K+: the worst-off person's welfare increases from 7 to 20, and the best-off goes from 55 to 70. All that changes are the names."});
     }
     // Same dominance, declined rather than denied. Not the same mistake -
     // this does not claim identity should decide value - but still a pass on
     // a verdict every anonymous, Pareto-respecting view would give, so it
     // draws a bullet of its own rather than going unremarked.
     if(ANS.plusVsBoth==="none"){
-        out.push({t:"You declined to rank K+ against K+- — a dominance result, not a toss-up.",
-                  b:"Sorted, K+-'s welfare levels beat K+'s at both ends — "+K_BOTH[1].w+" over "+K_MOD[1].w+
-                    " at the bottom, "+K_WOND[1].w+" over "+K_BASE[0].w+
-                    " at the top — with the same 501 people throughout and nobody worse off once you stop tracking who is who. Declining to rank the pair does not claim that whose name is on which number should decide value, the way ranking K+ above K+- does. But it does mean passing on a verdict every anonymous, Pareto-respecting view would give."});
+        out.push({t:"You declined to rank K+ against K±, even though K± is a Pareto improvement from an anonymous perspective.",
+                  b:"The two outcomes differ only in Owen and Nadia: Owen goes from "+K_BASE[0].w+" to "+K_BOTH[1].w+
+                  ", Nadia from "+K_MOD[1].w+" to "+K_WOND[1].w+". No person is added or removed. From an impartial perspective, K± is a Pareto improvement over K+: the worst-off person's welfare increases from 7 to 20, and the best-off goes from 55 to 70. All that changes are the names.<br><br>"+
+                  "Your verdict requires rejecting anonymity. You can make both Owen's and Nadia's lives better — but if you swap their names, the final outcome is incomparable.",
+                  world:"<strong>Policy choices are impossible.</strong> You can never choose a social policy in any realistic scenario — the only way you can express a preference is if one policy is a strict Pareto improvement over another.<br><br>"+
+                  "For example, you cannot prefer a flat tax over a progressive tax, because it leaves poorer individuals worse off; nor can you prefer a progressive tax over a flat tax, because it's worse for wealthier people."});
     }
 
     if(ANS.benign==="left") out.push({t:"Everyone gains, good lives are added, and you called it worse.",b:"Every one of A\u2019s hundred is better off in A+, and a further hundred exist there with lives clearly worth living. Ranking that below A means the new lives are a cost heavy enough to outweigh a gain to every person who was already there.<br/><br/>Your answer does not force you to accept the mere addition paradox. However, the price is what it commits you to elsewhere: you would prefer the original hundred be worse off, so long as fewer people existed alongside them.",
