@@ -50,6 +50,11 @@ var K_WOND=[{n:500,w:55},{n:1,w:70,tag:"Nadia"}];
 // beside, not whether the argument goes through, so the wonderful life is used
 // throughout for one world instead of two.
 var K_BOTH=[{n:499,w:55},{n:1,w:20,tag:"Owen",side:"left"},{n:1,w:K_WOND[1].w,tag:"Nadia"}];
+// Same population and total welfare as K_MOD, just with Owen split out of the
+// 500 and drawn at his own (unchanged) level - only for the plusVsBoth figure,
+// so it is visually obvious there that he is one of K's own people carried
+// over unaffected, not someone new standing next to Nadia.
+var K_MOD_OWEN=[{n:499,w:55},{n:1,w:K_BASE[0].w,tag:"Owen",side:"left"},{n:1,w:K_MOD[1].w,tag:"Nadia"}];
 
 var PARETO_BEFORE=[{n:100,w:50}];
 var PARETO_AFTER =[{n:100,w:90}];
@@ -174,7 +179,7 @@ var QUESTIONS=[
         // for K here settles the same question the other way, so both are
         // left live rather than assumed.
         when:function(a){ return a.neutral_mod==="none" && a.greedy==="left"; },
-        pops:[K_MOD,K_BOTH], names:["K+","K±"],
+        pops:[K_MOD_OWEN,K_BOTH], names:["K+","K±"],
         title:"Two ways to bring Nadia in.",
         body:"<strong>K+</strong> has the same 500 people as K, plus Nadia at "+K_MOD[1].w+
             ". <strong>K±</strong> has Owen — one of the people from K — down to "+K_BOTH[1].w+", and Nadia added at "+K_WOND[1].w+" instead. <strong>K± has higher total welfare, but with Owen worse off.</strong>"
