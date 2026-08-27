@@ -415,7 +415,7 @@ Open it: append `#a=yrllnnryln-lryxy-a` to the quiz URL.
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
-| The modest addition against the harm | K+ is worse than K± -- Nadia added at 7 against Owen down and Nadia added at 70. |
+| The modest addition against the harm | K+ is worse than K± -- Nadia added at 7 against Owen down by 35 and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of not-worse-than | "Not worse than" is not always transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
@@ -464,7 +464,7 @@ Open it: append `#a=yrllnnnyln-lryxy-a` to the quiz URL.
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
-| The modest addition against the harm | K+ is worse than K± -- Nadia added at 7 against Owen down and Nadia added at 70. |
+| The modest addition against the harm | K+ is worse than K± -- Nadia added at 7 against Owen down by 35 and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of not-worse-than | "Not worse than" is not always transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
@@ -609,7 +609,7 @@ Open it: append `#a=yrrlnrrylrylny-y-b` to the quiz URL.
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life cannot turn "unrankable" into a determinate verdict. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
-| The modest addition against the harm | K+ is not rankable against K± -- Nadia added at 7 against Owen down and Nadia added at 70. |
+| The modest addition against the harm | K+ is not rankable against K± -- Nadia added at 7 against Owen down by 35 and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
@@ -656,7 +656,7 @@ Open it: append `#a=yrllnrrylrxlny-y-a` to the quiz URL.
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life can turn "unrankable" into a determinate verdict. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
-| The modest addition against the harm | K+ is not rankable against K± -- Nadia added at 7 against Owen down and Nadia added at 70. |
+| The modest addition against the harm | K+ is not rankable against K± -- Nadia added at 7 against Owen down by 35 and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
