@@ -67,10 +67,7 @@ PROBE = """(a) => {
     // fields above stay for the prose below; this is what the count runs on,
     // so a new check needs no arithmetic here.
     extras: r.extras.map(x => x.id),
-    bullets: bullets().map(b => b.t),
-    // Lighter than a bullet, and not counted in its tally - see notes() in
-    // the engine.
-    notes: notes().map(n => n.t)
+    bullets: bullets().map(b => b.t)
   };
   ANS = keep;
   return out;
@@ -114,7 +111,6 @@ def expect_body(r):
             "extras": r["extras"],
             "zrank": r["zrank"]["via"] if r["zrank"] else None,
             "bullets": [strip_tags(b) for b in r["bullets"]],
-            "notes": [strip_tags(n) for n in r["notes"]],
             "asked": r["asked"]}
 
 
@@ -215,9 +211,6 @@ def as_markdown(results):
         if r["bullets"]:
             doc += ["", "Bullets bitten:", ""]
             doc += ["- %s" % strip_tags(b) for b in r["bullets"]]
-        if r["notes"]:
-            doc += ["", "Worth noting:", ""]
-            doc += ["- %s" % strip_tags(n) for n in r["notes"]]
         doc.append("")
     return "\n".join(doc)
 

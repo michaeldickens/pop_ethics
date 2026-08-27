@@ -16,8 +16,8 @@ Read each view's description against the answers below it, then against the verd
 - [Wide gaps, and only that conflict](#wide-gaps-only-that-conflict) - 1 conflict, 5 bullets
 - [Wide gaps, but spent on the harm anyway](#wide-gaps-spent-anyway) - 1 conflict, 3 bullets
 - [Wide gaps, spent on the harm anyway, without Pareto to spend it](#wide-gaps-spent-no-pareto) - clean, 5 bullets
-- [Unrankable below, better above](#vague_boundary) - 2 conflicts, 2 bullets
-- [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 2 bullets
+- [Unrankable below, better above](#vague_boundary) - 2 conflicts, 3 bullets
+- [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 3 bullets
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
 - [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 5 bullets
 - [Antinatalism](#antinatalist) - clean, 2 bullets
@@ -588,8 +588,9 @@ at 70 is determinately better, and accepts that no hair's improvement to a life 
 convert 'no fact of the matter' into a settled verdict. Those three cannot all stand:
 Broome's collapsing principle is aimed exactly here. The one profile in this list that
 the collapsing question should catch. K+ against K+- is left unrankable too, which draws
-only the lighter note (dominance passed on, not denied) rather than the bullet ranking
-K+ above K+- would.
+its own bullet for passing on a dominance result -- a smaller one than ranking K+ above
+K+- would, since it never claims identity should decide value, but a bullet all the
+same.
 
 Open it: append `#a=yrrlnrrylrylny-y-b` to the quiz URL.
 
@@ -623,12 +624,9 @@ Not asked: trans_none, menu_eq. These questions only appear when earlier answers
 
 Bullets bitten:
 
+- You declined to rank K+ against K+- -- a dominance result, not a toss-up.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
-
-Worth noting:
-
-- K+ against K+- is not a genuine toss-up.
 
 <a id="vague_boundary_ok"></a>
 
@@ -670,12 +668,9 @@ Not asked: trans_none, menu_eq. These questions only appear when earlier answers
 
 Bullets bitten:
 
+- You declined to rank K+ against K+- -- a dominance result, not a toss-up.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
-
-Worth noting:
-
-- K+ against K+- is not a genuine toss-up.
 
 <a id="nontransitive"></a>
 
