@@ -63,8 +63,6 @@ PROBE = """(a) => {
       ? {vague: r.collapse.vague.id, anchor: r.collapse.anchor.id, dir: r.collapse.dir}
       : null,
     zrank: r.zrank ? {via: r.zrank.via, level: r.zrank.level} : null,
-    greedy: r.greedy ? {level: r.greedy.level, floor: r.greedy.floor,
-                        harm: r.greedy.from - r.greedy.to} : null,
     // The checks that fired, in the order the results page shows them. Named
     // fields above stay for the prose below; this is what the count runs on,
     // so a new check needs no arithmetic here.
@@ -178,7 +176,7 @@ def as_markdown(results):
                 "| Question | What this view says |", "| --- | --- |"]
         for qid, label, claim in r["claims"]:
             doc.append("| %s | %s |" % (label, strip_tags(claim)))
-        skipped = [k for k in ("collapse", "greedy", "trans_none", "menu_eq")
+        skipped = [k for k in ("collapse", "greedy", "plusVsBoth", "trans_none", "menu_eq")
                    if k not in r["asked"]]
         if skipped:
             doc += ["", "Not asked: %s. These questions only appear when earlier "
@@ -210,12 +208,6 @@ def as_markdown(results):
                           else "A ranked above Z while the unrankable agony "
                                "addition places a critical level at %s, below "
                                "Z's welfare" % r["zrank"]["level"]))
-        if r["greedy"]:
-            doc.append("- **Greediness of neutrality** - additions at %d and %d "
-                       "both unrankable, so the gap covers Owen's %d, and K is "
-                       "ranked above K+- all the same."
-                       % (r["greedy"]["floor"], r["greedy"]["level"],
-                          r["greedy"]["harm"]))
         if r["bullets"]:
             doc += ["", "Bullets bitten:", ""]
             doc += ["- %s" % strip_tags(b) for b in r["bullets"]]
