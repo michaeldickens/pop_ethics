@@ -171,7 +171,7 @@ var QUESTIONS=[
         pops:[K_BASE_OWEN,K_BOTH], names:["K","K±"],
         title:"One person worse off, one person added.",
         body:"<strong>K</strong> once more, and beside it <strong>K±</strong>, which differs in exactly two ways. First, one person — <strong>Owen</strong>, who is there in both futures — drops from "+K_BASE[0].w+" to "+K_BOTH[1].w+
-             ". Second, <strong>Nadia is added at "+K_WOND[1].w+"</strong>: the same wonderful life you were asked about earlier. Nobody else is touched."
+            ". Second, <strong>Nadia is added at "+K_WOND[1].w+"</strong>: the same wonderful life you were asked about earlier. Nobody else is touched."
     },
     {
         id:"plusVsBoth", kind:"pair", label:"The modest addition against the harm",
@@ -225,31 +225,13 @@ var QUESTIONS=[
     },
     {
         // The one question that is a choice rather than a comparison, and the
-        // only source of an alpha violation. It contributes no edges to the
-        // closure - a choice from a menu is not a betterness claim, so there
-        // is nothing for it to contradict transitively. What it does instead
-        // is name a *choice set*, which the pairwise questions can then
-        // contradict directly: see alphaCandidate.
+        // only source of an alpha violation (see alphaCandidate).
         //
-        // Hence the shape of the options. What alpha needs to know is which
-        // of the three are among the best, not why. "A and B are exactly as
-        // good" and "A and B cannot be ranked against each other" name the
-        // same choice set and carry the same alpha commitments, and the
-        // difference between them was already asked in the A-against-B
-        // question, so one option covers both. Likewise "all three are equal"
-        // and "the three cannot be ranked" both name {A,B,Z}. Three views that
-        // look distinct therefore cost two options, not three.
-        //
-        // Five of the seven non-empty choice sets are offered. {A,Z} and {B,Z}
-        // are missing: they need Z among the best with one of A and B kept out
-        // of it, and nobody holds that. Someone who did would fall back on the
-        // single winner they do have, which draws no false hit, so leaving
-        // them out costs a little expressiveness and no correctness.
-        //
-        // None of the five is a shrug. Every one names a set the pairwise
-        // answers can contradict, which is the same bargain the rest of the
-        // quiz makes: "cannot be ranked" is a claim about the outcomes, not a
-        // way of declining to have a view.
+        // Hence the shape of the options. What alpha needs to know is which of
+        // the three are among the best. "A and B are exactly as good" and "A
+        // and B cannot be ranked against each other" both name the choice set
+        // {A,B} as the best. Likewise "all three are equal" and "the three
+        // cannot be ranked" both name {A,B,Z}.
         id:"menu", kind:"menu", label:"Choosing from three",
         pops:[A_POP,B_POP,Z_POP], names:["A","B","Z"], totals:true,
         title:"All three at once.",
@@ -257,7 +239,7 @@ var QUESTIONS=[
         ask:"Which is the best of the three?",
         opts:[["A","A","A"],["B","B","B"],["C","Z","Z"],
               ["D","A and B both \u2014 Z is worse than each of them","AB"],
-              ["E","All three \u2014 none of them can be ruled out","all"]]
+              ["E","All three \u2014 none of them is worse than the others","all"]]
     }
 ];
 
@@ -1656,8 +1638,8 @@ var CARD_HTML={
         // the damage, and it differs between the two.
         h+='<ol class="claims"><li>Offered '+al.pairWinner+' and '+al.picked+
            ' alone, you judged '+al.pairWinner+' the better of the two.</li>';
-        h+='<li>Offered A, B and Z together, you put '+al.picked+
-           (al.several ? ' among the best.' : ' at the top.')+'</li></ol>';
+        h+='<li>Offered A, B and Z together, you ranked '+al.picked+
+           (al.several ? ' as not worse.' : ' at the top.')+'</li></ol>';
         h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. '+al.third+'\u2019s presence cannot '+
            (al.several ? 'put '+al.picked+' alongside ' : 'make '+al.picked+' beat ')+al.pairWinner+
            ' if it did not already.</p></div>';
