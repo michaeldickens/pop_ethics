@@ -81,7 +81,7 @@ VIEWS = [
                      neutral_mod="right", benign="right", nae="right", generalize="yes",
                      AvZ="right", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="Z"),
+                     menu="Z", menu_alpha="yes"),
     ),
 
     dict(
@@ -97,7 +97,7 @@ VIEWS = [
                      neutral_mod="left", benign="left", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="right", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -114,7 +114,7 @@ VIEWS = [
                      neutral_mod="right", benign="right", nae="right", generalize="no",
                      AvZ="left", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="B"),
+                     menu="B", menu_alpha="yes"),
     ),
 
     dict(
@@ -133,7 +133,7 @@ VIEWS = [
                      neutral_mod="left", benign="left", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="equal", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -149,7 +149,7 @@ VIEWS = [
                      neutral_mod="equal", benign="right", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="equal", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="no",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -166,7 +166,7 @@ VIEWS = [
                      neutral_mod="equal", benign="right", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="equal", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -179,7 +179,7 @@ VIEWS = [
                      neutral_mod="equal", benign="right", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="equal", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="no",
-                     menu="B"),
+                     menu="B", menu_alpha="yes"),
     ),
 
     dict(
@@ -210,7 +210,7 @@ VIEWS = [
                      neutral_mod="none", benign="none", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="no", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -232,7 +232,7 @@ VIEWS = [
                      neutral_mod="none", benign="none", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="none", collapse="no", greedy="left", plusVsBoth="right",
                      trans_gt="yes", trans_none="no", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -251,7 +251,7 @@ VIEWS = [
                      neutral_mod="none", benign="none", nae="none", generalize="yes",
                      AvZ="left", neutral_wond="none", collapse="no", greedy="left", plusVsBoth="right",
                      trans_gt="yes", trans_none="no", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -274,7 +274,7 @@ VIEWS = [
                      neutral_mod="none", benign="right", nae="right", generalize="yes",
                      AvZ="right", neutral_wond="none", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="Z"),
+                     menu="Z", menu_alpha="yes"),
     ),
 
     dict(
@@ -293,7 +293,7 @@ VIEWS = [
                      neutral_mod="none", benign="right", nae="right", generalize="yes",
                      AvZ="right", neutral_wond="none", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="Z"),
+                     menu="Z", menu_alpha="yes"),
     ),
 
     dict(
@@ -313,7 +313,7 @@ VIEWS = [
                      neutral_mod="none", benign="right", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="right", collapse="yes", greedy="left", plusVsBoth="none",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="B"),
+                     menu="B", menu_alpha="yes"),
     ),
 
     dict(
@@ -327,7 +327,7 @@ VIEWS = [
                      neutral_mod="none", benign="right", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="right", collapse="no", greedy="left", plusVsBoth="none",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -345,7 +345,7 @@ VIEWS = [
                      neutral_mod="equal", benign="right", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="equal", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="no", trans_none="no", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -361,7 +361,7 @@ VIEWS = [
                      neutral_mod="equal", benign="right", nae="none",
                      generalize="yes", AvZ="none", neutral_wond="equal", collapse="yes",
                      greedy="left", plusVsBoth="left", trans_gt="yes", trans_none="yes", trans_eq="yes",
-                     menu_eq="no", menu="all"),
+                     menu_eq="no", menu="all", menu_alpha="yes"),
     ),
 
     dict(
@@ -376,7 +376,7 @@ VIEWS = [
                      neutral_mod="left", benign="left", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="left", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -395,7 +395,7 @@ VIEWS = [
                      neutral_mod="left", benign="left", nae="left", generalize="yes",
                      AvZ="left", neutral_wond="right", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -413,7 +413,7 @@ VIEWS = [
                      neutral_mod="left", benign="left", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="left", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -430,7 +430,7 @@ VIEWS = [
                      neutral_mod="right", benign="right", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -447,7 +447,7 @@ VIEWS = [
                      neutral_mod="right", benign="right", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="B"),
+                     menu="B", menu_alpha="yes"),
     ),
 
     dict(
@@ -462,7 +462,7 @@ VIEWS = [
                      neutral_mod="right", benign="right", nae="right", generalize="yes",
                      AvZ="right", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="Z"),
+                     menu="Z", menu_alpha="yes"),
     ),
 
     dict(
@@ -489,7 +489,7 @@ VIEWS = [
                      neutral_mod="none", benign="none", nae="right", generalize="no",
                      AvZ="left", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="no", trans_eq="yes", menu_eq="yes",
-                     menu="AB"),
+                     menu="AB", menu_alpha="yes"),
     ),
 
     dict(
@@ -511,7 +511,7 @@ VIEWS = [
                      neutral_mod="none", benign="none", nae="right", generalize="yes",
                      AvZ="left", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A"),
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -533,7 +533,7 @@ VIEWS = [
                      neutral_mod="none", benign="none", nae="right", generalize="no",
                      AvZ="left", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="AB"),
+                     menu="AB", menu_alpha="yes"),
     ),
 
     dict(
@@ -548,7 +548,7 @@ VIEWS = [
                      neutral_mod="none", benign="none", nae="none", generalize="yes",
                      AvZ="none", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="no",
-                     menu="all"),
+                     menu="all", menu_alpha="yes"),
     ),
 ]
 
