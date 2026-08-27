@@ -13,7 +13,9 @@ Read each view's description against the answers below it, then against the verd
 - [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
 - [Imprecise comparability](#rough) - 1 conflict, 5 bullets
 - [Wide gaps, and the harm still counts](#wide-gaps-harm-still-counts) - 2 conflicts, 4 bullets
+- [Wide gaps, and only that conflict](#wide-gaps-only-that-conflict) - 1 conflict, 5 bullets
 - [Wide gaps, but spent on the harm anyway](#wide-gaps-spent-anyway) - 1 conflict, 3 bullets
+- [Wide gaps, spent on the harm anyway, without Pareto to spend it](#wide-gaps-spent-no-pareto) - clean, 5 bullets
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 2 bullets
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 2 bullets
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
@@ -433,6 +435,55 @@ Bullets bitten:
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
 
+<a id="wide-gaps-only-that-conflict"></a>
+
+## Wide gaps, and only that conflict
+
+The view above bundles two separate collisions: the greediness one, and a leftover from
+declining benign addition while still ranking A above B and B above A+ -- those two
+rungs chain to A above A+, the very step just declined. Declining levelling up (nae) as
+well removes the second collision without touching the first, since the ladder story
+needs a ranked verdict on both rungs to chain through and the greediness story does not
+go anywhere near nae. What is left is a single, clean case of Broome's argument, with
+nothing else riding along.
+
+Open it: append `#a=yrllnnnyln-lryxy-a` to the quiz URL.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
+| A against B | A is better than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
+| Benign addition | A+ is not rankable against A -- everyone gains, and good new lives are added. |
+| Levelling up | B is not rankable against A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is better than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| The modest addition against the harm | K+ is worse than K± -- Nadia added at 7 against Owen down and Nadia added at 70. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of not-worse-than | "Not worse than" is not always transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | A is the best of A, B and Z. |
+
+Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+- **Your own answers already rank K above K+.** `greedy+neutral_mod+plusVsBoth+trans_gt`
+
+Bullets bitten:
+
+- You rejected transitivity of not-worse-than.
+- You denied that levelling up improves things.
+- You judged 4 of the 9 pairs unrankable.
+- You hold the Procreation Asymmetry.
+- Comparable when the numbers match, unrankable when they do not.
+
 <a id="wide-gaps-spent-anyway"></a>
 
 ## Wide gaps, but spent on the harm anyway
@@ -478,6 +529,53 @@ Not asked: collapse, trans_none, menu_eq. These questions only appear when earli
 Bullets bitten:
 
 - You accepted the repugnant conclusion.
+- You hold the Procreation Asymmetry.
+- Comparable when the numbers match, unrankable when they do not.
+
+<a id="wide-gaps-spent-no-pareto"></a>
+
+## Wide gaps, spent on the harm anyway, without Pareto to spend it
+
+The view above, with Pareto rejected. K++ > K+- was doing all the work: without it,
+ranking K+- above K is just an answer, not a step that chains anywhere, so nothing
+connects it back to the declined K against K++. The conflict card falls silent and a
+bullet takes its place -- the same 'an addition you could not rank outweighed a harm you
+could' bullet the companion view earns only once Pareto is off the table too. Rejecting
+Pareto is a steep price on its own, but it is worth seeing that it is doing real work
+here, not just sitting unused.
+
+Open it: append `#a=xrrlnrryrn-r-y-y-z` to the quiz URL.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | A future need not be better even when the very same people are all better off in it. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
+| A against B | A is worse than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
+| Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is worse than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| A harm beside the addition | K is worse than K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | Z is the best of A, B and Z. |
+
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+No conflicts.
+
+Bullets bitten:
+
+- You rejected the Pareto principle.
+- You accepted the repugnant conclusion.
+- An addition you could not rank outweighed a harm you could.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
 
