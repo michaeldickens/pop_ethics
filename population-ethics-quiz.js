@@ -1151,7 +1151,7 @@ var LABELS={
     greedy:function(a){ return "K is "+({left:"better than",right:"worse than",equal:"exactly as good as",none:"not rankable against"}[a])+
         " K± — Owen down from "+K_BASE[0].w+" to "+K_BOTH[1].w+", and Nadia added at "+K_WOND[1].w+"."; },
     plusVsBoth:function(a){ return "K+ is "+({left:"better than",right:"worse than",equal:"exactly as good as",none:"not rankable against"}[a])+
-        " K± — Nadia added at "+K_MOD[1].w+" against Owen down and Nadia added at "+K_WOND[1].w+"."; },
+        " K± — Nadia added at "+K_MOD[1].w+" against Owen down by 35 and Nadia added at "+K_WOND[1].w+"."; },
     benign:function(a){ return "A+ is "+({left:"worse than",right:"better than",equal:"exactly as good as",none:"not rankable against"}[a])+" A \u2014 everyone gains, and good new lives are added."; },
     nae:function(a){ return "B is "+({left:"worse than",right:"better than",equal:"exactly as good as",none:"not rankable against"}[a])+" A+ \u2014 same headcount, more total, more average, fully equal."; },
     generalize:function(a){ return {
