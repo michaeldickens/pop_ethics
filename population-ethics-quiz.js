@@ -1434,11 +1434,9 @@ function bullets(){
     // name is attached to which number - swap "Owen" and "Nadia" throughout
     // and the two worlds are unchanged, yet the verdict flips.
     if(ANS.plusVsBoth==="left"){
-        out.push({t:"You ranked K+ above K+- — sorted, K+- wins at both ends.",
-                  b:"K+ and K+- differ only in Owen and Nadia: Owen goes from "+K_BASE[0].w+" to "+K_BOTH[1].w+
-                    ", Nadia from "+K_MOD[1].w+" to "+K_WOND[1].w+". Sort each world's welfare levels from the bottom: K+-'s lowest person ("+
-                    K_BOTH[1].w+") beats K+'s lowest ("+K_MOD[1].w+"), and K+-'s highest ("+K_WOND[1].w+
-                    ") beats K+'s highest ("+K_BASE[0].w+"). That is dominance, not a close call — any anonymous, Pareto-respecting view has to rank K+- at least as good, whatever else it believes. Swap the names “Owen” and “Nadia” throughout and you get the same two worlds back, so this verdict cannot be about weighing their interests. It can only be tracking identity itself."});
+        out.push({t:"You treated Owen's welfare as more important than Nadia's.",
+                  b:"You ranked K+ as better than K±. The two outcomes differ only in Owen and Nadia: Owen goes from "+K_BASE[0].w+" to "+K_BOTH[1].w+
+                  ", Nadia from "+K_MOD[1].w+" to "+K_WOND[1].w+". No person is added or removed. From an impartial perspective, K± is a Pareto improvement over K+: the worst-off person's welfare increases from 7 to 20, and the best-off goes from 55 to 70. All that changes are the names."});
     }
     // Same dominance, declined rather than denied. Not the same mistake -
     // this does not claim identity should decide value - but still a pass on
