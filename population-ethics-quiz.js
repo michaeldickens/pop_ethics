@@ -1433,7 +1433,7 @@ function bullets(){
     // close call. Ranking K+ above K+- anyway means value is tracking whose
     // name is attached to which number - swap "Owen" and "Nadia" throughout
     // and the two worlds are unchanged, yet the verdict flips.
-    if(ANS.plusVsBoth==="left"){
+    if(ANS.plusVsBoth==="left" && ANS.pareto==="yes"){
         out.push({t:"You treated Owen's welfare as more important than Nadia's.",
                   b:"You ranked K+ as better than K±. The two outcomes differ only in Owen and Nadia: Owen goes from "+K_BASE[0].w+" to "+K_BOTH[1].w+
                   ", Nadia from "+K_MOD[1].w+" to "+K_WOND[1].w+". No person is added or removed. From an anonymous perspective, K± is a Pareto improvement over K+: the worst-off person's welfare increases from 7 to 20, and the best-off goes from 55 to 70. All that changes are the names."});
@@ -1442,7 +1442,7 @@ function bullets(){
     // this does not claim identity should decide value - but still a pass on
     // a verdict every anonymous, Pareto-respecting view would give, so it
     // draws a bullet of its own rather than going unremarked.
-    if(ANS.plusVsBoth==="none"){
+    if(ANS.plusVsBoth==="none" && ANS.pareto==="yes"){
         out.push({t:"You declined to rank K+ against K±, even though K± is a Pareto improvement from an anonymous perspective.",
                   b:"The two outcomes differ only in Owen and Nadia: Owen goes from "+K_BASE[0].w+" to "+K_BOTH[1].w+
                   ", Nadia from "+K_MOD[1].w+" to "+K_WOND[1].w+". No person is added or removed. From an impartial perspective, K± is a Pareto improvement over K+: the worst-off person's welfare increases from 7 to 20, and the best-off goes from 55 to 70. All that changes are the names.<br><br>"+
