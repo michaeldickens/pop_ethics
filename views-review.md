@@ -13,9 +13,11 @@ Read each view's description against the answers below it, then against the verd
 - [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
 - [Imprecise comparability](#rough) - 1 conflict, 6 bullets
 - [Wide gaps, and the harm still counts](#wide-gaps-harm-still-counts) - 2 conflicts, 5 bullets
+- [Wide gaps, and only that conflict](#wide-gaps-only-that-conflict) - 1 conflict, 6 bullets
 - [Wide gaps, but spent on the harm anyway](#wide-gaps-spent-anyway) - 1 conflict, 3 bullets
-- [Unrankable below, better above](#vague_boundary) - 2 conflicts, 2 bullets
-- [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 2 bullets
+- [Wide gaps, spent on the harm anyway, without Pareto to spend it](#wide-gaps-spent-no-pareto) - clean, 5 bullets
+- [Unrankable below, better above](#vague_boundary) - 2 conflicts, 3 bullets
+- [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 3 bullets
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
 - [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 5 bullets
 - [Antinatalism](#antinatalist) - clean, 2 bullets
@@ -39,7 +41,7 @@ in quality, so Z beats A and is chosen from the menu. Parfit's own statement of 
 that generates the Repugnant Conclusion. Internally consistent: it is a complete,
 transitive ordering.
 
-Open it: append `#a=yrrlrrryrr--y-y-z` to the quiz URL.
+Open it: append `#a=yrrlrrryrr---y-y-z` to the quiz URL.
 
 ### Answers
 
@@ -59,7 +61,7 @@ Open it: append `#a=yrrlrrryrr--y-y-z` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
 
-Not asked: collapse, greedy, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -79,7 +81,7 @@ worse; at 70 it raises the average and makes things better. Consistent, but it h
 deny benign addition, and it implies that a life well worth living can be a loss purely
 for being below par.
 
-Open it: append `#a=yrllllrylr-ly-y-a` to the quiz URL.
+Open it: append `#a=yrllllrylr-l-y-y-a` to the quiz URL.
 
 ### Answers
 
@@ -100,7 +102,7 @@ Open it: append `#a=yrllllrylr-ly-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -121,7 +123,7 @@ fall below it, so Z is worse than A and the moves cannot be repeated indefinitel
 best of the three and is chosen. Blocking the ladder at 'the moves repeat' is what saves
 it, and it is committed to some lives worth living being not worth adding.
 
-Open it: append `#a=yrrlrrrxlr--y-y-b` to the quiz URL.
+Open it: append `#a=yrrlrrrxlr---y-y-b` to the quiz URL.
 
 ### Answers
 
@@ -141,7 +143,7 @@ Open it: append `#a=yrrlrrrxlr--y-y-b` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
 
-Not asked: collapse, greedy, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -163,7 +165,7 @@ does not collide with Pareto here: the Pareto question is about the same people,
 them better off, and K++ contains a person K does not. So maximin comes out consistent,
 and is told instead what its verdicts commit it to.
 
-Open it: append `#a=yrllllryle-ly-yya` to the quiz URL.
+Open it: append `#a=yrllllryle-l-y-yya` to the quiz URL.
 
 ### Answers
 
@@ -185,7 +187,7 @@ Open it: append `#a=yrllllryle-ly-yya` to the quiz URL.
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -207,7 +209,7 @@ the table and K+ falls below the other two. Denying that a verdict survives a wi
 is what lets all three stand. Should escape the neutral-range collision and be told it
 violates Sen's property beta.
 
-Open it: append `#a=yrllerryle-ly-yxa` to the quiz URL.
+Open it: append `#a=yrllerryle-l-y-yxa` to the quiz URL.
 
 ### Answers
 
@@ -229,7 +231,7 @@ Open it: append `#a=yrllerryle-ly-yxa` to the quiz URL.
 | Verdicts across a wider menu | A third option can change how the first two compare. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -251,7 +253,7 @@ Existing people still matter, so benign addition and levelling up are both impro
 but A > B. Should collide twice over: once on the ladder, and once because two lives of
 very different quality cannot both be exactly worth nothing.
 
-Open it: append `#a=yrllerryle-ly-yya` to the quiz URL.
+Open it: append `#a=yrllerryle-l-y-yya` to the quiz URL.
 
 ### Answers
 
@@ -273,7 +275,7 @@ Open it: append `#a=yrllerryle-ly-yya` to the quiz URL.
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -292,7 +294,7 @@ Bullets bitten:
 Common-sense person-affecting view #1. Adding a happy life is neither good nor badr.
 Increasing total utility in a single step is good (B > A), but Z is worse than A.
 
-Open it: append `#a=yrrlerryle-ly-yxb` to the quiz URL.
+Open it: append `#a=yrrlerryle-l-y-yxb` to the quiz URL.
 
 ### Answers
 
@@ -314,7 +316,7 @@ Open it: append `#a=yrrlerryle-ly-yxb` to the quiz URL.
 | Verdicts across a wider menu | A third option can change how the first two compare. |
 | Choosing from three | B is the best of A, B and Z. |
 
-Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -346,7 +348,7 @@ reads 'cannot be ranked' as the strong claim, not better and not worse and not e
 a derived verdict contradicts it; Parfit's own claim about mere addition is the weaker
 'not worse than', which no option here states on its own.
 
-Open it: append `#a=yrllnnryln-nyxy-a` to the quiz URL.
+Open it: append `#a=yrllnnryln-n-yxy-a` to the quiz URL.
 
 ### Answers
 
@@ -368,7 +370,7 @@ Open it: append `#a=yrllnnryln-nyxy-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -388,16 +390,16 @@ Bullets bitten:
 ## Wide gaps, and the harm still counts
 
 The imprecise view above, one answer different: K is ranked above K+- rather than left
-unranked. That is the answer almost everyone gives, because the move from K to K+- is
-one bad thing and one thing the view itself calls neutral, and bad plus neutral ought to
-be bad. It is the answer the view cannot have. Calling both the life at 7 and the life
-at 70 unrankable says the range of critical levels runs from 70 down to at least 7, so
-adding at 70 is worth anywhere from nothing to 63 -- and Owen's 35 is inside that, which
-leaves no fact of the matter about which world is better. Should draw the greediness
-card. The ladder is blocked at not-worse-than, so nothing arrives at Z; what it does not
-escape is the denied benign step, which every view holding a gap there collides on.
+unranked. That is the answer almost everyone gives, because the view is totalist
+everywhere except at the two additions, and totalled K+- beats K+ -- Nadia's gain of 63
+outweighs Owen's loss of 35. It is the answer the view cannot have: pricing K+- above K+
+that way, together with ranking K above K+-, forces K above K+ by transitivity -- the
+very pair the view just called unrankable, not better, not worse, not equal. Should draw
+a real conflict now, not a bullet. The ladder is blocked at not-worse-than, so nothing
+arrives at Z; what it does not escape is the denied benign step, which every view
+holding a gap there collides on.
 
-Open it: append `#a=yrllnnryln-lyxy-a` to the quiz URL.
+Open it: append `#a=yrllnnryln-lryxy-a` to the quiz URL.
 
 ### Answers
 
@@ -414,6 +416,7 @@ Open it: append `#a=yrllnnryln-lyxy-a` to the quiz URL.
 | A against Z | A is better than Z. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| The modest addition against the harm | K+ is worse than K± -- Nadia added at 7 against Owen down by 35 and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of not-worse-than | "Not worse than" is not always transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
@@ -424,13 +427,63 @@ Not asked: collapse, menu_eq. These questions only appear when earlier answers g
 ### Verdict
 
 - **The rungs rank the step you declined to rank.** `AvB+benign+nae+trans_gt`
-- **Greediness of neutrality** - additions at 7 and 70 both unrankable, so the gap covers Owen's 35, and K is ranked above K+- all the same.
+- **Your own answers already rank K above K+.** `greedy+neutral_mod+plusVsBoth+trans_gt`
 
 Bullets bitten:
 
 - You rejected transitivity of not-worse-than.
 - You ranked the two ends of the ladder but not a single step of it.
 - You judged 3 of the 9 pairs unrankable.
+- You hold the Procreation Asymmetry.
+- Comparable when the numbers match, unrankable when they do not.
+
+<a id="wide-gaps-only-that-conflict"></a>
+
+## Wide gaps, and only that conflict
+
+The view above bundles two separate collisions: the greediness one, and a leftover from
+declining benign addition while still ranking A above B and B above A+ -- those two
+rungs chain to A above A+, the very step just declined. Declining levelling up (nae) as
+well removes the second collision without touching the first, since the ladder story
+needs a ranked verdict on both rungs to chain through and the greediness story does not
+go anywhere near nae. What is left is a single, clean case of Broome's argument, with
+nothing else riding along.
+
+Open it: append `#a=yrllnnnyln-lryxy-a` to the quiz URL.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
+| A against B | A is better than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
+| Benign addition | A+ is not rankable against A -- everyone gains, and good new lives are added. |
+| Levelling up | B is not rankable against A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is better than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| The modest addition against the harm | K+ is worse than K± -- Nadia added at 7 against Owen down by 35 and Nadia added at 70. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of not-worse-than | "Not worse than" is not always transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | A is the best of A, B and Z. |
+
+Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+- **Your own answers already rank K above K+.** `greedy+neutral_mod+plusVsBoth+trans_gt`
+
+Bullets bitten:
+
+- You rejected transitivity of not-worse-than.
+- You denied that levelling up improves things.
+- You ranked the two ends of the ladder but not a single step of it.
+- You judged 4 of the 9 pairs unrankable.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
 
@@ -449,7 +502,7 @@ denied pair and one derived relation, and they are the same pair. The companion 
 above shows the position this collides with is not a dead end -- decline K against K+-
 as well, and both cards fall silent.
 
-Open it: append `#a=yrrlnrryrn-ry-y-z` to the quiz URL.
+Open it: append `#a=yrrlnrryrn-r-y-y-z` to the quiz URL.
 
 ### Answers
 
@@ -470,7 +523,7 @@ Open it: append `#a=yrrlnrryrn-ry-y-z` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -482,6 +535,53 @@ Bullets bitten:
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
 
+<a id="wide-gaps-spent-no-pareto"></a>
+
+## Wide gaps, spent on the harm anyway, without Pareto to spend it
+
+The view above, with Pareto rejected. K++ > K+- was doing all the work: without it,
+ranking K+- above K is just an answer, not a step that chains anywhere, so nothing
+connects it back to the declined K against K++. The conflict card falls silent and a
+bullet takes its place -- the same 'an addition you could not rank outweighed a harm you
+could' bullet the companion view earns only once Pareto is off the table too. Rejecting
+Pareto is a steep price on its own, but it is worth seeing that it is doing real work
+here, not just sitting unused.
+
+Open it: append `#a=xrrlnrryrn-r-y-y-z` to the quiz URL.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | A future need not be better even when the very same people are all better off in it. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
+| A against B | A is worse than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
+| Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is worse than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| A harm beside the addition | K is worse than K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | Z is the best of A, B and Z. |
+
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+No conflicts.
+
+Bullets bitten:
+
+- You rejected the Pareto principle.
+- You accepted the repugnant conclusion.
+- An addition you could not rank outweighed a harm you could.
+- You hold the Procreation Asymmetry.
+- Comparable when the numbers match, unrankable when they do not.
+
 <a id="vague_boundary"></a>
 
 ## Unrankable below, better above
@@ -490,9 +590,12 @@ Holds that adding Nadia at 7 does not rank against leaving her out, but that add
 at 70 is determinately better, and accepts that no hair's improvement to a life can
 convert 'no fact of the matter' into a settled verdict. Those three cannot all stand:
 Broome's collapsing principle is aimed exactly here. The one profile in this list that
-the collapsing question should catch.
+the collapsing question should catch. K+ against K+- is left unrankable too, which draws
+its own bullet for passing on a dominance result -- a smaller one than ranking K+ above
+K+- would, since it never claims identity should decide value, but a bullet all the
+same.
 
-Open it: append `#a=yrrlnrrylryly-y-b` to the quiz URL.
+Open it: append `#a=yrrlnrrylrylny-y-b` to the quiz URL.
 
 ### Answers
 
@@ -510,6 +613,7 @@ Open it: append `#a=yrrlnrrylryly-y-b` to the quiz URL.
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life cannot turn "unrankable" into a determinate verdict. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| The modest addition against the harm | K+ is not rankable against K± -- Nadia added at 7 against Owen down by 35 and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
@@ -523,6 +627,7 @@ Not asked: trans_none, menu_eq. These questions only appear when earlier answers
 
 Bullets bitten:
 
+- You declined to rank K+ against K±, even though K± is a Pareto improvement from an anonymous perspective.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
 
@@ -534,7 +639,7 @@ The same answers as the previous view, except that a sharp boundary between 'unr
 and 'better' is accepted as the price of vagueness. That single change should be the
 difference between being caught by the collapsing principle and not.
 
-Open it: append `#a=yrllnrrylrxly-y-a` to the quiz URL.
+Open it: append `#a=yrllnrrylrxlny-y-a` to the quiz URL.
 
 ### Answers
 
@@ -552,6 +657,7 @@ Open it: append `#a=yrllnrrylrxly-y-a` to the quiz URL.
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life can turn "unrankable" into a determinate verdict. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| The modest addition against the harm | K+ is not rankable against K± -- Nadia added at 7 against Owen down by 35 and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
@@ -565,6 +671,7 @@ Not asked: trans_none, menu_eq. These questions only appear when earlier answers
 
 Bullets bitten:
 
+- You declined to rank K+ against K±, even though K± is a Pareto improvement from an anonymous perspective.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
 
@@ -579,7 +686,7 @@ neutrality answers are stipulated rather than drawn from Temkin, and are here to
 the contrast: the remaining collision turns on equality, which rejecting transitivity of
 better-than does nothing to touch.
 
-Open it: append `#a=yrllerryle-lx-yya` to the quiz URL.
+Open it: append `#a=yrllerryle-l-x-yya` to the quiz URL.
 
 ### Answers
 
@@ -601,7 +708,7 @@ Open it: append `#a=yrllerryle-lx-yya` to the quiz URL.
 | Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -622,7 +729,7 @@ buys the escape from the neutral-range collision, which needs two equalities to 
 before it can bite. Declines to rank A against B or against Z, and picks nothing from
 the three.
 
-Open it: append `#a=yrnlernyne-ly-yxn` to the quiz URL.
+Open it: append `#a=yrnlernyne-l-y-yxn` to the quiz URL.
 
 ### Answers
 
@@ -644,7 +751,7 @@ Open it: append `#a=yrnlernyne-ly-yxn` to the quiz URL.
 | Verdicts across a wider menu | A third option can change how the first two compare. |
 | Choosing from three | None of A, B and Z is best. |
 
-Not asked: collapse, trans_none. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -667,7 +774,7 @@ worse, whether the life goes badly or wonderfully. Among people who exist anyway
 wellbeing is still better, so levelling up improves things. Fewer people is better
 without limit, and the best world contains nobody.
 
-Open it: append `#a=yrllllryll-ly-y-a` to the quiz URL.
+Open it: append `#a=yrllllryll-l-y-y-a` to the quiz URL.
 
 ### Answers
 
@@ -688,7 +795,7 @@ Open it: append `#a=yrllllryll-ly-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -710,7 +817,7 @@ gain, and why levelling up is refused: B's two hundred at 64 hold more shortfall
 them than A+'s better-off hundred do. Not a standard view so much as the shape a good
 many people's answers take once the suffering is made vivid.
 
-Open it: append `#a=yrlllllylr-ly-y-a` to the quiz URL.
+Open it: append `#a=yrlllllylr-l-y-y-a` to the quiz URL.
 
 ### Answers
 
@@ -731,7 +838,7 @@ Open it: append `#a=yrlllllylr-ly-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -754,7 +861,7 @@ source of suffering and so a loss, whatever the life contains, and two futures o
 hundred people apiece come out exactly as good when neither holds any suffering to tell
 them apart.
 
-Open it: append `#a=xellllryll-ly-y-a` to the quiz URL.
+Open it: append `#a=xellllryll-l-y-y-a` to the quiz URL.
 
 ### Answers
 
@@ -775,7 +882,7 @@ Open it: append `#a=xellllryll-ly-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -798,7 +905,7 @@ the ladder looks right; better-than obviously chains; and yet A is plainly bette
 and vastly better than Z. No view about neutrality here at all, so the neutral-range
 collision should not fire - the ladder ones should, twice.
 
-Open it: append `#a=yrllrrrylr--y-y-a` to the quiz URL.
+Open it: append `#a=yrllrrrylr---y-y-a` to the quiz URL.
 
 ### Answers
 
@@ -818,7 +925,7 @@ Open it: append `#a=yrllrrrylr--y-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, greedy, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -835,7 +942,7 @@ the ladder looks right; better-than obviously chains; B is better than A; and ye
 worse than A or B. No view about neutrality here at all, so the neutral-range collision
 should not fire - the ladder ones should, twice.
 
-Open it: append `#a=yrrlrrrylr--y-y-b` to the quiz URL.
+Open it: append `#a=yrrlrrrylr---y-y-b` to the quiz URL.
 
 ### Answers
 
@@ -855,7 +962,7 @@ Open it: append `#a=yrrlrrrylr--y-y-b` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | B is the best of A, B and Z. |
 
-Not asked: collapse, greedy, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -870,7 +977,7 @@ of unrelieved agony makes the world better by being lived. Almost nothing in the
 literature goes here, and even totalism enters that life as a negative. It should not be
 able to pass without comment.
 
-Open it: append `#a=yrrrrrryrr--y-y-z` to the quiz URL.
+Open it: append `#a=yrrrrrryrr---y-y-z` to the quiz URL.
 
 ### Answers
 
@@ -890,7 +997,7 @@ Open it: append `#a=yrrrrrryrr--y-y-z` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | Z is the best of A, B and Z. |
 
-Not asked: collapse, greedy, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -917,7 +1024,7 @@ hundred, still there and fallen from 100 to 4, lose 9,600 between them, but that
 smaller half of it for any floor above 4. Coherent throughout: this profile should draw
 no conflict, only the bullets naming what the gaps cost it.
 
-Open it: append `#a=yrnlnnrxln-ny-y-a` to the quiz URL.
+Open it: append `#a=yrnlnnrxln-n-y-y-a` to the quiz URL.
 
 ### Answers
 
@@ -938,7 +1045,7 @@ Open it: append `#a=yrnlnnrxln-ny-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -967,7 +1074,7 @@ than A after all. Should collide on the ladder route, where the view above comes
 clean -- and on the denied benign step as well, which both views share and which neither
 answer to the not-worse-than question touches.
 
-Open it: append `#a=yrllnnryln-nyyy-a` to the quiz URL.
+Open it: append `#a=yrllnnryln-n-yyy-a` to the quiz URL.
 
 ### Answers
 
@@ -989,7 +1096,7 @@ Open it: append `#a=yrllnnryln-nyyy-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -1016,7 +1123,7 @@ unrankable puts a level at -40, while ranking A above Z says every level sits ab
 the welfare Z's people live at. Should collide on the misery route, and be told that
 route assumes the reading.
 
-Open it: append `#a=ynnnnnrxln-ny-y-a` to the quiz URL.
+Open it: append `#a=ynnnnnrxln-n-y-y-a` to the quiz URL.
 
 ### Answers
 
@@ -1037,7 +1144,7 @@ Open it: append `#a=ynnnnnrxln-ny-y-a` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | A is the best of A, B and Z. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -1059,7 +1166,7 @@ boundary case: there is nothing to be inconsistent with, so the quiz should find
 collisions, and should not manufacture one. If this profile ever produces a conflict,
 something is wrong.
 
-Open it: append `#a=xnnnnnnynn-ny-y-n` to the quiz URL.
+Open it: append `#a=xnnnnnnynn-n-y-y-n` to the quiz URL.
 
 ### Answers
 
@@ -1080,7 +1187,7 @@ Open it: append `#a=xnnnnnnynn-ny-y-n` to the quiz URL.
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
 | Choosing from three | None of A, B and Z is best. |
 
-Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 

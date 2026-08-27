@@ -63,8 +63,6 @@ PROBE = """(a) => {
       ? {vague: r.collapse.vague.id, anchor: r.collapse.anchor.id, dir: r.collapse.dir}
       : null,
     zrank: r.zrank ? {via: r.zrank.via, level: r.zrank.level} : null,
-    greedy: r.greedy ? {level: r.greedy.level, floor: r.greedy.floor,
-                        harm: r.greedy.from - r.greedy.to} : null,
     // The checks that fired, in the order the results page shows them. Named
     // fields above stay for the prose below; this is what the count runs on,
     // so a new check needs no arithmetic here.
@@ -207,11 +205,8 @@ def as_markdown(results):
         ]
         for qid, label, claim in r["claims"]:
             doc.append("| %s | %s |" % (label, strip_tags(claim)))
-        skipped = [
-            k
-            for k in ("collapse", "greedy", "trans_none", "menu_eq")
-            if k not in r["asked"]
-        ]
+        skipped = [k for k in ("collapse", "greedy", "plusVsBoth", "trans_none", "menu_eq")
+                   if k not in r["asked"]]
         if skipped:
             doc += [
                 "",
@@ -244,31 +239,16 @@ def as_markdown(results):
                 )
             )
         if r["zrank"]:
-            doc.append(
-                "- **%s** - %s"
-                % (
-                    (
-                        "Chaining through the gap"
-                        if r["zrank"]["via"] == "ladder"
-                        else "Ranking below the gap"
-                    ),
-                    (
-                        "the ladder run on not-worse-than reaches Z, which was "
-                        "ranked below A"
-                        if r["zrank"]["via"] == "ladder"
-                        else "A ranked above Z while the unrankable agony "
-                        "addition places a critical level at %s, below "
-                        "Z's welfare" % r["zrank"]["level"]
-                    ),
-                )
-            )
-        if r["greedy"]:
-            doc.append(
-                "- **Greediness of neutrality** - additions at %d and %d "
-                "both unrankable, so the gap covers Owen's %d, and K is "
-                "ranked above K+- all the same."
-                % (r["greedy"]["floor"], r["greedy"]["level"], r["greedy"]["harm"])
-            )
+            doc.append("- **%s** - %s"
+                       % ("Chaining through the gap"
+                          if r["zrank"]["via"] == "ladder"
+                          else "Ranking below the gap",
+                          "the ladder run on not-worse-than reaches Z, which was "
+                          "ranked below A"
+                          if r["zrank"]["via"] == "ladder"
+                          else "A ranked above Z while the unrankable agony "
+                               "addition places a critical level at %s, below "
+                               "Z's welfare" % r["zrank"]["level"]))
         if r["bullets"]:
             doc += ["", "Bullets bitten:", ""]
             doc += ["- %s" % strip_tags(b) for b in r["bullets"]]
