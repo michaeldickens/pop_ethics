@@ -176,8 +176,8 @@ var QUESTIONS=[
         when:function(a){ return a.neutral_mod==="none" && a.greedy==="left"; },
         pops:[K_MOD,K_BOTH], names:["K+","K±"],
         title:"Two ways to bring Nadia in.",
-        body:"One more comparison, between two futures you have already ranked against <strong>K</strong> separately. <strong>K+</strong> has the same 500 people as K, completely unaffected, plus Nadia at "+K_MOD[1].w+
-             ". <strong>K±</strong> has Owen — one of that same 500 — down to "+K_BOTH[1].w+", and Nadia added at "+K_WOND[1].w+" instead."
+        body:"<strong>K+</strong> has the same 500 people as K, plus Nadia at "+K_MOD[1].w+
+            ". <strong>K±</strong> has Owen — one of the people from K — down to "+K_BOTH[1].w+", and Nadia added at "+K_WOND[1].w+" instead. <strong>K± has higher total welfare, but with Owen worse off.</strong>"
     },
     {
         id:"trans_gt", kind:"principle", label:"Transitivity of better-than",
@@ -1257,9 +1257,7 @@ function plusVsBothPriced(needs){
         because:function(a){
             var harm=K_BASE[0].w-K_BOTH[1].w;
             var said=a.plusVsBoth==="equal" ? "exactly as good as K+" : "better than K+";
-            return "You ranked K± "+said+", and separately ranked K above K± — Owen down "+
-                harm+" points from "+K_BASE[0].w+", Nadia added at "+K_WOND[1].w+
-                ". Chain those two and K comes out better than K+, which collides with what you said above about adding Nadia at "+K_MOD[1].w+".";
+            return "You ranked K better than K±, and you ranked K± "+said+". Chain those two and K comes out definitively better than K+, which collides with what you said above about adding Nadia at "+K_MOD[1].w+".";
         },
         group:"plusVsBothPriced"
     };
