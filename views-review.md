@@ -624,7 +624,7 @@ Not asked: trans_none, menu_eq. These questions only appear when earlier answers
 
 Bullets bitten:
 
-- You declined to rank K+ against K+- -- a dominance result, not a toss-up.
+- You declined to rank K+ against K±, even though K± is a Pareto improvement from an anonymous perspective.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
 
@@ -668,7 +668,7 @@ Not asked: trans_none, menu_eq. These questions only appear when earlier answers
 
 Bullets bitten:
 
-- You declined to rank K+ against K+- -- a dominance result, not a toss-up.
+- You declined to rank K+ against K±, even though K± is a Pareto improvement from an anonymous perspective.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
 

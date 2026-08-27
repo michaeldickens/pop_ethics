@@ -590,6 +590,28 @@ function alphaCandidate(ans){
     return null;
 }
 
+// Ranking K+ at or above K+- takes Owen's welfare to matter more than
+// Nadia's: the two outcomes differ only in them, nobody is added or removed,
+// and once anonymized K+- is a Pareto improvement over K+ (the worst-off
+// rises from K+'s floor to Owen's new level, the best-off rises from K's
+// level to Nadia's new one). Nothing about either of them is ever given -
+// no relationship, no history, nothing - so there is no fact this verdict
+// could be tracking beyond whose name is attached to which number. That is
+// a stronger charge than the usual bullet: it says the verdict has no
+// possible basis, not just an unusual one, which is why it is scored here
+// rather than left as a cost the person can shrug and accept. "Equal" is
+// the same mistake by a smaller margin - it still requires weighing Owen's
+// loss more heavily, just not by enough to reverse the ranking - so both
+// share this one check instead of two separate cards making the same point
+// at different volumes. Needs Pareto: without it, "you rejected the Pareto
+// principle" already covers the ground, and charging a Pareto-rejector with
+// violating a Pareto-derived verdict is not a coherent complaint.
+function plusVsBothCandidate(ans){
+    if(ans.plusVsBoth!=="left" && ans.plusVsBoth!=="equal") return null;
+    if(ans.pareto!=="yes") return null;
+    return {dir:ans.plusVsBoth};
+}
+
 var EXTRA_CHECKS=[
     // Contraction consistency (Sen's property alpha): a constraint on choice
     // rather than on the betterness ordering.
@@ -597,7 +619,8 @@ var EXTRA_CHECKS=[
     // Broome's collapsing principle (Weighing Lives ch. 12). Asked before it is
     // scored, so an unasked or rejected principle cannot bite.
     {id:"collapse", run:function(a){ return a.collapse==="yes" ? collapseCandidate(a) : null; }},
-    {id:"zrank", run:zRankCandidate}
+    {id:"zrank", run:zRankCandidate},
+    {id:"plusVsBoth", run:plusVsBothCandidate}
 ];
 
 // Each check's result under its own name, plus the list of the ones that
@@ -1423,21 +1446,6 @@ function bullets(){
             ? " You also said that adding Nadia cannot be ranked against leaving her out. The two verdicts pull opposite ways: one says her existence has no determinate value, the other says it exactly equals the negated value of the harm to Owen."
             : "")});
 
-    // K+ and K+- hold the same 501 people; only Owen and Nadia move. Sorted,
-    // K+-'s welfare levels beat K+'s at both ends - Owen's new level tops
-    // Nadia's old one, and Nadia's new level tops what anyone in K+ has - so
-    // any view that does not care which named person holds which level, and
-    // treats more welfare for someone with nobody worse off as a gain, has to
-    // rank K+- at least as good. Totalism, averagism, prioritarianism and
-    // maximin all agree here; there is no ordinary reading on which this is a
-    // close call. Ranking K+ above K+- anyway means value is tracking whose
-    // name is attached to which number - swap "Owen" and "Nadia" throughout
-    // and the two worlds are unchanged, yet the verdict flips.
-    if(ANS.plusVsBoth==="left" && ANS.pareto==="yes"){
-        out.push({t:"You treated Owen's welfare as more important than Nadia's.",
-                  b:"You ranked K+ as better than K±. The two outcomes differ only in Owen and Nadia: Owen goes from "+K_BASE[0].w+" to "+K_BOTH[1].w+
-                  ", Nadia from "+K_MOD[1].w+" to "+K_WOND[1].w+". No person is added or removed. From an anonymous perspective, K± is a Pareto improvement over K+: the worst-off person's welfare increases from 7 to 20, and the best-off goes from 55 to 70. All that changes are the names."});
-    }
     // Same dominance, declined rather than denied. Not the same mistake -
     // this does not claim identity should decide value - but still a pass on
     // a verdict every anonymous, Pareto-respecting view would give, so it
@@ -1450,23 +1458,6 @@ function bullets(){
                   world:"<strong>Policy choices are impossible.</strong> You can never choose a social policy in any realistic scenario — the only way you can express a preference is if one policy is a strict Pareto improvement over another.<br><br>"+
                   "For example, you cannot prefer a flat tax over a progressive tax, because it leaves poorer individuals worse off; nor can you prefer a progressive tax over a flat tax, because it's worse for wealthier people."});
     }
-    // Equal is a third way to miss the same dominance, and arguably the
-    // harder one to defend: incomparable can at least appeal to welfare not
-    // being comparable across people in the first place, so only a Pareto
-    // improvement is guaranteed good. Equal instead asserts a precise value
-    // judgement - that the two worlds come out level - about a move that is a
-    // strict gain for someone and a strict loss for no one, once you stop
-    // tracking names. Fires alongside the conflict when trans_eq and menu_eq
-    // also hold, same as greedy==="equal" above: the conflict shows the
-    // chain, this names what the "equal" verdict itself is committed to.
-    if(ANS.plusVsBoth==="equal" && ANS.pareto==="yes"){
-        out.push({t:"You priced K± as exactly tied with K+.",
-                  b:"K±'s welfare levels beat K+'s at both ends — "+K_BOTH[1].w+" over "+K_MOD[1].w+
-                    " at the bottom, "+K_WOND[1].w+" over "+K_BASE[0].w+
-                    " at the top — with the same 501 people throughout. All that changes is Nadia and Owen switch positions.<br><br>"+
-                  "A view that rejects interpersonal welfare aggregation might judge these outcomes incomparable. But you didn't — you said they're <em>exactly equal</em>. You judged that Owen's smaller loss of welfare was exactly balanced out by Nadia's larger gain. That's not inconsistent, but it requires assigning greater worth to Owen's welfare."});
-    }
-
     if(ANS.benign==="left") out.push({t:"Everyone gains, good lives are added, and you called it worse.",b:"Every one of A\u2019s hundred is better off in A+, and a further hundred exist there with lives clearly worth living. Ranking that below A means the new lives are a cost heavy enough to outweigh a gain to every person who was already there.<br/><br/>Your answer does not force you to accept the mere addition paradox. However, the price is what it commits you to elsewhere: you would prefer the original hundred be worse off, so long as fewer people existed alongside them.",
                                       world:"Distributing malaria nets leaves recipients healthier and better off, and also means more children survive to adulthood, but with worse lives than the global average. Your answer holds that distributing malaria nets may therefore be a <em>bad</em> thing."});
 
@@ -1609,6 +1600,16 @@ var CARD_HTML={
             ' those lives are a gain, and '+Z_POP[0].n.toLocaleString()+' of them swamp what A\u2019s hundred lose. But calling the addition of a life at welfare '+zr.level+
             ' unrankable puts a level down at '+zr.level+', which is not above '+Z_LEVEL+
             '. You cannot have the boundary in both places. Note that this one, unlike the others, assumes your gaps come from a neutral range at all \u2014 so if you reject that picture, this is the conflict to argue with.</p></div>';
+        return h;
+    },
+    plusVsBoth:function(pv, n){
+        var h='', said = pv.dir==="equal" ? "exactly as good as" : "better than";
+        h+='<div class="hit"><div class="tag">Conflict '+n+' &middot; treating Owen and Nadia unequally</div>';
+        h+='<h3 style="margin-top:10px">You treated Owen\u2019s welfare as more important than Nadia\u2019s.</h3>';
+        h+='<ol class="claims"><li>'+claimText("pareto")+'</li><li>'+claimText("plusVsBoth")+'</li></ol>';
+        h+='<p class="because">You ranked K+ '+said+' K\u00b1. The two outcomes differ only in Owen and Nadia: Owen goes from '+K_BASE[0].w+' to '+K_BOTH[1].w+
+           ', Nadia from '+K_MOD[1].w+' to '+K_WOND[1].w+'. No person is added or removed. From an anonymous perspective, K\u00b1 is a Pareto improvement over K+: the worst-off person\u2019s welfare increases from '+K_MOD[1].w+' to '+K_BOTH[1].w+
+           ', and the best-off goes from '+K_BASE[0].w+' to '+K_WOND[1].w+'. All that changes are the names. Nothing about Owen or Nadia beyond that has been given \u2014 no relationship, no history, nothing \u2014 so there is no fact this verdict could be tracking.</p></div>';
         return h;
     }
 };
