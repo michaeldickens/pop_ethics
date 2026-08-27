@@ -1333,6 +1333,7 @@ function bullets(){
         if(ANS.misery==="equal")       eqs.push({w:"K\u2212", q:"misery"});
         if(ANS.neutral_mod==="equal")  eqs.push({w:"K+",       q:"neutral_mod"});
         if(ANS.neutral_wond==="equal") eqs.push({w:"K++",      q:"neutral_wond"});
+        /* REVISE_ME */
         var worked = eqs.length>=2
             ? " In your case it does specific work: you called both "+eqs[0].w+" and "+eqs[1].w+
               " exactly as good as K, and Pareto ranks them against each other, which together would be a contradiction. Denying menu independence is what lets all three stand, at the cost of saying that "+
