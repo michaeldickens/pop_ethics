@@ -259,6 +259,18 @@ def suite_engine(page, rep):
     rep.check(r["zrank"] is None,
               "...as does the verdict flipping partway down, where the chain stops")
 
+    # The consistent counterpart is priced as a bullet rather than a conflict,
+    # and must not appear beside the conflict it is the counterpart of.
+    ok = bullet_titles(page, dict(gaps, generalize="no"))
+    rep.check(any("two ends of the ladder" in t for t in ok),
+              "ranking the ends while declining a step is priced as a bullet", str(ok))
+    rep.check(any("flips somewhere" in t for t in ok),
+              "...alongside, not instead of, the bullet for flipping at all", str(ok))
+    clash = bullet_titles(page, dict(gaps, generalize="yes", trans_none="yes"))
+    rep.check(not any("two ends of the ladder" in t for t in clash),
+              "...and never beside the conflict it is the consistent version of",
+              str(clash))
+
     # The misery route has no chain to run on: it turns on ranking A above Z
     # while placing a critical level at -40, beneath the welfare Z's people
     # live at. Independent of the ladder, so it survives what breaks the chain.
