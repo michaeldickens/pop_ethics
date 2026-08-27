@@ -118,6 +118,65 @@ VIEWS = [
     ),
 
     dict(
+        key="geometrism",
+        name="Geometrism",
+        blurb="""Sider's proposal, and the one view here that blocks the
+            ladder by discounting people according to where they stand in the
+            ranking. Rank everyone from best off to worst off; count the
+            first person's welfare in full, the second's at half, the third's
+            at a quarter, and so on down. The sum is bounded however many
+            people there are, so Z's 51,200 lives at 4 come to eight units
+            against A's two hundred, and no ladder can arrive. What pays for
+            that is where the discount falls. It runs by rank, so nearly all
+            the weight sits on the
+            best-off few: A+ splits its two hundred into a hundred at 101 and
+            a hundred at 25, B levels all two hundred to 64, and geometrism
+            prefers A+ because B pulled the top ranks -- the ones carrying
+            the weight -- down from 101 to 64. Mere addition is accepted at
+            every rung and levelling up refused at every rung, so the chain
+            never gets going and this comes out consistent, at the price of
+            the elitism the view is usually charged with. That is what the
+            levelling-up bullet names here. It also says adding Nadia at 7 is
+            an improvement of about 7/2^500 of a unit: the right sign, and a
+            quantity nothing could ever be traded against.""",
+        answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
+                     neutral_mod="right", benign="right", nae="left", generalize="yes",
+                     AvZ="left", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
+                     trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
+                     menu="A", menu_alpha="yes"),
+    ),
+
+    dict(
+        key="variable_value",
+        name="Variable value",
+        blurb="""Hurka's and Ng's family: multiply average welfare by a
+            non-decreasing dampening function of the headcount, bounded
+            above, so the view behaves like the total view while the
+            population is small and like the average view once the function
+            has flattened. Here taken to be average x 200(1 - e^(-N/200)).
+            At A's scale the function is still climbing steeply, so the extra
+            hundred in A+ and in B more than pay for the dilution and both
+            beat A. By K's five hundred it has all but flattened, an extra
+            person buys almost nothing more, and the effect on the average
+            decides instead: Nadia at 7 makes things worse, at 70 better, and
+            K+- -- Owen down 35 against Nadia up 70 -- comes out worse than K
+            by a hair. Z is far past the flattening and loses badly to A,
+            which is what the view is for. Consistent, and it pays the
+            average view's price: a life clearly worth living, harming
+            nobody, called a loss for being below par. That bullet and the
+            one for flipping partway down the ladder are the whole verdict;
+            there should be no conflict. The margins near the crossover are
+            thin -- a slower dampening function flips the greediness answer,
+            a faster one flips benign addition -- which is worth knowing
+            about the family rather than a defect of this specimen.""",
+        answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
+                     neutral_mod="left", benign="right", nae="right", generalize="no",
+                     AvZ="left", neutral_wond="right", collapse="yes", greedy="left", plusVsBoth="left",
+                     trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
+                     menu="B", menu_alpha="yes"),
+    ),
+
+    dict(
         key="maximin",
         name="Maximin",
         blurb="""Rank outcomes by how the worst-off person fares. A beats B,
@@ -180,6 +239,38 @@ VIEWS = [
                      AvZ="left", neutral_wond="equal", collapse="yes", greedy="left", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="no",
                      menu="B", menu_alpha="yes"),
+    ),
+
+    dict(
+        key="asymmetry_gap",
+        name="Procreation Asymmetry, a gap rather than an equality",
+        blurb="""Narveson's asymmetry as Frick reconstructs it, and as a
+            contractualist reaches it by another road: no reason to create a
+            happy person, a reason not to create a miserable one. One word
+            separates it from the strong form listed above, under
+            'Procreation Asymmetry, strong form'. That view says the
+            wonderful life and the modest life are each exactly as good as
+            leaving Nadia out, which is what the neutral-range collision
+            catches. This one declines to rank them at all -- on Frick's
+            account because the reason to confer wellbeing is conditional on
+            existing, so there is no betterness fact to state; on the
+            contractualist's because nobody has a complaint either way.
+            Everything not about creation is answered as usual, which is why
+            benign addition and levelling up are both improvements: the
+            original hundred gain, and the new hundred have lives worth
+            living and so nothing to object to. Three collisions follow, and
+            they are the view's real bill. Two are the ladder, which the
+            asymmetry does nothing to stop once mere addition is granted. The
+            third is Broome's: Owen's loss is a reason against K+-, Nadia's
+            addition is no reason for it, so K beats K+- -- and yet between
+            K+ and K+- the asymmetry is silent, since Nadia exists in both,
+            so her 63 against Owen's 35 puts K+- ahead of K+, which chains
+            back to a verdict on K against K+, the pair just declined.""",
+        answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
+                     neutral_mod="none", benign="right", nae="right", generalize="yes",
+                     AvZ="left", neutral_wond="none", collapse="no", greedy="left", plusVsBoth="right",
+                     trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
+                     menu="A", menu_alpha="yes"),
     ),
 
     dict(
@@ -537,6 +628,70 @@ VIEWS = [
     ),
 
     dict(
+        key="same_number_only",
+        name="Same number, or no answer",
+        blurb="""Bader's conclusion: betterness between populations has to
+            consist in betterness facts for the people in them, and that
+            leaves same-number comparisons standing and nothing else.
+            Populations of different sizes are not imprecisely comparable on
+            this view and not equally good either -- they are incomparable,
+            and deliberately so. The two questions that hold the headcount
+            fixed therefore get ordinary utilitarian answers, and every other
+            pair is declined: the whole ladder, all three of Nadia's lives,
+            and the harm beside the addition, which changes the headcount
+            too. Nothing determinate is left for the collapsing question to
+            measure a gap against, and the three-way menu can only be
+            answered 'none of them is worse than the others', since A, B and Z
+            differ in size from each other in every direction.
+            Should come out clean, and should be told what the gaps cost.
+            One bullet is the view's own thesis read back to it -- comparable
+            when the numbers match, unrankable when they do not. Two are
+            sharper. Broome's other horn: declining K against K+- leaves
+            Owen, who is there in both and 35 points worse off in one of
+            them, with a loss the ordering cannot state. And the agony
+            addition, which the headcount rule declines along with the rest,
+            so Nadia's life at -40 is placed outside the ranking rather than
+            called worse -- the price of drawing the line at the headcount
+            and nowhere else.
+            Arrhenius's different-number-based imprecision is the same shape
+            with imprecision in place of incomparability.""",
+        answers=dict(pareto="yes", same_number="right", AvB="none", misery="none",
+                     neutral_mod="none", benign="none", nae="right", generalize="yes",
+                     AvZ="none", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
+                     trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
+                     menu="all", menu_alpha="yes"),
+    ),
+
+    dict(
+        key="genethics",
+        name="No standing for the merely potential",
+        blurb="""Heyd's genethics, one answer away from the view above:
+            potential people have no moral standing at all, so a choice that
+            settles who comes into existence is not a comparison of outcomes
+            but a question for the values of those who already exist. Where
+            Bader keeps the same-number comparison because there are people
+            in each outcome to be better or worse off, Heyd lets that one go
+            as well -- neither hundred exists yet, and neither has a claim to
+            be the hundred that is born. What survives is the pair of
+            questions where the same people stand on both sides: everyone
+            gaining is an improvement, and levelling A+ up to B is an
+            improvement. Everything else is declined, including the agony
+            addition, since whether Nadia exists is exactly what this view
+            holds is not a matter of better and worse. Should come out clean;
+            if either of the two surviving answers ever produces a conflict,
+            something is wrong. It pays Bader's prices in full -- Owen's
+            loss goes unsayable, and Nadia's agony is placed outside the
+            ranking rather than called worse -- and one more besides, since
+            letting the same-number case go means a world of uniformly
+            better-off people is not judged better when the people change.""",
+        answers=dict(pareto="yes", same_number="none", AvB="none", misery="none",
+                     neutral_mod="none", benign="none", nae="right", generalize="yes",
+                     AvZ="none", neutral_wond="none", collapse="no", greedy="none", plusVsBoth="left",
+                     trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
+                     menu="all", menu_alpha="yes"),
+    ),
+
+    dict(
         key="quietist",
         name="Declining to rank anything",
         blurb="""Answers 'cannot be ranked' to every comparison and rejects
@@ -563,13 +718,16 @@ EXPECT = {
     'total': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'average': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'critical_level': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said the verdict flips somewhere on the ladder.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'geometrism': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You denied that levelling up improves things.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'variable_value': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said the verdict flips somewhere on the ladder.', 'You said a life worth living makes the world worse by being lived.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'maximin': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'asymmetry_menu': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'asymmetry_equal': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt'], ['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'extras': [], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'asymmetry_B': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
-    'rough': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'A neutral addition made a real harm unrankable.', 'You ranked the two ends of the ladder but not a single step of it.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
-    'wide-gaps-harm-still-counts': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['greedy', 'neutral_mod', 'plusVsBoth', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You ranked the two ends of the ladder but not a single step of it.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
-    'wide-gaps-only-that-conflict': {'conflicts': [['greedy', 'neutral_mod', 'plusVsBoth', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You denied that levelling up improves things.', 'You ranked the two ends of the ladder but not a single step of it.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
+    'asymmetry_gap': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt'], ['greedy', 'neutral_mod', 'plusVsBoth', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_eq', 'menu']},
+    'rough': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'A neutral addition made a harm unrankable.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
+    'wide-gaps-harm-still-counts': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['greedy', 'neutral_mod', 'plusVsBoth', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
+    'wide-gaps-only-that-conflict': {'conflicts': [['greedy', 'neutral_mod', 'plusVsBoth', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You denied that levelling up improves things.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
     'wide-gaps-spent-anyway': {'conflicts': [['greedy', 'neutral_wond', 'pareto', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'wide-gaps-spent-no-pareto': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', 'You accepted the repugnant conclusion.', 'An addition you could not rank outweighed a harm you could.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'vague_boundary': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': ['collapse'], 'zrank': None, 'bullets': ['You declined to rank K+ against K±, even though K± is a Pareto improvement from an anonymous perspective.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_eq', 'menu']},
@@ -582,8 +740,10 @@ EXPECT = {
     'intuitive-v1': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': [], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'intuitive-v2': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': [], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'misery_gain': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You counted a life of suffering as a gain.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'imprecise-critical-level': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said the verdict flips somewhere on the ladder.', 'A neutral addition made a real harm unrankable.', 'You ranked the two ends of the ladder but not a single step of it.', 'You judged 5 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
-    'rough-transitive': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': ['zrank'], 'zrank': 'ladder', 'bullets': ['A neutral addition made a real harm unrankable.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
-    'symmetric-gap-ranks-Z': {'conflicts': [], 'extras': ['zrank'], 'zrank': 'misery', 'bullets': ['You said the verdict flips somewhere on the ladder.', 'A neutral addition made a real harm unrankable.', 'You judged 7 of the 9 pairs unrankable.', 'When the people change, a world with uniformly better-off people is not judged better.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
-    'quietist': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', 'A neutral addition made a real harm unrankable.', 'You denied that levelling up improves things.', 'You judged none of the nine pairs rankable.', 'When the people change, a world with uniformly better-off people is not judged better.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
+    'imprecise-critical-level': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said the verdict flips somewhere on the ladder.', 'A neutral addition made a harm unrankable.', 'You judged 5 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
+    'rough-transitive': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': ['zrank'], 'zrank': 'ladder', 'bullets': ['A neutral addition made a harm unrankable.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
+    'symmetric-gap-ranks-Z': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said the verdict flips somewhere on the ladder.', 'Adding a life of misery did not make the world worse.', 'The outcomes you judged incomparable cannot be explained by a neutral range.', 'A neutral addition made a harm unrankable.', 'You judged 7 of the 9 pairs unrankable.', 'When the people change, a world with uniformly better-off people is not judged better.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
+    'same_number_only': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['Adding a life of misery did not make the world worse.', 'A neutral addition made a harm unrankable.', 'You judged 7 of the 9 pairs unrankable.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
+    'genethics': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['Adding a life of misery did not make the world worse.', 'A neutral addition made a harm unrankable.', 'You judged 8 of the 9 pairs unrankable.', 'When the people change, a world with uniformly better-off people is not judged better.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
+    'quietist': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', 'Adding a life of misery did not make the world worse.', 'A neutral addition made a harm unrankable.', 'You denied that levelling up improves things.', 'You judged none of the nine pairs rankable.', 'When the people change, a world with uniformly better-off people is not judged better.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
 }
