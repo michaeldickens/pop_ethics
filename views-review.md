@@ -11,8 +11,8 @@ Read each view's description against the answers below it, then against the verd
 - [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 2 bullets
 - [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 1 bullet
 - [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
-- [Imprecise comparability](#rough) - 1 conflict, 5 bullets
-- [Wide gaps, and the harm still counts](#wide-gaps-harm-still-counts) - 2 conflicts, 4 bullets
+- [Imprecise comparability](#rough) - 1 conflict, 6 bullets
+- [Wide gaps, and the harm still counts](#wide-gaps-harm-still-counts) - 2 conflicts, 5 bullets
 - [Wide gaps, but spent on the harm anyway](#wide-gaps-spent-anyway) - 1 conflict, 3 bullets
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 2 bullets
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 2 bullets
@@ -26,7 +26,7 @@ Read each view's description against the answers below it, then against the verd
 - [Suffering counts as a gain](#misery_gain) - clean, 2 bullets
 - [A neutral range with a floor](#imprecise-critical-level) - clean, 6 bullets
 - [Imprecise comparability, without Parfit's escape](#rough-transitive) - 2 conflicts, 4 bullets
-- [Creating is never better or worse, and Z is worse](#symmetric-gap-ranks-Z) - 1 conflict, 5 bullets
+- [Creating is never better or worse, and Z is worse](#symmetric-gap-ranks-Z) - 1 conflict, 4 bullets
 - [Declining to rank anything](#quietist) - clean, 5 bullets
 
 <a id="total"></a>
@@ -378,6 +378,7 @@ Bullets bitten:
 
 - You rejected transitivity of not-worse-than.
 - A neutral addition made a real harm unrankable.
+- You ranked the two ends of the ladder but not a single step of it.
 - You judged 4 of the 9 pairs unrankable.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
@@ -428,6 +429,7 @@ Not asked: collapse, menu_eq. These questions only appear when earlier answers g
 Bullets bitten:
 
 - You rejected transitivity of not-worse-than.
+- You ranked the two ends of the ladder but not a single step of it.
 - You judged 3 of the 9 pairs unrankable.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
@@ -909,10 +911,11 @@ Adding a life is an open question while its welfare falls inside the range, whic
 the benign addition cannot be ranked and A cannot be ranked against B - B's people live
 at 64, well inside any plausible range. It stops being open once the added lives fall
 beneath the range's floor, which is why the rung verdicts flip partway down the ladder
-and why Z, whose people live at 4, is rankable at all. The verdict against Z is then
-carried entirely by A's original hundred, who are still there and have fallen from 100
-to 4. Coherent throughout: this profile should draw no conflict, only the bullet naming
-what the floor commits it to.
+and why Z, whose people live at 4, is rankable at all: every one of its lives sits below
+the floor, so on this view the added people are exactly what makes Z worse. A's original
+hundred, still there and fallen from 100 to 4, lose 9,600 between them, but that is the
+smaller half of it for any floor above 4. Coherent throughout: this profile should draw
+no conflict, only the bullets naming what the gaps cost it.
 
 Open it: append `#a=yrnlnnrxln-ny-y-a` to the quiz URL.
 
@@ -945,7 +948,7 @@ Bullets bitten:
 
 - You said the verdict flips somewhere on the ladder.
 - A neutral addition made a real harm unrankable.
-- Your gaps have a floor, and it is doing the work.
+- You ranked the two ends of the ladder but not a single step of it.
 - You judged 5 of the 9 pairs unrankable.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
@@ -1044,7 +1047,6 @@ Bullets bitten:
 
 - You said the verdict flips somewhere on the ladder.
 - A neutral addition made a real harm unrankable.
-- Your gaps have a floor, and it is doing the work.
 - You judged 7 of the 9 pairs unrankable.
 - When the people change, a world with uniformly better-off people is not judged better.
 
