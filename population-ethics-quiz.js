@@ -171,7 +171,7 @@ var QUESTIONS=[
         pops:[K_BASE_OWEN,K_BOTH], names:["K","K±"],
         title:"One person worse off, one person added.",
         body:"<strong>K</strong> once more, and beside it <strong>K±</strong>, which differs in exactly two ways. First, one person — <strong>Owen</strong>, who is there in both futures — drops from "+K_BASE[0].w+" to "+K_BOTH[1].w+
-             ". Second, <strong>Nadia is added at "+K_WOND[1].w+"</strong>: the same wonderful life you were asked about earlier. Nobody else is touched."
+            ". Second, <strong>Nadia is added at "+K_WOND[1].w+"</strong>: the same wonderful life you were asked about earlier. Nobody else is touched."
     },
     {
         id:"plusVsBoth", kind:"pair", label:"The modest addition against the harm",
@@ -224,12 +224,37 @@ var QUESTIONS=[
               ["B","No \u2014 a third option can change how the first two compare","no"]]
     },
     {
+        // The one question that is a choice rather than a comparison, and the
+        // only source of an alpha violation (see alphaCandidate).
+        //
+        // Hence the shape of the options. What alpha needs to know is which of
+        // the three are among the best. "A and B are exactly as good" and "A
+        // and B cannot be ranked against each other" both name the choice set
+        // {A,B} as the best. Likewise "all three are equal" and "the three
+        // cannot be ranked" both name {A,B,Z}.
         id:"menu", kind:"menu", label:"Choosing from three",
         pops:[A_POP,B_POP,Z_POP], names:["A","B","Z"], totals:true,
         title:"All three at once.",
         body:"The three futures you have already seen, now offered together: <strong>A</strong> with its 100 excellent lives, <strong>B</strong> with its 200 good ones, <strong>Z</strong> with its "+last.n.toLocaleString()+" barely-good ones.",
         ask:"Which is the best of the three?",
-        opts:[["A","A","A"],["B","B","B"],["C","Z","Z"],["D","None \u2014 they cannot be ranked","none"]]
+        opts:[["A","A","A"],["B","B","B"],["C","Z","Z"],
+              ["D","A and B both \u2014 Z is worse than each of them","AB"],
+              ["E","All three \u2014 none of them is worse than the others","all"]]
+    },
+    {
+        // Ask about Sen's property alpha. It comes after the menu question
+        // because it is only worth asking of someone whose menu answer actually
+        // collides with a pair. menu_eq, the other menu-independence question,
+        // covers Sen's beta. Denying beta is a claim about ties breaking, which
+        // says nothing about whether a winner keeps winning as the menu
+        // shrinks.
+        id:"menu_alpha", kind:"principle", label:"Best of three, best of two",
+        when:function(a){ return !!alphaCandidate(a); },
+        title:"Does the best of three stay best in a pair?",
+        body:"Take any three futures {A, B, C}, where <strong>A</strong> is best of the three. Now take <strong>C</strong> off the table.",
+        ask:"Must <strong>A</strong> still be better than <strong>B</strong>?",
+        opts:[["A","Yes \u2014 removing an option cannot dethrone what was already best","yes"],
+              ["B","No \u2014 which option is best can depend on the whole set offered","no"]]
     }
 ];
 
@@ -501,30 +526,28 @@ function collapseCandidate(ans){
 /* ---------------------------------------------------------------
    Ranking Z while declining to rank the steps that lead to it.
 
-   Two ways to get there, and they are not equally strong.
+   The ladder route, scored here as a conflict, is Parfit's own argument run
+   on "not worse than" rather than "better than", which is what lets it pass
+   through a gap. Being unrankable, A+ is not worse than A; B is better than
+   A+, so B is not worse than A+ either. Chain that down every rung and Z is
+   not worse than A - but judging A better than Z says Z is worse than A.
+   Nothing about neutral ranges or numbers is needed, only the chaining, which
+   is why it is scored only against someone who has been asked for it and said
+   yes. Parfit's answer was no: his claim is precisely that "not worse than"
+   does not chain, and that is why he thought mere addition was no paradox.
 
-   The ladder route is Parfit's own argument run on "not worse than" rather
-   than "better than", which is what lets it pass through a gap. Being
-   unrankable, A+ is not worse than A; B is better than A+, so B is not worse
-   than A+ either. Chain that down every rung and Z is not worse than A - but
-   judging A better than Z says Z is worse than A. Nothing about neutral
-   ranges or numbers is needed, only the chaining, which is why it is scored
-   only against someone who has been asked for it and said yes. Parfit's
-   answer was no: his claim is precisely that "not worse than" does not chain,
-   and that is why he thought mere addition was no paradox.
+   A second route, through the misery addition, once sat here as a conflict
+   too. It has no chain to run on and rests on a reading instead: take a
+   neutral range as Broome does, and ranking A above Z forces every critical
+   level above Z's people, while an unrankable -40 addition forces one down at
+   -40. That is not a contradiction - the two answers are consistent - only a
+   cost that lands if you read your own gaps as a neutral range, so it is now
+   scored as a bullet in bullets(), not a conflict here.
 
-   The misery route has no chain to run on and rests on a reading instead:
-   take a neutral range as Broome does, a range of critical levels shared by
-   every addition, a comparison coming out determinate only when it holds at
-   every level in the range. Then A vs Z turns over at 3.81, just under Z's
-   people at welfare 4, so ranking A above Z says every level you entertain
-   sits above 4 - while calling the addition of a life at -40 unrankable puts
-   one down at -40. The card says out loud that this one assumes the reading.
-
-   Neither is visible to the closure, which never sees an unrankable verdict.
-   What is no conflict at all is a gap at the top of the ladder with the
-   verdict flipping partway down: the chain breaks where it flips. bullets()
-   covers that case instead.
+   The conflict is not visible to the closure, which never sees an unrankable
+   verdict. What is no conflict at all is a gap at the top of the ladder with
+   the verdict flipping partway down: the chain breaks where it flips. bullets()
+   covers that case too.
 --------------------------------------------------------------- */
 var Z_LEVEL=Z_POP[0].w;
 // Split out so the trans_none question can gate on the same shape it scores.
@@ -541,8 +564,9 @@ function zRankCandidate(ans){
     if(zRankLadder(ans) && ans.trans_none==="yes")
         return {via:"ladder", level:Z_LEVEL,
                 ids:["AvZ","benign","nae","generalize","trans_none"]};
-    if(ans.misery==="none")
-        return {via:"misery", level:K_BAD[1].w, ids:["AvZ","misery"]};
+    // The misery route that once lived here is not a contradiction, only a cost
+    // that lands if you read your gaps as a neutral range, so it is scored as a
+    // bullet in bullets() rather than a conflict.
     return null;
 }
 
@@ -582,20 +606,49 @@ function eqChainMatters(ans){
    card's number has to learn about it. Here a check is an entry, its card is an
    entry in CARD_HTML beside the other cards, and nothing counts anything.
 --------------------------------------------------------------- */
+// The choice set each menu answer names. Two of the five name more than one
+// world, which is the only reason this is a table rather than a single pick:
+// "A and B both" is {A,B}, and "all three" - whether because the three are
+// equal or because they cannot be ranked, a difference alpha cannot see - is
+// {A,B,Z}. An unanswered question names no set and is absent, which is what
+// leaves it inert.
+var MENU_SETS={A:["A"], B:["B"], Z:["Z"], AB:["A","B"], all:["A","B","Z"]};
+
+// Sen's property alpha: anything you pick out of the three has to survive
+// being offered a subset it belongs to. So every pair the quiz put determinately
+// is a constraint on the menu answer - if the pair has a winner, the loser is
+// not among the best of any larger set containing it, and picking it from the
+// three takes it back.
+//
+// Only two pairs qualify. A against B and A against Z were both asked; B
+// against Z never was, so no verdict exists there to be contradicted. A pair
+// answered "exactly as good" or "cannot be ranked" constrains nothing either:
+// neither option is excluded, so neither can be wrongly picked later.
+//
+// Read this way, the two old cases fall out as instances rather than as
+// special rules - picking Z having ranked A above it, and picking the loser of
+// the A/B question - and one gap closes: picking A having ranked Z above it
+// was a violation of exactly the same shape that nothing used to catch.
 function alphaCandidate(ans){
-    var declined=function(v){ return !v||v==="none"||v==="abstain"; };
-    if(declined(ans.menu)) return null;
-    var pick=ans.menu;
-    // Picking Z from the three while ranking A above Z in the pair is a
-    // violation on its own terms. It turns on AvZ, not AvB, so it must not be
-    // gated behind AvB: an incomparabilist who declines A against B would
-    // otherwise walk through it.
-    if(pick==="Z" && ans.AvZ==="left")
-        return {picked:"Z", pairWinner:"A", third:"B", viaZ:true};
-    if(declined(ans.AvB)) return null;
-    var pairWinner = ans.AvB==="left" ? "A" : ans.AvB==="right" ? "B" : "tie";
-    if((pick==="A"||pick==="B") && pairWinner!=="tie" && pick!==pairWinner)
-        return {picked:pick, pairWinner:pairWinner, third:"Z"};
+    var picked=MENU_SETS[ans.menu];
+    if(!picked) return null;
+    var ASKED=[{q:"AvB", left:"A", right:"B", third:"Z"},
+               {q:"AvZ", left:"A", right:"Z", third:"B"}];
+    for(var i=0;i<ASKED.length;i++){
+        var p=ASKED[i], v=ans[p.q];
+        if(v!=="left" && v!=="right") continue;
+        var winner = v==="left" ? p.left : p.right,
+            loser  = v==="left" ? p.right : p.left;
+        if(picked.indexOf(loser)===-1) continue;
+        // viaZ marks which pair was contradicted rather than which world was
+        // picked - the card wants the pair either way round, and only the
+        // tests read it. several says the answer named more than one world as
+        // best, which the card has to word differently; it is carried here
+        // rather than read back off ANS so the check stays a function of the
+        // answers it was handed.
+        return {picked:loser, pairWinner:winner, third:p.third,
+                viaZ:p.q==="AvZ", several:picked.length>1};
+    }
     return null;
 }
 
@@ -624,7 +677,7 @@ function plusVsBothCandidate(ans){
 var EXTRA_CHECKS=[
     // Contraction consistency (Sen's property alpha): a constraint on choice
     // rather than on the betterness ordering.
-    {id:"alpha", run:alphaCandidate},
+    {id:"alpha", run:function(a){ return a.menu_alpha==="yes" ? alphaCandidate(a) : null; }},
     // Broome's collapsing principle (Weighing Lives ch. 12). Asked before it is
     // scored, so an unasked or rejected principle cannot bite.
     {id:"collapse", run:function(a){ return a.collapse==="yes" ? collapseCandidate(a) : null; }},
@@ -701,7 +754,7 @@ var $=function(s){return document.querySelector(s);};
    --------------------------------------------------------------- */
 var CODES={
     pair: {left:"l", right:"r", equal:"e", none:"n"},
-    menu: {A:"a", B:"b", Z:"z", none:"n"},
+    menu: {A:"a", B:"b", Z:"z", AB:"p", all:"n"},
     principle: {yes:"y", no:"x"}
 };
 var DECODES={};
@@ -767,7 +820,10 @@ function logAnswers(){
 var LASTHASH="";
 function fragment(){
     if(VIEW==="intro") return "";
-    return "#a="+encodeAns()+"&q="+(VIEW==="results"?"r":IDX+1);
+    // "&s=1" says these answers are someone else's, being read rather than
+    // given. Without it a reload of a shared run - or a click into one of its
+    // questions - would come back as your own run, open for editing.
+    return "#a="+encodeAns()+"&q="+(VIEW==="results"?"r":IDX+1)+(SHARED?"&s=1":"");
 }
 function baseURL(){ return location.href.split("#")[0]; }
 function shareURL(){ return baseURL()+"#a="+encodeAns(); }
@@ -853,13 +909,18 @@ function boot(){
     // which carries answers and no marker at all - go through showResults, which
     // turns back at the first gap rather than scoring one.
     if(p.q==="r" || p.q===undefined){
-        // No &q on a complete profile means the link came from someone else.
-        SHARED = p.q===undefined && !missingActive().length;
+        // No &q on a complete profile means the link came from someone else;
+        // &s=1 says so outright, which is how a shared run survives a reload
+        // and a trip into one of its questions and back.
+        SHARED = (p.q===undefined || p.s==="1") && !missingActive().length;
         IDX=stepTo(QUESTIONS.length-1,-1);
         showResults();
         return;
     }
-    SHARED=false;
+    // A question reached from a shared run is read-only: the answers on show
+    // are someone else's, so renderQ offers no way to change them. An
+    // incomplete code is nobody's finished run, so it opens as your own.
+    SHARED = p.s==="1" && !missingActive().length;
     IDX = (n>=1 && n<=QUESTIONS.length) ? stepTo(n-1,1) : firstUnanswered();
     show("quiz"); renderQ();
 }
@@ -1083,17 +1144,21 @@ function renderQ(){
     // question, and must not follow the person down the rest of the quiz.
     var html = NOTICE ? '<p class="notice">'+NOTICE+'</p>' : '';
     NOTICE="";
+    if(SHARED) html+='<div class="shared">Shared answers &middot; someone else\u2019s run, shown as they gave it</div>';
     html+='<div class="q"><h2 class="qtitle">'+q.title+'</h2>'+
         '<p class="qbody">'+(typeof q.body==="function"?q.body(ANS):q.body)+'</p>'+fig+
         '<p class="qbody" style="margin-top:20px"><strong>'+ask+'</strong></p><div class="opts">';
     opts.forEach(function(o){
         var sel = ANS[q.id]===o[2] ? " sel":"";
-        html+='<button class="opt'+sel+'" data-v="'+o[2]+'"><span class="key">'+o[0]+'</span><span>'+o[1]+'</span></button>';
+        html+='<button class="opt'+sel+'" data-v="'+o[2]+'"'+(SHARED?' disabled':'')+
+            '><span class="key">'+o[0]+'</span><span>'+o[1]+'</span></button>';
     });
     html+='</div></div>';
     $("#qslot").innerHTML=html;
 
-    Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(b){
+    // No handlers at all on a shared run, so the options are a record of what
+    // was answered rather than a control that would rewrite it.
+    if(!SHARED) Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(b){
         b.addEventListener("click",function(){
             ANS[q.id]=b.dataset.v;
             Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(x){x.classList.remove("sel");});
@@ -1103,9 +1168,14 @@ function renderQ(){
             setTimeout(function(){ if(ANS[q.id]) advance(); },260);
         });
     });
-    $("#next").disabled = !ANS[q.id];
-    $("#back").style.visibility = pos===0 ? "hidden":"visible";
-    $("#next").textContent = pos===A.length-1 ? "See the verdict \u2192" : "Next \u2192";
+    $("#next").disabled = !SHARED && !ANS[q.id];
+    // Reading someone else's run, both ends of the walk lead back to their
+    // verdict; taking your own, there is nothing behind question one.
+    $("#back").style.visibility = (pos===0 && !SHARED) ? "hidden":"visible";
+    $("#back").textContent = (SHARED && pos===0) ? "\u2190 The verdict" : "\u2190 Back";
+    $("#next").textContent = pos===A.length-1
+        ? (SHARED ? "The verdict \u2192" : "See the verdict \u2192")
+        : "Next \u2192";
     syncHash();
 }
 
@@ -1123,6 +1193,9 @@ function advance(){
         return;
     }
     if(pos>=0 && pos<A.length-1){ IDX=A[pos+1]; renderQ(); window.scrollTo({top:0,behavior:"smooth"}); }
+    // A shared run has no name to ask for and nothing new to log: past the last
+    // question is the verdict you came from.
+    else if(SHARED){ showResults(); }
     else { showNameStep(); }
 }
 
@@ -1159,10 +1232,12 @@ $("#back").addEventListener("click",function(){
     RETURNING=false;
     var A=activeIdx(), pos=A.indexOf(IDX);
     if(pos>0){ IDX=A[pos-1]; renderQ(); window.scrollTo({top:0,behavior:"smooth"}); }
+    else if(SHARED){ showResults(); }
 });
 document.addEventListener("keydown",function(e){
     if($("#quiz").classList.contains("hide")) return;
-    var k=e.key.toUpperCase(), map={A:0,B:1,C:2,D:3};
+    if(SHARED) return;              // nothing to pick on someone else's run
+    var k=e.key.toUpperCase(), map={A:0,B:1,C:2,D:3,E:4};
     if(k in map){ var bs=document.querySelectorAll(".opt"); if(bs[map[k]]) bs[map[k]].click(); }
 });
 
@@ -1198,6 +1273,10 @@ var LABELS={
         yes:"A verdict reached between two options still holds when a third joins them.",
         no:"A third option can change how the first two compare.",
         abstain:"No view on whether verdicts survive a wider menu."}[a]; },
+    menu_alpha:function(a){ return {
+        yes:"What is best of three is still best when one of the others is taken away.",
+        no:"Which option is best can depend on the whole set of options offered.",
+        abstain:"No view on whether the best of three stays best in a pair."}[a]; },
     trans_gt:function(a){ return {
         yes:"\u201CBetter than\u201D is transitive.",
         no:"\u201CBetter than\u201D is not always transitive.",
@@ -1214,6 +1293,20 @@ var LABELS={
 function claimText(id){
     var v=LABELS[id];
     return (typeof v==="function") ? v(ANS[id]) : v;
+}
+
+// The menu question sits outside LABELS: its answers name sets of worlds
+// rather than a relation between two, so there is no one sentence with a word
+// swapped into it. Kept as a function all the same, because the results table
+// and review_views.py both have to say it and had drifted apart when they each
+// spelled it out.
+function menuClaimText(v){
+    return {A:"A is the best of A, B and Z.",
+            B:"B is the best of A, B and Z.",
+            Z:"Z is the best of A, B and Z.",
+            AB:"A and B are the best of A, B and Z, with Z below them.",
+            all:"None of A, B and Z can be ruled out as best.",
+            abstain:"No view offered on which of A, B and Z is best."}[v] || "";
 }
 
 /* K± meets the closure whenever the wonderful addition was ranked at all: the
@@ -1410,6 +1503,14 @@ function bullets(){
         out.push({t:"You denied that a verdict survives a wider menu.",b:"Your pairwise judgements no longer cohere into a single ordering: each judgement depends on the pair it was made in, and putting a third option on the table can reverse it. This is a violation of Sen\u2019s property &beta;, which states that if two options are tied for best, then expanding the set of options cannot break the tie.<br/><br/>You are committed to there being no such thing as how good an outcome is <em>full stop</em>, only how good it is against a particular set of choices."});
     }
 
+    // Only ever asked of someone whose menu answer already collides with a
+    // pair, so answering "no" is never idle: it is the answer that turns a
+    // conflict into a cost, and it should be named as the cost it is.
+    if(ANS.menu_alpha==="no") out.push({
+        t:"You denied that the best of a set stays best in a subset.",
+        b:"You picked from the three in a way that reverses a verdict you gave on a pair, and when asked whether that was allowed, you said it was. This is a violation of Sen\u2019s property &alpha;: if a choice is best in a set, then it is still best in any subset that contains it.<br/><br/>What you would pick depends on what else is on the table, so there is no fact about which future is best, only about which you would take from a given menu.",
+        world:"<strong>You can be money-pumped.</strong> Say you rank A > B in the presence of C, but B > A when considered alone. If C is removed, you'd pay $20 to move from A to B; then if C is re-introduced, you'd pay $20 to move back to A."});
+
     if(ANS.trans_eq==="no") out.push({t:"You rejected transitivity of equal-goodness.",b:"This is the standard escape from the neutral-range argument, and it usually comes packaged as the claim that some outcomes are only <em>roughly</em> comparable rather than exactly equal. Be warned that it is not a way out of Broome generally: he devotes a later chapter to arguing that rough comparability cannot be a stable resting place either."});
     if(ANS.pareto==="no") out.push({t:"You rejected the Pareto principle.",b:"Denying that a world is better when the very same people are all better off in it is about as revisionary as population ethics gets. Almost every theory in the field takes this as a fixed point."});
     if(ANS.AvZ==="right") out.push({t:"You accepted the repugnant conclusion.",b:"You judged Z better than A: enough lives barely worth living outweigh a small number of superb ones. This is the totalist's answer and it is entirely consistent \u2014 Tännsjö, Huemer and others defend it explicitly. It also means there is in principle no quality of life so marginal that sheer numbers cannot compensate."});
@@ -1417,6 +1518,29 @@ function bullets(){
     // Revisionary pair verdicts. The principles all draw a comment when rejected;
     // without these, a verdict like "her agony is a gain" could pass in silence.
     if(ANS.misery==="right") out.push({t:"You counted a life of suffering as a gain.",b:"When Nadia\u2019s life holds far more suffering than good \u2014 a life it would have been better for her never to have had \u2014 you judged the world better for containing it."});
+    // The mirror of the "gain" verdict, and nearly as revisionary: saying the
+    // addition of a life of agony is not even a loss. "equal" prices her
+    // suffering at exactly nothing; "none" leaves the world with her in it
+    // outside the ordering, so nothing there gets called worse. Named on its
+    // own rather than folded into the unrankable-pairs count, since a
+    // below-zero life is where "not worse" costs the most.
+    if(ANS.misery==="equal" || ANS.misery==="none"){
+        var mtail = ANS.misery==="equal"
+            ? "You called the world with her in it <em>exactly as good</em> as the world without her \u2014 her agony and everything it weighs came out to precisely zero."
+            : "You placed the world with her in it <em>outside the ranking</em> \u2014 not better, not worse, not equal \u2014 so your ordering will not call it worse at all.";
+        out.push({t:"Adding a life of misery did not make the world worse.",
+            b:"Nadia\u2019s life at K\u2212 holds far more suffering than good \u2014 a life it would have been better for her never to have had. "+mtail+
+              " This is the mirror of counting such a life as a gain, and nearly as hard to hold: the unforced verdict is that adding a life of pure suffering is bad, and you have declined to say even that."});
+    }
+    // Stacked on top of the above, for the person who also ranked A over Z. Not
+    // a contradiction \u2014 the two answers are consistent \u2014 but ranking A above Z
+    // closes off the natural explanation of the gap, so this names what the
+    // view then owes. Was a conflict card until it was seen for what it is.
+    if(ANS.misery==="none" && ANS.AvZ==="left"){
+        out.push({t:"Your gap cannot come from a neutral range.",
+            b:"The natural account of an unrankable addition is Broome\u2019s: a range of critical levels, an addition coming out unrankable exactly when its welfare falls inside the range. That account is closed to you here. Ranking <strong>A better than Z</strong> \u2014 where Z\u2019s "+Z_POP[0].n.toLocaleString()+" people live at "+Z_LEVEL+" \u2014 requires every level in the range to sit above "+Z_LEVEL+", since below it those numbers swamp what A\u2019s hundred lose. But calling the addition of a life at "+K_BAD[1].w+" unrankable requires the range to reach down to "+K_BAD[1].w+". One range cannot be in both places, so whatever makes that addition unrankable for you is <em>not</em> a neutral range \u2014 and you owe an account of what it is instead. This is the one place the quiz leans on a reading: reject the neutral-range picture and there is nothing here to answer; keep it, and this gap needs a stranger explanation than most."});
+        : '<p class="because">You declined to rank the outcome were Nadia was added with a miserable life. The straightforward justification for this view would be that two outcomes become incomparable whenever new lives are added. But you <em>also</em> preferred A to Z, so you <em>are</em> willing to compare outcomes where new lives are added. This leaves your answers in want of an explanation.</p></div>';
+    }
 
     if(ANS.neutral_mod==="left" || ANS.neutral_wond==="left") out.push({t:"You said a life worth living makes the world worse by being lived.",b:"This goes well past the Procreation Asymmetry, which claims only that creating a happy person is not <em>good</em>. You have said it is positively <em>bad</em>.",
                                                                         world:"Think of a couple who want a child, and would raise it well: you are committed to saying the child's birth is nonetheless bad for the world."});
@@ -1577,8 +1701,12 @@ var CARD_HTML={
         // the damage, and it differs between the two.
         h+='<ol class="claims"><li>Offered '+al.pairWinner+' and '+al.picked+
            ' alone, you judged '+al.pairWinner+' the better of the two.</li>';
-        h+='<li>Offered A, B and Z together, you picked '+al.picked+' as best.</li></ol>';
-        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. '+al.third+'\u2019s presence cannot make '+al.picked+' beat '+al.pairWinner+' if it did not already.</p></div>';
+        h+='<li>Offered A, B and Z together, you ranked '+al.picked+
+           (al.several ? ' as not worse.' : ' at the top.')+'</li>';
+        h+='<li>'+claimText("menu_alpha")+'</li></ol>';
+        h+='<p class="because">This violates Sen\u2019s property &alpha;: if something is best in a set, it must still be best in any subset that contains it. '+al.third+'\u2019s presence cannot '+
+           (al.several ? 'put '+al.picked+' alongside ' : 'make '+al.picked+' beat ')+al.pairWinner+
+           ' if it did not already.</p></div>';
         return h;
     },
     collapse:function(cp, n){
@@ -1599,20 +1727,12 @@ var CARD_HTML={
     },
     zrank:function(zr, n){
         var h='';
-        h+='<div class="hit"><div class="tag">Conflict '+n+' &middot; '+
-           (zr.via==="ladder"?"chaining through the gap":"ranking below the gap")+'</div>';
-        h+='<h3 style="margin-top:10px">'+(zr.via==="ladder"
-            ? "Declining to rank the rungs does not stop the ladder."
-            : "You ranked Z, having put the boundary of your indeterminacy underneath it.")+'</h3>';
+        h+='<div class="hit"><div class="tag">Conflict '+n+' &middot; chaining through the gap</div>';
+        h+='<h3 style="margin-top:10px">Declining to rank the rungs does not stop the ladder.</h3>';
         h+='<ol class="claims">';
         zr.ids.forEach(function(id){ h+='<li>'+claimText(id)+'</li>'; });
         h+='</ol>';
-        h+= zr.via==="ladder"
-          ? '<p class="because">This is Parfit\u2019s mere addition argument, but run on <em>not worse than</em> instead of <em>better than</em>. Being unrankable, A+ is not worse than A. B is better than A+, so B is not worse than A+ either. You said both verdicts repeat at every rung, and you said not-worse-than is transitive, so it chains all '+(2*CHAIN.length)+' steps down the ladder: Z is not worse than A. But you also judged A better than Z, which is to say Z <em>is</em> worse than A. Declining to rank the rungs did not stop the contradiction, because an unrankable pair is still a pair where neither is worse.</p></div>'
-        /* REVISE_ME */
-        // : '<p class="because">Your answers imply the existence of a "neutral range" (as described by Broome): rather than 0 being the unique neutral welfare level, there is a <em>range</em> of welfares such that adding a life in that range makes the outcome incomparable. By judging A to be better than Z — where everyone in A has welfare 100, and everyone in Z has welfare 4 — you force the bottom of the neutral range to be above 4. However, by judging K and K- to be incomparable — where K- adds Nadia at -40 welfare — you require -40 to be <em>inside</em> the neutral range.</p></div>';
-        // TODO: another possible view is that adding new lives makes it unrankable *unless* existing people are worse off, in which case it's worse
-            : '<p class="because">You declined to rank the outcome were Nadia was added with a miserable life. The straightforward justification for this view would be that two outcomes become incomparable whenever new lives are added. But you <em>also</em> preferred A to Z, so you <em>are</em> willing to compare outcomes where new lives are added. This leaves your answers in want of an explanation.</p></div>';
+        h+='<p class="because">This is Parfit\u2019s mere addition argument, but run on <em>not worse than</em> instead of <em>better than</em>. Being unrankable, A+ is not worse than A. B is better than A+, so B is not worse than A+ either. You said both verdicts repeat at every rung, and you said not-worse-than chains, so it chains all '+(2*CHAIN.length)+' steps down the ladder: Z is not worse than A. But you also judged A better than Z, which is to say Z <em>is</em> worse than A. Declining to rank the rungs did not stop the contradiction, because an unrankable pair is still a pair where neither is worse.</p></div>';
         return h;
     },
     plusVsBoth:function(pv, n){
@@ -1721,22 +1841,19 @@ function showResults(){
     h+='<hr class="rule thin"><div class="eyebrow">Your answers in full</div><table class="rev">';
     // Each label links back to its question with this run's answers already
     // encoded, so following it lands you there instead of at question one -
-    // the same "&q=" deep link a bookmark or share URL carries. Not offered
-    // on a shared run: clicking in and changing an answer would edit someone
-    // else's results, which is exactly what the missing Back button avoids too.
-    var revCode=encodeAns(), menuIdx=-1;
+    // the same "&q=" deep link a bookmark or share URL carries. On a shared
+    // run the link carries "&s=1" as well, which opens the question read-only:
+    // you can see what was asked without editing someone else's results, which
+    // is the same thing the missing Back button below protects.
+    var revCode=encodeAns();
     function revLabel(text,i){
-        return SHARED ? text : '<a href="#a='+revCode+'&q='+(i+1)+'">'+text+'</a>';
+        return '<a href="#a='+revCode+'&q='+(i+1)+(SHARED?'&s=1':'')+'">'+text+'</a>';
     }
     QUESTIONS.forEach(function(q,i){
-        if(q.id==="menu"){ menuIdx=i; return; }
         if(ANS[q.id]===undefined) return;
-        h+='<tr><td class="a">'+revLabel(q.label,i)+'</td><td>'+claimText(q.id)+'</td></tr>';
+        h+='<tr><td class="a">'+revLabel(q.label,i)+'</td><td>'+
+           (q.id==="menu" ? menuClaimText(ANS.menu) : claimText(q.id))+'</td></tr>';
     });
-    if(ANS.menu) h+='<tr><td class="a">'+revLabel("Choosing from three",menuIdx)+'</td><td>'+(
-        ANS.menu==="none"    ? "None of A, B and Z is best." :
-            ANS.menu==="abstain" ? "No view offered on which of A, B and Z is best." :
-            ANS.menu+" is the best of A, B and Z.")+'</td></tr>';
     h+='</table>';
 
     h+='<hr class="rule thin" style="margin-top:44px"><div class="eyebrow">Save or share</div>';

@@ -47,8 +47,7 @@ PROBE = """(a) => {
     code: encodeAns(),
     claims: asked.map(id => [id, QUESTIONS.find(q => q.id === id).label,
       id === 'menu'
-        ? (eff.menu === 'none' ? 'None of A, B and Z is best.'
-                               : eff.menu + ' is the best of A, B and Z.')
+        ? menuClaimText(eff.menu)
         : claimText(id)]),
     conflicts: r.sets.map(S => {
       const ids = [...S].sort();
