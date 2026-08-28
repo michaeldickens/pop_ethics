@@ -1526,20 +1526,19 @@ function bullets(){
     // below-zero life is where "not worse" costs the most.
     if(ANS.misery==="equal" || ANS.misery==="none"){
         var mtail = ANS.misery==="equal"
-            ? "You called the world with her in it <em>exactly as good</em> as the world without her \u2014 her agony and everything it weighs came out to precisely zero."
-            : "You placed the world with her in it <em>outside the ranking</em> \u2014 not better, not worse, not equal \u2014 so your ordering will not call it worse at all.";
+            ? "You called the world with her in it <em>exactly as good</em> as the world without her \u2014 her agony weighs precisely zero."
+            : "You placed the world with her in it <em>outside the ranking</em> \u2014 not better, not worse, not equal.";
         out.push({t:"Adding a life of misery did not make the world worse.",
-            b:"Nadia\u2019s life at K\u2212 holds far more suffering than good \u2014 a life it would have been better for her never to have had. "+mtail+
-              " This is the mirror of counting such a life as a gain, and nearly as hard to hold: the unforced verdict is that adding a life of pure suffering is bad, and you have declined to say even that."});
+            b:"Nadia\u2019s life at K\u2212 is so miserable that it would have been better for her never to have lived. "+mtail+
+              " This runs against the near-universal intuition that it is bad to create a life of misery."});
     }
     // Stacked on top of the above, for the person who also ranked A over Z. Not
     // a contradiction \u2014 the two answers are consistent \u2014 but ranking A above Z
     // closes off the natural explanation of the gap, so this names what the
     // view then owes. Was a conflict card until it was seen for what it is.
     if(ANS.misery==="none" && ANS.AvZ==="left"){
-        out.push({t:"Your gap cannot come from a neutral range.",
-            b:"The natural account of an unrankable addition is Broome\u2019s: a range of critical levels, an addition coming out unrankable exactly when its welfare falls inside the range. That account is closed to you here. Ranking <strong>A better than Z</strong> \u2014 where Z\u2019s "+Z_POP[0].n.toLocaleString()+" people live at "+Z_LEVEL+" \u2014 requires every level in the range to sit above "+Z_LEVEL+", since below it those numbers swamp what A\u2019s hundred lose. But calling the addition of a life at "+K_BAD[1].w+" unrankable requires the range to reach down to "+K_BAD[1].w+". One range cannot be in both places, so whatever makes that addition unrankable for you is <em>not</em> a neutral range \u2014 and you owe an account of what it is instead. This is the one place the quiz leans on a reading: reject the neutral-range picture and there is nothing here to answer; keep it, and this gap needs a stranger explanation than most."});
-        : '<p class="because">You declined to rank the outcome were Nadia was added with a miserable life. The straightforward justification for this view would be that two outcomes become incomparable whenever new lives are added. But you <em>also</em> preferred A to Z, so you <em>are</em> willing to compare outcomes where new lives are added. This leaves your answers in want of an explanation.</p></div>';
+        out.push({t:"The outcomes you judged incomparable cannot be explained by a neutral range.",
+                  b:"You declined to rank the outcome were Nadia was added with a miserable life. The natural account of an unrankable addition is Broome\u2019s: a range of welfare levels, where a new life is judged unrankable when it falls within the range. But you ranked A better than Z \u2014 where Z\u2019s "+Z_POP[0].n.toLocaleString()+" people live at "+Z_LEVEL+" \u2014. You judged the additions as bad, which means they fall below the neutral range. However, you also called the addition of a life at "+K_BAD[1].w+" unrankable, which requires the range to reach down to "+K_BAD[1].w+". One range cannot be in both places. The neutral range view is not consistent with your answers, which leaves them in want of an explanation."});
     }
 
     if(ANS.neutral_mod==="left" || ANS.neutral_wond==="left") out.push({t:"You said a life worth living makes the world worse by being lived.",b:"This goes well past the Procreation Asymmetry, which claims only that creating a happy person is not <em>good</em>. You have said it is positively <em>bad</em>.",
