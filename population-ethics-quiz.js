@@ -1481,6 +1481,7 @@ function bullets(){
     var out=[];
     if(ANS.trans_gt==="no") out.push({
         t:"You rejected transitivity of better-than.",
+        claims:["trans_gt"],
         b:"That is a live position \u2014 Temkin and Rachels both take it \u2014 and it defuses most of the paradoxes here at a stroke. The price is that \u201Cbetter than\u201D can now run in circles, which makes it hard to say what you should be aiming at: for any option there may be a better one that is in turn worse than where you started.",
         world:"<strong>You can be money-pumped.</strong> There are some three outcomes A, B, and C such that you'd pay $20 to move from A to B, another $20 to move from B to C, and then $20 to move from C back to A. Nothing has changed, except that you're out $60."
     });
@@ -1489,6 +1490,7 @@ function bullets(){
     // so declining it is always load-bearing.
     if(ANS.trans_none==="no") out.push({
         t:"You rejected transitivity of not-worse-than.",
+        claims:["trans_none"],
         b:"This is one possible resolution to the mere addition paradox: every rung leaves you not worse off, but \u201Cnot worse than\u201D does not chain, so the ladder never delivers Z. The move is open to you only because you deemed many pairs of outcomes incomparable.<br/><br/>What it costs: the final outcome Z is worse than where we started, even though no step along the way was a mistake.",
         world:"<strong>You can be money-pumped.</strong> There are some three outcomes A, B, and C such that you'd accept a move from A to B — you believe B is not worse than A — and likewise you'd accept a move from B to C. Having arrived at C, you'd want to pay $20 to move back to A. Nothing has changed, except that you're out $20."
     });
@@ -1500,7 +1502,7 @@ function bullets(){
         if(ANS.misery==="equal")       eqs.push({w:"K\u2212", q:"misery"});
         if(ANS.neutral_mod==="equal")  eqs.push({w:"K+",       q:"neutral_mod"});
         if(ANS.neutral_wond==="equal") eqs.push({w:"K++",      q:"neutral_wond"});
-        out.push({t:"You denied that a verdict survives a wider menu.",b:"Your pairwise judgements no longer cohere into a single ordering: each judgement depends on the pair it was made in, and putting a third option on the table can reverse it. This is a violation of Sen\u2019s property &beta;, which states that if two options are tied for best, then expanding the set of options cannot break the tie.<br/><br/>You are committed to there being no such thing as how good an outcome is <em>full stop</em>, only how good it is against a particular set of choices."});
+        out.push({t:"You denied that a verdict survives a wider menu.",claims:["menu_eq"],b:"Your pairwise judgements no longer cohere into a single ordering: each judgement depends on the pair it was made in, and putting a third option on the table can reverse it. This is a violation of Sen\u2019s property &beta;, which states that if two options are tied for best, then expanding the set of options cannot break the tie.<br/><br/>You are committed to there being no such thing as how good an outcome is <em>full stop</em>, only how good it is against a particular set of choices."});
     }
 
     // Only ever asked of someone whose menu answer already collides with a
@@ -1508,16 +1510,17 @@ function bullets(){
     // conflict into a cost, and it should be named as the cost it is.
     if(ANS.menu_alpha==="no") out.push({
         t:"You denied that the best of a set stays best in a subset.",
+        claims:["menu_alpha"],
         b:"You picked from the three in a way that reverses a verdict you gave on a pair, and when asked whether that was allowed, you said it was. This is a violation of Sen\u2019s property &alpha;: if a choice is best in a set, then it is still best in any subset that contains it.<br/><br/>What you would pick depends on what else is on the table, so there is no fact about which future is best, only about which you would take from a given menu.",
         world:"<strong>You can be money-pumped.</strong> Say you rank A > B in the presence of C, but B > A when considered alone. If C is removed, you'd pay $20 to move from A to B; then if C is re-introduced, you'd pay $20 to move back to A."});
 
-    if(ANS.trans_eq==="no") out.push({t:"You rejected transitivity of equal-goodness.",b:"This is the standard escape from the neutral-range argument, and it usually comes packaged as the claim that some outcomes are only <em>roughly</em> comparable rather than exactly equal. Be warned that it is not a way out of Broome generally: he devotes a later chapter to arguing that rough comparability cannot be a stable resting place either."});
-    if(ANS.pareto==="no") out.push({t:"You rejected the Pareto principle.",b:"Denying that a world is better when the very same people are all better off in it is about as revisionary as population ethics gets. Almost every theory in the field takes this as a fixed point."});
-    if(ANS.AvZ==="right") out.push({t:"You accepted the repugnant conclusion.",b:"You judged Z better than A: enough lives barely worth living outweigh a small number of superb ones. This is the totalist's answer and it is entirely consistent \u2014 Tännsjö, Huemer and others defend it explicitly. It also means there is in principle no quality of life so marginal that sheer numbers cannot compensate."});
-    if(ANS.generalize==="no") out.push({t:"You said the verdict flips somewhere on the ladder.",b:"That leaves you owing an account of <em>where</em>. Every rung is qualitatively identical to every other; if rung 4 is fine and rung 5 is not, something must distinguish them. Critical-level and lexical views are attempts to say what."});
+    if(ANS.trans_eq==="no") out.push({t:"You rejected transitivity of equal-goodness.",claims:["trans_eq"],b:"This is the standard escape from the neutral-range argument, and it usually comes packaged as the claim that some outcomes are only <em>roughly</em> comparable rather than exactly equal. Be warned that it is not a way out of Broome generally: he devotes a later chapter to arguing that rough comparability cannot be a stable resting place either."});
+    if(ANS.pareto==="no") out.push({t:"You rejected the Pareto principle.",claims:["pareto"],b:"Denying that a world is better when the very same people are all better off in it is about as revisionary as population ethics gets. Almost every theory in the field takes this as a fixed point."});
+    if(ANS.AvZ==="right") out.push({t:"You accepted the repugnant conclusion.",claims:["AvZ"],b:"You judged Z better than A: enough lives barely worth living outweigh a small number of superb ones. This is the totalist's answer and it is entirely consistent \u2014 Tännsjö, Huemer and others defend it explicitly. It also means there is in principle no quality of life so marginal that sheer numbers cannot compensate."});
+    if(ANS.generalize==="no") out.push({t:"You said the verdict flips somewhere on the ladder.",claims:["generalize"],b:"That leaves you owing an account of <em>where</em>. Every rung is qualitatively identical to every other; if rung 4 is fine and rung 5 is not, something must distinguish them. Critical-level and lexical views are attempts to say what."});
     // Revisionary pair verdicts. The principles all draw a comment when rejected;
     // without these, a verdict like "her agony is a gain" could pass in silence.
-    if(ANS.misery==="right") out.push({t:"You counted a life of suffering as a gain.",b:"When Nadia\u2019s life holds far more suffering than good \u2014 a life it would have been better for her never to have had \u2014 you judged the world better for containing it."});
+    if(ANS.misery==="right") out.push({t:"You counted a life of suffering as a gain.",claims:["misery"],b:"When Nadia\u2019s life holds far more suffering than good \u2014 a life it would have been better for her never to have had \u2014 you judged the world better for containing it."});
     // The mirror of the "gain" verdict, and nearly as revisionary: saying the
     // addition of a life of agony is not even a loss. "equal" prices her
     // suffering at exactly nothing; "none" leaves the world with her in it
@@ -1529,6 +1532,7 @@ function bullets(){
             ? "You called the world with her in it <em>exactly as good</em> as the world without her \u2014 her agony weighs precisely zero."
             : "You placed the world with her in it <em>outside the ranking</em> \u2014 not better, not worse, not equal.";
         out.push({t:"Adding a life of misery did not make the world worse.",
+            claims:["misery"],
             b:"Nadia\u2019s life at K\u2212 is so miserable that it would have been better for her never to have lived. "+mtail+
               " This runs against the near-universal intuition that it is bad to create a life of misery."});
     }
@@ -1538,23 +1542,29 @@ function bullets(){
     // view then owes. Was a conflict card until it was seen for what it is.
     if(ANS.misery==="none" && ANS.AvZ==="left"){
         out.push({t:"The outcomes you judged incomparable cannot be explained by a neutral range.",
+                  claims:["misery","AvZ"],
                   b:"You declined to rank the outcome were Nadia was added with a miserable life. The natural account of an unrankable addition is Broome\u2019s: a range of welfare levels, where a new life is judged unrankable when it falls within the range. But you ranked A better than Z \u2014 where Z\u2019s "+Z_POP[0].n.toLocaleString()+" people live at "+Z_LEVEL+" \u2014. You judged the additions as bad, which means they fall below the neutral range. However, you also called the addition of a life at "+K_BAD[1].w+" unrankable, which requires the range to reach down to "+K_BAD[1].w+". One range cannot be in both places. The neutral range view is not consistent with your answers, which leaves them in want of an explanation."});
     }
 
-    if(ANS.neutral_mod==="left" || ANS.neutral_wond==="left") out.push({t:"You said a life worth living makes the world worse by being lived.",b:"This goes well past the Procreation Asymmetry, which claims only that creating a happy person is not <em>good</em>. You have said it is positively <em>bad</em>.",
-                                                                        world:"Think of a couple who want a child, and would raise it well: you are committed to saying the child's birth is nonetheless bad for the world."});
+    if(ANS.neutral_mod==="left" || ANS.neutral_wond==="left"){
+        var worseLefts=[];
+        if(ANS.neutral_mod==="left") worseLefts.push("neutral_mod");
+        if(ANS.neutral_wond==="left") worseLefts.push("neutral_wond");
+        out.push({t:"You said a life worth living makes the world worse by being lived.",claims:worseLefts,b:"This goes well past the Procreation Asymmetry, which claims only that creating a happy person is not <em>good</em>. You have said it is positively <em>bad</em>.",
+                  world:"Think of a couple who want a child, and would raise it well: you are committed to saying the child's birth is nonetheless bad for the world."});
+    }
 
     // Adding a better life should not be ranked below adding a worse one. Pareto
     // turns this into a conflict; without Pareto it is merely very hard to hold.
     var RANK={left:-1,equal:0,right:1};
     var NADIA=[["misery","a life of agony"],["neutral_mod","a modest good life"],["neutral_wond","a wonderful life"]];
-    var inv=[];
+    var inv=[], invIds={};
     for(var i=0;i<NADIA.length;i++) for(var j=i+1;j<NADIA.length;j++){
         var ri=RANK[ANS[NADIA[i][0]]], rj=RANK[ANS[NADIA[j][0]]];
         if(ri===undefined||rj===undefined) continue;
-        if(ri>rj) inv.push("adding "+NADIA[i][1]+" above adding "+NADIA[j][1]);
+        if(ri>rj){ inv.push("adding "+NADIA[i][1]+" above adding "+NADIA[j][1]); invIds[NADIA[i][0]]=1; invIds[NADIA[j][0]]=1; }
     }
-    if(inv.length) out.push({t:"Nadia\u2019s life gets better and your verdict gets worse.",b:"You ranked "+inv.join(", and ")+" \u2014 the same woman, the same 500 people around her, and the only difference is how well her life goes. According to your choices, the value of bringing someone into existence <em>falls</em> as their life improves."});
+    if(inv.length) out.push({t:"Nadia\u2019s life gets better and your verdict gets worse.",claims:Object.keys(invIds),b:"You ranked "+inv.join(", and ")+" \u2014 the same woman, the same 500 people around her, and the only difference is how well her life goes. According to your choices, the value of bringing someone into existence <em>falls</em> as their life improves."});
 
     // The other horn of the greediness dilemma. Declining to rank K against K±
     // is perfectly consistent, and that is the trouble with it: a loss to
@@ -1562,6 +1572,7 @@ function bullets(){
     var HARM=K_BASE[0].w-K_BOTH[1].w;
     if(ANS.greedy==="none" && (ANS.neutral_wond==="none"||ANS.neutral_wond==="equal")){
         out.push({t:"A neutral addition made a harm unrankable.",
+                  claims:["neutral_wond","greedy"],
                   b:"Owen is one of the 500 people in K, and he's there in K± too, "+HARM+" points worse off. That is a loss to somebody who exists either way — not to a merely possible person. At the same time, you judged that adding Nadia's happy life alone did not constitute an improvement. This is Broome’s greediness objection. Your answer is not inconsistent, but the cost is that adding a new person \"swallows\" the harm to Owen – on this view, adding Nadia isn't good in isolation, but it causes the harm to Owen to stop being bad."});
     }
     // K± holds more welfare in total than K, so a totalist ranking it above K
@@ -1572,14 +1583,21 @@ function bullets(){
     // says it better than a bullet can.
     if(ANS.greedy==="right" && ANS.neutral_wond==="none" && ANS.pareto!=="yes"){
         out.push({t:"An addition you could not rank outweighed a harm you could.",
+                  claims:["neutral_wond","greedy"],
                   b:"You said that adding Nadia at "+K_WOND[1].w+" was incomparable to leaving her out, and then ranked K± above K — which takes her arrival to justify making Owen worse off, when he would have existed either way. An addition cannot be too indeterminate to compare against nothing and determinate enough to outweigh a named loss. If her arrival really is worth that much, the earlier question had an answer: it was better."});
     }
-    if(ANS.greedy==="equal") out.push({t:"You priced Nadia’s life at exactly Owen’s loss.",
+    if(ANS.greedy==="equal"){
+        var geClaims=["greedy"];
+        if(ANS.neutral_mod==="none") geClaims.push("neutral_mod");
+        if(ANS.neutral_wond==="none") geClaims.push("neutral_wond");
+        out.push({t:"You priced Nadia’s life at exactly Owen’s loss.",
+                  claims:geClaims,
                                        b:"Two things separate K from K±: Owen loses "+HARM+" points, and Nadia arrives at "+K_WOND[1].w+
                                        ". Calling the two worlds exactly as good sets the two changes to cancel out — an oddly exact figure for a life, and one that would have to move if Owen’s loss moved."+
                                        ((ANS.neutral_mod==="none"||ANS.neutral_wond==="none")
                                         ? " You also said that adding Nadia cannot be ranked against leaving her out. The two verdicts pull opposite ways: one says her existence has no determinate value, the other says it exactly equals the negated value of the harm to Owen."
                                         : "")});
+    }
 
     // Same dominance, declined rather than denied. Not the same mistake -
     // this does not claim identity should decide value - but still a pass on
@@ -1587,30 +1605,33 @@ function bullets(){
     // draws a bullet of its own rather than going unremarked.
     if(ANS.plusVsBoth==="none" && ANS.pareto==="yes"){
         out.push({t:"You declined to rank K+ against K±, even though K± is a Pareto improvement from an anonymous perspective.",
+                  claims:["pareto","plusVsBoth"],
                   b:"The two outcomes differ only in Owen and Nadia: Owen goes from "+K_BASE[0].w+" to "+K_BOTH[1].w+
                   ", Nadia from "+K_MOD[1].w+" to "+K_WOND[1].w+". No person is added or removed. From an impartial perspective, K± is a Pareto improvement over K+: the worst-off person's welfare increases from 7 to 20, and the best-off goes from 55 to 70. All that changes are the names.<br><br>"+
                   "Your verdict requires rejecting anonymity. You can make both Owen's and Nadia's lives better — but if you swap their names, the final outcome is incomparable.",
                   world:"<strong>Policy choices are impossible.</strong> You can never choose a social policy in any realistic scenario, <strong>even if population size does not change</strong> — the only way you can express a preference is if one policy is a Pareto improvement over another.<br><br>"+
                   "For example, you cannot prefer a flat tax over a progressive tax, because it leaves poorer individuals worse off; nor can you prefer a progressive tax over a flat tax, because it's worse for wealthier people."});
     }
-    if(ANS.benign==="left") out.push({t:"Everyone gains, good lives are added, and you called it worse.",b:"Every one of A\u2019s hundred is better off in A+, and a further hundred exist there with lives clearly worth living. Ranking that below A means the new lives are a cost heavy enough to outweigh a gain to every person who was already there.<br/><br/>Your answer does not force you to accept the mere addition paradox. However, the price is what it commits you to elsewhere: you would prefer the original hundred be worse off, so long as fewer people existed alongside them.",
+    if(ANS.benign==="left") out.push({t:"Everyone gains, good lives are added, and you called it worse.",claims:["benign"],b:"Every one of A\u2019s hundred is better off in A+, and a further hundred exist there with lives clearly worth living. Ranking that below A means the new lives are a cost heavy enough to outweigh a gain to every person who was already there.<br/><br/>Your answer does not force you to accept the mere addition paradox. However, the price is what it commits you to elsewhere: you would prefer the original hundred be worse off, so long as fewer people existed alongside them.",
                                       world:"Distributing malaria nets leaves recipients healthier and better off, and also means more children survive to adulthood, but with worse lives than the global average. Your answer holds that distributing malaria nets may therefore be a <em>bad</em> thing."});
 
-    if(ANS.nae!=="right") out.push({t:"You denied that levelling up improves things.",b:"B holds the same "+CHAIN[0].to.n+" people as A+, with more welfare in total, more on average, and more equality. There is a consistent motive available \u2014 the better-off group does lose, falling from "+CHAIN[0].plus[0].w+" to "+CHAIN[0].to.w+", while the worse-off rise from "+CHAIN[0].plus[1].w+" \u2014 so a view that weighs losses to the well-off heavily can resist it. But it sets you against totalism, averagism and egalitarianism in one move."});
+    if(ANS.nae!=="right") out.push({t:"You denied that levelling up improves things.",claims:["nae"],b:"B holds the same "+CHAIN[0].to.n+" people as A+, with more welfare in total, more on average, and more equality. There is a consistent motive available \u2014 the better-off group does lose, falling from "+CHAIN[0].plus[0].w+" to "+CHAIN[0].to.w+", while the worse-off rise from "+CHAIN[0].plus[1].w+" \u2014 so a view that weighs losses to the well-off heavily can resist it. But it sets you against totalism, averagism and egalitarianism in one move."});
 
-    var noneCount=0, PAIRQS=["AvB","AvZ","misery","neutral_mod","neutral_wond","benign","nae","greedy","same_number"];
+    var noneIds=[], PAIRQS=["AvB","AvZ","misery","neutral_mod","neutral_wond","benign","nae","greedy","same_number"];
     PAIRQS.forEach(function(k){
-        if(ANS[k]==="none") noneCount++;
+        if(ANS[k]==="none") noneIds.push(k);
     });
+    var noneCount=noneIds.length;
     depletionProblemText = "<strong>Parfit's Depletion problem.</strong> A country can burn through its natural resource reserves, raising living standards for a century but ruining the climate for future generations; or it can conserve resources and protect the environment. The choice changes who meets whom and when children are conceived, so the two futures are populated by entirely different people. No particular person is harmed by choosing to deplete resources, but it still seems that a wrong has been committed. By your answers, depleting the environment's resources cannot be judged as wrong.";
     if(noneCount>=3) {
-        out.push({t:noneCount===PAIRQS.length?"You judged none of the nine pairs rankable.":"You judged "+noneCount+" of the "+PAIRQS.length+" pairs unrankable.",b:"You said that these pairs were not <em>equal</em>, but that no betterness relation holds either way. An ordering with widespread incomparability cannot give much practical guidance \u2014 it will stay silent on most of the choices you would want it to settle.",
+        out.push({t:noneCount===PAIRQS.length?"You judged none of the nine pairs rankable.":"You judged "+noneCount+" of the "+PAIRQS.length+" pairs unrankable.",claims:noneIds,b:"You said that these pairs were not <em>equal</em>, but that no betterness relation holds either way. An ordering with widespread incomparability cannot give much practical guidance \u2014 it will stay silent on most of the choices you would want it to settle.",
                   world:depletionProblemText});
     } else if (ANS.AvZ==="left" && ANS.benign==="none" && !zRankCandidate(ANS)) {
         // Only raise this bullet if we don't raise the one above, because
         // they're redundant. I think this is unreachable, but it's here just in
         // case.
         out.push({t:"You ranked the two ends of the ladder but not a single step of it.",
+                  claims:["AvZ","benign"],
                   b:"When comparing A against Z — the two ends of the ladder — you judged A to be better. But at each rung along the ladder — an increase in population, and a small decrease in welfare — you deemed the outcomes incomparable.",
                   world:depletionProblemText});
     }
@@ -1627,7 +1648,10 @@ function bullets(){
             : viaEq
             ? " You took it in the strong form: the addition is <em>exactly as good</em> as leaving her out. That is the form Broome\u2019s argument targets, and if you also kept Pareto and transitivity of equal-goodness it will have surfaced as a conflict above."
             : " You took it in the weak form: the addition is simply <em>not rankable</em> against leaving her out. Nothing is claimed to be exactly as good, so the neutral-range argument has nothing to chain through. That is the usual reason people retreat here \u2014 but it is not safety, only a different battlefield: Broome's collapsing principle is aimed squarely at it, which is what the boundary question was testing. What the retreat costs even if it works is silence: on a choice that plainly matters, your ordering declines to speak.";
-        out.push({t:"You hold the Procreation Asymmetry.",b:"Creating a miserable life is bad; creating a happy one is not good. This matches most people's instincts, and it is not inconsistent on its own. It is, however, notoriously hard to ground: the obvious explanations of the first half tend to imply the opposite of the second."+route,
+        var paClaims=["misery"];
+        if(notBetter(ANS.neutral_mod)) paClaims.push("neutral_mod");
+        if(notBetter(ANS.neutral_wond)) paClaims.push("neutral_wond");
+        out.push({t:"You hold the Procreation Asymmetry.",claims:paClaims,b:"Creating a miserable life is bad; creating a happy one is not good. This matches most people's instincts, and it is not inconsistent on its own. It is, however, notoriously hard to ground: the obvious explanations of the first half tend to imply the opposite of the second."+route,
                   world:"By the Procreation Asymmetry, human extinction need not be a bad thing: if future generations never come to exist, then no one has been harmed so long as the currently-alive generations are happy."});
     }
 
@@ -1648,7 +1672,7 @@ function bullets(){
         // bullet already carries as a world note; saying it twice for the people
         // who draw both is worse than saying it once well, so this one keeps to
         // what is peculiar to holding the number fixed.
-        out.push({t:"When the people change, a world with uniformly better-off people is not judged better.",b:"Same headcount, every life in the second future far better than every life in the first, and not one person in both — and "+sroute+". This is the person-affecting thought in its strongest form: nothing is better or worse unless it is better or worse <em>for</em> somebody, and here there is nobody it could be better for.",
+        out.push({t:"When the people change, a world with uniformly better-off people is not judged better.",claims:["same_number"],b:"Same headcount, every life in the second future far better than every life in the first, and not one person in both — and "+sroute+". This is the person-affecting thought in its strongest form: nothing is better or worse unless it is better or worse <em>for</em> somebody, and here there is nobody it could be better for.",
                   world:"Parfit's medical programmes:<br><br>"+
                   "A health service can afford only one of two programmes. Both prevent the same handicap, and each would prevent it in 1,000 children."+
                   "<ol><li><strong>Preconception testing</strong> screens women who have not yet conceived; those who test positive are advised to wait. If this programme is canceled, 1,000 handicapped children are born in place of 1,000 unhandicapped children. These are <strong>not the same children</strong> who would have been born otherwise.</li>"+
@@ -1666,13 +1690,13 @@ function bullets(){
     var duckedDiffN=["AvB","AvZ","benign","misery","neutral_mod","neutral_wond","greedy"]
         .filter(function(k){ return ANS[k]==="none"; });
     if(ANS.same_number==="right" && duckedDiffN.length){
-        out.push({t:"Comparable when the numbers match, unrankable when they do not.",b:"You determinately ranked two futures when they each had 100 people, while leaving "+
+        out.push({t:"Comparable when the numbers match, unrankable when they do not.",claims:["same_number"].concat(duckedDiffN),b:"You determinately ranked two futures when they each had 100 people, while leaving "+
                   (duckedDiffN.length===1?"one comparison":duckedDiffN.length+" comparisons")+
                   " unrankable where the two futures held <em>different numbers</em> of people. Your answers match Parfit's Same Number Quality Claim: same-number choices are decided by how well the lives go, but different-number cases are left indeterminate.<br><br>"+
                   "What the view owes is an account of why adding a person changes things. On your answers, 100 people at 90 is determinately better than 100 different people at 50; put one more person into the better future and the comparison falls silent, though nothing about the original hundred lives has changed. That is Broome's collapsing-principle objection pointed at headcount rather than wellbeing."});
     }
     if(ANS.same_number==="left"){
-        out.push({t:"You ranked the worse-off future above the better-off one.",b:"The two futures hold 100 people each, but no single person lives in both futures. Every life in both is worth living, and the only thing separating them is that the second group's lives go better. You ranked the first group above them. Totalism, averagism, maximin and egalitarianism all deliver the opposite verdict here, and the person-affecting views deliver a tie or a refusal rather than a reversal — this is an answer that no reasonable view gives."});
+        out.push({t:"You ranked the worse-off future above the better-off one.",claims:["same_number"],b:"The two futures hold 100 people each, but no single person lives in both futures. Every life in both is worth living, and the only thing separating them is that the second group's lives go better. You ranked the first group above them. Totalism, averagism, maximin and egalitarianism all deliver the opposite verdict here, and the person-affecting views deliver a tie or a refusal rather than a reversal — this is an answer that no reasonable view gives."});
     }
     return out;
 }
@@ -1831,7 +1855,18 @@ function showResults(){
 
     if(B.length){
         h+='<hr class="rule thin" style="margin-top:44px"><div class="eyebrow">Bullets bitten</div>';
-        B.forEach(function(b){ h+='<div class="bullet"><div class="tag">Consistent, but costly</div><h3 style="margin-top:8px">'+b.t+'</h3><p class="qbody" style="font-size:17px">'+b.b+'</p>'+(b.world?worldNote(b.world):'')+'</div>'; });
+        B.forEach(function(b){
+            h+='<div class="bullet"><div class="tag">Consistent, but costly</div><h3 style="margin-top:8px">'+b.t+'</h3>';
+            // The answers that produced the bullet, shown the same way a conflict
+            // shows the set behind it: one numbered claim per answer, in question
+            // order so the list reads the same whichever bullet it sits under.
+            if(b.claims&&b.claims.length){
+                h+='<ol class="claims">';
+                QUESTIONS.forEach(function(q){ if(b.claims.indexOf(q.id)>=0) h+='<li>'+claimText(q.id)+'</li>'; });
+                h+='</ol>';
+            }
+            h+='<p class="qbody" style="font-size:17px">'+b.b+'</p>'+(b.world?worldNote(b.world):'')+'</div>';
+        });
     }
 
     h+='<hr class="rule" style="margin-top:44px"><div class="eyebrow">Where you landed</div>';
