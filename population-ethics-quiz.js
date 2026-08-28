@@ -526,30 +526,28 @@ function collapseCandidate(ans){
 /* ---------------------------------------------------------------
    Ranking Z while declining to rank the steps that lead to it.
 
-   Two ways to get there, and they are not equally strong.
+   The ladder route, scored here as a conflict, is Parfit's own argument run
+   on "not worse than" rather than "better than", which is what lets it pass
+   through a gap. Being unrankable, A+ is not worse than A; B is better than
+   A+, so B is not worse than A+ either. Chain that down every rung and Z is
+   not worse than A - but judging A better than Z says Z is worse than A.
+   Nothing about neutral ranges or numbers is needed, only the chaining, which
+   is why it is scored only against someone who has been asked for it and said
+   yes. Parfit's answer was no: his claim is precisely that "not worse than"
+   does not chain, and that is why he thought mere addition was no paradox.
 
-   The ladder route is Parfit's own argument run on "not worse than" rather
-   than "better than", which is what lets it pass through a gap. Being
-   unrankable, A+ is not worse than A; B is better than A+, so B is not worse
-   than A+ either. Chain that down every rung and Z is not worse than A - but
-   judging A better than Z says Z is worse than A. Nothing about neutral
-   ranges or numbers is needed, only the chaining, which is why it is scored
-   only against someone who has been asked for it and said yes. Parfit's
-   answer was no: his claim is precisely that "not worse than" does not chain,
-   and that is why he thought mere addition was no paradox.
+   A second route, through the misery addition, once sat here as a conflict
+   too. It has no chain to run on and rests on a reading instead: take a
+   neutral range as Broome does, and ranking A above Z forces every critical
+   level above Z's people, while an unrankable -40 addition forces one down at
+   -40. That is not a contradiction - the two answers are consistent - only a
+   cost that lands if you read your own gaps as a neutral range, so it is now
+   scored as a bullet in bullets(), not a conflict here.
 
-   The misery route has no chain to run on and rests on a reading instead:
-   take a neutral range as Broome does, a range of critical levels shared by
-   every addition, a comparison coming out determinate only when it holds at
-   every level in the range. Then A vs Z turns over at 3.81, just under Z's
-   people at welfare 4, so ranking A above Z says every level you entertain
-   sits above 4 - while calling the addition of a life at -40 unrankable puts
-   one down at -40. The card says out loud that this one assumes the reading.
-
-   Neither is visible to the closure, which never sees an unrankable verdict.
-   What is no conflict at all is a gap at the top of the ladder with the
-   verdict flipping partway down: the chain breaks where it flips. bullets()
-   covers that case instead.
+   The conflict is not visible to the closure, which never sees an unrankable
+   verdict. What is no conflict at all is a gap at the top of the ladder with
+   the verdict flipping partway down: the chain breaks where it flips. bullets()
+   covers that case too.
 --------------------------------------------------------------- */
 var Z_LEVEL=Z_POP[0].w;
 // Split out so the trans_none question can gate on the same shape it scores.
@@ -566,8 +564,9 @@ function zRankCandidate(ans){
     if(zRankLadder(ans) && ans.trans_none==="yes")
         return {via:"ladder", level:Z_LEVEL,
                 ids:["AvZ","benign","nae","generalize","trans_none"]};
-    if(ans.misery==="none")
-        return {via:"misery", level:K_BAD[1].w, ids:["AvZ","misery"]};
+    // The misery route that once lived here is not a contradiction, only a cost
+    // that lands if you read your gaps as a neutral range, so it is scored as a
+    // bullet in bullets() rather than a conflict.
     return null;
 }
 
@@ -1524,6 +1523,28 @@ function bullets(){
     // Revisionary pair verdicts. The principles all draw a comment when rejected;
     // without these, a verdict like "her agony is a gain" could pass in silence.
     if(ANS.misery==="right") out.push({t:"You counted a life of suffering as a gain.",b:"When Nadia\u2019s life holds far more suffering than good \u2014 a life it would have been better for her never to have had \u2014 you judged the world better for containing it."});
+    // The mirror of the "gain" verdict, and nearly as revisionary: saying the
+    // addition of a life of agony is not even a loss. "equal" prices her
+    // suffering at exactly nothing; "none" leaves the world with her in it
+    // outside the ordering, so nothing there gets called worse. Named on its
+    // own rather than folded into the unrankable-pairs count, since a
+    // below-zero life is where "not worse" costs the most.
+    if(ANS.misery==="equal" || ANS.misery==="none"){
+        var mtail = ANS.misery==="equal"
+            ? "You called the world with her in it <em>exactly as good</em> as the world without her \u2014 her agony and everything it weighs came out to precisely zero."
+            : "You placed the world with her in it <em>outside the ranking</em> \u2014 not better, not worse, not equal \u2014 so your ordering will not call it worse at all.";
+        out.push({t:"Adding a life of misery did not make the world worse.",
+            b:"Nadia\u2019s life at K\u2212 holds far more suffering than good \u2014 a life it would have been better for her never to have had. "+mtail+
+              " This is the mirror of counting such a life as a gain, and nearly as hard to hold: the unforced verdict is that adding a life of pure suffering is bad, and you have declined to say even that."});
+    }
+    // Stacked on top of the above, for the person who also ranked A over Z. Not
+    // a contradiction \u2014 the two answers are consistent \u2014 but ranking A above Z
+    // closes off the natural explanation of the gap, so this names what the
+    // view then owes. Was a conflict card until it was seen for what it is.
+    if(ANS.misery==="none" && ANS.AvZ==="left"){
+        out.push({t:"Your gap cannot come from a neutral range.",
+            b:"The natural account of an unrankable addition is Broome\u2019s: a range of critical levels, an addition coming out unrankable exactly when its welfare falls inside the range. That account is closed to you here. Ranking <strong>A better than Z</strong> \u2014 where Z\u2019s "+Z_POP[0].n.toLocaleString()+" people live at "+Z_LEVEL+" \u2014 requires every level in the range to sit above "+Z_LEVEL+", since below it those numbers swamp what A\u2019s hundred lose. But calling the addition of a life at "+K_BAD[1].w+" unrankable requires the range to reach down to "+K_BAD[1].w+". One range cannot be in both places, so whatever makes that addition unrankable for you is <em>not</em> a neutral range \u2014 and you owe an account of what it is instead. This is the one place the quiz leans on a reading: reject the neutral-range picture and there is nothing here to answer; keep it, and this gap needs a stranger explanation than most."});
+    }
 
     if(ANS.neutral_mod==="left" || ANS.neutral_wond==="left") out.push({t:"You said a life worth living makes the world worse by being lived.",b:"This goes well past the Procreation Asymmetry, which claims only that creating a happy person is not <em>good</em>. You have said it is positively <em>bad</em>.",
         world:"Think of a couple who want a child, and would raise it well: you are committed to saying the child's birth is nonetheless bad for the world."});
@@ -1713,21 +1734,12 @@ var CARD_HTML={
     },
     zrank:function(zr, n){
         var h='';
-        h+='<div class="hit"><div class="tag">Conflict '+n+' &middot; '+
-           (zr.via==="ladder"?"chaining through the gap":"ranking below the gap")+'</div>';
-        h+='<h3 style="margin-top:10px">'+(zr.via==="ladder"
-            ? "Declining to rank the rungs does not stop the ladder."
-            : "You ranked Z, having put the boundary of your indeterminacy underneath it.")+'</h3>';
+        h+='<div class="hit"><div class="tag">Conflict '+n+' &middot; chaining through the gap</div>';
+        h+='<h3 style="margin-top:10px">Declining to rank the rungs does not stop the ladder.</h3>';
         h+='<ol class="claims">';
         zr.ids.forEach(function(id){ h+='<li>'+claimText(id)+'</li>'; });
         h+='</ol>';
-        h+= zr.via==="ladder"
-          ? '<p class="because">This is Parfit\u2019s mere addition argument, but run on <em>not worse than</em> instead of <em>better than</em>. Being unrankable, A+ is not worse than A. B is better than A+, so B is not worse than A+ either. You said both verdicts repeat at every rung, and you said not-worse-than chains, so it chains all '+(2*CHAIN.length)+' steps down the ladder: Z is not worse than A. But you also judged A better than Z, which is to say Z <em>is</em> worse than A. Declining to rank the rungs did not stop the contradiction, because an unrankable pair is still a pair where neither is worse.</p></div>'
-          : '<p class="because">Take a neutral range as Broome does: a range of levels, shared by every addition, with a comparison coming out determinate only when it holds at every level in the range. Judging <strong>A better than Z</strong> then says something definite \u2014 that every level you would entertain sits <em>above</em> '+Z_LEVEL+
-            ', the level Z\u2019s '+Z_POP[0].n.toLocaleString()+' people live at. Below that, Z\u2019s numbers win: at any level under '+Z_LEVEL+
-            ' those lives are a gain, and '+Z_POP[0].n.toLocaleString()+' of them swamp what A\u2019s hundred lose. But calling the addition of a life at welfare '+zr.level+
-            ' unrankable puts a level down at '+zr.level+', which is not above '+Z_LEVEL+
-            '. You cannot have the boundary in both places. Note that this one, unlike the others, assumes your gaps come from a neutral range at all \u2014 so if you reject that picture, this is the conflict to argue with.</p></div>';
+        h+='<p class="because">This is Parfit\u2019s mere addition argument, but run on <em>not worse than</em> instead of <em>better than</em>. Being unrankable, A+ is not worse than A. B is better than A+, so B is not worse than A+ either. You said both verdicts repeat at every rung, and you said not-worse-than chains, so it chains all '+(2*CHAIN.length)+' steps down the ladder: Z is not worse than A. But you also judged A better than Z, which is to say Z <em>is</em> worse than A. Declining to rank the rungs did not stop the contradiction, because an unrankable pair is still a pair where neither is worse.</p></div>';
         return h;
     },
     plusVsBoth:function(pv, n){
