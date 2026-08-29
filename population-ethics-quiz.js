@@ -1972,6 +1972,23 @@ $("#back").addEventListener("click", function () {
 });
 document.addEventListener("keydown", function (e) {
   if ($("#quiz").classList.contains("hide")) return;
+  // Leave the browser's own Alt/Cmd+Arrow (history back/forward) alone, and
+  // any other modified chord.
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  // Left and Right walk the questions - the same two moves as the Back and
+  // Next buttons, and unlike picking an option they work on a shared run too,
+  // so they sit ahead of the SHARED guard. A disabled Next (no answer yet)
+  // ignores the click, exactly as the button does.
+  if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    $("#back").click();
+    return;
+  }
+  if (e.key === "ArrowRight") {
+    e.preventDefault();
+    $("#next").click();
+    return;
+  }
   if (SHARED) return; // nothing to pick on someone else's run
   var k = e.key.toUpperCase(),
     map = { A: 0, B: 1, C: 2, D: 3, E: 4 };
