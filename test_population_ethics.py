@@ -1085,6 +1085,11 @@ def suite_layout(page_factory, rep):
 def suite_flow(page, rep):
     rep.suite("flow")
     reset(page)
+    # The right arrow begins the quiz from the intro screen, matching Begin.
+    page.keyboard.press("ArrowRight")
+    page.wait_for_timeout(300)
+    rep.check("QUESTION 1" in page.inner_text("#counter"), "right arrow begins the quiz")
+    reset(page)
     page.click("#start")
     page.wait_for_timeout(300)
     page.keyboard.press("a")
