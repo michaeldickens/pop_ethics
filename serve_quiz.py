@@ -29,6 +29,13 @@ it directly:
 
 Only the quiz's own files are served; the log, source, and everything else
 in the directory stay off the web.
+
+The log must not live inside the served directory (the web root). This
+server only serves the STATIC allowlist, but a reverse proxy pointed at the
+same directory - or a plain file server - would happily hand quiz-log.jsonl
+to anyone who asked, leaking every visitor's IP and answers. So the log is
+resolved against the working directory the server was launched from (not the
+served directory), and placing it inside the served directory is refused.
 """
 
 import argparse
@@ -121,14 +128,32 @@ def main():
                     help="bind address (default: 127.0.0.1 - localhost only, for use "
                          "behind nginx; pass 0.0.0.0 to expose it directly)")
     ap.add_argument("--port", type=int, default=8000, help="port (default: 8000)")
-    ap.add_argument("--log", default="quiz-log.jsonl", help="response log file (default: quiz-log.jsonl)")
+    ap.add_argument("--log", default="quiz-log.jsonl",
+                    help="response log file (default: quiz-log.jsonl in the launch "
+                         "directory - kept out of the served directory so it is never "
+                         "exposed on the web; pass an absolute path to put it elsewhere)")
     ap.add_argument("--dir", default=os.path.dirname(os.path.abspath(__file__)),
                     help="directory holding the quiz files (default: this script's directory)")
     args = ap.parse_args()
 
-    os.chdir(args.dir)
+    # Resolve the log path against the launch directory *before* chdir, so a
+    # relative default lands where the operator ran the command rather than in
+    # the served directory (the web root).
+    log_path = os.path.abspath(args.log)
+    served_dir = os.path.abspath(args.dir)
+
+    # Refuse to write the log anywhere inside the served directory: this server
+    # won't serve it, but a reverse proxy or file server over the same directory
+    # would leak every visitor's IP and answers.
+    if os.path.commonpath([log_path, served_dir]) == served_dir:
+        ap.error(
+            "refusing to write the log inside the served directory (%s): it "
+            "could be exposed on the web. Point --log at a path outside it, e.g. "
+            "an absolute path like /var/log/quiz/quiz-log.jsonl." % served_dir)
+
+    os.chdir(served_dir)
     server = ThreadingHTTPServer((args.host, args.port), Handler)
-    server.log_path = os.path.abspath(args.log)
+    server.log_path = log_path
     server.log_lock = threading.Lock()
 
     print("Serving quiz from %s" % args.dir)

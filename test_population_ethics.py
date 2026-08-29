@@ -1096,6 +1096,22 @@ def suite_flow(page, rep):
               "going back restores the previous answer")
     rep.check("QUESTION 1" in page.inner_text("#counter"), "going back moves the counter")
 
+    # Arrow keys mirror the Back and Next buttons.
+    page.keyboard.press("ArrowRight")
+    page.wait_for_timeout(300)
+    rep.check("QUESTION 2" in page.inner_text("#counter"), "right arrow advances")
+    page.keyboard.press("ArrowLeft")
+    page.wait_for_timeout(300)
+    rep.check("QUESTION 1" in page.inner_text("#counter"), "left arrow goes back")
+    # Next is disabled with no answer, so the right arrow must not skip past it.
+    reset(page)
+    page.click("#start")
+    page.wait_for_timeout(300)
+    page.keyboard.press("ArrowRight")
+    page.wait_for_timeout(300)
+    rep.check("QUESTION 1" in page.inner_text("#counter"),
+              "right arrow does not advance past an unanswered question")
+
     for name, clicks in [("modal", CLICK_MODAL), ("alpha", CLICK_ALPHA),
                          ("unrankable", CLICK_UNRANKABLE), ("totalist", CLICK_TOTALIST)]:
         reset(page)
