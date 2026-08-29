@@ -1,19 +1,26 @@
 # Named views, and what the quiz says about them
 
-Read each view's description against the answers below it, then against the verdict. A description that does not match its answers is a bug in the catalogue; answers that do not match the verdict are a bug in the quiz.
+Read each view's description against the answers below it, then against the verdict. Answers that do not match the verdict are a bug in the quiz.
+
+The answers were manually vetted by a human (namely me, Michael Dickens); the explanations of each view were AI-generated with minimal human revision.
+
+The list of views to include was initially AI-generated, and then a human added a few more to fill in the gaps.
 
 ## Contents
 
 - [Total utilitarianism](#total) - clean, 1 bullet
 - [Average utilitarianism](#average) - clean, 2 bullets
 - [Critical-level utilitarianism](#critical_level) - clean, 1 bullet
+- [Geometrism](#geometrism) - clean, 1 bullet
+- [Variable value](#variable_value) - clean, 2 bullets
 - [Maximin](#maximin) - clean, 3 bullets
 - [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 2 bullets
 - [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 1 bullet
 - [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
-- [Imprecise comparability](#rough) - 1 conflict, 6 bullets
-- [Wide gaps, and the harm still counts](#wide-gaps-harm-still-counts) - 2 conflicts, 5 bullets
-- [Wide gaps, and only that conflict](#wide-gaps-only-that-conflict) - 1 conflict, 6 bullets
+- [Procreation Asymmetry, a gap rather than an equality](#asymmetry_gap) - 3 conflicts, 2 bullets
+- [Imprecise comparability](#rough) - 1 conflict, 5 bullets
+- [Wide gaps, and the harm still counts](#wide-gaps-harm-still-counts) - 2 conflicts, 4 bullets
+- [Wide gaps, and only that conflict](#wide-gaps-only-that-conflict) - 1 conflict, 5 bullets
 - [Wide gaps, but spent on the harm anyway](#wide-gaps-spent-anyway) - 1 conflict, 3 bullets
 - [Wide gaps, spent on the harm anyway, without Pareto to spend it](#wide-gaps-spent-no-pareto) - clean, 5 bullets
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 3 bullets
@@ -26,10 +33,12 @@ Read each view's description against the answers below it, then against the verd
 - [The untutored intuitive package (A > B)](#intuitive-v1) - 2 conflicts
 - [The untutored intuitive package (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 2 bullets
-- [A neutral range with a floor](#imprecise-critical-level) - clean, 6 bullets
+- [A neutral range with a floor](#imprecise-critical-level) - clean, 5 bullets
 - [Imprecise comparability, without Parfit's escape](#rough-transitive) - 2 conflicts, 4 bullets
-- [Creating is never better or worse, and Z is worse](#symmetric-gap-ranks-Z) - 1 conflict, 4 bullets
-- [Declining to rank anything](#quietist) - clean, 5 bullets
+- [Creating is never better or worse, and Z is worse](#symmetric-gap-ranks-Z) - clean, 6 bullets
+- [Same number, or no answer](#same_number_only) - clean, 4 bullets
+- [No standing for the merely potential](#genethics) - clean, 4 bullets
+- [Declining to rank anything](#quietist) - clean, 6 bullets
 
 <a id="total"></a>
 
@@ -153,6 +162,107 @@ Bullets bitten:
 
 - You said the verdict flips somewhere on the ladder.
 
+<a id="geometrism"></a>
+
+## Geometrism
+
+Sider's proposal, and the one view here that blocks the ladder by discounting people
+according to where they stand in the ranking. Rank everyone from best off to worst off;
+count the first person's welfare in full, the second's at half, the third's at a
+quarter, and so on down. The sum is bounded however many people there are, so Z's 51,200
+lives at 4 come to eight units against A's two hundred, and no ladder can arrive. What
+pays for that is where the discount falls. It runs by rank, so nearly all the weight
+sits on the best-off few: A+ splits its two hundred into a hundred at 101 and a hundred
+at 25, B levels all two hundred to 64, and geometrism prefers A+ because B pulled the
+top ranks -- the ones carrying the weight -- down from 101 to 64. Mere addition is
+accepted at every rung and levelling up refused at every rung, so the chain never gets
+going and this comes out consistent, at the price of the elitism the view is usually
+charged with. That is what the levelling-up bullet names here. It also says adding Nadia
+at 7 is an improvement of about 7/2^500 of a unit: the right sign, and a quantity
+nothing could ever be traded against.
+
+Open it: append `#a=yrllrrlylr---y-y-a-` to the quiz URL.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
+| A against B | A is better than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome better. |
+| Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
+| Levelling up | B is worse than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is better than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | A is the best of A, B and Z. |
+
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+No conflicts.
+
+Bullets bitten:
+
+- You denied that levelling up improves things.
+
+<a id="variable_value"></a>
+
+## Variable value
+
+Hurka's and Ng's family: multiply average welfare by a non-decreasing dampening function
+of the headcount, bounded above, so the view behaves like the total view while the
+population is small and like the average view once the function has flattened. Here
+taken to be average x 200(1 - e^(-N/200)). At A's scale the function is still climbing
+steeply, so the extra hundred in A+ and in B more than pay for the dilution and both
+beat A. By K's five hundred it has all but flattened, an extra person buys almost
+nothing more, and the effect on the average decides instead: Nadia at 7 makes things
+worse, at 70 better, and K+- -- Owen down 35 against Nadia up 70 -- comes out worse than
+K by a hair. Z is far past the flattening and loses badly to A, which is what the view
+is for. Consistent, and it pays the average view's price: a life clearly worth living,
+harming nobody, called a loss for being below par. That bullet and the one for flipping
+partway down the ladder are the whole verdict; there should be no conflict. The margins
+near the crossover are thin -- a slower dampening function flips the greediness answer,
+a faster one flips benign addition -- which is worth knowing about the family rather
+than a defect of this specimen.
+
+Open it: append `#a=yrrllrrxlr-l-y-y-b-` to the quiz URL.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
+| A against B | A is worse than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome worse. |
+| Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Somewhere on the ladder those two verdicts flip. |
+| A against Z | A is better than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | B is the best of A, B and Z. |
+
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+No conflicts.
+
+Bullets bitten:
+
+- You said the verdict flips somewhere on the ladder.
+- You said a life worth living makes the world worse by being lived.
+
 <a id="maximin"></a>
 
 ## Maximin
@@ -236,7 +346,7 @@ Not asked: collapse, plusVsBoth, trans_none. These questions only appear when ea
 ### Verdict
 
 - **The ladder reaches B, but you say B is worse.** `AvB+benign+nae+trans_gt`
-- **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
+- **Each rung of the ladder is an improvement, but you end up worse than you started.** `AvZ+benign+generalize+nae+trans_gt`
 
 Bullets bitten:
 
@@ -280,7 +390,7 @@ Not asked: collapse, plusVsBoth, trans_none. These questions only appear when ea
 ### Verdict
 
 - **The ladder reaches B, but you say B is worse.** `AvB+benign+nae+trans_gt`
-- **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
+- **Each rung of the ladder is an improvement, but you end up worse than you started.** `AvZ+benign+generalize+nae+trans_gt`
 - **Nadia's life cannot be worth nothing twice over.** `menu_eq+neutral_mod+neutral_wond+pareto+trans_eq`
 
 Bullets bitten:
@@ -320,12 +430,68 @@ Not asked: collapse, plusVsBoth, trans_none. These questions only appear when ea
 
 ### Verdict
 
-- **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
+- **Each rung of the ladder is an improvement, but you end up worse than you started.** `AvZ+benign+generalize+nae+trans_gt`
 
 Bullets bitten:
 
 - You denied that a verdict survives a wider menu.
 - You hold the Procreation Asymmetry.
+
+<a id="asymmetry_gap"></a>
+
+## Procreation Asymmetry, a gap rather than an equality
+
+Narveson's asymmetry as Frick reconstructs it, and as a contractualist reaches it by
+another road: no reason to create a happy person, a reason not to create a miserable
+one. One word separates it from the strong form listed above, under 'Procreation
+Asymmetry, strong form'. That view says the wonderful life and the modest life are each
+exactly as good as leaving Nadia out, which is what the neutral-range collision catches.
+This one declines to rank them at all -- on Frick's account because the reason to confer
+wellbeing is conditional on existing, so there is no betterness fact to state; on the
+contractualist's because nobody has a complaint either way. Everything not about
+creation is answered as usual, which is why benign addition and levelling up are both
+improvements: the original hundred gain, and the new hundred have lives worth living and
+so nothing to object to. Three collisions follow, and they are the view's real bill. Two
+are the ladder, which the asymmetry does nothing to stop once mere addition is granted.
+The third is Broome's: Owen's loss is a reason against K+-, Nadia's addition is no
+reason for it, so K beats K+- -- and yet between K+ and K+- the asymmetry is silent,
+since Nadia exists in both, so her 63 against Owen's 35 puts K+- ahead of K+, which
+chains back to a verdict on K against K+, the pair just declined.
+
+Open it: append `#a=yrllnrryln-lry-y-a-` to the quiz URL.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
+| A against B | A is better than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
+| Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is better than Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| The modest addition against the harm | K+ is worse than K± -- Nadia added at 7 against Owen down by 35 and Nadia added at 70. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | A is the best of A, B and Z. |
+
+Not asked: collapse, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+- **The ladder reaches B, but you say B is worse.** `AvB+benign+nae+trans_gt`
+- **Each rung of the ladder is an improvement, but you end up worse than you started.** `AvZ+benign+generalize+nae+trans_gt`
+- **Your own answers already rank K above K+.** `greedy+neutral_mod+plusVsBoth+trans_gt`
+
+Bullets bitten:
+
+- You hold the Procreation Asymmetry.
+- Comparable when the numbers match, unrankable when they do not.
 
 <a id="rough"></a>
 
@@ -379,8 +545,7 @@ Not asked: collapse, plusVsBoth, menu_eq. These questions only appear when earli
 Bullets bitten:
 
 - You rejected transitivity of not-worse-than.
-- A neutral addition made a real harm unrankable.
-- You ranked the two ends of the ladder but not a single step of it.
+- A neutral addition made a harm unrankable.
 - You judged 4 of the 9 pairs unrankable.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
@@ -432,7 +597,6 @@ Not asked: collapse, menu_eq. These questions only appear when earlier answers g
 Bullets bitten:
 
 - You rejected transitivity of not-worse-than.
-- You ranked the two ends of the ladder but not a single step of it.
 - You judged 3 of the 9 pairs unrankable.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
@@ -482,7 +646,6 @@ Bullets bitten:
 
 - You rejected transitivity of not-worse-than.
 - You denied that levelling up improves things.
-- You ranked the two ends of the ladder but not a single step of it.
 - You judged 4 of the 9 pairs unrankable.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
@@ -622,7 +785,7 @@ Not asked: trans_none, menu_eq. These questions only appear when earlier answers
 
 ### Verdict
 
-- **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
+- **Each rung of the ladder is an improvement, but you end up worse than you started.** `AvZ+benign+generalize+nae+trans_gt`
 - **Collapsing principle** - neutral_mod unrankable, neutral_wond determinate, running upwards.
 
 Bullets bitten:
@@ -667,7 +830,7 @@ Not asked: trans_none, menu_eq. These questions only appear when earlier answers
 ### Verdict
 
 - **The ladder reaches B, but you say B is worse.** `AvB+benign+nae+trans_gt`
-- **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
+- **Each rung of the ladder is an improvement, but you end up worse than you started.** `AvZ+benign+generalize+nae+trans_gt`
 
 Bullets bitten:
 
@@ -930,7 +1093,7 @@ Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions on
 ### Verdict
 
 - **The ladder reaches B, but you say B is worse.** `AvB+benign+nae+trans_gt`
-- **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
+- **Each rung of the ladder is an improvement, but you end up worse than you started.** `AvZ+benign+generalize+nae+trans_gt`
 
 <a id="intuitive-v2"></a>
 
@@ -966,7 +1129,7 @@ Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions on
 
 ### Verdict
 
-- **The ladder reaches Z, and the loop closes.** `AvZ+benign+generalize+nae+trans_gt`
+- **Each rung of the ladder is an improvement, but you end up worse than you started.** `AvZ+benign+generalize+nae+trans_gt`
 
 <a id="misery_gain"></a>
 
@@ -1056,8 +1219,7 @@ No conflicts.
 Bullets bitten:
 
 - You said the verdict flips somewhere on the ladder.
-- A neutral addition made a real harm unrankable.
-- You ranked the two ends of the ladder but not a single step of it.
+- A neutral addition made a harm unrankable.
 - You judged 5 of the 9 pairs unrankable.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
@@ -1107,7 +1269,7 @@ Not asked: collapse, plusVsBoth, menu_eq. These questions only appear when earli
 
 Bullets bitten:
 
-- A neutral addition made a real harm unrankable.
+- A neutral addition made a harm unrankable.
 - You judged 4 of the 9 pairs unrankable.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
@@ -1119,11 +1281,14 @@ Bullets bitten:
 A person-affecting view with no asymmetry: adding a life is beyond ranking whichever way
 it goes, agony included. The ladder route does not reach this one, because the rung
 verdicts are said to flip partway down and the chain stops where they do. The other
-route does. Read the gaps as a neutral range -- a range of critical levels, a comparison
-determinate only when it holds at every level in it -- and calling the agony addition
-unrankable puts a level at -40, while ranking A above Z says every level sits above 4,
-the welfare Z's people live at. Should collide on the misery route, and be told that
-route assumes the reading. Picks A and B together from the three, as any view that
+route no longer collides. Read the gaps as a neutral range -- a range of critical
+levels, a comparison determinate only when it holds at every level in it -- and calling
+the agony addition unrankable puts a level at -40, while ranking A above Z says every
+level sits above 4, the welfare Z's people live at. Those two are in tension, but they
+are not inconsistent: the tension is there only on that reading of the gaps, which
+nothing here forces. So it is priced as a bullet rather than a conflict, and the bullet
+is the one saying the incomparable outcomes cannot be explained by a neutral range.
+Should draw no conflict at all. Picks A and B together from the three, as any view that
 declines to rank them against each other but ranks both above Z has to.
 
 Open it: append `#a=ynnnnnrxln-n-y-y-p-` to the quiz URL.
@@ -1151,13 +1316,125 @@ Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appea
 
 ### Verdict
 
-- **Ranking below the gap** - A ranked above Z while the unrankable agony addition places a critical level at -40, below Z's welfare
+No conflicts.
 
 Bullets bitten:
 
 - You said the verdict flips somewhere on the ladder.
-- A neutral addition made a real harm unrankable.
+- Adding a life of misery did not make the world worse.
+- The outcomes you judged incomparable cannot be explained by a neutral range.
+- A neutral addition made a harm unrankable.
 - You judged 7 of the 9 pairs unrankable.
+- When the people change, a world with uniformly better-off people is not judged better.
+
+<a id="same_number_only"></a>
+
+## Same number, or no answer
+
+Bader's conclusion: betterness between populations has to consist in betterness facts
+for the people in them, and that leaves same-number comparisons standing and nothing
+else. Populations of different sizes are not imprecisely comparable on this view and not
+equally good either -- they are incomparable, and deliberately so. The two questions
+that hold the headcount fixed therefore get ordinary utilitarian answers, and every
+other pair is declined: the whole ladder, all three of Nadia's lives, and the harm
+beside the addition, which changes the headcount too. Nothing determinate is left for
+the collapsing question to measure a gap against, and the three-way menu can only be
+answered 'none of them is worse than the others', since A, B and Z differ in size from
+each other in every direction. Should come out clean, and should be told what the gaps
+cost. One bullet is the view's own thesis read back to it -- comparable when the numbers
+match, unrankable when they do not. Two are sharper. Broome's other horn: declining K
+against K+- leaves Owen, who is there in both and 35 points worse off in one of them,
+with a loss the ordering cannot state. And the agony addition, which the headcount rule
+declines along with the rest, so Nadia's life at -40 is placed outside the ranking
+rather than called worse -- the price of drawing the line at the headcount and nowhere
+else. Arrhenius's different-number-based imprecision is the same shape with imprecision
+in place of incomparability.
+
+Open it: append `#a=yrnnnnrynn-n-y-y-n-` to the quiz URL.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
+| A against B | A is not rankable against B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome incomparable. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
+| Benign addition | A+ is not rankable against A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is not rankable against Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | None of A, B and Z can be ruled out as best. |
+
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+No conflicts.
+
+Bullets bitten:
+
+- Adding a life of misery did not make the world worse.
+- A neutral addition made a harm unrankable.
+- You judged 7 of the 9 pairs unrankable.
+- Comparable when the numbers match, unrankable when they do not.
+
+<a id="genethics"></a>
+
+## No standing for the merely potential
+
+Heyd's genethics, one answer away from the view above: potential people have no moral
+standing at all, so a choice that settles who comes into existence is not a comparison
+of outcomes but a question for the values of those who already exist. Where Bader keeps
+the same-number comparison because there are people in each outcome to be better or
+worse off, Heyd lets that one go as well -- neither hundred exists yet, and neither has
+a claim to be the hundred that is born. What survives is the pair of questions where the
+same people stand on both sides: everyone gaining is an improvement, and levelling A+ up
+to B is an improvement. Everything else is declined, including the agony addition, since
+whether Nadia exists is exactly what this view holds is not a matter of better and
+worse. Should come out clean; if either of the two surviving answers ever produces a
+conflict, something is wrong. It pays Bader's prices in full -- Owen's loss goes
+unsayable, and Nadia's agony is placed outside the ranking rather than called worse --
+and one more besides, since letting the same-number case go means a world of uniformly
+better-off people is not judged better when the people change.
+
+Open it: append `#a=ynnnnnrynn-n-y-y-n-` to the quiz URL.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is not rankable against a future of 100 entirely different people whose lives all go far better. |
+| A against B | A is not rankable against B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome incomparable. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome incomparable. |
+| Benign addition | A+ is not rankable against A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is not rankable against Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
+| A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | None of A, B and Z can be ruled out as best. |
+
+Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+No conflicts.
+
+Bullets bitten:
+
+- Adding a life of misery did not make the world worse.
+- A neutral addition made a harm unrankable.
+- You judged 8 of the 9 pairs unrankable.
 - When the people change, a world with uniformly better-off people is not judged better.
 
 <a id="quietist"></a>
@@ -1199,7 +1476,8 @@ No conflicts.
 Bullets bitten:
 
 - You rejected the Pareto principle.
-- A neutral addition made a real harm unrankable.
+- Adding a life of misery did not make the world worse.
+- A neutral addition made a harm unrankable.
 - You denied that levelling up improves things.
 - You judged none of the nine pairs rankable.
 - When the people change, a world with uniformly better-off people is not judged better.
