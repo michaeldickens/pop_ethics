@@ -1281,11 +1281,14 @@ Bullets bitten:
 A person-affecting view with no asymmetry: adding a life is beyond ranking whichever way
 it goes, agony included. The ladder route does not reach this one, because the rung
 verdicts are said to flip partway down and the chain stops where they do. The other
-route does. Read the gaps as a neutral range -- a range of critical levels, a comparison
-determinate only when it holds at every level in it -- and calling the agony addition
-unrankable puts a level at -40, while ranking A above Z says every level sits above 4,
-the welfare Z's people live at. Should collide on the misery route, and be told that
-route assumes the reading. Picks A and B together from the three, as any view that
+route no longer collides. Read the gaps as a neutral range -- a range of critical
+levels, a comparison determinate only when it holds at every level in it -- and calling
+the agony addition unrankable puts a level at -40, while ranking A above Z says every
+level sits above 4, the welfare Z's people live at. Those two are in tension, but they
+are not inconsistent: the tension is there only on that reading of the gaps, which
+nothing here forces. So it is priced as a bullet rather than a conflict, and the bullet
+is the one saying the incomparable outcomes cannot be explained by a neutral range.
+Should draw no conflict at all. Picks A and B together from the three, as any view that
 declines to rank them against each other but ranks both above Z has to.
 
 Open it: append `#a=ynnnnnrxln-n-y-y-p-` to the quiz URL.
