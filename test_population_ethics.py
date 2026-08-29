@@ -295,16 +295,25 @@ def suite_engine(page, rep):
               "...and never beside the conflict it is the consistent version of",
               str(clash))
 
-    # The misery route has no chain to run on: it turns on ranking A above Z
-    # while placing a critical level at -40, beneath the welfare Z's people
-    # live at. Independent of the ladder, so it survives what breaks the chain.
-    r = analyse(page, dict(gaps, generalize="no", misery="none", trans_none="yes"))
-    rep.check(r["zrank"] and r["zrank"]["via"] == "misery",
-              "an unrankable agony addition collides with ranking Z on its own")
+    # The misery route used to be a second way to reach a conflict card here:
+    # ranking A above Z while placing a critical level at -40, beneath the
+    # welfare Z's people live at. It is not a contradiction - the tension only
+    # exists if the gaps are read as a neutral range, which nothing forces - so
+    # it is priced as a bullet now. These guard the demotion in both
+    # directions: no card, and the bullet in its place.
+    misery_gap = dict(gaps, generalize="no", misery="none", trans_none="yes")
+    rep.check(analyse(page, misery_gap)["zrank"] is None,
+              "an unrankable agony addition no longer collides with ranking Z")
+    said = bullet_titles(page, misery_gap)
+    rep.check(any("cannot be explained by a neutral range" in x for x in said),
+              "...it is priced as a bullet instead", str(said))
+    quiet = bullet_titles(page, dict(misery_gap, AvZ="right"))
+    rep.check(not any("cannot be explained by a neutral range" in x for x in quiet),
+              "...and says nothing to someone who ranks Z above A", str(quiet))
     r = analyse(page, dict(gaps, generalize="yes", misery="none",
                            trans_none="yes", AvZ="right"))
     rep.check(r["zrank"] is None,
-              "...and neither route bites on someone who ranks Z above A")
+              "...and the ladder route does not bite there either")
 
     # Rejecting a principle always draws a bullet. A revisionary verdict used to
     # draw nothing, so answers like "her agony improves the world" could pass
