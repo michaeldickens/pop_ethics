@@ -2558,11 +2558,7 @@ function bullets() {
       t: "The outcomes you judged incomparable cannot be explained by a neutral range.",
       claims: ["misery", "AvZ"],
       b:
-        "You declined to rank the outcome were Nadia was added with a miserable life. The natural account of an unrankable addition is Broome\u2019s: a range of welfare levels, where a new life is judged unrankable when it falls within the range. But you ranked A better than Z \u2014 where Z\u2019s " +
-        Z_POP[0].n.toLocaleString() +
-        " people live at " +
-        Z_LEVEL +
-        " \u2014. You judged the additions as bad, which means they fall below the neutral range. However, you also called the addition of a life at " +
+        "You declined to rank the outcome were Nadia was added with a miserable life. The natural account of an unrankable addition is Broome\u2019s: a range of welfare levels, where a new life is judged unrankable when it falls within the range. But you ranked A better than Z. You judged the additions as bad, which means they fall below the neutral range. However, you also called the addition of a life at " +
         K_BAD[1].w +
         " unrankable, which requires the range to reach down to " +
         K_BAD[1].w +
