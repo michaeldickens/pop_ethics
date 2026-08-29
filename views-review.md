@@ -4,7 +4,7 @@ Read each view's description against the answers below it, then against the verd
 
 The answers were manually vetted by a human (namely me, Michael Dickens); the explanations of each view were AI-generated with minimal human revision.
 
-The list of views to include was initially AI-generated, and then a human added a few more to fill in the gaps.
+The list of views to include was initially AI-generated, and then I added a few more to fill in gaps.
 
 ## Contents
 

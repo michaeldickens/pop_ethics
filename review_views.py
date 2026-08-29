@@ -173,7 +173,7 @@ def as_markdown(results):
         "the explanations of each view were AI-generated with minimal human revision.",
         "",
         "The list of views to include was initially AI-generated, and then "
-        "a human added a few more to fill in the gaps.",
+        "I added a few more to fill in gaps.",
         "",
     ]
 

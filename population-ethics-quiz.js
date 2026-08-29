@@ -2846,13 +2846,13 @@ function bullets() {
       b:
         "Same headcount, every life in the second future far better than every life in the first, and not one person in both — and " +
         sroute +
-        ". This is the person-affecting thought in its strongest form: nothing is better or worse unless it is better or worse <em>for</em> somebody, and here there is nobody it could be better for.",
+            ". This is the person-affecting thought in its strongest form: no particular <em>person</em> is better off, therefore the <em>world</em> is not better off — even though welfare is higher across the board.",
       world:
-        "Parfit's medical programmes:<br><br>" +
+        "<strong>Parfit's medical programmes:</strong><br><br>" +
         "A health service can afford only one of two programmes. Both prevent the same handicap, and each would prevent it in 1,000 children." +
         "<ol><li><strong>Preconception testing</strong> screens women who have not yet conceived; those who test positive are advised to wait. If this programme is canceled, 1,000 handicapped children are born in place of 1,000 unhandicapped children. These are <strong>not the same children</strong> who would have been born otherwise.</li>" +
         "<li><strong>Pregnancy testing</strong> screens women who are already pregnant; those who test positive are treated, and their children are born unharmed. Cancel this programme and 1,000 handicapped children are born — and they are <strong>the very same children</strong> who would otherwise have been born unharmed.</li></ol>" +
-        "Either way, 1,000 children are handicapped; many would say these programmes are equally good. But your answers require that <strong>only the pregnancy testing is good</strong>. According to your answers, canceling the preconception testing is not bad because no person is harmed.",
+        "Whichever programme you fund, 1,000 handicaps are prevented; many would say the two choices are equal. But your answers require that <strong>only the pregnancy testing is good</strong>. According to your answers, the preconception testing is not good because no particular person benefits.",
     });
   }
   // Ranking the same-number case while ducking the different-number ones is
