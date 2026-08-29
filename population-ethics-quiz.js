@@ -1971,10 +1971,19 @@ $("#back").addEventListener("click", function () {
   }
 });
 document.addEventListener("keydown", function (e) {
-  if ($("#quiz").classList.contains("hide")) return;
   // Leave the browser's own Alt/Cmd+Arrow (history back/forward) alone, and
   // any other modified chord.
   if (e.metaKey || e.ctrlKey || e.altKey) return;
+  // On the intro screen the right arrow begins the quiz, matching Begin - the
+  // one forward move there, with nothing behind it for Left to reach.
+  if (VIEW === "intro") {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      $("#start").click();
+    }
+    return;
+  }
+  if ($("#quiz").classList.contains("hide")) return;
   // Left and Right walk the questions - the same two moves as the Back and
   // Next buttons, and unlike picking an option they work on a shared run too,
   // so they sit ahead of the SHARED guard. A disabled Next (no answer yet)
