@@ -135,7 +135,7 @@ var QUESTIONS = [
     label: "A against B",
     pops: [A_POP, B_POP],
     names: ["A", "B"],
-    title: "Two futures, side by side.",
+    title: "Greater total welfare, but lower average.",
     body: "<strong>A</strong> has 100 people living excellent lives. <strong>B</strong> has 200 people living lives that are less good, but still more than half as good. Nothing else separates them.",
   },
   {
@@ -388,12 +388,12 @@ var QUESTIONS = [
       "The three futures you have already seen, now offered together: <strong>A</strong> with its 100 excellent lives, <strong>B</strong> with its 200 good ones, <strong>Z</strong> with its " +
       last.n.toLocaleString() +
       " barely-good ones.",
-    ask: "Which is the best of the three?",
+    ask: "Which of the three are among the best?",
     opts: [
       ["A", "A", "A"],
       ["B", "B", "B"],
       ["C", "Z", "Z"],
-      ["D", "A and B both \u2014 Z is worse than each of them", "AB"],
+      ["D", "A and B both \u2014 Z is worse than the others", "AB"],
       ["E", "All three \u2014 none of them is worse than the others", "all"],
     ],
   },
@@ -2539,7 +2539,7 @@ function bullets() {
     out.push({
       t: "You accepted the repugnant conclusion.",
       claims: ["AvZ"],
-      b: "You judged Z better than A: enough lives barely worth living outweigh a small number of superb ones. This is the totalist's answer and it is entirely consistent \u2014 Tännsjö, Huemer and others defend it explicitly. It also means there is in principle no quality of life so marginal that sheer numbers cannot compensate.",
+      b: "You judged Z better than A: enough lives barely worth living outweigh a small number of superb ones. This is the totalist's answer \u2014 Tännsjö, Huemer and others defend it explicitly. But most find it counterintuitive — it means there is in principle no quality of life so marginal that sheer numbers cannot compensate.",
     });
   if (ANS.generalize === "no")
     out.push({
