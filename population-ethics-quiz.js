@@ -1056,7 +1056,9 @@ var NAME = "";
 // Opt-out consent for including this run in a public analysis of the aggregate.
 // Given on the namestep screen and defaulting to true (the checkbox ships
 // checked); like NAME it is never decoded from a share link and travels only in
-// the /log POST, so the log records the explicit choice for every genuine run.
+// the /log POST. The consent choice never gates logging - every genuine run is
+// logged either way and carries this flag, so the log itself records who opted
+// out and public analysis can simply exclude those runs.
 var CONSENT = true;
 // Set when a request for the results was turned back for want of an answer;
 // rendered on the question it was turned back to, then spent.
