@@ -1139,6 +1139,7 @@ class Report(object):
         # quiz, so several routes to the same contradiction share the row.
         # Which routes those were is worth its own table below.
         untold = collections.Counter()
+        untold_urls = {}
         for r in runs:
             keys = set()
             for c in r.scored["conflicts"]:
@@ -1147,9 +1148,14 @@ class Report(object):
                 titles[key] = card_key(c["title"] or NO_STORY)
                 idsets[key] = "+".join(c["ids"])
                 if not c["title"]:
-                    untold[("+".join(c["ids"]),
-                            ", ".join("%s=%s" % (q, r.scored["answers"].get(q))
-                                      for q in c["ids"]))] += 1
+                    route = ("+".join(c["ids"]),
+                             ", ".join("%s=%s" % (q, r.scored["answers"].get(q))
+                                       for q in c["ids"]))
+                    untold[route] += 1
+                    # The run itself, as a link that opens it in the quiz.
+                    # Private mode only: a share link is a whole profile.
+                    untold_urls.setdefault(route, set()).add(
+                        (r.page or "") + "#a=" + r.scored["code"])
             for x in r.scored["extras"]:
                 key = ("extra:" + x["id"], card_key(x["title"]))
                 keys.add(key)
@@ -1211,6 +1217,20 @@ class Report(object):
                       urows)
             self.stats["conflicts_without_a_story"] = {
                 "%s | %s" % k: v for k, v in untold.items()}
+
+            if self.args.mode == "private":
+                self.p("Each run that took one, as a link that opens it in "
+                       "the quiz - so a route can be read on the results "
+                       "page it produced, which is where prose for it would "
+                       "have to fit. Private mode only: a share link is a "
+                       "whole answer profile.")
+                self.rows(["The route they took", "Open it"],
+                          [[shape, url]
+                           for (ids, shape) in
+                           sorted(untold, key=lambda k: (-untold[k], k))
+                           for url in sorted(untold_urls[(ids, shape)])])
+                self.stats["conflicts_without_a_story_urls"] = {
+                    "%s | %s" % k: sorted(v) for k, v in untold_urls.items()}
 
         counts = [len(r.scored["conflicts"]) + len(r.scored["extras"]) for r in runs]
         dist = collections.Counter(counts)
@@ -1635,14 +1655,19 @@ def inline_html(text):
     """The little markdown the report actually uses, as HTML."""
     text = str(text)                        # table cells are often plain ints
     out, i = [], 0
-    for m in re.finditer(r"`([^`]+)`|\*\*([^*]+)\*\*|\*([^*]+)\*", text):
+    for m in re.finditer(r"`([^`]+)`|\*\*([^*]+)\*\*|\*([^*]+)\*"
+                         r"|(https?://[^\s<>\"]+)", text):
         out.append(esc(text[i:m.start()]))
         if m.group(1) is not None:
             out.append("<code>%s</code>" % esc(m.group(1)))
         elif m.group(2) is not None:
             out.append("<strong>%s</strong>" % esc(m.group(2)))
-        else:
+        elif m.group(3) is not None:
             out.append("<em>%s</em>" % esc(m.group(3)))
+        else:
+            # A share link is meant to be opened, so make it openable.
+            out.append('<a href="%s">%s</a>'
+                       % (esc(m.group(4)), esc(m.group(4))))
         i = m.end()
     out.append(esc(text[i:]))
     return "".join(out)
