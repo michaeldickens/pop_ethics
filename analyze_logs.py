@@ -1307,8 +1307,7 @@ class Report(object):
                       ", ".join(dropped)))
         self.p("Open it: append `#a=%s` to the quiz URL." % scored["code"])
 
-        exact = sum(1 for r in runs if self.effective(r) == kept)
-        self.p("%s gave exactly this set of answers." % pct(exact, n))
+        exact = self.modal_reach(runs, kept, n)
 
         cards = [c["title"] or "(generic card)" for c in scored["conflicts"]]
         cards += [x["title"] for x in scored["extras"]]
@@ -1341,6 +1340,81 @@ class Report(object):
             "conflicts": [card_key(c) for c in cards],
             "bullets": [card_key(b) for b in scored["bullets"]],
         }
+
+    def modal_reach(self, runs, kept, n):
+        """How near anybody actually got to the composite, and who is nearest.
+
+        Nobody matching it exactly is the normal case rather than a finding:
+        agreeing with a dozen separate majorities at once is a product of a
+        dozen fractions. What is worth knowing is whether the misses are
+        scattered - lots of people one or two answers off in different places,
+        so the composite really is the centre - or concentrated, with a large
+        block missing it on the same few questions, which means the mode has
+        blended two camps into a position neither holds.
+        """
+        qs = sorted(kept)
+        profiles = collections.Counter(
+            tuple(self.effective(r).get(q) for q in qs) for r in runs)
+        target = tuple(kept[q] for q in qs)
+        exact = profiles.get(target, 0)
+        dist = collections.Counter()
+        for profile, c in profiles.items():
+            dist[sum(1 for a, b in zip(profile, target) if a != b)] += c
+
+        # What agreeing with every majority at once would come to if the
+        # questions were answered independently. They are not - that is rather
+        # the point - but it says whether nobody matching is even surprising.
+        expected = float(n)
+        for q in qs:
+            asked = [r for r in runs if q in self.effective(r)]
+            if asked:
+                expected *= (sum(1 for r in asked
+                                 if self.effective(r)[q] == kept[q])
+                             / float(len(asked)))
+
+        self.p("%s gave exactly this set of answers. Agreeing with all %d "
+               "majorities at once would be expected of about %.1f "
+               "%s even if the questions were answered independently, so "
+               "nobody landing on it is not by itself a surprise."
+               % (pct(exact, n), len(qs), expected,
+                  "person" if 0.5 <= expected < 1.5 else "people"))
+        misses = sorted(d for d in dist if d)
+        if misses:
+            closest = misses[0]
+            self.p("The nearest anybody came was %d answer%s away, and %s "
+                   "got that close."
+                   % (closest, "" if closest == 1 else "s",
+                      pct(dist[closest], n)))
+        self.h(3, "Where people part company with it")
+        span = range(0, max(dist) + 1) if dist else []
+        self.rows(["Answers differing", "Respondents"],
+                  [[d, pct(dist.get(d, 0), n)] for d in span],
+                  chart="columns", total=n,
+                  data=[(str(d), dist.get(d, 0)) for d in span])
+
+        # The largest block of people who answered these questions alike. If
+        # it is not the composite, it is the more informative number: a real
+        # position that real people hold, against a construction nobody does.
+        top, tc = profiles.most_common(1)[0]
+        if top != target and not (self.args.mode == "public"
+                                  and tc < self.args.min_cell):
+            differs = [q for q, a in zip(qs, top) if a != kept[q]]
+            self.p("The largest block who answered these questions alike is "
+                   "%s - bigger than any group the composite has - and it is "
+                   "not the composite. They part from it on %d of the %d: %s."
+                   % (pct(tc, n), len(differs), len(qs),
+                      ", ".join(self.qlabel(q) for q in differs)))
+            self.p("Where a block that size misses on the same handful of "
+                   "questions, the per-question majorities are coming from "
+                   "camps that disagree with each other, and the composite "
+                   "takes one camp's answer here and the other's there. That "
+                   "is worth checking against the verdict below: a "
+                   "composite can be inconsistent because the population is "
+                   "split, rather than because anybody holds an inconsistent "
+                   "view.")
+        self.stats["modal_distance"] = dict(dist)
+        self.stats["modal_largest_block"] = tc
+        return exact
 
     # -- views ------------------------------------------------------------
 
