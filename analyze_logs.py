@@ -203,6 +203,11 @@ def strip_tags(s):
 # own title, so two runs that bit the same bullet arrive under different
 # strings. Numbers are folded to N, and the all-nine wording - which is the
 # same bullet phrased positively - is folded in with them.
+# What the results page shows when a conflict's blamed answers match no story
+# in the quiz: a card that says only what is true of every route to that
+# contradiction. Several different answer shapes share the row.
+NO_STORY = "(no story for this shape)"
+
 _ALL_NINE = "You judged none of the nine pairs rankable."
 _ALL_NINE_KEY = "You judged N of the N pairs unrankable."
 
@@ -1130,13 +1135,21 @@ class Report(object):
         # different cards.
         seen = collections.Counter()
         titles, idsets = {}, {}
+        # A generic card is one whose blamed answers match no story in the
+        # quiz, so several routes to the same contradiction share the row.
+        # Which routes those were is worth its own table below.
+        untold = collections.Counter()
         for r in runs:
             keys = set()
             for c in r.scored["conflicts"]:
-                key = ("+".join(c["ids"]), card_key(c["title"] or "(generic card)"))
+                key = ("+".join(c["ids"]), card_key(c["title"] or NO_STORY))
                 keys.add(key)
-                titles[key] = card_key(c["title"] or "(generic card)")
+                titles[key] = card_key(c["title"] or NO_STORY)
                 idsets[key] = "+".join(c["ids"])
+                if not c["title"]:
+                    untold[("+".join(c["ids"]),
+                            ", ".join("%s=%s" % (q, r.scored["answers"].get(q))
+                                      for q in c["ids"]))] += 1
             for x in r.scored["extras"]:
                 key = ("extra:" + x["id"], card_key(x["title"]))
                 keys.add(key)
@@ -1147,9 +1160,9 @@ class Report(object):
         universe_keys = {}
         if universe:
             for c in universe["conflicts"]:
-                key = ("+".join(c["ids"]), card_key(c["title"] or "(generic card)"))
+                key = ("+".join(c["ids"]), card_key(c["title"] or NO_STORY))
                 universe_keys[key] = ("+".join(c["ids"]),
-                                      card_key(c["title"] or "(generic card)"))
+                                      card_key(c["title"] or NO_STORY))
             for x in universe["extras"]:
                 key = ("extra:" + x["id"], card_key(x["title"]))
                 universe_keys[key] = (x["id"], card_key(x["title"]))
@@ -1178,6 +1191,26 @@ class Report(object):
                    "withheld: a rare card plus a set of blamed answers comes "
                    "close to naming the run behind it."
                    % (hidden, "" if hidden == 1 else "s", self.args.min_cell))
+
+        if untold:
+            self.h(3, "Conflicts the quiz has no story for")
+            self.p("A conflict card carries prose only when the answers "
+                   "behind it match one of the quiz's stories, and a story "
+                   "names both a set of blamed answers *and* the shape of "
+                   "the answers it describes. The same set reached by a "
+                   "different route falls through to `%s`, which says only "
+                   "what holds of every route - so one blamed set can appear "
+                   "twice in the table above, once told and once not. These "
+                   "are the routes people here actually took." % NO_STORY)
+            urows = [[ids, shape, pct(c, n)]
+                     for (ids, shape), c in
+                     sorted(untold.items(), key=lambda kv: (-kv[1], kv[0]))
+                     if not (self.args.mode == "public"
+                             and c < self.args.min_cell)]
+            self.rows(["Answers blamed", "The route they took", "Respondents"],
+                      urows)
+            self.stats["conflicts_without_a_story"] = {
+                "%s | %s" % k: v for k, v in untold.items()}
 
         counts = [len(r.scored["conflicts"]) + len(r.scored["extras"]) for r in runs]
         dist = collections.Counter(counts)
@@ -1309,7 +1342,7 @@ class Report(object):
 
         exact = self.modal_reach(runs, kept, n)
 
-        cards = [c["title"] or "(generic card)" for c in scored["conflicts"]]
+        cards = [c["title"] or NO_STORY for c in scored["conflicts"]]
         cards += [x["title"] for x in scored["extras"]]
         self.h(3, "What the quiz says back to it")
         if cards:
