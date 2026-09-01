@@ -4,7 +4,12 @@
     python3 analyse_logs.py quiz-log.jsonl                  # public report
     python3 analyse_logs.py --mode private quiz-log.jsonl    # everything, do not share
     python3 analyse_logs.py --dedupe last quiz-log.jsonl
+    python3 analyse_logs.py --html report.html quiz-log.jsonl
     python3 analyse_logs.py --json stats.json -o report.md quiz-log.jsonl
+
+The report prints as markdown, which is also readable as plain text.
+--html writes the same report as a self-contained page - no CDN, no
+plotting dependency - with each table drawn as a chart beside it.
 
 The log is one JSON object per line: the server's fields (time, ip,
 remote_addr, user_agent) wrapped around the client's `submission` (the
@@ -33,6 +38,15 @@ respondent when they share a fingerprint and only one name has ever been
 seen from it; it is off by default because a fingerprint is a household or
 an office as often as it is a person. --dedupe then takes each
 respondent's first run, their last, or all of them.
+
+Runs by a name on the exclusion list - the author's own test runs, "MD
+Test", by default - are dropped from the corpus before anything is counted.
+--exclude-name replaces that list, --keep-excluded turns it off.
+
+Besides the per-question tallies there is a "modal answer" section: the
+most popular answer to every question, assembled into one run and put back
+through the quiz. A majority on each question separately can still be
+jointly inconsistent, so the composite gets a verdict of its own.
 
 Conflicts and bullets are not recomputed here: the quiz itself scores them,
 and a second implementation would drift. The page is loaded in a headless
@@ -90,6 +104,9 @@ PROBE = """(a) => {
     asked: QUESTIONS.filter(q => isActive(q)).map(q => q.id),
     answers: Object.assign({}, eff),
     missing: missingActive().length,
+    // Taken after pruning, so a question these answers never reach encodes
+    // as a gap. Append it to the quiz URL as #a=<code> to open the run.
+    code: encodeAns(),
     conflicts: [],
     extras: [],
     bullets: bullets().map(b => b.t),
@@ -323,6 +340,30 @@ def assign_identities(runs, link_anon):
     return linked
 
 
+# The quiz's author takes it repeatedly while working on it, under this name.
+# Those runs are not survey responses and would skew a corpus this size, so
+# they come out by default; --exclude-name replaces the list, --keep-excluded
+# turns the filter off.
+DEFAULT_EXCLUDED_NAMES = ["MD Test"]
+
+
+def drop_excluded(groups, names):
+    """Remove whole respondents whose name is on the exclusion list.
+
+    Done per respondent rather than per run, so that a run linked to an
+    excluded name by --link-anon goes with it rather than surviving as an
+    anonymous stranger.
+    """
+    wanted = {norm_name(n) for n in names if n.strip()}
+    dropped, kept = 0, collections.OrderedDict()
+    for key, runs in groups.items():
+        if key[0] == "name" and key[1] in wanted:
+            dropped += len(runs)
+            continue
+        kept[key] = runs
+    return kept, dropped
+
+
 def group_runs(runs):
     """Respondent -> their runs, oldest first."""
     order = {}
@@ -495,7 +536,296 @@ def nearest_view(views, answers):
 
 
 # ---------------------------------------------------------------------------
-# Report
+# Charts. Plain inline SVG, written by hand: the repo carries no plotting
+# dependency and does not need one for bars and a line. Every chart here plots
+# one series - a count against a category - so all of them use the one
+# sequential hue rather than a categorical palette, and none needs a legend.
+# Values are labelled on the marks, and the same numbers sit in the table
+# beside every chart, so nothing is available only by hovering.
+# ---------------------------------------------------------------------------
+
+# Chart surface, ink and the blue ramp are CSS custom properties defined once
+# in HTML_HEAD, so light and dark swap in one place and the SVG below is
+# written against roles rather than hex.
+BAR_H = 22          # mark thickness, under the 24px cap
+BAND_H = 32         # leaves 10px of air between neighbouring bars
+RADIUS = 4          # rounded data-end, square at the baseline
+
+
+def esc(s):
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;")
+            .replace(">", "&gt;").replace('"', "&quot;"))
+
+
+def _bar_path(x, y, w, h, r=RADIUS):
+    """A bar with its data-end rounded and its baseline end square."""
+    r = max(0.0, min(float(r), w))
+    if r <= 0:
+        return "M%.1f %.1f h%.1f v%.1f h%.1f Z" % (x, y, w, h, -w)
+    return ("M%.1f %.1f h%.1f a%.1f %.1f 0 0 1 %.1f %.1f v%.1f "
+            "a%.1f %.1f 0 0 1 %.1f %.1f h%.1f Z"
+            % (x, y, w - r, r, r, r, r, h - 2 * r, r, r, -r, r, -(w - r)))
+
+
+def _column_path(x, y, w, h, r=RADIUS):
+    """The same bar stood up: rounded cap, square where it meets the axis."""
+    r = max(0.0, min(float(r), h, w / 2.0))
+    if r <= 0:
+        return "M%.1f %.1f h%.1f v%.1f h%.1f Z" % (x, y, w, h, -w)
+    return ("M%.1f %.1f a%.1f %.1f 0 0 1 %.1f %.1f h%.1f "
+            "a%.1f %.1f 0 0 1 %.1f %.1f v%.1f h%.1f Z"
+            % (x, y + r, r, r, r, -r, w - 2 * r, r, r, r, r, h - r, -w))
+
+
+def _num(v):
+    """Counts print as integers; a tie split between views does not."""
+    return "%d" % v if float(v).is_integer() else "%.1f" % v
+
+
+def _nice_max(v):
+    """A round number at or above v, for an axis that ends somewhere sane."""
+    if v <= 0:
+        return 1
+    step = 10 ** int(math.floor(math.log10(v)))
+    for mult in (1, 2, 2.5, 5, 10):
+        if step * mult >= v:
+            return int(math.ceil(step * mult))
+    return int(v)
+
+
+# Rather than measure text (which would tie chart drawing to the browser),
+# assume a per-character width comfortably above 12px system sans's average,
+# so an estimate errs towards a wider gutter and a shorter label rather than
+# towards a label that runs off its own chart. Whatever still will not fit is
+# ellipsised, with the full text in the row's tooltip and in the table beside
+# the chart, so nothing is lost.
+CHAR_W = 7.0
+LABEL_MIN, LABEL_MAX = 110, 380
+LABEL_PAD = 24                  # gutter room the estimate is not asked to fill
+
+
+def _clip(text, chars):
+    text = str(text)
+    return text if len(text) <= chars else text[:chars - 1].rstrip() + "…"
+
+
+def chart_bar_h(rows, total=None, bar_w=300):
+    """Horizontal bars: one count per category, category names on the left.
+
+    Horizontal because the categories are sentences - the quiz's own answer
+    wordings, and whole bullet titles - and a column chart would have to turn
+    them on their side. The gutter grows to fit the labels, up to a cap.
+    """
+    rows = list(rows)
+    if not rows:
+        return ""
+    label_chars = int((LABEL_MAX - LABEL_PAD) / CHAR_W)
+    longest = max(len(_clip(l, label_chars)) for l, _ in rows)
+    label_w = int(min(LABEL_MAX,
+                      max(LABEL_MIN, longest * CHAR_W + LABEL_PAD)))
+    # The tip label is the value and its share - "104 (100%)" at the widest -
+    # and it sits 8px past the bar, so reserve enough that it never runs off.
+    tip_w = int(8 + CHAR_W * max(len(_num(v)) + (7 if total else 0)
+                                 for _, v in rows) + 6)
+    width = label_w + bar_w + tip_w
+    plot_x = label_w
+    plot_w = bar_w
+    top = 8
+    height = top + len(rows) * BAND_H + 8
+    hi = max([v for _, v in rows] + [1])
+    out = ['<svg class="chart" viewBox="0 0 %d %d" width="%d" height="%d" '
+           'role="img" xmlns="http://www.w3.org/2000/svg">'
+           % (width, height, width, height)]
+    for i, (label, value) in enumerate(rows):
+        y = top + i * BAND_H
+        by = y + (BAND_H - BAR_H) / 2.0
+        w = plot_w * value / float(hi)
+        share = "" if not total else " (%.0f%%)" % (100.0 * value / total)
+        out.append('<text class="cat" x="%d" y="%.1f">%s</text>'
+                   % (plot_x - 10, y + BAND_H / 2.0 + 4,
+                      esc(_clip(label, label_chars))))
+        if value:
+            out.append('<path class="mark" d="%s"><title>%s: %s%s</title></path>'
+                       % (_bar_path(plot_x, by, w, BAR_H), esc(label),
+                          _num(value), share))
+        out.append('<text class="val" x="%.1f" y="%.1f">%s%s</text>'
+                   % (plot_x + w + 8, y + BAND_H / 2.0 + 4, _num(value), share))
+    # The baseline every bar grows from, drawn last so no mark sits on it.
+    out.append('<line class="axis" x1="%d" y1="%d" x2="%d" y2="%.1f"/>'
+               % (plot_x, top, plot_x, top + len(rows) * BAND_H))
+    out.append("</svg>")
+    return "\n".join(out)
+
+
+def chart_columns(rows, total=None, width=680, height=220):
+    """Columns over an ordered scale - 0 conflicts, 1, 2, ... - so the shape
+    of the distribution is the point rather than any single bar."""
+    rows = list(rows)
+    if not rows:
+        return ""
+    left, right, top, bottom = 44, 12, 18, 34
+    plot_w = width - left - right
+    plot_h = height - top - bottom
+    hi = _nice_max(max([v for _, v in rows] + [1]))
+    band = plot_w / float(len(rows))
+    bw = min(24.0, band - 8)
+    out = ['<svg class="chart" viewBox="0 0 %d %d" width="%d" height="%d" '
+           'role="img" xmlns="http://www.w3.org/2000/svg">'
+           % (width, height, width, height)]
+    for t in (0, hi / 2.0, hi):
+        y = top + plot_h - plot_h * t / float(hi)
+        out.append('<line class="grid" x1="%d" y1="%.1f" x2="%d" y2="%.1f"/>'
+                   % (left, y, width - right, y))
+        out.append('<text class="tick" x="%d" y="%.1f">%g</text>'
+                   % (left - 8, y + 4, round(t, 1)))
+    for i, (label, value) in enumerate(rows):
+        x = left + i * band + (band - bw) / 2.0
+        h = plot_h * value / float(hi)
+        share = "" if not total else " (%.0f%%)" % (100.0 * value / total)
+        if value:
+            out.append('<path class="mark" d="%s"><title>%s: %d%s</title></path>'
+                       % (_column_path(x, top + plot_h - h, bw, h),
+                          esc(label), value, share))
+            out.append('<text class="cap" x="%.1f" y="%.1f">%d</text>'
+                       % (x + bw / 2.0, top + plot_h - h - 6, value))
+        out.append('<text class="cat mid" x="%.1f" y="%d">%s</text>'
+                   % (x + bw / 2.0, height - 12, esc(label)))
+    out.append('<line class="axis" x1="%d" y1="%d" x2="%d" y2="%d"/>'
+               % (left, top + plot_h, width - right, top + plot_h))
+    out.append("</svg>")
+    return "\n".join(out)
+
+
+def chart_line(points, width=680, height=200):
+    """A count over time. One series, so a line with a wash under it."""
+    points = list(points)
+    if len(points) < 2:
+        return chart_columns(points)
+    left, right, top, bottom = 44, 12, 18, 30
+    plot_w = width - left - right
+    plot_h = height - top - bottom
+    hi = _nice_max(max(v for _, v in points))
+    xs = [left + plot_w * i / float(len(points) - 1)
+          for i in range(len(points))]
+    ys = [top + plot_h - plot_h * v / float(hi) for _, v in points]
+    out = ['<svg class="chart" viewBox="0 0 %d %d" width="%d" height="%d" '
+           'role="img" xmlns="http://www.w3.org/2000/svg">'
+           % (width, height, width, height)]
+    for t in (0, hi / 2.0, hi):
+        y = top + plot_h - plot_h * t / float(hi)
+        out.append('<line class="grid" x1="%d" y1="%.1f" x2="%d" y2="%.1f"/>'
+                   % (left, y, width - right, y))
+        out.append('<text class="tick" x="%d" y="%.1f">%g</text>'
+                   % (left - 8, y + 4, round(t, 1)))
+    area = ("M%.1f %.1f " % (xs[0], top + plot_h)
+            + " ".join("L%.1f %.1f" % (x, y) for x, y in zip(xs, ys))
+            + " L%.1f %.1f Z" % (xs[-1], top + plot_h))
+    out.append('<path class="wash" d="%s"/>' % area)
+    out.append('<path class="line" d="%s"/>'
+               % ("M" + " L".join("%.1f %.1f" % (x, y) for x, y in zip(xs, ys))))
+    for (label, value), x, y in zip(points, xs, ys):
+        out.append('<circle class="hit" cx="%.1f" cy="%.1f" r="7">'
+                   '<title>%s: %d</title></circle>' % (x, y, esc(label), value))
+    out.append('<circle class="dot" cx="%.1f" cy="%.1f" r="4"/>'
+               % (xs[-1], ys[-1]))
+    # Only the ends are labelled: a tick under every day would be unreadable.
+    out.append('<text class="cat start" x="%d" y="%d">%s</text>'
+               % (left, height - 8, esc(points[0][0])))
+    out.append('<text class="cat end" x="%d" y="%d">%s</text>'
+               % (width - right, height - 8, esc(points[-1][0])))
+    out.append('<line class="axis" x1="%d" y1="%d" x2="%d" y2="%d"/>'
+               % (left, top + plot_h, width - right, top + plot_h))
+    out.append("</svg>")
+    return "\n".join(out)
+
+
+CHARTS = {"bar_h": chart_bar_h, "columns": chart_columns, "line": chart_line}
+
+# Values from the reference palette: blue as the single sequential hue, with
+# its own dark step, plus that palette's chart chrome and ink. Declared under
+# both the media query and the data-theme scope so a viewer's explicit choice
+# wins in either direction.
+HTML_HEAD = """<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>%(title)s</title>
+<style>
+:root{
+  color-scheme: light;
+  --plane:#f9f9f7; --surface:#fcfcfb;
+  --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --rule:rgba(11,11,11,.10);
+  --series:#2a78d6; --wash:rgba(42,120,214,.10);
+  --warn-bg:#fdf3e3; --warn-ink:#7a4a06; --warn-edge:#eda100;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --plane:#0d0d0d; --surface:#1a1a19;
+    --ink:#fff; --ink-2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --rule:rgba(255,255,255,.10);
+    --series:#3987e5; --wash:rgba(57,135,229,.12);
+    --warn-bg:#2a2213; --warn-ink:#eda100; --warn-edge:#c98500;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --plane:#0d0d0d; --surface:#1a1a19;
+  --ink:#fff; --ink-2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --rule:rgba(255,255,255,.10);
+  --series:#3987e5; --wash:rgba(57,135,229,.12);
+  --warn-bg:#2a2213; --warn-ink:#eda100; --warn-edge:#c98500;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--plane);color:var(--ink);
+  font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:28px;line-height:1.2;margin:0 0 6px}
+h2{font-size:21px;margin:44px 0 8px;padding-top:18px;border-top:1px solid var(--rule)}
+h3{font-size:16px;margin:28px 0 6px}
+p{margin:10px 0;color:var(--ink-2);max-width:70ch}
+code{font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;
+  background:var(--surface);border:1px solid var(--rule);
+  border-radius:4px;padding:1px 5px}
+figure{margin:14px 0;padding:12px 4px;background:var(--surface);
+  border:1px solid var(--rule);border-radius:8px;overflow-x:auto}
+svg.chart{display:block;max-width:100%%;height:auto}
+.chart .mark{fill:var(--series)}
+.chart .line{fill:none;stroke:var(--series);stroke-width:2;
+  stroke-linejoin:round;stroke-linecap:round}
+.chart .wash{fill:var(--wash)}
+.chart .dot{fill:var(--series);stroke:var(--surface);stroke-width:2}
+.chart .hit{fill:transparent}
+.chart .grid{stroke:var(--grid);stroke-width:1}
+.chart .axis{stroke:var(--axis);stroke-width:1}
+.chart text{font:12px system-ui,-apple-system,"Segoe UI",sans-serif}
+.chart .cat{fill:var(--ink-2);text-anchor:end}
+.chart .cat.mid{text-anchor:middle}
+.chart .cat.end{text-anchor:end}
+.chart .cat.start{text-anchor:start}
+.chart .val,.chart .cap{fill:var(--ink-2);font-variant-numeric:tabular-nums}
+.chart .cap{text-anchor:middle}
+.chart .tick{fill:var(--muted);text-anchor:end;font-variant-numeric:tabular-nums}
+.chart .mark:hover{fill-opacity:.78}
+.tablewrap{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;font-size:14px;min-width:100%%}
+th,td{text-align:left;padding:6px 12px 6px 0;border-bottom:1px solid var(--rule);
+  vertical-align:top;white-space:nowrap}
+th{color:var(--muted);font-weight:600;font-size:12px;
+  text-transform:uppercase;letter-spacing:.04em}
+td{font-variant-numeric:tabular-nums}
+td:first-child,th:first-child{white-space:normal}
+blockquote{margin:18px 0;padding:12px 16px;border-left:3px solid var(--warn-edge);
+  background:var(--warn-bg);color:var(--warn-ink);border-radius:0 6px 6px 0}
+blockquote p{color:inherit}
+</style>
+<main>
+"""
+
+
+# ---------------------------------------------------------------------------
+# Report. Sections append blocks - headings, prose, tables, charts - and the
+# two renderers walk them, so the markdown and the HTML cannot drift apart.
 # ---------------------------------------------------------------------------
 
 def pct(k, n):
@@ -531,7 +861,7 @@ class Report(object):
     def __init__(self, args, engine):
         self.args = args
         self.engine = engine
-        self.lines = []
+        self.blocks = []
         self.stats = {}
         # Filled in properly once the answers section has seen the log; set
         # here because the respondents section names questions too.
@@ -539,20 +869,32 @@ class Report(object):
                            (engine.meta["questions"] if engine else [])}
 
     def h(self, level, text):
-        self.lines += ["", "#" * level + " " + text, ""]
+        self.blocks.append(("h", level, text))
 
     def p(self, text):
-        self.lines += [text, ""]
+        self.blocks.append(("p", text))
 
-    def rows(self, headers, rows):
+    def quote(self, text):
+        self.blocks.append(("quote", text))
+
+    def rows(self, headers, rows, chart=None, data=None, total=None):
+        """A table, optionally with a chart of the same numbers beside it.
+
+        The table is the record - it carries every figure and survives being
+        read as plain text. The chart is drawn only in the HTML report, from
+        `data` (label, value pairs) rather than from the formatted cells.
+        """
         if not rows:
             self.p("(nothing to show)")
             return
-        self.lines += table(headers, rows) + [""]
+        if chart and data:
+            self.blocks.append(("chart", chart, list(data), total))
+        self.blocks.append(("table", headers, rows))
 
     # -- sections ---------------------------------------------------------
 
-    def corpus(self, all_runs, kept, dropped_consent, dropped_unrecorded, bad, blank):
+    def corpus(self, all_runs, kept, dropped_consent, dropped_unrecorded, bad,
+               blank, dropped_named):
         self.h(2, "The corpus")
         times = [r.time for r in kept if r.time]
         rows = [
@@ -560,6 +902,8 @@ class Report(object):
             ["Unparseable / skipped", bad + blank],
             ["Runs read", len(all_runs)],
         ]
+        if dropped_named:
+            rows.append(["Dropped: excluded by name", dropped_named])
         if self.args.mode == "public":
             rows += [
                 ["Dropped: consent declined", dropped_consent],
@@ -587,25 +931,35 @@ class Report(object):
         self.p("Gave a name: %s of all runs read." % pct(named, len(all_runs)))
 
         if times:
+            # Every day between the first run and the last, so a quiet stretch
+            # shows as a trough rather than closing up.
+            first, last = min(times).date(), max(times).date()
             per_day = collections.Counter(t.date().isoformat() for t in times)
+            days = [(first + datetime.timedelta(days=i)).isoformat()
+                    for i in range((last - first).days + 1)]
             self.h(3, "Runs per day")
-            self.rows(["Day", "Runs", ""],
-                      [[d, per_day[d], "#" * min(per_day[d], 60)]
-                       for d in sorted(per_day)])
+            self.rows(["Day", "Runs"], [[d, per_day.get(d, 0)] for d in days],
+                      chart="line", data=[(d, per_day.get(d, 0)) for d in days])
 
         self.stats["corpus"] = {
             "lines": len(all_runs) + bad + blank, "unparseable": bad + blank,
             "runs_read": len(all_runs), "runs_analysed": len(kept),
             "dropped_consent_declined": dropped_consent,
             "dropped_consent_unrecorded": dropped_unrecorded,
+            "dropped_excluded_by_name": dropped_named,
             "consent_rate": (consented / float(recorded)) if recorded else None,
             "named_runs": named,
             "first": min(times).isoformat() if times else None,
             "last": max(times).isoformat() if times else None,
         }
 
-    def respondents(self, groups, selected, linked):
+    def respondents(self, groups, selected, linked, excluded_runs):
         self.h(2, "Respondents")
+        if excluded_runs:
+            self.p("Excluded by name (%s): %d run%s, dropped before any of "
+                   "the counts below. `--keep-excluded` keeps them."
+                   % (", ".join(self.args.exclude_name), excluded_runs,
+                      "" if excluded_runs == 1 else "s"))
         named = sum(1 for k in groups if k[0] == "name")
         repeats = {k: v for k, v in groups.items() if len(v) > 1}
         self.p(
@@ -725,7 +1079,10 @@ class Report(object):
             self.h(3, head)
             rows = [[strip_tags(dict(opts).get(v, v)), "`%s`" % v, pct(counts.get(v, 0), n)]
                     for v in values]
-            self.rows(["Answer", "Value", "Respondents"], rows)
+            self.rows(["Answer", "Value", "Respondents"], rows,
+                      chart="bar_h", total=n,
+                      data=[(strip_tags(dict(opts).get(v, v)), counts.get(v, 0))
+                            for v in values])
             stats[q["id"]] = {"label": q["label"], "asked": n,
                               "counts": dict(counts)}
         self.stats["questions"] = stats
@@ -801,9 +1158,11 @@ class Report(object):
             if self.args.mode == "public" and 0 < c < self.args.min_cell:
                 hidden += 1
                 continue
-            rows.append([title, "`%s`" % ids, c, pct(c, n)])
-        rows.sort(key=lambda r: (-r[2], r[0], r[1]))
-        self.rows(["Conflict card", "Answers blamed", "N", "Respondents"], rows)
+            rows.append([title, "`%s`" % ids, pct(c, n), c])
+        rows.sort(key=lambda r: (-r[3], r[0], r[1]))
+        self.rows(["Conflict card", "Answers blamed", "Respondents"],
+                  [r[:3] for r in rows], chart="bar_h", total=n,
+                  data=[(r[0], r[3]) for r in rows if r[3]])
         if universe:
             hit = sum(1 for k in universe_keys if seen.get(k))
             self.p("%d of the %d conflict cards reachable at all were hit by "
@@ -818,9 +1177,11 @@ class Report(object):
         counts = [len(r.scored["conflicts"]) + len(r.scored["extras"]) for r in runs]
         dist = collections.Counter(counts)
         self.h(3, "How many conflicts each person had")
-        self.rows(["Conflicts", "Respondents", ""],
-                  [[k, pct(dist[k], n), "#" * min(dist[k], 60)]
-                   for k in sorted(dist)])
+        span = range(0, max(dist) + 1) if dist else []
+        self.rows(["Conflicts", "Respondents"],
+                  [[k, pct(dist.get(k, 0), n)] for k in span],
+                  chart="columns", total=n,
+                  data=[(str(k), dist.get(k, 0)) for k in span])
         self.p("Mean %.2f, median %.1f. %s came out with no conflict at all."
                % (sum(counts) / float(n) if n else 0.0, median(counts),
                   pct(dist.get(0, 0), n)))
@@ -837,9 +1198,11 @@ class Report(object):
             if self.args.mode == "public" and 0 < c < self.args.min_cell:
                 hidden += 1
                 continue
-            rows.append([b, c, pct(c, n)])
-        rows.sort(key=lambda r: (-r[1], r[0]))
-        self.rows(["Bullet", "N", "Respondents"], rows)
+            rows.append([b, pct(c, n), c])
+        rows.sort(key=lambda r: (-r[2], r[0]))
+        self.rows(["Bullet", "Respondents"], [r[:2] for r in rows],
+                  chart="bar_h", total=n,
+                  data=[(r[0], r[2]) for r in rows if r[2]])
         if hidden:
             self.p("%d further bullet%s bitten by fewer than %d people and "
                    "withheld." % (hidden, "" if hidden == 1 else "s",
@@ -851,9 +1214,11 @@ class Report(object):
         bcounts = [len({card_key(b) for b in r.scored["bullets"]}) for r in runs]
         bdist = collections.Counter(bcounts)
         self.h(3, "How many bullets each person bit")
-        self.rows(["Bullets", "Respondents", ""],
-                  [[k, pct(bdist[k], n), "#" * min(bdist[k], 60)]
-                   for k in sorted(bdist)])
+        bspan = range(0, max(bdist) + 1) if bdist else []
+        self.rows(["Bullets", "Respondents"],
+                  [[k, pct(bdist.get(k, 0), n)] for k in bspan],
+                  chart="columns", total=n,
+                  data=[(str(k), bdist.get(k, 0)) for k in bspan])
         clean = sum(1 for r in runs
                     if not r.scored["conflicts"] and not r.scored["extras"]
                     and not r.scored["bullets"])
@@ -868,6 +1233,109 @@ class Report(object):
         self.stats["conflict_count_distribution"] = dict(dist)
         self.stats["bullet_count_distribution"] = dict(bdist)
         self.stats["clean_runs"] = clean
+
+    # -- the modal answer --------------------------------------------------
+
+    def modal(self, runs, views):
+        """Take the most popular answer to every question, and see what the
+        quiz makes of the run they add up to.
+
+        It is a construction, not a person: the composite is nobody's answers
+        unless somebody happens to have given exactly them, and a majority on
+        each question separately can still be jointly inconsistent - which is
+        the interesting case, and why it is run through the engine rather
+        than just tabulated.
+        """
+        self.h(2, "The modal answer")
+        qs = (self.engine.meta["questions"] if self.engine
+              else self.fallback_questions(runs))
+        n = len(runs)
+        modal, rows, data = {}, [], []
+        for q in qs:
+            asked = [self.effective(r)[q["id"]] for r in runs
+                     if q["id"] in self.effective(r)]
+            if not asked:
+                continue
+            counts = collections.Counter(asked)
+            # Ties go to the answer the quiz offers first, so the composite is
+            # reproducible rather than dependent on iteration order.
+            order = {v: i for i, (v, _) in enumerate(q.get("opts") or [])}
+            top = min(counts, key=lambda v: (-counts[v], order.get(v, 99), v))
+            modal[q["id"]] = top
+            rows.append([q["label"], self.vlabel(q["id"], top, 60),
+                         "`%s`" % top, pct(counts[top], len(asked))])
+            data.append((q["label"], counts[top]))
+        if not modal:
+            self.p("(no answers to take a mode of)")
+            return
+
+        self.p("The most popular answer to each question, over the people who "
+               "were asked it. Where a question was only put to some of them, "
+               "its mode is that subgroup's, which is why the composite can "
+               "include an answer most respondents never gave.")
+
+        scored = self.engine.score(modal) if self.engine else None
+        if scored:
+            # Pruning can retire a question whose mode was taken over the
+            # people who did see it, so report the composite the engine
+            # actually scored rather than the one assembled above.
+            kept = scored["answers"]
+            dropped = [q["label"] for q in qs
+                       if q["id"] in modal and q["id"] not in kept]
+            rows = [r for r, q in zip(rows, [q for q in qs if q["id"] in modal])
+                    if q["id"] in kept]
+            data = [d for d, q in zip(data, [q for q in qs if q["id"] in modal])
+                    if q["id"] in kept]
+        self.rows(["Question", "Modal answer", "Value", "Of those asked"],
+                  rows, chart="bar_h", total=n, data=data)
+
+        if not scored:
+            self.p("*The verdict on this composite needs the quiz's engine; "
+                   "see the note under Conflicts.*")
+            self.stats["modal_answers"] = modal
+            return
+
+        if dropped:
+            self.p("Dropped from the composite, because the other modal "
+                   "answers never raise %s: %s."
+                   % ("it" if len(dropped) == 1 else "them",
+                      ", ".join(dropped)))
+        self.p("Open it: append `#a=%s` to the quiz URL." % scored["code"])
+
+        exact = sum(1 for r in runs if self.effective(r) == kept)
+        self.p("%s gave exactly this set of answers." % pct(exact, n))
+
+        cards = [c["title"] or "(generic card)" for c in scored["conflicts"]]
+        cards += [x["title"] for x in scored["extras"]]
+        self.h(3, "What the quiz says back to it")
+        if cards:
+            self.p("The composite is **not internally consistent**: a "
+                   "majority on each question separately still adds up to a "
+                   "set of claims that cannot all hold.")
+            self.rows(["Conflict"], [[card_key(c)] for c in cards])
+        else:
+            self.p("The composite is **internally consistent** - no conflict "
+                   "card. Every majority answer can be held alongside the "
+                   "others.")
+        if scored["bullets"]:
+            self.rows(["Bullet bitten"],
+                      [[card_key(b)] for b in scored["bullets"]])
+        else:
+            self.p("It bites no bullets.")
+
+        if views:
+            best = nearest_view(views, kept)
+            if best:
+                score, names, _ = best
+                self.p("Nearest catalogued view: %s, agreeing on %.0f%% of "
+                       "the answers."
+                       % (", ".join(name for _, name in names), 100.0 * score))
+
+        self.stats["modal"] = {
+            "answers": kept, "code": scored["code"], "exact_matches": exact,
+            "conflicts": [card_key(c) for c in cards],
+            "bullets": [card_key(b) for b in scored["bullets"]],
+        }
 
     # -- views ------------------------------------------------------------
 
@@ -892,12 +1360,15 @@ class Report(object):
                 tied += 1
             for key, name in names:
                 hits[(key, name)] += 1.0 / len(names)
-        ranked = sorted(hits.items(), key=lambda kv: (-kv[1], kv[0][0]))
+        ranked = [(k, v) for k, v in
+                  sorted(hits.items(), key=lambda kv: (-kv[1], kv[0][0]))
+                  if not (self.args.mode == "public" and v < self.args.min_cell)]
         rows = [[name, "`%s`" % key, "%.1f" % v,
                  "%.0f%%" % (100.0 * v / len(runs)) if runs else "-"]
-                for (key, name), v in ranked
-                if not (self.args.mode == "public" and v < self.args.min_cell)]
-        self.rows(["View", "Key", "Respondents (ties split)", "Share"], rows)
+                for (key, name), v in ranked]
+        self.rows(["View", "Key", "Respondents (ties split)", "Share"], rows,
+                  chart="bar_h", total=len(runs),
+                  data=[(name, v) for (key, name), v in ranked[:15] if v])
         if scores:
             self.p("Agreement with the nearest view: mean %.0f%%, median "
                    "%.0f%%, worst %.0f%%. A low figure means the catalogue "
@@ -1009,7 +1480,72 @@ class Report(object):
     # -- assembly ---------------------------------------------------------
 
     def render(self):
-        return "\n".join(self.lines).rstrip() + "\n"
+        """Markdown, which is also the plain-text form printed to stdout."""
+        lines = []
+        for block in self.blocks:
+            kind = block[0]
+            if kind == "h":
+                lines += ["", "#" * block[1] + " " + block[2], ""]
+            elif kind == "p":
+                lines += [block[1], ""]
+            elif kind == "quote":
+                lines += ["> " + block[1], ""]
+            elif kind == "table":
+                lines += table(block[1], block[2]) + [""]
+            # Charts are an HTML-only block; the table beside each one carries
+            # the same numbers, so nothing is lost here.
+        return "\n".join(lines).strip() + "\n"
+
+    def render_html(self, title):
+        out = [HTML_HEAD % {"title": esc(title)}]
+        for block in self.blocks:
+            kind = block[0]
+            if kind == "h":
+                out.append("<h%d>%s</h%d>"
+                           % (block[1], inline_html(block[2]), block[1]))
+            elif kind == "p":
+                out.append("<p>%s</p>" % inline_html(block[1]))
+            elif kind == "quote":
+                out.append("<blockquote><p>%s</p></blockquote>"
+                           % inline_html(block[1]))
+            elif kind == "table":
+                out.append(html_table(block[1], block[2]))
+            elif kind == "chart":
+                svg = CHARTS[block[1]](block[2], total=block[3]) \
+                    if block[1] != "line" else CHARTS[block[1]](block[2])
+                if svg:
+                    out.append("<figure>%s</figure>" % svg)
+        out.append("</main>")
+        return "\n".join(out) + "\n"
+
+
+def inline_html(text):
+    """The little markdown the report actually uses, as HTML."""
+    text = str(text)                        # table cells are often plain ints
+    out, i = [], 0
+    for m in re.finditer(r"`([^`]+)`|\*\*([^*]+)\*\*|\*([^*]+)\*", text):
+        out.append(esc(text[i:m.start()]))
+        if m.group(1) is not None:
+            out.append("<code>%s</code>" % esc(m.group(1)))
+        elif m.group(2) is not None:
+            out.append("<strong>%s</strong>" % esc(m.group(2)))
+        else:
+            out.append("<em>%s</em>" % esc(m.group(3)))
+        i = m.end()
+    out.append(esc(text[i:]))
+    return "".join(out)
+
+
+def html_table(headers, rows):
+    out = ['<div class="tablewrap"><table><thead><tr>']
+    out += ["<th>%s</th>" % inline_html(h) for h in headers]
+    out.append("</tr></thead><tbody>")
+    for row in rows:
+        out.append("<tr>"
+                   + "".join("<td>%s</td>" % inline_html(c) for c in row)
+                   + "</tr>")
+    out.append("</tbody></table></div>")
+    return "".join(out)
 
 
 def main():
@@ -1028,6 +1564,13 @@ def main():
                     help="which of a respondent's runs to count: their first "
                          "(default - the answers they gave before seeing any "
                          "verdict), their last, or every run")
+    ap.add_argument("--exclude-name", action="append", metavar="NAME",
+                    help="drop every run by this name, and by anything "
+                         "--link-anon folds into it. Repeatable; giving it at "
+                         "all replaces the default list (%s)"
+                         % ", ".join(DEFAULT_EXCLUDED_NAMES))
+    ap.add_argument("--keep-excluded", action="store_true",
+                    help="keep the runs --exclude-name would drop")
     ap.add_argument("--link-anon", action="store_true",
                     help="fold an unnamed run into a named respondent when "
                          "they share an (IP, user-agent) and only one name "
@@ -1057,11 +1600,18 @@ def main():
                     help="how many of those to print as a cross-tab "
                          "(default: 3)")
     ap.add_argument("-o", "--out", help="also write the report to this file")
+    ap.add_argument("--html", metavar="PATH",
+                    help="write the report to this file as a self-contained "
+                         "HTML page, with the tables drawn as charts")
     ap.add_argument("--json", help="write the numbers to this file as JSON")
     args = ap.parse_args()
 
     if args.min_cell is None:
         args.min_cell = 2 if args.mode == "public" else 1
+    if args.exclude_name is None:
+        args.exclude_name = list(DEFAULT_EXCLUDED_NAMES)
+    if args.keep_excluded:
+        args.exclude_name = []
 
     try:
         all_runs, bad, blank = read_log(args.log)
@@ -1082,6 +1632,15 @@ def main():
 
     linked = assign_identities(kept, args.link_anon)
     groups = group_runs(kept)
+    groups, excluded_runs = drop_excluded(groups, args.exclude_name)
+    if not groups:
+        sys.exit("every respondent was excluded by name; --keep-excluded "
+                 "keeps them")
+    if excluded_runs:
+        # Out of the corpus entirely, not just out of the tables: they are the
+        # author testing the quiz, not responses.
+        survivors = {id(r) for runs in groups.values() for r in runs}
+        kept = [r for r in kept if id(r) in survivors]
     selected = select(groups, args.dedupe)
 
     engine, universe = None, None
@@ -1107,10 +1666,12 @@ def main():
         if engine.errors:
             print("page errors: " + "; ".join(engine.errors), file=sys.stderr)
 
+    title = "Population ethics quiz - response log"
+    views = load_views()
     rep = Report(args, engine)
-    rep.lines += ["# Population ethics quiz - response log", ""]
+    rep.h(1, title)
     if args.mode == "private":
-        rep.p(BANNER)
+        rep.quote(BANNER)
     rep.p("Generated %s from `%s` in **%s** mode, `--dedupe %s`."
           % (datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), args.log,
              args.mode, args.dedupe))
@@ -1118,22 +1679,28 @@ def main():
         rep.p("Only runs whose taker consented to public aggregate analysis "
               "are included, and nothing below identifies anybody.")
 
-    rep.corpus(all_runs, kept, len(declined), len(unrecorded), bad, blank)
-    rep.respondents(groups, selected, linked)
+    rep.corpus(all_runs, kept, len(declined), len(unrecorded), bad, blank,
+               excluded_runs)
+    rep.respondents(groups, selected, linked, excluded_runs)
     rep.answers(selected)
+    rep.modal(selected, views)
     rep.cards(selected, universe)
-    rep.views(selected, load_views())
+    rep.views(selected, views)
     rep.associations(selected)
     rep.profiles(selected)
 
     if args.mode == "private":
-        rep.lines += ["", "---", "", BANNER, ""]
+        rep.quote(BANNER)
 
     text = rep.render()
     sys.stdout.write(text)
     if args.out:
         pathlib.Path(args.out).write_text(text, encoding="utf-8")
         print("wrote %s" % args.out, file=sys.stderr)
+    if args.html:
+        pathlib.Path(args.html).write_text(rep.render_html(title),
+                                           encoding="utf-8")
+        print("wrote %s" % args.html, file=sys.stderr)
     if args.json:
         rep.stats["mode"] = args.mode
         rep.stats["dedupe"] = args.dedupe
