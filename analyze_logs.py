@@ -667,6 +667,9 @@ class Report(object):
                 # Names are matched case- and space-insensitively but shown as
                 # last typed, which is what the person would recognise.
                 typed = [r.name for r in runs if r.name]
+                if not typed:
+                    # skip anyone without a name
+                    continue
                 who = (typed[-1] if typed else key[1]) if key[0] == "name" \
                     else "%s / %s" % (key[1], (key[2] or "")[:60])
                 rows.append([who, len(runs),
