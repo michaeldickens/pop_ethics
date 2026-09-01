@@ -180,7 +180,7 @@ var QUESTIONS = [
     label: "Repeating the moves",
     title: "Now do it again. And again.",
     body:
-      "Imagine making the same two moves as A -> A+ and A+ -> B, but this time starting at B: (1) make everyone slightly better off and create a new group of less-happy people; then (2) keep the same population, but increase both total welfare and equality. Repeat again and again a total of " +
+      "Imagine making the same two moves as A &rarr; A+ and A+ &rarr; B, but this time starting at B: (1) make everyone slightly better off and create a new group of less-happy people; then (2) keep the same population, but increase both total welfare and equality. Repeat again and again a total of " +
       CHAIN.length +
       " times, each new rung making the population larger but less happy.",
     ask: "Would you make those same two judgements at every rung?",
