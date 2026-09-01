@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Summarise the response log written by serve_quiz.py.
 
-    python3 analyse_logs.py quiz-log.jsonl                  # public report
-    python3 analyse_logs.py --mode private quiz-log.jsonl    # everything, do not share
-    python3 analyse_logs.py --dedupe last quiz-log.jsonl
-    python3 analyse_logs.py --html report.html quiz-log.jsonl
-    python3 analyse_logs.py --json stats.json -o report.md quiz-log.jsonl
+    python3 analyze_logs.py quiz-log.jsonl                  # public report
+    python3 analyze_logs.py --mode private quiz-log.jsonl    # everything, do not share
+    python3 analyze_logs.py --dedupe last quiz-log.jsonl
+    python3 analyze_logs.py --html report.html quiz-log.jsonl
+    python3 analyze_logs.py --json stats.json -o report.md quiz-log.jsonl
 
 The report prints as markdown, which is also readable as plain text.
 --html writes the same report as a self-contained page - no CDN, no
@@ -23,8 +23,9 @@ Two modes, because the log holds two different kinds of thing:
            nineteen-answer profile held by one person is as identifying as
            a name. The output is meant to be publishable as it stands.
 
-  private  keeps every run, consented or not, and prints the identifying
-           detail. The report carries a do-not-share banner top and bottom.
+  private  keeps every run, consented or not, and names the people who
+           gave a name. The report carries a do-not-share banner top and
+           bottom.
 
 Runs logged before the consent checkbox existed carry no consent field at
 all. They are treated as non-consenting - silence is not consent - and
@@ -848,11 +849,12 @@ def table(headers, rows):
 
 
 BANNER = (
-    "> **PRIVATE - DO NOT SHARE.** This report was built in private mode. It "
+    "**PRIVATE - DO NOT SHARE.** This report was built in private mode. It "
     "includes runs whose takers did not consent to public aggregate "
-    "analysis, and it prints names, IP addresses and user agents. Publishing "
-    "any of it, in whole or in part, breaks a promise made on the quiz's own "
-    "consent checkbox. Use `--mode public` for a report that can be shared."
+    "analysis, and it prints the names people gave beside their answers. "
+    "Publishing any of it, in whole or in part, breaks a promise made on the "
+    "quiz's own consent checkbox. Use `--mode public` for a report that can "
+    "be shared."
 )
 
 
@@ -1016,6 +1018,10 @@ class Report(object):
 
         if self.args.mode == "private" and groups:
             self.h(3, "Per respondent (private mode only)")
+            self.p("Only the people who gave a name. The rest are known to "
+                   "the log by an address and a browser string, which would "
+                   "make this a list of IP addresses without telling you "
+                   "anything the counts above have not already said.")
             rows = []
             for key, runs in groups.items():
                 # Names are matched case- and space-insensitively but shown as
@@ -1024,8 +1030,7 @@ class Report(object):
                 if not typed:
                     # skip anyone without a name
                     continue
-                who = (typed[-1] if typed else key[1]) if key[0] == "name" \
-                    else "%s / %s" % (key[1], (key[2] or "")[:60])
+                who = typed[-1]
                 rows.append([who, len(runs),
                              runs[-1].time.strftime("%Y-%m-%d") if runs[-1].time else "?",
                              runs[-1].code])
