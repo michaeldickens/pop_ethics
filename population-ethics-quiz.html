@@ -158,6 +158,9 @@ ol.claims li::before{content:counter(c);position:absolute;left:0;top:9px;font-fa
   font-family:var(--body);font-size:17.5px;color:var(--ink);padding:14px 16px;
 }
 .namefield:focus{border-color:var(--blue);outline:none}
+.consent{display:flex;gap:12px;align-items:flex-start;max-width:56ch;margin:26px 0 0;cursor:pointer}
+.consent input{flex:0 0 auto;width:18px;height:18px;margin:2px 0 0;accent-color:var(--blue);cursor:pointer}
+.consent span{font-size:16px;color:#25282C}
 table.rev{width:100%;border-collapse:collapse;margin:14px 0 0;font-size:15px}
 table.rev td{border-top:1px solid var(--hair);padding:9px 8px 9px 0;vertical-align:top}
 table.rev td.a{font-family:var(--mono);font-size:11.5px;color:var(--blue);white-space:nowrap;text-align:right;padding-right:14px;width:1%}
@@ -236,6 +239,10 @@ footer a{color:var(--blue)}
   <div class="q" style="margin-top:26px">
     <input id="namefield" class="namefield" type="text" maxlength="80" autocomplete="name" placeholder="Name (optional)">
     <p class="small" style="margin-top:14px;max-width:52ch">If you give a name, I can see if you take the quiz across multiple devices, to avoid accidentally double-counting your answers.</p>
+    <label class="consent" for="consent">
+      <input id="consent" type="checkbox" checked>
+      <span>You may use my answers, combined with everyone else's, in a public analysis of the results. Only aggregate statistics would be published &mdash; never your individual answers. Uncheck to opt out.</span>
+    </label>
   </div>
   <div class="nav">
     <button class="btn ghost" id="nameback">&larr; Back</button>
