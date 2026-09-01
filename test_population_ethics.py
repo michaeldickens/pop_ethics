@@ -1243,6 +1243,47 @@ def suite_flow(page, rep):
     rep.check(not page.eval_on_selector_all(".opt", "e => e.some(x => x.classList.contains('sel'))"),
               "restart clears previous answers")
 
+    # The namestep offers opt-out consent for public aggregate analysis. The box
+    # ships checked; whatever it reads when you go on to the verdict is the
+    # consent value carried in the logged submission - the only record of the
+    # choice, since nothing about consent travels in the share link.
+    def walk_to_namestep(clicks):
+        reset(page)
+        # The /log POST goes to a file:// endpoint under the test harness and
+        # never lands, so spy on fetch to read the body that would have shipped.
+        page.evaluate("""() => {
+          window.__logged = null;
+          window.fetch = (url, opts) => {
+            try { if (opts && opts.method === 'POST') window.__logged = JSON.parse(opts.body); }
+            catch (e) {}
+            return Promise.resolve(new Response(null, {status: 204}));
+          };
+        }""")
+        page.click("#start")
+        for _ in range(len(QIDS) + 2):
+            if page.query_selector("#namestep:not(.hide)"):
+                return
+            answer(page, clicks)
+        raise AssertionError("never reached the namestep")
+
+    def logged_consent():
+        page.click("#namenext")
+        page.wait_for_selector(DONE, timeout=5000)
+        page.wait_for_timeout(100)
+        body = page.evaluate("() => window.__logged")
+        return body.get("consent_public_aggregate") if body else None
+
+    walk_to_namestep(CLICK_MODAL)
+    rep.check(page.eval_on_selector("#consent", "e => e.checked") is True,
+              "consent box ships checked (opt-out)")
+    rep.check(logged_consent() is True,
+              "leaving the box checked logs consent true")
+
+    walk_to_namestep(CLICK_MODAL)
+    page.uncheck("#consent")
+    rep.check(logged_consent() is False,
+              "unchecking the box logs consent false (opt-out)")
+
 
 ROUNDTRIP_JS = """
 () => {

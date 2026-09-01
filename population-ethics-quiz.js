@@ -1053,6 +1053,11 @@ var ANS = {},
 // Optional, given on the namestep screen just before results. Never required,
 // never decoded from a share link - it travels only in the /log POST.
 var NAME = "";
+// Opt-out consent for including this run in a public analysis of the aggregate.
+// Given on the namestep screen and defaulting to true (the checkbox ships
+// checked); like NAME it is never decoded from a share link and travels only in
+// the /log POST, so the log records the explicit choice for every genuine run.
+var CONSENT = true;
 // Set when a request for the results was turned back for want of an answer;
 // rendered on the question it was turned back to, then spent.
 var NOTICE = "";
@@ -1106,10 +1111,11 @@ function decodeAns(code) {
    Optional response logging. On a genuine completion - not a shared
    link being replayed - POST the answers to the server, which appends
    one line to a log file. Most of what's identifying (IP, user-agent, the
-   arrival time) is filled in server-side; the client sends the answers and,
-   if the person chose to give one on the namestep screen, a name - the one
-   piece of identity the server can't infer, and the only way to recognize
-   the same person across devices instead of just across a shared IP.
+   arrival time) is filled in server-side; the client sends the answers, the
+   opt-out consent choice for public aggregate analysis, and - if the person
+   chose to give one on the namestep screen - a name, the one piece of identity
+   the server can't infer, and the only way to recognize the same person across
+   devices instead of just across a shared IP.
    Best-effort: if there is no endpoint (opened from disk, or served by a
    plain static host) the request just fails and the quiz carries on.
    Nothing here blocks rendering or touches the UI.
@@ -1125,7 +1131,12 @@ function logAnswers() {
   // deep links make reachable and which would silently skew the corpus.
   if (LOGGED || SHARED || !LOG_ENDPOINT || missingActive().length) return;
   LOGGED = true;
-  var payload = { code: encodeAns(), answers: ANS, page: baseURL() };
+  var payload = {
+    code: encodeAns(),
+    answers: ANS,
+    page: baseURL(),
+    consent_public_aggregate: CONSENT,
+  };
   if (NAME) payload.name = NAME;
   try {
     // keepalive lets the POST finish even if the tab is closed right after.
@@ -1925,6 +1936,7 @@ function advance() {
 // ask that a fresh completion doesn't already have an answer to.
 function showNameStep() {
   $("#namefield").value = NAME;
+  $("#consent").checked = CONSENT;
   show("namestep");
   window.scrollTo({ top: 0, behavior: "smooth" });
   setTimeout(function () {
@@ -1933,6 +1945,7 @@ function showNameStep() {
 }
 function finishNameStep() {
   NAME = $("#namefield").value.trim();
+  CONSENT = $("#consent").checked;
   logAnswers();
   showResults();
 }
@@ -1952,6 +1965,7 @@ $("#start").addEventListener("click", function () {
   SHARED = false;
   RETURNING = false;
   NAME = "";
+  CONSENT = true;
   show("quiz");
   renderQ();
 });
