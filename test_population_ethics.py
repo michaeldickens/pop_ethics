@@ -32,9 +32,47 @@ Exit status is 0 only if every selected suite passes.
 
 import argparse
 import json
+import multiprocessing
 import pathlib
 import sys
 from playwright.sync_api import sync_playwright
+
+# The page pulls Fraunces, Newsreader and Space Mono from Google Fonts, and the
+# app script is render-blocked on that stylesheet, so every navigation waits for
+# it. On a machine that cannot reach Google Fonts each of the suite's ~30 page
+# loads stalled for ten-plus seconds before the request finally failed, which is
+# what made the run take twenty minutes on the VM. We fetch each font resource
+# once, cache it in-process, and serve the rest from memory: the first load pays
+# for the fonts and the rest are instant. When a resource is genuinely
+# unreachable we fail it fast instead of letting it hang, so an offline run falls
+# back to system fonts quickly rather than stalling. Real fonts still load
+# whenever they can, so geometry and layout keep measuring the type the page
+# actually renders.
+FONT_HOSTS = ("fonts.googleapis.com", "fonts.gstatic.com")
+_font_cache = {}
+
+
+def install_font_cache(pg):
+    def handler(route):
+        u = route.request.url
+        if u in _font_cache:
+            hit = _font_cache[u]
+            if hit is None:
+                route.abort()
+            else:
+                route.fulfill(status=hit[0], headers=hit[1], body=hit[2])
+            return
+        try:
+            resp = route.fetch(timeout=5000)
+            entry = (resp.status, resp.headers, resp.body())
+            _font_cache[u] = entry
+            route.fulfill(status=entry[0], headers=entry[1], body=entry[2])
+        except Exception:
+            _font_cache[u] = None
+            route.abort()
+
+    for host in FONT_HOSTS:
+        pg.route(f"**://{host}/**", handler)
 
 QIDS = ["pareto", "same_number", "AvB", "misery", "neutral_mod", "benign", "nae",
         "generalize", "AvZ", "neutral_wond", "collapse", "greedy", "plusVsBoth",
@@ -96,22 +134,32 @@ PRICED_MOD_GT = "greedy+neutral_mod+plusVsBoth+trans_gt"
 
 
 class Report:
-    def __init__(self, verbose):
+    # Lines are collected as well as (optionally) printed live. A single
+    # sequential run prints as it goes; parallel workers keep live off and hand
+    # their buffered lines back so the driver can print each suite's output in
+    # one uninterleaved block.
+    def __init__(self, verbose, live=True):
         self.verbose, self.failures, self.checks = verbose, [], 0
+        self.live, self.lines = live, []
+
+    def _emit(self, line):
+        self.lines.append(line)
+        if self.live:
+            print(line)
 
     def check(self, ok, name, detail=""):
         self.checks += 1
         if not ok:
             self.failures.append(f"{name}  {detail}".rstrip())
         if self.verbose or not ok:
-            print(f"  {'pass' if ok else 'FAIL'}  {name}" + (f"   {detail}" if detail else ""))
+            self._emit(f"  {'pass' if ok else 'FAIL'}  {name}" + (f"   {detail}" if detail else ""))
 
     def note(self, msg):
         if self.verbose:
-            print(f"        {msg}")
+            self._emit(f"        {msg}")
 
     def suite(self, name):
-        print(f"\n=== {name} ===")
+        self._emit(f"\n=== {name} ===")
 
 
 def bullet_titles(page, profile):
@@ -1759,61 +1807,123 @@ def random_profiles(n, seed):
     return out
 
 
+# Canonical order (cheap suites first) and a rough cost in seconds, used only to
+# balance suites across workers when running in parallel. flow and conditional
+# dominate, so keeping them on separate workers is what actually shortens the run.
+SUITE_NAMES = ["oracle", "views", "fuzz", "engine", "geometry", "share",
+               "layout", "conditional", "flow"]
+SUITE_COST = {"oracle": 4, "views": 4, "fuzz": 8, "engine": 10, "geometry": 18,
+              "share": 56, "layout": 61, "conditional": 135, "flow": 264}
+
+
+def dispatch(name, page, page_factory, rep, seed, cases, oracle_cases):
+    if name == "engine":
+        suite_engine(page, rep)
+    elif name == "oracle":
+        suite_oracle(page, rep, random_profiles(oracle_cases, seed))
+    elif name == "fuzz":
+        suite_fuzz(page, rep, seed, cases)
+    elif name == "geometry":
+        suite_geometry(page, rep)
+    elif name == "flow":
+        suite_flow(page, rep)
+    elif name == "share":
+        suite_share(page, rep)
+    elif name == "conditional":
+        suite_conditional(page, rep)
+    elif name == "views":
+        suite_views(page, rep)
+    elif name == "layout":
+        suite_layout(page_factory, rep)
+
+
+def run_group(job):
+    # One browser runs the whole group of suites. Kept top-level and passed only
+    # picklable data so it can be a multiprocessing worker.
+    url, names, verbose, seed, cases, oracle_cases, live = job
+    rep = Report(verbose, live=live)
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+
+        def page_factory(w, h):
+            pg = browser.new_page(viewport={"width": w, "height": h})
+            install_font_cache(pg)
+            pg.goto(url)
+            return pg
+
+        page = page_factory(1100, 950)
+        page.wait_for_timeout(700)
+        for name in names:
+            dispatch(name, page, page_factory, rep, seed, cases, oracle_cases)
+        browser.close()
+    return rep.checks, rep.failures, rep.lines
+
+
+def balance(names, jobs):
+    # Longest-processing-time bin packing: hand the most expensive suite to the
+    # emptiest worker in turn. Keeps groups in canonical order for stable output.
+    groups = [[] for _ in range(jobs)]
+    loads = [0] * jobs
+    for name in sorted(names, key=lambda n: -SUITE_COST.get(n, 30)):
+        i = loads.index(min(loads))
+        groups[i].append(name)
+        loads[i] += SUITE_COST.get(name, 30)
+    order = {n: i for i, n in enumerate(SUITE_NAMES)}
+    return [sorted(g, key=lambda n: order.get(n, 99)) for g in groups if g]
+
+
 def main():
     ap = argparse.ArgumentParser(description="Test the population ethics quiz.")
     ap.add_argument("--file", default="population-ethics-quiz.html")
     ap.add_argument("--suite", default="all",
-                    choices=["all", "engine", "oracle", "fuzz", "geometry", "layout",
-                             "flow", "share", "conditional", "views"])
+                    help="'all', or a comma-separated list: " + ",".join(SUITE_NAMES))
+    ap.add_argument("--skip", default="",
+                    help="comma-separated suites to leave out (e.g. --skip flow,conditional)")
+    ap.add_argument("-j", "--jobs", type=int, default=1,
+                    help="run suites across this many browsers in parallel")
     ap.add_argument("--seed", type=int, default=20260723)
     ap.add_argument("--cases", type=int, default=4000)
     ap.add_argument("--oracle-cases", type=int, default=400)
     ap.add_argument("-v", "--verbose", action="store_true")
     args = ap.parse_args()
 
+    def parse_list(s):
+        return [t.strip() for t in s.split(",") if t.strip()]
+
+    chosen = SUITE_NAMES if args.suite == "all" else parse_list(args.suite)
+    skip = set(parse_list(args.skip))
+    unknown = [s for s in list(chosen) + list(skip) if s not in SUITE_NAMES]
+    if unknown:
+        sys.exit(f"unknown suite(s): {', '.join(unknown)}\nknown: {', '.join(SUITE_NAMES)}")
+    selected = [s for s in SUITE_NAMES if s in chosen and s not in skip]
+    if not selected:
+        sys.exit("no suites selected")
+
     path = pathlib.Path(args.file).resolve()
     if not path.exists():
         sys.exit(f"no such file: {path}")
     url = "file://" + str(path)
-    rep = Report(args.verbose)
-    want = lambda s: args.suite in ("all", s)
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch()
+    jobs = max(1, min(args.jobs, len(selected)))
 
-        def page_factory(w, h):
-            pg = browser.new_page(viewport={"width": w, "height": h})
-            pg.goto(url)
-            return pg
+    if jobs == 1:
+        checks, failures, _ = run_group((url, selected, args.verbose, args.seed,
+                                         args.cases, args.oracle_cases, True))
+    else:
+        groups = balance(selected, jobs)
+        jobspecs = [(url, g, args.verbose, args.seed, args.cases, args.oracle_cases, False)
+                    for g in groups]
+        checks, failures = 0, []
+        with multiprocessing.Pool(len(jobspecs)) as pool:
+            for c, f, lines in pool.imap_unordered(run_group, jobspecs):
+                checks += c
+                failures += f
+                print("\n".join(lines))
 
-        page = page_factory(1100, 950)
-        page.wait_for_timeout(700)
-
-        if want("engine"):
-            suite_engine(page, rep)
-        if want("oracle"):
-            suite_oracle(page, rep, random_profiles(args.oracle_cases, args.seed))
-        if want("fuzz"):
-            suite_fuzz(page, rep, args.seed, args.cases)
-        if want("geometry"):
-            suite_geometry(page, rep)
-        if want("flow"):
-            suite_flow(page, rep)
-        if want("share"):
-            suite_share(page, rep)
-        if want("conditional"):
-            suite_conditional(page, rep)
-        if want("views"):
-            suite_views(page, rep)
-        if want("layout"):
-            suite_layout(page_factory, rep)
-
-        browser.close()
-
-    print(f"\n{rep.checks} checks run")
-    if rep.failures:
-        print(f"{len(rep.failures)} FAILED:")
-        for f in rep.failures:
+    print(f"\n{checks} checks run")
+    if failures:
+        print(f"{len(failures)} FAILED:")
+        for f in failures:
             print("  - " + f)
         sys.exit(1)
     print("all passed")
