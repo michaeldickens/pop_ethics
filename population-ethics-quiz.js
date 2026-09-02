@@ -1058,6 +1058,17 @@ var NAME = "";
 // checked); like NAME it is never decoded from a share link and travels only in
 // the /log POST, so the log records the explicit choice for every genuine run.
 var CONSENT = true;
+// Self-reported familiarity with the repugnant conclusion, given on the
+// namestep screen: "" for no answer, else "no", "heard" or "explain".
+// Asked here rather than on the intro for two reasons. Naming the repugnant
+// conclusion up front would tell people what the quiz is driving at and invite
+// them to answer as the position they half-remember; and the namestep still
+// comes before the verdict, so nothing anyone has seen by then has named the
+// term. Hence the question is put in the past tense - the quiz walks through
+// the repugnant conclusion unnamed, so "had you heard" has to reach back
+// behind the last quarter of an hour to mean anything.
+// Like NAME and CONSENT it never travels in a share link.
+var FAMILIARITY = "";
 // Set when a request for the results was turned back for want of an answer;
 // rendered on the question it was turned back to, then spent.
 var NOTICE = "";
@@ -1112,10 +1123,10 @@ function decodeAns(code) {
    link being replayed - POST the answers to the server, which appends
    one line to a log file. Most of what's identifying (IP, user-agent, the
    arrival time) is filled in server-side; the client sends the answers, the
-   opt-out consent choice for public aggregate analysis, and - if the person
-   chose to give one on the namestep screen - a name, the one piece of identity
-   the server can't infer, and the only way to recognize the same person across
-   devices instead of just across a shared IP.
+   opt-out consent choice for public aggregate analysis, the familiarity
+   answer, and - if the person chose to give one on the namestep screen - a
+   name, the one piece of identity the server can't infer, and the only way to
+   recognize the same person across devices instead of just across a shared IP.
    Best-effort: if there is no endpoint (opened from disk, or served by a
    plain static host) the request just fails and the quiz carries on.
    Nothing here blocks rendering or touches the UI.
@@ -1136,6 +1147,10 @@ function logAnswers() {
     answers: ANS,
     page: baseURL(),
     consent_public_aggregate: CONSENT,
+    // Always sent, "" and all, so that a run where the question went
+    // unanswered is distinguishable in the log from one taken before the
+    // question existed.
+    familiarity: FAMILIARITY,
   };
   if (NAME) payload.name = NAME;
   try {
@@ -1930,13 +1945,23 @@ function advance() {
   }
 }
 
-// One screen, offered once, between the last question and the verdict - a
-// name is never required to see results. Skipped entirely on a reload of a
+function famRadios() {
+  return Array.prototype.slice.call(
+    document.querySelectorAll('input[name="familiarity"]'));
+}
+
+// One screen, offered once, between the last question and the verdict -
+// nothing on it is required to see results. Skipped entirely on a reload of a
 // finished run (boot() goes straight to showResults) since it has nothing to
 // ask that a fresh completion doesn't already have an answer to.
 function showNameStep() {
   $("#namefield").value = NAME;
   $("#consent").checked = CONSENT;
+  // No option ships selected: a default would be an answer nobody gave, and
+  // "unanswered" has to stay distinguishable from "no".
+  famRadios().forEach(function (r) {
+    r.checked = r.value === FAMILIARITY;
+  });
   show("namestep");
   window.scrollTo({ top: 0, behavior: "smooth" });
   setTimeout(function () {
@@ -1946,6 +1971,8 @@ function showNameStep() {
 function finishNameStep() {
   NAME = $("#namefield").value.trim();
   CONSENT = $("#consent").checked;
+  var fam = famRadios().filter(function (r) { return r.checked; })[0];
+  FAMILIARITY = fam ? fam.value : "";
   logAnswers();
   showResults();
 }
@@ -1959,13 +1986,21 @@ $("#namefield").addEventListener("keydown", function (e) {
   if (e.key === "Enter") finishNameStep();
 });
 
-$("#start").addEventListener("click", function () {
+// Everything a fresh run starts from. Both ways in - Begin on the intro and
+// Start over on the results - clear the same state, so nothing given on one
+// run is left behind for whoever takes the next one on the same machine.
+function resetRun() {
   ANS = {};
   IDX = 0;
   SHARED = false;
   RETURNING = false;
   NAME = "";
   CONSENT = true;
+  FAMILIARITY = "";
+}
+
+$("#start").addEventListener("click", function () {
+  resetRun();
   show("quiz");
   renderQ();
 });
@@ -3297,11 +3332,7 @@ function showResults() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 
   $("#again").addEventListener("click", function () {
-    ANS = {};
-    IDX = 0;
-    SHARED = false;
-    RETURNING = false;
-    NAME = "";
+    resetRun();
     show("quiz");
     renderQ();
     window.scrollTo({ top: 0 });

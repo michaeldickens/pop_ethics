@@ -1266,23 +1266,73 @@ def suite_flow(page, rep):
             answer(page, clicks)
         raise AssertionError("never reached the namestep")
 
-    def logged_consent():
+    def logged(key):
         page.click("#namenext")
         page.wait_for_selector(DONE, timeout=5000)
         page.wait_for_timeout(100)
         body = page.evaluate("() => window.__logged")
-        return body.get("consent_public_aggregate") if body else None
+        return body.get(key) if body else None
 
     walk_to_namestep(CLICK_MODAL)
     rep.check(page.eval_on_selector("#consent", "e => e.checked") is True,
               "consent box ships checked (opt-out)")
-    rep.check(logged_consent() is True,
+    rep.check(logged("consent_public_aggregate") is True,
               "leaving the box checked logs consent true")
 
     walk_to_namestep(CLICK_MODAL)
     page.uncheck("#consent")
-    rep.check(logged_consent() is False,
+    rep.check(logged("consent_public_aggregate") is False,
               "unchecking the box logs consent false (opt-out)")
+
+    # The namestep also asks what the person knew before they started. It is
+    # optional and ships with nothing selected, so a run where it went
+    # unanswered has to log "" rather than picking a default nobody gave.
+    walk_to_namestep(CLICK_MODAL)
+    rep.check(page.eval_on_selector_all(
+                  'input[name="familiarity"]', "e => e.length") == 3,
+              "the familiarity question offers three graded options")
+    rep.check(not page.eval_on_selector_all(
+                  'input[name="familiarity"]', "e => e.some(x => x.checked)"),
+              "no familiarity option ships selected")
+    rep.check(logged("familiarity") == "",
+              "skipping the familiarity question logs an empty answer")
+
+    for value in ("no", "heard", "explain"):
+        walk_to_namestep(CLICK_MODAL)
+        page.check('input[name="familiarity"][value="%s"]' % value)
+        rep.check(logged("familiarity") == value,
+                  "familiarity %r reaches the log" % value)
+
+    # The question has to reach back past the quiz, which walks through the
+    # repugnant conclusion without naming it and whose intro credits Tannsjo
+    # and Huemer for biting the bullet on it. Present tense would collect
+    # what the last quarter of an hour taught people; past tense collects what
+    # they brought.
+    walk_to_namestep(CLICK_MODAL)
+    rep.check(page.inner_text("fieldset.famq legend").lower()
+                  .startswith("before taking this quiz"),
+              "the familiarity question is asked in the past tense",
+              page.inner_text("fieldset.famq legend"))
+    rep.check("repugnant" not in page.evaluate(
+                  "() => JSON.stringify(QUESTIONS).toLowerCase()"),
+              "no quiz question names the repugnant conclusion")
+
+    # Starting over has to clear what the namestep collected, or the next
+    # taker on a shared machine inherits the last one's answers.
+    walk_to_namestep(CLICK_MODAL)
+    page.check('input[name="familiarity"][value="explain"]')
+    page.uncheck("#consent")
+    page.fill("#namefield", "Ada")
+    page.click("#namenext")
+    page.wait_for_selector(DONE, timeout=5000)
+    page.click("#again")
+    page.wait_for_timeout(400)
+    rep.check(page.evaluate("() => FAMILIARITY") == "",
+              "starting over clears the familiarity answer")
+    rep.check(page.evaluate("() => CONSENT") is True,
+              "starting over restores the consent default")
+    rep.check(page.evaluate("() => NAME") == "",
+              "starting over clears the name")
 
 
 ROUNDTRIP_JS = """
