@@ -44,6 +44,13 @@ Runs by a name on the exclusion list - the author's own test runs, "MD
 Test", by default - are dropped from the corpus before anything is counted.
 --exclude-name replaces that list, --keep-excluded turns it off.
 
+Runs taken after the namestep began asking about it also carry a
+self-reported familiarity with the repugnant conclusion. It gets a section
+of its own and is tested against every question in the associations
+section, but it is deliberately kept out of the answer tallies, the modal
+composite and the nearest-view matching: it is not a position on
+population ethics.
+
 Besides the per-question tallies there is a "modal answer" section: the
 most popular answer to every question, assembled into one run and put back
 through the quiz. A majority on each question separately can still be
@@ -208,6 +215,30 @@ def strip_tags(s):
 # contradiction. Several different answer shapes share the row.
 NO_STORY = "(no story for this shape)"
 
+# The namestep's familiarity question, described the way the quiz's own
+# questions are so that the labelling, ordering and cross-tab machinery can
+# take it without knowing it is different. It is deliberately NOT folded into
+# a run's answers: it is not a position on population ethics, and letting it
+# into the tallies would put it in the modal composite, the answer profiles
+# and the nearest-view matching, where it does not belong.
+FAMILIARITY = {
+    "id": "familiarity",
+    "label": "Heard of the repugnant conclusion",
+    "kind": "meta",
+    "conditional": False,
+    # In order of how much is being claimed, which is the order the quiz
+    # offers them in, so the bars read as a scale.
+    "opts": [
+        ["no", "No"],
+        ["heard", "Yes, but couldn't have explained it"],
+        ["explain", "Yes, and could have explained it"],
+        ["", "Declined to say"],
+    ],
+}
+# "" is a non-answer: counted in the distribution, kept out of every
+# comparison, exactly as an unasked question is.
+FAMILIARITY_ANSWERS = ("no", "heard", "explain")
+
 _ALL_NINE = "You judged none of the nine pairs rankable."
 _ALL_NINE_KEY = "You judged N of the N pairs unrankable."
 
@@ -258,8 +289,8 @@ class Run(object):
     """One line of the log, parsed."""
 
     __slots__ = ("lineno", "time", "ip", "user_agent", "name", "consent",
-                 "consent_recorded", "answers", "code", "page", "identity",
-                 "scored")
+                 "consent_recorded", "familiarity", "familiarity_recorded",
+                 "answers", "code", "page", "identity", "scored")
 
     def __init__(self, lineno, rec):
         sub = rec.get("submission") or {}
@@ -270,6 +301,12 @@ class Run(object):
         self.name = (sub.get("name") or "").strip()
         self.consent_recorded = "consent_public_aggregate" in sub
         self.consent = bool(sub.get("consent_public_aggregate"))
+        # Sent on every run once the question existed, "" and all, so the key
+        # being absent means the run predates it while "" means the person was
+        # asked and passed. The two are different facts and stay apart.
+        self.familiarity_recorded = "familiarity" in sub
+        fam = sub.get("familiarity")
+        self.familiarity = fam if isinstance(fam, str) else ""
         self.answers = {k: v for k, v in (sub.get("answers") or {}).items()
                         if isinstance(v, str)}
         self.code = sub.get("code") or ""
@@ -936,6 +973,13 @@ class Report(object):
                    % pct(consented, recorded))
         named = sum(1 for r in all_runs if r.name)
         self.p("Gave a name: %s of all runs read." % pct(named, len(all_runs)))
+        fam = sum(1 for r in all_runs if r.familiarity_recorded)
+        if fam:
+            answered = sum(1 for r in all_runs
+                           if r.familiarity in FAMILIARITY_ANSWERS)
+            self.p("Asked the familiarity question: %s of all runs read, of "
+                   "which %s answered it."
+                   % (pct(fam, len(all_runs)), pct(answered, fam)))
 
         if times:
             # Every day between the first run and the last, so a quiet stretch
@@ -955,7 +999,7 @@ class Report(object):
             "dropped_consent_unrecorded": dropped_unrecorded,
             "dropped_excluded_by_name": dropped_named,
             "consent_rate": (consented / float(recorded)) if recorded else None,
-            "named_runs": named,
+            "named_runs": named, "familiarity_asked": fam,
             "first": min(times).isoformat() if times else None,
             "last": max(times).isoformat() if times else None,
         }
@@ -1292,6 +1336,112 @@ class Report(object):
         self.stats["bullet_count_distribution"] = dict(bdist)
         self.stats["clean_runs"] = clean
 
+    # -- familiarity --------------------------------------------------------
+
+    def familiarity(self, runs):
+        """What people said about having met the repugnant conclusion before.
+
+        Self-reported and asked after the fact, so it is evidence about the
+        room rather than a controlled variable: someone who has just spent
+        fifteen minutes on the argument is being asked to remember what they
+        knew before they started. Everything here is read in that light.
+        """
+        self.meta_by_id["familiarity"] = FAMILIARITY
+        asked = [r for r in runs if r.familiarity_recorded]
+        if not asked:
+            return
+        self.h(2, "Familiarity with the repugnant conclusion")
+        n_asked = len(asked)
+        if n_asked < len(runs):
+            self.p("The question was added after the quiz went up, so only "
+                   "%s were asked it at all. Everything in this section is "
+                   "out of those, not out of the whole corpus."
+                   % pct(n_asked, len(runs)))
+        self.p("Asked on the namestep, after the last question and before "
+               "the verdict: naming it on the intro would have told people "
+               "what the quiz was driving at. It is self-reported, and "
+               "reported by someone who has just been walked through the "
+               "argument, so read it as a rough grouping rather than a "
+               "measurement.")
+
+        counts = collections.Counter(r.familiarity for r in asked)
+        self.rows(["Answer", "Value", "Respondents"],
+                  [[strip_tags(dict(FAMILIARITY["opts"])[v]),
+                    "`%s`" % v if v else "(empty)",
+                    pct(counts.get(v, 0), n_asked)]
+                   for v, _ in FAMILIARITY["opts"]],
+                  chart="bar_h", total=n_asked,
+                  data=[(strip_tags(dict(FAMILIARITY["opts"])[v]),
+                         counts.get(v, 0)) for v, _ in FAMILIARITY["opts"]])
+
+        groups = [(v, [r for r in asked if r.familiarity == v])
+                  for v in FAMILIARITY_ANSWERS]
+        groups = [(v, g) for v, g in groups if g]
+        self.stats["familiarity"] = dict(counts)
+        if len(groups) < 2:
+            self.p("Everybody asked declined to answer, so there is nothing "
+                   "to compare." if not groups else
+                   "Only one of the three answers was given, so there is "
+                   "nothing to compare it against.")
+            return
+
+        if self.engine and all(r.scored for r in asked):
+            self.h(3, "Does it show in the verdict?")
+            self.p("Conflicts and bullets by group. With subgroups this "
+                   "small the means are indicative at best - the group sizes "
+                   "are in the table so you can see how little each one is "
+                   "resting on.")
+            rows, cdata = [], []
+            for v, g in groups:
+                cf = [len(r.scored["conflicts"]) + len(r.scored["extras"])
+                      for r in g]
+                bl = [len({card_key(b) for b in r.scored["bullets"]}) for r in g]
+                clean = sum(1 for c in cf if c == 0)
+                rows.append([strip_tags(dict(FAMILIARITY["opts"])[v]), len(g),
+                             "%.2f" % (sum(cf) / float(len(g))),
+                             "%.2f" % (sum(bl) / float(len(g))),
+                             pct(clean, len(g))])
+                cdata.append((strip_tags(dict(FAMILIARITY["opts"])[v]),
+                              sum(cf) / float(len(g))))
+            self.rows(["Group", "n", "Mean conflicts", "Mean bullets",
+                       "No conflict at all"], rows)
+            self.stats["familiarity_verdict"] = {
+                r[0]: {"n": r[1], "mean_conflicts": float(r[2]),
+                       "mean_bullets": float(r[3])} for r in rows}
+
+        # The one cross-tab that is on the nose: the question names the
+        # repugnant conclusion, and A against Z is where the quiz asks people
+        # to accept or refuse it.
+        pairs = [(r.familiarity, self.effective(r)["AvZ"]) for r in asked
+                 if r.familiarity in FAMILIARITY_ANSWERS
+                 and "AvZ" in self.effective(r)]
+        res = association(pairs) if pairs else None
+        if res:
+            self.h(3, "Familiarity against the repugnant conclusion itself")
+            self.crosstab("familiarity", "AvZ", res)
+            self.p("Cramer's V %.2f, p %.3f%s, n %d. The rest of the "
+                   "questions are tested against familiarity in the "
+                   "associations section below."
+                   % (res["v"], res["p"],
+                      " (the table is too sparse for that to mean much)"
+                      if res["min_expected"] < 5 else "", res["n"]))
+            self.stats["familiarity_vs_AvZ"] = {
+                "v": res["v"], "p": res["p"], "n": res["n"]}
+
+    def crosstab(self, a, b, res):
+        """One contingency table, in the quiz's own wording and order."""
+        ra_vals = self.in_option_order(a, res["rows"])
+        cb_vals = self.in_option_order(b, res["cols"])
+        headers = ([self.qlabel(a) + " \\ " + self.qlabel(b)]
+                   + [self.vlabel(b, cb, 16) for cb in cb_vals] + ["total"])
+        rows = []
+        for ra in ra_vals:
+            cells = [res["table"][(ra, cb)] for cb in cb_vals]
+            rows.append([self.vlabel(a, ra)] + cells + [sum(cells)])
+        rows.append(["total"] + [sum(res["table"][(ra, cb)] for ra in ra_vals)
+                                 for cb in cb_vals] + [res["n"]])
+        self.rows(headers, rows)
+
     # -- the modal answer --------------------------------------------------
 
     def modal(self, runs, views):
@@ -1528,12 +1678,25 @@ class Report(object):
             "scored only over the respondents who were asked both questions, "
             "which is why n varies.")
 
-        qids = [q["id"] for q in (self.engine.meta["questions"] if self.engine
-                                  else self.fallback_questions(runs))]
+        # Each variable as {run index: value}, so familiarity - which is not
+        # an answer and must stay out of the tallies - can still be tested
+        # against every question without a special case in the loop below.
+        variables = collections.OrderedDict()
+        for q in (self.engine.meta["questions"] if self.engine
+                  else self.fallback_questions(runs)):
+            variables[q["id"]] = {
+                i: self.effective(r)[q["id"]] for i, r in enumerate(runs)
+                if q["id"] in self.effective(r)}
+        fam = {i: r.familiarity for i, r in enumerate(runs)
+               if r.familiarity_recorded
+               and r.familiarity in FAMILIARITY_ANSWERS}
+        if fam:
+            variables["familiarity"] = fam
+
         results = []
-        for a, b in itertools.combinations(qids, 2):
-            pairs = [(self.effective(r)[a], self.effective(r)[b]) for r in runs
-                     if a in self.effective(r) and b in self.effective(r)]
+        for a, b in itertools.combinations(variables, 2):
+            va, vb = variables[a], variables[b]
+            pairs = [(va[i], vb[i]) for i in va if i in vb]
             if len(pairs) < self.args.min_assoc_n:
                 continue
             res = association(pairs)
@@ -1568,18 +1731,7 @@ class Report(object):
             if self.args.mode == "public" and res["n"] < self.args.min_assoc_n:
                 continue
             self.h(3, "%s x %s" % (self.qlabel(a), self.qlabel(b)))
-            ra_vals = self.in_option_order(a, res["rows"])
-            cb_vals = self.in_option_order(b, res["cols"])
-            headers = ([self.qlabel(a) + " \\ " + self.qlabel(b)]
-                       + [self.vlabel(b, cb, 16) for cb in cb_vals]
-                       + ["total"])
-            rows = []
-            for ra in ra_vals:
-                cells = [res["table"][(ra, cb)] for cb in cb_vals]
-                rows.append([self.vlabel(a, ra)] + cells + [sum(cells)])
-            rows.append(["total"] + [sum(res["table"][(ra, cb)] for ra in ra_vals)
-                                     for cb in cb_vals] + [res["n"]])
-            self.rows(headers, rows)
+            self.crosstab(a, b, res)
 
         self.stats["associations"] = [
             {"a": a, "b": b, "n": res["n"], "v": res["v"], "p": res["p"],
@@ -1820,6 +1972,7 @@ def main():
                excluded_runs)
     rep.respondents(groups, selected, linked, excluded_runs)
     rep.answers(selected)
+    rep.familiarity(selected)
     rep.modal(selected, views)
     rep.cards(selected, universe)
     rep.views(selected, views)
