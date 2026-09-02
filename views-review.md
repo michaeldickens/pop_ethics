@@ -65,7 +65,7 @@ Open it: append `#a=yrrlrrryrr---y-y-z-rr` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
-| Suffering against happiness | G is worse than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is worse than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -109,7 +109,7 @@ Open it: append `#a=yrllllrylr-l-y-y-a-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -153,7 +153,7 @@ Open it: append `#a=yrrlrrrxlr---y-y-b-rl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Somewhere on the ladder those two verdicts flip. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is worse than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -205,7 +205,7 @@ Open it: append `#a=yrllrrlylr---y-y-a-rl` to the quiz URL.
 | Levelling up | B is worse than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is worse than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -258,7 +258,7 @@ Open it: append `#a=yrrllrrxlr-l-y-y-b-rl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Somewhere on the ladder those two verdicts flip. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is worse than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -305,7 +305,7 @@ Open it: append `#a=yrllllryle-l-y-yya-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -351,7 +351,7 @@ Open it: append `#a=yrllerryle-l-y-yxa-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -397,7 +397,7 @@ Open it: append `#a=yrllerryle-l-y-yya-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -440,7 +440,7 @@ Open it: append `#a=yrrlerryle-l-y-yxb-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -496,7 +496,7 @@ Open it: append `#a=yrllnrryln-lry-y-a-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -554,7 +554,7 @@ Open it: append `#a=yrllnnryln-n-yxy-a-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -606,7 +606,7 @@ Open it: append `#a=yrllnnryln-lryxy-a-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -657,7 +657,7 @@ Open it: append `#a=yrllnnnyln-lryxy-a-nl` to the quiz URL.
 | Levelling up | B is not rankable against A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -711,7 +711,7 @@ Open it: append `#a=yrrlnrryrn-r-y-y-z-rr` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
-| Suffering against happiness | G is worse than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is worse than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is worse than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -760,7 +760,7 @@ Open it: append `#a=xrrlnrryrn-r-y-y-z-rr` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
-| Suffering against happiness | G is worse than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is worse than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is worse than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -812,7 +812,7 @@ Open it: append `#a=yrrlnrrylrylny-y-b-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life cannot turn "unrankable" into a determinate verdict. |
@@ -858,7 +858,7 @@ Open it: append `#a=yrllnrrylrxlny-y-a-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life can turn "unrankable" into a determinate verdict. |
@@ -907,7 +907,7 @@ Open it: append `#a=yrllerryle-l-x-yya-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -952,7 +952,7 @@ Open it: append `#a=yrnlernyne-l-y-yxn-nn` to the quiz URL.
 | Levelling up | B is not rankable against A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is not rankable against one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -999,7 +999,7 @@ Open it: append `#a=yrllllryll-l-y-y-a-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -1044,7 +1044,7 @@ Open it: append `#a=yrlllllylr-l-y-y-a-ll` to the quiz URL.
 | Levelling up | B is worse than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -1090,7 +1090,7 @@ Open it: append `#a=xellllryll-l-y-y-a-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -1136,7 +1136,7 @@ Open it: append `#a=yrllrrrylr---y-y-a-rl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is worse than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -1179,7 +1179,7 @@ Open it: append `#a=yrrlrrrylr---y-y-b-rl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is worse than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -1220,7 +1220,7 @@ Open it: append `#a=yrrrrrryrr---y-y-z-rr` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
-| Suffering against happiness | G is worse than H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is worse than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -1272,7 +1272,7 @@ Open it: append `#a=yrnlnnrxln-n-y-y-p-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Somewhere on the ladder those two verdicts flip. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -1323,7 +1323,7 @@ Open it: append `#a=yrllnnryln-n-yyy-a-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -1378,7 +1378,7 @@ Open it: append `#a=ynnnnnrxln-n-y-y-p-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Somewhere on the ladder those two verdicts flip. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -1439,7 +1439,7 @@ Open it: append `#a=yrnnnnrynn-n-y-y-n-nn` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is not rankable against one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -1494,7 +1494,7 @@ Open it: append `#a=ynnnnnrynn-n-y-y-n-nn` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is not rankable against one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -1539,7 +1539,7 @@ Open it: append `#a=xnnnnnnynn-n-y-y-n-nn` to the quiz URL.
 | Levelling up | B is not rankable against A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
-| Suffering against happiness | G is not rankable against H -- 40 lives of agony against more total welfare and more good lives. |
+| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A world of arbitrarily many wonderful lives is not rankable against one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |

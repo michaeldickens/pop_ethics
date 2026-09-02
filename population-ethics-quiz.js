@@ -100,11 +100,15 @@ var PARETO_AFTER = [{ n: 100, w: 90 }];
 // less happy. -40 is the same depth of agony as Nadia's life in the misery
 // question; 1 is a life barely worth living, as at the foot of the ladder.
 var VRC_G = [{ n: 100, w: 70 }];
-// Both groups stay under the width knee so a block's area still reads as its
-// total welfare - no to-scale row needed on the mild figure. Only the single
-// suffering group is tagged (a caption); the good group carries the total.
+// H is G unchanged plus two additions, so the added lives can be drawn as
+// their own outlined-and-captioned bars, the way Nadia is in the addition
+// questions - everyone wonderful stays at 70, so nothing muddies the trade.
+// The base hundred is left untagged and carries the honesty check; both
+// groups stay under the width knee, so a block's area still reads as its
+// total welfare and no to-scale row is needed.
 var VRC_H = [
-  { n: 240, w: 40 },
+  { n: 100, w: 70 },
+  { n: 100, w: 70, tag: "a hundred more" },
   { n: 40, w: -40, tag: "the suffering forty" },
 ];
 // The extreme figure spans the knee, so - like AvZ - the bars carry totals and
@@ -243,7 +247,7 @@ var QUESTIONS = [
     names: ["G", "H"],
     title: "More welfare in total, but some of it is agony.",
     body:
-      "<strong>G</strong> holds 100 people with wonderful lives. <strong>H</strong> holds 240 people with comfortable, clearly good lives — <strong>and 40 more whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than G, and more good lives; the cost is that 40 people in it genuinely suffer.",
+      "<strong>G</strong> holds 100 people with wonderful lives. <strong>H</strong> holds those same 100, unaffected — <strong>and adds a hundred more just as wonderful</strong>, together with <strong>40 people whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than G; the cost is that 40 of its people genuinely suffer.",
   },
   {
     id: "vrc",
@@ -2209,7 +2213,7 @@ var LABELS = {
         equal: "exactly as good as",
         none: "not rankable against",
       }[a] +
-      " H — 40 lives of agony against more total welfare and more good lives."
+      " H — a hundred wonderful lives added, and forty in agony, for more welfare in total."
     );
   },
   vrc: function (a) {
