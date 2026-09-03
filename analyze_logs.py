@@ -124,6 +124,9 @@ PROBE = """(a) => {
     // Taken after pruning, so a question these answers never reach encodes
     // as a gap. Append it to the quiz URL as #a=<code> to open the run.
     code: encodeAns(),
+    // The broad classification the results page leads with - one of a
+    // handful of standard positions, or none of them.
+    profile: profile(),
     conflicts: [],
     extras: [],
     bullets: bullets().map(b => b.t),
@@ -171,7 +174,7 @@ UNIVERSE_PROBE = """(spec) => {
   };
 """ + EXTRA_TITLE_JS + """
   const keep = ANS;
-  const conflicts = {}, extras = {}, bullets_ = {};
+  const conflicts = {}, extras = {}, bullets_ = {}, profiles = {};
   for (let i = 0; i < spec.n; i++) {
     const a = {};
     QUESTIONS.forEach(q => {
@@ -192,12 +195,14 @@ UNIVERSE_PROBE = """(spec) => {
     });
     r.extras.forEach(x => { extras[x.id] = extraTitle(x); });
     bullets().forEach(b => { bullets_[b.t] = 1; });
+    profiles[profile()] = 1;
   }
   ANS = keep;
   return {
     conflicts: Object.keys(conflicts).map(k => conflicts[k]),
     extras: Object.keys(extras).map(k => ({id: k, title: extras[k]})),
     bullets: Object.keys(bullets_),
+    profiles: Object.keys(profiles),
   };
 }"""
 
@@ -264,6 +269,40 @@ def familiarity_matches(run, wanted):
 
 _ALL_NINE = "You judged none of the nine pairs rankable."
 _ALL_NINE_KEY = "You judged N of the N pairs unrankable."
+
+
+def profile_names(verdicts):
+    """Short names for the quiz's broad classifications, from its own prose.
+
+    Each verdict is a sentence naming the position in bold - "sit closest to
+    <strong>totalism</strong>" - so the bold run is the name, and the whole
+    stripped sentence stays the key. Two of them name the same position and
+    differ in the clause that follows, so a name is only lengthened where it
+    would otherwise collide. Read off the page rather than restated here, so
+    rewording a verdict renames it instead of dropping it.
+    """
+    bold, tail = {}, {}
+    for v in verdicts:
+        m = re.search(r"<strong>(.*?)</strong>(.*)", v, re.S)
+        if m:
+            bold[v] = strip_tags(m.group(1))
+            rest = strip_tags(m.group(2))
+            tail[v] = re.split(r"[:;.—]", rest, 1)[0].strip()
+        else:
+            # A verdict that bolds no position is the catch-all: the one the
+            # quiz gives when the answers match none of its patterns. Named
+            # for that structural fact rather than for its wording, so a
+            # reworded catch-all keeps the name and still reads correctly.
+            bold[v] = "none of the standard views"
+            tail[v] = ""
+    clashes = collections.Counter(bold.values())
+    out = {}
+    for v in verdicts:
+        name = bold[v][:1].upper() + bold[v][1:]
+        if clashes[bold[v]] > 1 and tail[v]:
+            name += " %s" % tail[v]
+        out[v] = name
+    return out
 
 
 def card_key(title):
@@ -1986,6 +2025,53 @@ class Report(object):
         self.stats["modal_largest_block"] = tc
         return exact
 
+    # -- the quiz's own classification ---------------------------------------
+
+    def classification(self, runs, universe):
+        """How the results page classified people, in its own broad terms.
+
+        Not the same thing as the nearest catalogued view below. This is the
+        verdict the quiz itself hands the person - a handful of standard
+        positions decided by a few named answers, or none of them - so it is
+        what respondents actually saw, and it is coarse on purpose.
+        """
+        if not self.engine:
+            return
+        n = len(runs)
+        seen = collections.Counter(r.scored["profile"] for r in runs)
+        reachable = list(universe["profiles"]) if universe else []
+        for v in seen:
+            if v not in reachable:
+                reachable.append(v)
+        names = profile_names(reachable)
+
+        self.h(2, "The quiz's own classification")
+        self.p("The line the results page leads with. It is decided by a "
+               "handful of named answers rather than by overall similarity, "
+               "so it is much coarser than the nearest catalogued view below "
+               "- and it is the one people were actually shown.")
+        self.p("Everyone gets exactly one, including the people whose "
+               "answers match none of the patterns, so unlike the nearest "
+               "view these are whole people and they add up to the corpus.")
+        shown = [v for v in reachable
+                 if not (self.args.mode == "public"
+                         and 0 < seen.get(v, 0) < self.args.min_cell)]
+        shown.sort(key=lambda v: (-seen.get(v, 0), names[v]))
+        self.rows(["Classification", "Respondents"],
+                  [[names[v], pct(seen.get(v, 0), n)] for v in shown],
+                  chart="bar_h", total=n,
+                  data=[(names[v], seen[v]) for v in shown if seen.get(v)])
+        if universe:
+            hit = sum(1 for v in reachable if seen.get(v))
+            self.p("%d of the %d classifications the quiz can give were given "
+                   "to somebody." % (hit, len(reachable)))
+        # The short names lose the reasoning, so keep the quiz's own sentence
+        # beside each - in the same order, so the two tables read together.
+        self.rows(["Classification", "What the results page says"],
+                  [[names[v], strip_tags(v)] for v in shown])
+        self.stats["classification"] = {names[v]: seen.get(v, 0)
+                                        for v in reachable}
+
     # -- views ------------------------------------------------------------
 
     def views(self, runs, views):
@@ -2503,6 +2589,7 @@ def main():
     rep.group_tests(selected)
     rep.modal(selected, views)
     rep.cards(selected, universe)
+    rep.classification(selected, universe)
     rep.views(selected, views)
     rep.associations(selected)
     rep.profiles(selected, views)
