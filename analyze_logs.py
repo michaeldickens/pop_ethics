@@ -880,11 +880,14 @@ svg.chart{display:block;max-width:100%%;height:auto}
 .tablewrap{overflow-x:auto;margin:14px 0}
 table{border-collapse:collapse;font-size:14px;min-width:100%%}
 th,td{text-align:left;padding:6px 12px 6px 0;border-bottom:1px solid var(--rule);
-  vertical-align:top;white-space:nowrap}
+  vertical-align:top}
 th{color:var(--muted);font-weight:600;font-size:12px;
   text-transform:uppercase;letter-spacing:.04em}
-td{font-variant-numeric:tabular-nums}
-td:first-child,th:first-child{white-space:normal}
+/* Prose wraps so a long label cannot push the columns after it off the
+   side; counts and answer codes do not, since breaking those mid-token is
+   worse than a wide table. */
+td{font-variant-numeric:tabular-nums;white-space:normal}
+td.num,td.tok,td code{white-space:nowrap}
 blockquote{margin:18px 0;padding:12px 16px;border-left:3px solid var(--warn-edge);
   background:var(--warn-bg);color:var(--warn-ink);border-radius:0 6px 6px 0}
 blockquote p{color:inherit}
@@ -954,6 +957,9 @@ class Report(object):
         self.blocks = []
         self.footer_blocks = []
         self.stats = {}
+        # The catalogue, for the profile table. Named apart from the views()
+        # section method, which is a different thing with the same word.
+        self.view_catalogue = None
         # Filled in properly once the answers section has seen the log; set
         # here because the respondents section names questions too.
         self.meta_by_id = {q["id"]: q for q in
@@ -1767,9 +1773,64 @@ class Report(object):
 
     # -- profiles ---------------------------------------------------------
 
-    def profiles(self, runs):
+    def profile_code(self, run):
+        """The engine's encoding where there is one, else the logged code.
+
+        The engine's is the one that reflects pruning, and it is what the
+        catalogued views below are encoded with, so the two are comparable.
+        """
+        return run.scored["code"] if run.scored else run.code
+
+    def view_codes(self, views):
+        """Every catalogued view as an answer profile, for exact matching.
+
+        Encoded by the same engine that encoded the runs, after the same
+        pruning, so equal codes really are the same set of answers. Two views
+        can encode alike - they differ only where the quiz never asks - and
+        then the profile is honestly both.
+        """
+        out = {}
+        if not (views and self.engine):
+            return out
+        for key, name, answers in views:
+            code = self.engine.score(answers)["code"]
+            out.setdefault(code, []).append(name)
+        return out
+
+    @staticmethod
+    def join_names(names):
+        """Ties named in full up to two, then counted."""
+        if len(names) <= 2:
+            return " / ".join(names)
+        return "%s and %d others" % (names[0], len(names) - 1)
+
+    def view_of(self, code, answers, exact):
+        """[name, agreement] for one profile: the view it is, or the nearest.
+
+        Exact is settled on the encoded profile rather than on the
+        agreement score, which is computed over the questions a run and a
+        view have in common and so reads 100% for a view that simply says
+        nothing about the ones where they would have differed.
+        """
+        if code in exact:
+            return [self.join_names(sorted(exact[code])), "exact"]
+        if not answers:
+            return ["-", "-"]
+        best = (nearest_view(self.view_catalogue, answers)
+                if self.view_catalogue else None)
+        if not best:
+            return ["-", "-"]
+        score, names, _ = best
+        return ["%s (approx.)" % self.join_names(sorted(n for _, n in names)),
+                "%.0f%%" % (100.0 * score)]
+
+    def profiles(self, runs, views):
         self.h(2, "Whole answer profiles")
-        counts = collections.Counter(r.code for r in runs if r.code)
+        counts = collections.Counter(self.profile_code(r) for r in runs
+                                     if self.profile_code(r))
+        example = {}
+        for r in runs:
+            example.setdefault(self.profile_code(r), self.effective(r))
         n = len(runs)
         self.p("%d distinct answer profile%s across %d respondent%s. A "
                "profile is the whole run, one character per question, and it "
@@ -1777,11 +1838,31 @@ class Report(object):
                "quiz URL to open it."
                % (len(counts), "" if len(counts) == 1 else "s",
                   n, "" if n == 1 else "s"))
+        exact = self.view_codes(views)
+        if views:
+            self.p("Against each, the view in `population_ethics_views.py` "
+                   "it answers like. **Exact** means the profile is that "
+                   "view, answer for answer. Otherwise the nearest view is "
+                   "named `(approx.)` with the share of answers it agrees "
+                   "on - and a low figure there means the catalogue has "
+                   "nothing close, not that the person half-holds the view.")
+            if not self.engine:
+                self.p("*Without the engine a view cannot be encoded as a "
+                       "profile, so nothing can be confirmed exact and every "
+                       "row is marked approximate. A row at 100% is the one "
+                       "that would otherwise have read exact.*")
         ranked = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[:20]
-        rows = [[("`%s`" % code), pct(c, n)] for code, c in ranked
-                if not (self.args.mode == "public" and c < self.args.min_cell)]
+        rows = []
+        for code, c in ranked:
+            if self.args.mode == "public" and c < self.args.min_cell:
+                continue
+            row = [("`%s`" % code), pct(c, n)]
+            if views:
+                row += self.view_of(code, example.get(code), exact)
+            rows.append(row)
         if rows:
-            self.rows(["Profile", "Respondents"], rows)
+            self.rows(["Profile", "Respondents"]
+                      + (["Named view", "Agreement"] if views else []), rows)
         elif self.args.mode == "public":
             self.p("Every profile is unique to one person, so none is shown: "
                    "in public mode a whole profile below `--min-cell` (%d) is "
@@ -1882,14 +1963,29 @@ def inline_html(text):
     return "".join(out)
 
 
+# A cell that is only figures - "19 (27%)", "0.42", "exact" - or only an
+# answer code in backticks. Those keep to one line; everything else wraps.
+NUMERIC_CELL = re.compile(r"^[\d\s.,%()+/<>=-]*$")
+TOKEN_CELL = re.compile(r"^`[^`]+`$")
+
+
+def cell_class(text):
+    text = str(text).strip()
+    if TOKEN_CELL.match(text):
+        return " class=\"tok\""
+    if text and NUMERIC_CELL.match(text):
+        return " class=\"num\""
+    return ""
+
+
 def html_table(headers, rows):
     out = ['<div class="tablewrap"><table><thead><tr>']
     out += ["<th>%s</th>" % inline_html(h) for h in headers]
     out.append("</tr></thead><tbody>")
     for row in rows:
-        out.append("<tr>"
-                   + "".join("<td>%s</td>" % inline_html(c) for c in row)
-                   + "</tr>")
+        out.append("<tr>" + "".join(
+            "<td%s>%s</td>" % (cell_class(c), inline_html(c)) for c in row)
+            + "</tr>")
     out.append("</tbody></table></div>")
     return "".join(out)
 
@@ -2015,6 +2111,7 @@ def main():
     title = "Population ethics quiz - response log"
     views = load_views()
     rep = Report(args, engine)
+    rep.view_catalogue = views
     rep.h(1, title)
     if args.mode == "private":
         rep.quote(BANNER)
@@ -2034,7 +2131,7 @@ def main():
     rep.cards(selected, universe)
     rep.views(selected, views)
     rep.associations(selected)
-    rep.profiles(selected)
+    rep.profiles(selected, views)
 
     if args.mode == "private":
         rep.footer(BANNER)
