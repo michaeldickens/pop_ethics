@@ -826,6 +826,33 @@ main{max-width:820px;margin:0 auto;padding:40px 20px 80px}
 h1{font-size:28px;line-height:1.2;margin:0 0 6px}
 h2{font-size:21px;margin:44px 0 8px;padding-top:18px;border-top:1px solid var(--rule)}
 h3{font-size:16px;margin:28px 0 6px}
+/* Sections collapse so the report can be skimmed by heading. Closed by
+   default: it is a long document and the headings are the table of
+   contents. Find-in-page does not reach inside a closed <details>, so the
+   toolbar carries an expand-all. */
+details.sec{border-top:1px solid var(--rule)}
+details.sec>summary{cursor:pointer;list-style:none;display:flex;
+  align-items:baseline;gap:10px;padding:16px 0}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::before{content:"";flex:0 0 auto;width:7px;height:7px;
+  margin:0 1px;border-right:2px solid var(--muted);
+  border-bottom:2px solid var(--muted);transform:rotate(-45deg);
+  transition:transform .15s ease}
+details.sec[open]>summary::before{transform:rotate(45deg)}
+details.sec>summary h2{margin:0;padding:0;border:0}
+details.sec>summary:hover h2{color:var(--series)}
+details.sec>summary:focus-visible{outline:2px solid var(--series);
+  outline-offset:2px;border-radius:3px}
+.secbody{padding:0 0 20px}
+.secbody>h3:first-child{margin-top:0}
+.toolbar{display:flex;justify-content:flex-end;margin:22px 0 0}
+.toolbar button{font:inherit;font-size:13px;color:var(--ink-2);
+  background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  padding:5px 12px;cursor:pointer}
+.toolbar button:hover{color:var(--series);border-color:var(--series)}
+@media print{details.sec{border-top:0}
+  details.sec>summary{list-style:none}
+  .toolbar{display:none}}
 p{margin:10px 0;color:var(--ink-2);max-width:70ch}
 code{font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;
   background:var(--surface);border:1px solid var(--rule);
@@ -864,6 +891,25 @@ blockquote p{color:inherit}
 </style>
 <main>
 """
+
+# The one piece of script in the report, and nothing depends on it: without
+# it every section still opens on its own summary, which is the whole
+# interaction. It exists because find-in-page does not reach into a closed
+# <details>, so a reader searching the report needs one click to open the lot.
+EXPAND_ALL_JS = """<script>
+(function () {
+  var button = document.getElementById("expand-all");
+  var sections = document.querySelectorAll("details.sec");
+  if (!button || !sections.length) return;
+  button.hidden = false;
+  button.addEventListener("click", function () {
+    var open = button.getAttribute("aria-expanded") !== "true";
+    Array.prototype.forEach.call(sections, function (d) { d.open = open; });
+    button.setAttribute("aria-expanded", open ? "true" : "false");
+    button.textContent = open ? "Collapse all" : "Expand all";
+  });
+})();
+</script>"""
 
 
 # ---------------------------------------------------------------------------
@@ -906,6 +952,7 @@ class Report(object):
         self.args = args
         self.engine = engine
         self.blocks = []
+        self.footer_blocks = []
         self.stats = {}
         # Filled in properly once the answers section has seen the log; set
         # here because the respondents section names questions too.
@@ -1743,10 +1790,19 @@ class Report(object):
 
     # -- assembly ---------------------------------------------------------
 
+    def footer(self, text):
+        """A block that stays outside the collapsible sections.
+
+        The do-not-share banner is the only one: it belongs to the page, not
+        to whichever section happened to be last, and a warning nobody can
+        see until they expand something is not a warning.
+        """
+        self.footer_blocks.append(("quote", text))
+
     def render(self):
         """Markdown, which is also the plain-text form printed to stdout."""
         lines = []
-        for block in self.blocks:
+        for block in self.blocks + self.footer_blocks:
             kind = block[0]
             if kind == "h":
                 lines += ["", "#" * block[1] + " " + block[2], ""]
@@ -1760,27 +1816,53 @@ class Report(object):
             # the same numbers, so nothing is lost here.
         return "\n".join(lines).strip() + "\n"
 
+    def html_block(self, block):
+        kind = block[0]
+        if kind == "h":
+            return "<h%d>%s</h%d>" % (block[1], inline_html(block[2]), block[1])
+        if kind == "p":
+            return "<p>%s</p>" % inline_html(block[1])
+        if kind == "quote":
+            return "<blockquote><p>%s</p></blockquote>" % inline_html(block[1])
+        if kind == "table":
+            return html_table(block[1], block[2])
+        if kind == "chart":
+            svg = CHARTS[block[1]](block[2], total=block[3]) \
+                if block[1] != "line" else CHARTS[block[1]](block[2])
+            return "<figure>%s</figure>" % svg if svg else ""
+        return ""
+
     def render_html(self, title):
-        out = [HTML_HEAD % {"title": esc(title)}]
+        # Everything from one h2 up to the next is one collapsible section.
+        # Blocks before the first h2 are the page's own heading and preamble
+        # and stay open, as does the footer.
+        intro, sections = [], []
         for block in self.blocks:
-            kind = block[0]
-            if kind == "h":
-                out.append("<h%d>%s</h%d>"
-                           % (block[1], inline_html(block[2]), block[1]))
-            elif kind == "p":
-                out.append("<p>%s</p>" % inline_html(block[1]))
-            elif kind == "quote":
-                out.append("<blockquote><p>%s</p></blockquote>"
-                           % inline_html(block[1]))
-            elif kind == "table":
-                out.append(html_table(block[1], block[2]))
-            elif kind == "chart":
-                svg = CHARTS[block[1]](block[2], total=block[3]) \
-                    if block[1] != "line" else CHARTS[block[1]](block[2])
-                if svg:
-                    out.append("<figure>%s</figure>" % svg)
+            if block[0] == "h" and block[1] == 2:
+                sections.append((block[2], []))
+            elif sections:
+                sections[-1][1].append(block)
+            else:
+                intro.append(block)
+
+        out = [HTML_HEAD % {"title": esc(title)}]
+        out += [self.html_block(b) for b in intro]
+        if sections:
+            # Ships hidden and is unhidden by its own script, so it is never
+            # a dead control where scripting is off - the sections still
+            # open on their summaries there.
+            out.append('<div class="toolbar"><button id="expand-all" hidden '
+                       'type="button" aria-expanded="false">Expand all'
+                       '</button></div>')
+        for heading, body in sections:
+            out.append('<details class="sec"><summary><h2>%s</h2></summary>'
+                       '<div class="secbody">' % inline_html(heading))
+            out += [self.html_block(b) for b in body]
+            out.append("</div></details>")
+        out += [self.html_block(b) for b in self.footer_blocks]
         out.append("</main>")
-        return "\n".join(out) + "\n"
+        out.append(EXPAND_ALL_JS)
+        return "\n".join(x for x in out if x) + "\n"
 
 
 def inline_html(text):
@@ -1955,7 +2037,7 @@ def main():
     rep.profiles(selected)
 
     if args.mode == "private":
-        rep.quote(BANNER)
+        rep.footer(BANNER)
 
     text = rep.render()
     sys.stdout.write(text)
