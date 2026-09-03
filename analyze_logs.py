@@ -44,6 +44,13 @@ Runs by a name on the exclusion list - the author's own test runs, "MD
 Test", by default - are dropped from the corpus before anything is counted.
 --exclude-name replaces that list, --keep-excluded turns it off.
 
+--familiarity narrows the corpus to runs giving a particular answer to that
+question - a comma-separated list of no, heard, explain, answered (any of
+the three), declined (asked and passed) or unasked (logged before the
+question existed). Off by default. It is applied beside the consent filter,
+before anything is grouped or counted, so every figure in the report is of
+the subgroup and the report says so at the top.
+
 Runs taken after the namestep began asking about it also carry a
 self-reported familiarity with the repugnant conclusion. It gets a section
 of its own and is tested against every question in the associations
@@ -238,6 +245,20 @@ FAMILIARITY = {
 # "" is a non-answer: counted in the distribution, kept out of every
 # comparison, exactly as an unasked question is.
 FAMILIARITY_ANSWERS = ("no", "heard", "explain")
+
+# What --familiarity accepts. The three answers, plus the two states that are
+# not answers and a shorthand for "gave one of the three" - a run that
+# predates the question and a run whose taker passed are different facts, and
+# a filter that could not tell them apart would silently lump them.
+FAMILIARITY_FILTERS = FAMILIARITY_ANSWERS + ("answered", "declined", "unasked")
+
+
+def familiarity_matches(run, wanted):
+    if not run.familiarity_recorded:
+        return "unasked" in wanted
+    if run.familiarity in FAMILIARITY_ANSWERS:
+        return run.familiarity in wanted or "answered" in wanted
+    return "declined" in wanted
 
 _ALL_NINE = "You judged none of the nine pairs rankable."
 _ALL_NINE_KEY = "You judged N of the N pairs unrankable."
@@ -991,7 +1012,7 @@ class Report(object):
     # -- sections ---------------------------------------------------------
 
     def corpus(self, all_runs, kept, dropped_consent, dropped_unrecorded, bad,
-               blank, dropped_named):
+               blank, dropped_named, dropped_familiarity):
         self.h(2, "The corpus")
         times = [r.time for r in kept if r.time]
         rows = [
@@ -999,8 +1020,8 @@ class Report(object):
             ["Unparseable / skipped", bad + blank],
             ["Runs read", len(all_runs)],
         ]
-        if dropped_named:
-            rows.append(["Dropped: excluded by name", dropped_named])
+        # In the order the filters actually run, so the column subtracts
+        # top to bottom and lands on the last figure.
         if self.args.mode == "public":
             rows += [
                 ["Dropped: consent declined", dropped_consent],
@@ -1011,6 +1032,10 @@ class Report(object):
                 ["Of which consent declined", dropped_consent],
                 ["Of which no consent recorded (pre-checkbox)", dropped_unrecorded],
             ]
+        if dropped_familiarity:
+            rows.append(["Dropped: outside --familiarity", dropped_familiarity])
+        if dropped_named:
+            rows.append(["Dropped: excluded by name", dropped_named])
         rows += [["Runs analysed", len(kept)]]
         if times:
             rows += [
@@ -1051,6 +1076,7 @@ class Report(object):
             "dropped_consent_declined": dropped_consent,
             "dropped_consent_unrecorded": dropped_unrecorded,
             "dropped_excluded_by_name": dropped_named,
+            "dropped_familiarity_filter": dropped_familiarity,
             "consent_rate": (consented / float(recorded)) if recorded else None,
             "named_runs": named, "familiarity_asked": fam,
             "first": min(times).isoformat() if times else None,
@@ -1396,6 +1422,11 @@ class Report(object):
                "reported by someone who has just been walked through the "
                "argument, so read it as a rough grouping rather than a "
                "measurement.")
+        if self.args.familiarity:
+            self.p("`--familiarity` has already cut the corpus down to this "
+                   "answer, so the distribution below is the filter's own "
+                   "shape rather than the room's, and there is nothing left "
+                   "to compare against.")
 
         counts = collections.Counter(r.familiarity for r in asked)
         self.rows(["Answer", "Value", "Respondents"],
@@ -2013,6 +2044,12 @@ def main():
                          % ", ".join(DEFAULT_EXCLUDED_NAMES))
     ap.add_argument("--keep-excluded", action="store_true",
                     help="keep the runs --exclude-name would drop")
+    ap.add_argument("--familiarity", metavar="VALUES",
+                    help="analyse only runs whose familiarity answer is one "
+                         "of these, comma-separated: %s. `answered` is any of "
+                         "the three, `declined` was asked and passed, "
+                         "`unasked` predates the question. Default: no filter"
+                         % ", ".join(FAMILIARITY_FILTERS))
     ap.add_argument("--link-anon", action="store_true",
                     help="fold an unnamed run into a named respondent when "
                          "they share an (IP, user-agent) and only one name "
@@ -2050,6 +2087,14 @@ def main():
 
     if args.min_cell is None:
         args.min_cell = 2 if args.mode == "public" else 1
+    if args.familiarity:
+        args.familiarity = {v.strip().lower()
+                            for v in args.familiarity.split(",") if v.strip()}
+        bad = sorted(args.familiarity - set(FAMILIARITY_FILTERS))
+        if bad:
+            ap.error("unknown --familiarity value%s: %s (choose from %s)"
+                     % ("" if len(bad) == 1 else "s", ", ".join(bad),
+                        ", ".join(FAMILIARITY_FILTERS)))
     if args.exclude_name is None:
         args.exclude_name = list(DEFAULT_EXCLUDED_NAMES)
     if args.keep_excluded:
@@ -2071,6 +2116,18 @@ def main():
     if not kept:
         sys.exit("no runs left after the consent filter; try --mode private "
                  "if you are the one holding the log")
+
+    # Applied here, beside the consent filter, so that everything downstream -
+    # the grouping, the dedupe, every count - is of the subgroup and nothing
+    # has to remember to filter itself.
+    dropped_familiarity = 0
+    if args.familiarity:
+        before = len(kept)
+        kept = [r for r in kept if familiarity_matches(r, args.familiarity)]
+        dropped_familiarity = before - len(kept)
+        if not kept:
+            sys.exit("no runs match --familiarity %s"
+                     % ",".join(sorted(args.familiarity)))
 
     linked = assign_identities(kept, args.link_anon)
     groups = group_runs(kept)
@@ -2118,12 +2175,16 @@ def main():
     rep.p("Generated %s from `%s` in **%s** mode, `--dedupe %s`."
           % (datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), args.log,
              args.mode, args.dedupe))
+    if args.familiarity:
+        rep.p("**Filtered to `--familiarity %s`.** Every figure below is of "
+              "that subgroup only, not of the whole corpus."
+              % ",".join(sorted(args.familiarity)))
     if args.mode == "public":
         rep.p("Only runs whose taker consented to public aggregate analysis "
               "are included, and nothing below identifies anybody.")
 
     rep.corpus(all_runs, kept, len(declined), len(unrecorded), bad, blank,
-               excluded_runs)
+               excluded_runs, dropped_familiarity)
     rep.respondents(groups, selected, linked, excluded_runs)
     rep.answers(selected)
     rep.familiarity(selected)
@@ -2148,6 +2209,8 @@ def main():
     if args.json:
         rep.stats["mode"] = args.mode
         rep.stats["dedupe"] = args.dedupe
+        rep.stats["familiarity_filter"] = (sorted(args.familiarity)
+                                           if args.familiarity else None)
         if args.mode == "private":
             rep.stats["warning"] = ("built in private mode: includes runs "
                                     "that did not consent to public "
