@@ -88,8 +88,10 @@ import itertools
 import json
 import math
 import pathlib
+import random
 import re
 import sys
+import zlib
 
 # ---------------------------------------------------------------------------
 # The quiz's own engine, run in a browser. Everything scored comes from here.
@@ -503,6 +505,96 @@ def chi2_sf(x, df):
     return 1.0 - _gser(a, xx) if xx < a + 1.0 else _gcf(a, xx)
 
 
+def chi2_2xk(in_group, col_totals, r1, r2, n):
+    """Chi-square for a two-row table, from the first row's counts alone.
+
+    With two rows the second row's deviation is the first's negated, so the
+    whole statistic collapses to a sum over columns. Everything but
+    `in_group` is fixed while labels are being reshuffled, which is what
+    makes the permutation loop below cheap enough to run.
+    """
+    if r1 <= 0 or r2 <= 0:
+        return 0.0
+    total = 0.0
+    for a, c in zip(in_group, col_totals):
+        if c:
+            d = a - r1 * c / float(n)
+            total += d * d / c
+    return total * n * n / float(r1 * r2)
+
+
+def permutation_p(pairs, group, iterations, seed):
+    """P(chi-square at least this large) with the group labels reshuffled.
+
+    The asymptotic p-value wants every expected count at 5 or more, and on a
+    corpus this size several of these tables will not have that. Reshuffling
+    the labels answers the same question - how often would a split this
+    lopsided arise by chance? - without leaning on the approximation, and it
+    is the p-value the uniformity check at the end of the section can
+    actually be run on.
+    """
+    values = sorted({v for _, v in pairs})
+    index = {v: i for i, v in enumerate(values)}
+    idx = [index[v] for _, v in pairs]
+    member = [g == group for g, _ in pairs]
+    n, k = len(pairs), len(values)
+    r1 = sum(member)
+    r2 = n - r1
+    col_totals = [0] * k
+    for j in idx:
+        col_totals[j] += 1
+
+    def stat(flags):
+        counts = [0] * k
+        for m, j in zip(flags, idx):
+            if m:
+                counts[j] += 1
+        return chi2_2xk(counts, col_totals, r1, r2, n)
+
+    observed = stat(member)
+    if r1 == 0 or r2 == 0 or k < 2 or iterations <= 0:
+        return observed, None, iterations
+    rng = random.Random(seed)
+    shuffled, hits = list(member), 0
+    for _ in range(iterations):
+        rng.shuffle(shuffled)
+        if stat(shuffled) >= observed - 1e-9:
+            hits += 1
+    # Add-one, so the p-value can never be reported as exactly zero: with B
+    # reshuffles the most it can say is that none of them beat the data.
+    return observed, (hits + 1) / float(iterations + 1), iterations
+
+
+def ks_uniform(ps):
+    """One-sample Kolmogorov-Smirnov against Uniform(0,1): D and its p.
+
+    Under a global null - no question differing between the groups - the
+    p-values should be uniform. This asks how far from uniform they are.
+    """
+    ps = sorted(ps)
+    n = len(ps)
+    if n < 2:
+        return None, None
+    d = max(max((i + 1) / float(n) - p, p - i / float(n))
+            for i, p in enumerate(ps))
+    lam = (math.sqrt(n) + 0.12 + 0.11 / math.sqrt(n)) * d
+    q = 2.0 * sum((-1) ** (k - 1) * math.exp(-2.0 * k * k * lam * lam)
+                  for k in range(1, 101))
+    return d, min(1.0, max(0.0, q))
+
+
+def binom_sf(k, n, p):
+    """P(at least k successes of n) - how surprising a count of small p is."""
+    if k <= 0:
+        return 1.0
+    total = 0.0
+    for i in range(k, n + 1):
+        total += math.exp(math.lgamma(n + 1) - math.lgamma(i + 1)
+                          - math.lgamma(n - i + 1)
+                          + i * math.log(p) + (n - i) * math.log1p(-p))
+    return min(1.0, total)
+
+
 def crosstab(pairs):
     """(rows, cols, table) from a list of (a, b)."""
     rows = sorted({a for a, _ in pairs})
@@ -721,16 +813,21 @@ def chart_bar_h(rows, total=None, bar_w=300):
     return "\n".join(out)
 
 
-def chart_columns(rows, total=None, width=680, height=220):
+def chart_columns(rows, total=None, width=680, height=220, reference=None):
     """Columns over an ordered scale - 0 conflicts, 1, 2, ... - so the shape
-    of the distribution is the point rather than any single bar."""
+    of the distribution is the point rather than any single bar.
+
+    `reference` draws the level the bars would sit at under some null, which
+    is what makes a histogram of p-values readable: without the line there
+    is nothing to judge flatness against.
+    """
     rows = list(rows)
     if not rows:
         return ""
     left, right, top, bottom = 44, 12, 18, 34
     plot_w = width - left - right
     plot_h = height - top - bottom
-    hi = _nice_max(max([v for _, v in rows] + [1]))
+    hi = _nice_max(max([v for _, v in rows] + [reference or 0] + [1]))
     band = plot_w / float(len(rows))
     bw = min(24.0, band - 8)
     out = ['<svg class="chart" viewBox="0 0 %d %d" width="%d" height="%d" '
@@ -754,6 +851,14 @@ def chart_columns(rows, total=None, width=680, height=220):
                        % (x + bw / 2.0, top + plot_h - h - 6, value))
         out.append('<text class="cat mid" x="%.1f" y="%d">%s</text>'
                    % (x + bw / 2.0, height - 12, esc(label)))
+    if reference:
+        y = top + plot_h - plot_h * reference / float(hi)
+        out.append('<line class="ref" x1="%d" y1="%.1f" x2="%d" y2="%.1f">'
+                   '<title>flat would be %s per bar</title></line>'
+                   % (left, y, width - right, y, _num(reference)))
+        # Deliberately unlabelled in the chart: a label at the right runs
+        # into the last column's value, and the sentence under the chart
+        # already names the level. The line carries it as a tooltip.
     out.append('<line class="axis" x1="%d" y1="%d" x2="%d" y2="%d"/>'
                % (left, top + plot_h, width - right, top + plot_h))
     out.append("</svg>")
@@ -888,6 +993,7 @@ svg.chart{display:block;max-width:100%%;height:auto}
 .chart .dot{fill:var(--series);stroke:var(--surface);stroke-width:2}
 .chart .hit{fill:transparent}
 .chart .grid{stroke:var(--grid);stroke-width:1}
+.chart .ref{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 3}
 .chart .axis{stroke:var(--axis);stroke-width:1}
 .chart text{font:12px system-ui,-apple-system,"Segoe UI",sans-serif}
 .chart .cat{fill:var(--ink-2);text-anchor:end}
@@ -995,7 +1101,8 @@ class Report(object):
     def quote(self, text):
         self.blocks.append(("quote", text))
 
-    def rows(self, headers, rows, chart=None, data=None, total=None):
+    def rows(self, headers, rows, chart=None, data=None, total=None,
+             reference=None):
         """A table, optionally with a chart of the same numbers beside it.
 
         The table is the record - it carries every figure and survives being
@@ -1006,7 +1113,7 @@ class Report(object):
             self.p("(nothing to show)")
             return
         if chart and data:
-            self.blocks.append(("chart", chart, list(data), total))
+            self.blocks.append(("chart", chart, list(data), total, reference))
         self.blocks.append(("table", headers, rows))
 
     # -- sections ---------------------------------------------------------
@@ -1506,6 +1613,202 @@ class Report(object):
                                  for cb in cb_vals] + [res["n"]])
         self.rows(headers, rows)
 
+    # -- group comparisons --------------------------------------------------
+
+    def splits(self, runs):
+        """The group splits worth testing, and who each one leaves out."""
+        out = []
+        fam = [r for r in runs if r.familiarity in FAMILIARITY_ANSWERS]
+        if fam:
+            out.append({
+                "key": "familiarity",
+                "title": "Familiar against unfamiliar",
+                "groups": ("Familiar", "Unfamiliar"),
+                "of": lambda r: ("Familiar" if r.familiarity in
+                                 ("heard", "explain") else "Unfamiliar"
+                                 if r.familiarity == "no" else None),
+                "note": "Familiar is *heard* or *could have explained*, "
+                        "unfamiliar is *no*. A run that declined the "
+                        "question, or predates it, is in neither group: not "
+                        "having said is not the same as having said no.",
+            })
+        # Public mode drops the non-consenting runs before anything is
+        # counted, so there is no second group left to compare against; the
+        # split only exists on a corpus that still has them.
+        if self.args.mode == "private":
+            con = [r for r in runs if r.consent_recorded]
+            if con and len({r.consent for r in con}) > 1:
+                out.append({
+                    "key": "consent",
+                    "title": "Consented against declined",
+                    "groups": ("Consented", "Declined"),
+                    "of": lambda r: (None if not r.consent_recorded
+                                     else "Consented" if r.consent
+                                     else "Declined"),
+                    "note": "Runs logged before the consent checkbox existed "
+                            "carry no answer and are in neither group - an "
+                            "unknown is not a refusal. This split needs the "
+                            "runs public mode throws away, so it appears in "
+                            "private mode only.",
+                })
+        return out
+
+    def test_split(self, split, runs, qs):
+        """(results, skipped) for one split, over every question."""
+        results, skipped = [], []
+        for qid in qs:
+            pairs = [(split["of"](r), self.effective(r)[qid])
+                     for r in runs if qid in self.effective(r)
+                     and split["of"](r) is not None]
+            sizes = collections.Counter(g for g, _ in pairs)
+            res = (association(pairs)
+                   if len(pairs) >= self.args.min_assoc_n and len(sizes) >= 2
+                   else None)
+            if not res:
+                skipped.append(self.qlabel(qid))
+                continue
+            # Seeded per question and split, so a rerun reproduces it.
+            _, pperm, _ = permutation_p(
+                pairs, split["groups"][0], self.args.permutations,
+                self.args.seed + zlib.crc32(
+                    (split["key"] + qid).encode("utf-8")))
+            res["p_perm"] = pperm if pperm is not None else res["p"]
+            res["sizes"] = sizes
+            results.append((qid, res))
+        if results:
+            adj = holm([r["p_perm"] for _, r in results])
+            for i, (_, res) in enumerate(results):
+                res["p_holm"] = adj[i]
+        return results, skipped
+
+    def group_tests(self, runs):
+        """Every question, tested for a difference between two groups."""
+        qs = [q["id"] for q in (self.engine.meta["questions"] if self.engine
+                                else self.fallback_questions(runs))]
+        # Everything is computed before anything is written, so that a split
+        # with nothing testable in it - one group emptied by --familiarity,
+        # say - leaves no heading behind.
+        tested = [(split,) + self.test_split(split, runs, qs)
+                  for split in self.splits(runs)]
+        tested = [t for t in tested if t[1]]
+        if not tested:
+            return
+
+        self.h(2, "Do the groups answer differently?")
+        self.p("Each question against each split, as a two-by-k contingency "
+               "table. Two p-values: **p** comes from reshuffling the group "
+               "labels %d times and asking how often chance alone produces a "
+               "split this lopsided, and **p (approx.)** is the textbook "
+               "chi-square tail. They diverge exactly where the table is too "
+               "sparse for the approximation, which on a corpus this size is "
+               "often, so the reshuffled one is the one to read - and it is "
+               "the one the uniformity check at the end runs on."
+               % self.args.permutations)
+        self.p("Nothing here is corrected for testing every question at "
+               "once; the Holm column is there to be glanced at, and the "
+               "section ends by asking whether the p-values as a whole look "
+               "like noise, which is the more useful question.")
+
+        summary = []
+        for split, results, skipped in tested:
+            self.h(3, split["title"])
+            self.p(split["note"])
+            a, b = split["groups"]
+            self.rows(
+                ["Question", "n", a, b, "chi2", "df", "p", "p (approx.)",
+                 "p (Holm)", "min exp"],
+                [[self.qlabel(qid), res["n"], res["sizes"].get(a, 0),
+                  res["sizes"].get(b, 0), "%.2f" % res["chi2"], res["df"],
+                  "%.3f" % res["p_perm"], "%.3f" % res["p"],
+                  "%.3f" % res["p_holm"],
+                  "%.1f%s" % (res["min_expected"],
+                              " !" if res["min_expected"] < 5 else "")]
+                 for qid, res in sorted(results, key=lambda t: t[1]["p_perm"])])
+            self.p("Sorted by p. `!` marks a table whose smallest expected "
+                   "count is under 5, where the approximate column is not to "
+                   "be trusted and the reshuffled one still is.")
+            if skipped:
+                self.p("Not tested, for want of %d respondents in both "
+                       "groups with two different answers between them: %s."
+                       % (self.args.min_assoc_n, ", ".join(skipped)))
+            summary.append((split, [r["p_perm"] for _, r in results]))
+            self.stats.setdefault("group_tests", {})[split["key"]] = {
+                qid: {"n": res["n"], "chi2": res["chi2"], "df": res["df"],
+                      "p": res["p_perm"], "p_chi2": res["p"],
+                      "p_holm": res["p_holm"],
+                      "min_expected": res["min_expected"]}
+                for qid, res in results}
+
+        if summary:
+            self.p_value_shape(summary)
+
+    def p_value_shape(self, summary):
+        """Do the p-values look like noise, or like something is there?
+
+        Under a global null - no question answered differently by the two
+        groups - p-values are uniform on (0, 1), so a twentieth of them fall
+        below 0.05 and half below 0.5. A pile-up near zero is the signal
+        that survives having tested everything at once; a distribution
+        indistinguishable from flat says the individually small p-values are
+        what testing nineteen questions buys you.
+        """
+        self.h(3, "Do these p-values look random?")
+        self.p("Under a global null - every question answered alike by both "
+               "groups - the p-values would be spread evenly over 0 to 1: a "
+               "twentieth below 0.05, a tenth below 0.10, half below 0.50. "
+               "So the shape of the whole set says more than any one of "
+               "them. The counts below are what turned up against what a "
+               "flat distribution predicts.")
+        rows = []
+        for split, ps in summary:
+            n = len(ps)
+            row = [split["title"], n]
+            for thr in (0.05, 0.10, 0.50):
+                got = sum(1 for p in ps if p < thr)
+                row.append("%d vs %.1f" % (got, thr * n))
+            d, ksp = ks_uniform(ps)
+            low = sum(1 for p in ps if p < 0.05)
+            row += ["%.2f" % d if d is not None else "-",
+                    "%.3f" % ksp if ksp is not None else "-",
+                    "%.3f" % binom_sf(low, n, 0.05)]
+            rows.append(row)
+            self.stats.setdefault("p_value_shape", {})[split["key"]] = {
+                "n": n, "below_05": low, "ks_d": d, "ks_p": ksp,
+                "binomial_p": binom_sf(low, n, 0.05)}
+        self.rows(["Split", "Tests", "p<0.05", "p<0.10", "p<0.50",
+                   "KS D", "KS p", "P(that many or more under 0.05)"], rows)
+        self.p("**KS p** is a Kolmogorov-Smirnov test of the p-values "
+               "against a flat distribution: small means they are not flat, "
+               "so something in there is real. The last column asks the "
+               "narrower question of whether the count below 0.05 alone is "
+               "more than chance would give. Both are rough here - "
+               "reshuffled p-values on small tables come in steps rather "
+               "than a continuum, and the tests are not independent of each "
+               "other, since one person's answers appear in every one of "
+               "them.")
+        self.p("Read these *alongside* the Holm column, not instead of it. "
+               "Both ask whether the set as a whole is unusual, and neither "
+               "has much power when a couple of questions differ sharply and "
+               "the rest do not: a handful of real effects among fifteen "
+               "nulls barely moves a distribution of fifteen p-values. A "
+               "flat-looking set with something surviving Holm means the "
+               "surviving one, not the flatness. What a pile-up near zero "
+               "adds is the opposite case - many questions each mildly "
+               "different, none of them individually convincing.")
+        for split, ps in summary:
+            self.h(3, "%s - where the p-values fell" % split["title"])
+            bins = [0] * 10
+            for p in ps:
+                bins[min(9, int(p * 10))] += 1
+            self.rows(["Range", "Tests"],
+                      [["%.1f-%.1f" % (i / 10.0, (i + 1) / 10.0), bins[i]]
+                       for i in range(10)],
+                      chart="columns", reference=len(ps) / 10.0,
+                      data=[("%.1f" % (i / 10.0), bins[i]) for i in range(10)])
+            self.p("The dashed line is where a flat distribution would put "
+                   "every bar: %.1f of the %d tests per tenth."
+                   % (len(ps) / 10.0, len(ps)))
+
     # -- the modal answer --------------------------------------------------
 
     def modal(self, runs, views):
@@ -1939,8 +2242,13 @@ class Report(object):
         if kind == "table":
             return html_table(block[1], block[2])
         if kind == "chart":
-            svg = CHARTS[block[1]](block[2], total=block[3]) \
-                if block[1] != "line" else CHARTS[block[1]](block[2])
+            if block[1] == "line":
+                svg = CHARTS[block[1]](block[2])
+            elif block[1] == "columns":
+                svg = CHARTS[block[1]](block[2], total=block[3],
+                                       reference=block[4])
+            else:
+                svg = CHARTS[block[1]](block[2], total=block[3])
             return "<figure>%s</figure>" % svg if svg else ""
         return ""
 
@@ -2069,6 +2377,10 @@ def main():
     ap.add_argument("--min-cell", type=int, default=None,
                     help="in public mode, suppress non-zero counts below this "
                          "(default: 2 public, 1 private)")
+    ap.add_argument("--permutations", type=int, default=2000, metavar="N",
+                    help="reshuffles behind each group-comparison p-value "
+                         "(default: 2000; 0 falls back to the chi-square "
+                         "approximation)")
     ap.add_argument("--min-assoc-n", type=int, default=20,
                     help="don't test a pair of questions with fewer than this "
                          "many respondents answering both (default: 20)")
@@ -2188,6 +2500,7 @@ def main():
     rep.respondents(groups, selected, linked, excluded_runs)
     rep.answers(selected)
     rep.familiarity(selected)
+    rep.group_tests(selected)
     rep.modal(selected, views)
     rep.cards(selected, universe)
     rep.views(selected, views)
