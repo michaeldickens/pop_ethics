@@ -93,10 +93,8 @@ import itertools
 import json
 import math
 import pathlib
-import random
 import re
 import sys
-import zlib
 
 # ---------------------------------------------------------------------------
 # The quiz's own engine, run in a browser. Everything scored comes from here.
@@ -547,66 +545,6 @@ def chi2_sf(x, df):
         return 1.0
     a, xx = df / 2.0, x / 2.0
     return 1.0 - _gser(a, xx) if xx < a + 1.0 else _gcf(a, xx)
-
-
-def chi2_2xk(in_group, col_totals, r1, r2, n):
-    """Chi-square for a two-row table, from the first row's counts alone.
-
-    With two rows the second row's deviation is the first's negated, so the
-    whole statistic collapses to a sum over columns. Everything but
-    `in_group` is fixed while labels are being reshuffled, which is what
-    makes the permutation loop below cheap enough to run.
-    """
-    if r1 <= 0 or r2 <= 0:
-        return 0.0
-    total = 0.0
-    for a, c in zip(in_group, col_totals):
-        if c:
-            d = a - r1 * c / float(n)
-            total += d * d / c
-    return total * n * n / float(r1 * r2)
-
-
-def permutation_p(pairs, group, iterations, seed):
-    """P(chi-square at least this large) with the group labels reshuffled.
-
-    The asymptotic p-value wants every expected count at 5 or more, and on a
-    corpus this size several of these tables will not have that. Reshuffling
-    the labels answers the same question - how often would a split this
-    lopsided arise by chance? - without leaning on the approximation, and it
-    is the p-value the uniformity check at the end of the section can
-    actually be run on.
-    """
-    values = sorted({v for _, v in pairs})
-    index = {v: i for i, v in enumerate(values)}
-    idx = [index[v] for _, v in pairs]
-    member = [g == group for g, _ in pairs]
-    n, k = len(pairs), len(values)
-    r1 = sum(member)
-    r2 = n - r1
-    col_totals = [0] * k
-    for j in idx:
-        col_totals[j] += 1
-
-    def stat(flags):
-        counts = [0] * k
-        for m, j in zip(flags, idx):
-            if m:
-                counts[j] += 1
-        return chi2_2xk(counts, col_totals, r1, r2, n)
-
-    observed = stat(member)
-    if r1 == 0 or r2 == 0 or k < 2 or iterations <= 0:
-        return observed, None, iterations
-    rng = random.Random(seed)
-    shuffled, hits = list(member), 0
-    for _ in range(iterations):
-        rng.shuffle(shuffled)
-        if stat(shuffled) >= observed - 1e-9:
-            hits += 1
-    # Add-one, so the p-value can never be reported as exactly zero: with B
-    # reshuffles the most it can say is that none of them beat the data.
-    return observed, (hits + 1) / float(iterations + 1), iterations
 
 
 def ks_uniform(ps):
@@ -1694,16 +1632,10 @@ class Report(object):
             if not res:
                 skipped.append(self.qlabel(qid))
                 continue
-            # Seeded per question and split, so a rerun reproduces it.
-            _, pperm, _ = permutation_p(
-                pairs, split["groups"][0], self.args.permutations,
-                self.args.seed + zlib.crc32(
-                    (split["key"] + qid).encode("utf-8")))
-            res["p_perm"] = pperm if pperm is not None else res["p"]
             res["sizes"] = sizes
             results.append((qid, res))
         if results:
-            adj = holm([r["p_perm"] for _, r in results])
+            adj = holm([r["p"] for _, r in results])
             for i, (_, res) in enumerate(results):
                 res["p_holm"] = adj[i]
         return results, skipped
@@ -1723,14 +1655,9 @@ class Report(object):
 
         self.h(2, "Do the groups answer differently?")
         self.p("Each question against each split, as a two-by-k contingency "
-               "table. Two p-values: **p** comes from reshuffling the group "
-               "labels %d times and asking how often chance alone produces a "
-               "split this lopsided, and **p (approx.)** is the textbook "
-               "chi-square tail. They diverge exactly where the table is too "
-               "sparse for the approximation, which on a corpus this size is "
-               "often, so the reshuffled one is the one to read - and it is "
-               "the one the uniformity check at the end runs on."
-               % self.args.permutations)
+               "table, scored with Pearson's chi-square. **p** is the "
+               "chi-square tail: the chance of a split at least this "
+               "lopsided if the two groups answered alike.")
         self.p("Nothing here is corrected for testing every question at "
                "once; the Holm column is there to be glanced at, and the "
                "section ends by asking whether the p-values as a whole look "
@@ -1742,27 +1669,31 @@ class Report(object):
             self.p(split["note"])
             a, b = split["groups"]
             self.rows(
-                ["Question", "n", a, b, "chi2", "df", "p", "p (approx.)",
-                 "p (Holm)", "min exp"],
+                ["Question", "n", a, b, "chi2", "df", "p", "p (Holm)",
+                 "min exp"],
                 [[self.qlabel(qid), res["n"], res["sizes"].get(a, 0),
                   res["sizes"].get(b, 0), "%.2f" % res["chi2"], res["df"],
-                  "%.3f" % res["p_perm"], "%.3f" % res["p"],
-                  "%.3f" % res["p_holm"],
+                  "%.3f" % res["p"], "%.3f" % res["p_holm"],
                   "%.1f%s" % (res["min_expected"],
                               " !" if res["min_expected"] < 5 else "")]
-                 for qid, res in sorted(results, key=lambda t: t[1]["p_perm"])])
+                 for qid, res in sorted(results, key=lambda t: t[1]["p"])])
             self.p("Sorted by p. `!` marks a table whose smallest expected "
-                   "count is under 5, where the approximate column is not to "
-                   "be trusted and the reshuffled one still is.")
+                   "count is under 5, where the chi-square tail is only an "
+                   "approximation to the real one. Which way it errs depends "
+                   "on the table: where an answer is lopsided enough that "
+                   "one column is nearly empty it runs conservative, but on "
+                   "a small table with the groups and answers evenly spread "
+                   "- the conditional questions, mostly - it runs optimistic, "
+                   "closer to 8 nulls in 100 under 0.05 than 5. Treat a "
+                   "borderline p on a flagged row as weaker than it looks.")
             if skipped:
                 self.p("Not tested, for want of %d respondents in both "
                        "groups with two different answers between them: %s."
                        % (self.args.min_assoc_n, ", ".join(skipped)))
-            summary.append((split, [r["p_perm"] for _, r in results]))
+            summary.append((split, [r["p"] for _, r in results]))
             self.stats.setdefault("group_tests", {})[split["key"]] = {
                 qid: {"n": res["n"], "chi2": res["chi2"], "df": res["df"],
-                      "p": res["p_perm"], "p_chi2": res["p"],
-                      "p_holm": res["p_holm"],
+                      "p": res["p"], "p_holm": res["p_holm"],
                       "min_expected": res["min_expected"]}
                 for qid, res in results}
 
@@ -1808,11 +1739,12 @@ class Report(object):
                "against a flat distribution: small means they are not flat, "
                "so something in there is real. The last column asks the "
                "narrower question of whether the count below 0.05 alone is "
-               "more than chance would give. Both are rough here - "
-               "reshuffled p-values on small tables come in steps rather "
-               "than a continuum, and the tests are not independent of each "
-               "other, since one person's answers appear in every one of "
-               "them.")
+               "more than chance would give. Both are rough here. The tests "
+               "are not independent of each other, since one person\'s "
+               "answers appear in every one of them; and any row flagged "
+               "`!` above contributes a p-value the approximation has "
+               "already nudged one way or the other, so a mild lean towards "
+               "zero can be the approximation rather than a finding.")
         self.p("Read these *alongside* the Holm column, not instead of it. "
                "Both ask whether the set as a whole is unusual, and neither "
                "has much power when a couple of questions differ sharply and "
@@ -2459,10 +2391,6 @@ def main():
                          "person's individual answers and is also their share "
                          "link (default: 2 public, 1 private; pass 1 to show "
                          "every profile)")
-    ap.add_argument("--permutations", type=int, default=2000, metavar="N",
-                    help="reshuffles behind each group-comparison p-value "
-                         "(default: 2000; 0 falls back to the chi-square "
-                         "approximation)")
     ap.add_argument("--min-assoc-n", type=int, default=20,
                     help="don't test a pair of questions with fewer than this "
                          "many respondents answering both (default: 20)")
