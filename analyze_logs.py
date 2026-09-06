@@ -18,10 +18,15 @@ answers, the answer code, the consent choice, and a name if one was given).
 Two modes, because the log holds two different kinds of thing:
 
   public   (default) drops every run that did not consent to public
-           aggregate analysis, prints no names, addresses or user agents,
-           and suppresses any cell smaller than --min-cell, since a full
-           nineteen-answer profile held by one person is as identifying as
-           a name. The output is meant to be publishable as it stands.
+           aggregate analysis and prints no names, addresses or user
+           agents. Counts of a category - a conflict card, a bullet, a
+           classification - are published however small, down to one
+           person: those are aggregate statistics about a category, not
+           anybody's answers. The exception is a whole nineteen-answer
+           profile, which is one person's individual answers and is also,
+           character for character, the share link they were offered;
+           those are withheld below --min-cell. The output is meant to be
+           publishable as it stands.
 
   private  keeps every run, consented or not, and names the people who
            gave a name. The report carries a do-not-share banner top and
@@ -1438,13 +1443,10 @@ class Report(object):
         for key in seen:
             universe_keys.setdefault(key, (idsets[key], titles[key]))
 
-        rows, hidden = [], 0
+        rows = []
         for key in sorted(universe_keys):
             ids, title = universe_keys[key]
             c = seen.get(key, 0)
-            if self.args.mode == "public" and 0 < c < self.args.min_cell:
-                hidden += 1
-                continue
             rows.append([title, "`%s`" % ids, pct(c, n), c])
         rows.sort(key=lambda r: (-r[3], r[0], r[1]))
         self.rows(["Conflict card", "Answers blamed", "Respondents"],
@@ -1455,11 +1457,6 @@ class Report(object):
             self.p("%d of the %d conflict cards reachable at all were hit by "
                    "somebody. Cards at 0 are ones the quiz can produce and "
                    "nobody here produced." % (hit, len(universe_keys)))
-        if hidden:
-            self.p("%d further card%s hit by fewer than %d people and "
-                   "withheld: a rare card plus a set of blamed answers comes "
-                   "close to naming the run behind it."
-                   % (hidden, "" if hidden == 1 else "s", self.args.min_cell))
 
         if untold:
             self.h(3, "Conflicts the quiz has no story for")
@@ -1473,9 +1470,7 @@ class Report(object):
                    "are the routes people here actually took." % NO_STORY)
             urows = [[ids, shape, pct(c, n)]
                      for (ids, shape), c in
-                     sorted(untold.items(), key=lambda kv: (-kv[1], kv[0]))
-                     if not (self.args.mode == "public"
-                             and c < self.args.min_cell)]
+                     sorted(untold.items(), key=lambda kv: (-kv[1], kv[0]))]
             self.rows(["Answers blamed", "The route they took", "Respondents"],
                       urows)
             self.stats["conflicts_without_a_story"] = {
@@ -1499,21 +1494,14 @@ class Report(object):
             bseen.update({card_key(b) for b in r.scored["bullets"]})
         buniverse = {card_key(b) for b in (universe["bullets"] if universe else [])}
         buniverse |= set(bseen)
-        rows, hidden = [], 0
+        rows = []
         for b in sorted(buniverse):
             c = bseen.get(b, 0)
-            if self.args.mode == "public" and 0 < c < self.args.min_cell:
-                hidden += 1
-                continue
             rows.append([b, pct(c, n), c])
         rows.sort(key=lambda r: (-r[2], r[0]))
         self.rows(["Bullet", "Respondents"], [r[:2] for r in rows],
                   chart="bar_h", total=n,
                   data=[(r[0], r[2]) for r in rows if r[2]])
-        if hidden:
-            self.p("%d further bullet%s bitten by fewer than %d people and "
-                   "withheld." % (hidden, "" if hidden == 1 else "s",
-                                  self.args.min_cell))
         self.p("A title with `N` in it had a number filled in per run; the "
                "\"none of the nine pairs rankable\" wording is the same "
                "bullet as the unrankable-pairs row and is counted with it.")
@@ -2005,8 +1993,7 @@ class Report(object):
         # it is not the composite, it is the more informative number: a real
         # position that real people hold, against a construction nobody does.
         top, tc = profiles.most_common(1)[0]
-        if top != target and not (self.args.mode == "public"
-                                  and tc < self.args.min_cell):
+        if top != target:
             differs = [q for q, a in zip(qs, top) if a != kept[q]]
             self.p("The largest block who answered these questions alike is "
                    "%s - bigger than any group the composite has - and it is "
@@ -2053,9 +2040,7 @@ class Report(object):
         self.p("Everyone gets exactly one, including the people whose "
                "answers match none of the patterns, so unlike the nearest "
                "view these are whole people and they add up to the corpus.")
-        shown = [v for v in reachable
-                 if not (self.args.mode == "public"
-                         and 0 < seen.get(v, 0) < self.args.min_cell)]
+        shown = list(reachable)
         shown.sort(key=lambda v: (-seen.get(v, 0), names[v]))
         self.rows(["Classification", "Respondents"],
                   [[names[v], pct(seen.get(v, 0), n)] for v in shown],
@@ -2095,9 +2080,7 @@ class Report(object):
                 tied += 1
             for key, name in names:
                 hits[(key, name)] += 1.0 / len(names)
-        ranked = [(k, v) for k, v in
-                  sorted(hits.items(), key=lambda kv: (-kv[1], kv[0][0]))
-                  if not (self.args.mode == "public" and v < self.args.min_cell)]
+        ranked = sorted(hits.items(), key=lambda kv: (-kv[1], kv[0][0]))
         rows = [[name, "`%s`" % key, "%.1f" % v,
                  "%.0f%%" % (100.0 * v / len(runs)) if runs else "-"]
                 for (key, name), v in ranked]
@@ -2283,10 +2266,20 @@ class Report(object):
         if rows:
             self.rows(["Profile", "Respondents"]
                       + (["Named view", "Agreement"] if views else []), rows)
-        elif self.args.mode == "public":
-            self.p("Every profile is unique to one person, so none is shown: "
-                   "in public mode a whole profile below `--min-cell` (%d) is "
-                   "as identifying as a name." % self.args.min_cell)
+        if self.args.mode == "public":
+            withheld = sum(1 for _, c in ranked if c < self.args.min_cell)
+            self.p("%s Two things make a whole profile different from the "
+                   "counts elsewhere in this report. It is one person's "
+                   "individual answers, which is the thing the consent "
+                   "checkbox promised would never be published; and it is "
+                   "character-for-character the share link they were offered "
+                   "at the end, so anyone who has seen that link posted can "
+                   "match a profile only one person gave. `--min-cell 1` "
+                   "shows them anyway."
+                   % ("Profiles held by fewer than %d people are not shown."
+                      % self.args.min_cell if withheld else
+                      "Every profile shown here is held by at least %d "
+                      "people." % self.args.min_cell))
         self.stats["distinct_profiles"] = len(counts)
 
     # -- assembly ---------------------------------------------------------
@@ -2461,8 +2454,11 @@ def main():
     ap.add_argument("--seed", type=int, default=20260901,
                     help="seed for the universe sweep (default: 20260901)")
     ap.add_argument("--min-cell", type=int, default=None,
-                    help="in public mode, suppress non-zero counts below this "
-                         "(default: 2 public, 1 private)")
+                    help="in public mode, withhold whole answer profiles held "
+                         "by fewer than this many people - a profile is one "
+                         "person's individual answers and is also their share "
+                         "link (default: 2 public, 1 private; pass 1 to show "
+                         "every profile)")
     ap.add_argument("--permutations", type=int, default=2000, metavar="N",
                     help="reshuffles behind each group-comparison p-value "
                          "(default: 2000; 0 falls back to the chi-square "
