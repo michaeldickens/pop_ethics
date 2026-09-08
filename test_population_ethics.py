@@ -37,10 +37,10 @@ import sys
 from playwright.sync_api import sync_playwright
 
 QIDS = ["pareto", "same_number", "AvB", "misery", "neutral_mod", "benign", "nae",
-        "generalize", "AvZ", "neutral_wond", "collapse", "greedy", "plusVsBoth",
-        "trans_gt", "trans_none", "trans_eq", "menu_eq", "menu", "menu_alpha"]
+        "generalize", "AvZ", "vrc_mild", "vrc", "neutral_wond", "collapse", "greedy",
+        "plusVsBoth", "trans_gt", "trans_none", "trans_eq", "menu_eq", "menu", "menu_alpha"]
 PAIRS = ["same_number", "AvB", "misery", "neutral_mod", "benign", "nae", "AvZ",
-         "neutral_wond", "greedy", "plusVsBoth"]
+         "vrc_mild", "vrc", "neutral_wond", "greedy", "plusVsBoth"]
 PRINCIPLES = ["pareto", "generalize", "collapse", "trans_gt", "trans_none",
               "trans_eq", "menu_eq", "menu_alpha"]
 CONDITIONAL = ("collapse", "greedy", "plusVsBoth", "trans_none", "menu_eq",
@@ -50,12 +50,17 @@ PRINCIPLE_VALUES = ["yes", "no"]
 MENU_VALUES = ["A", "B", "Z", "AB", "all"]
 
 # Index of the answer button to click, per question, for named profiles.
+# vrc_mild/vrc use pair indices: 0 left (first world better), 1 right (second
+# better), 2 equal, 3 none. Modal rejects both trades (suffering not outweighed);
+# the totalist accepts both, biting the very repugnant conclusion.
 CLICK_MODAL = {"pareto": 0, "same_number": 1, "AvB": 0, "misery": 0, "neutral_mod": 2,
-               "benign": 1, "nae": 1, "generalize": 0, "AvZ": 0, "neutral_wond": 2,
+               "benign": 1, "nae": 1, "generalize": 0, "AvZ": 0, "vrc_mild": 0, "vrc": 0,
+               "neutral_wond": 2,
                "collapse": 0, "greedy": 0, "plusVsBoth": 0, "trans_gt": 0, "trans_none": 0,
                "trans_eq": 0, "menu_eq": 0, "menu": 0}
 CLICK_TOTALIST = {"pareto": 0, "same_number": 1, "AvB": 1, "misery": 0, "neutral_mod": 1,
-                  "benign": 1, "nae": 1, "generalize": 0, "AvZ": 1, "neutral_wond": 1,
+                  "benign": 1, "nae": 1, "generalize": 0, "AvZ": 1, "vrc_mild": 1, "vrc": 1,
+                  "neutral_wond": 1,
                   "collapse": 0, "greedy": 1, "plusVsBoth": 0, "trans_gt": 0, "trans_none": 0,
                   "trans_eq": 0, "menu_eq": 0, "menu": 2}
 # menu=0 picks A, reversing this profile's own "B is better" - and index 0 on
@@ -354,13 +359,44 @@ def suite_engine(page, rep):
     rep.check(not any("verdict gets worse" in t for t in mono),
               "a monotonic ranking of the three additions is not flagged", str(mono))
 
+    # The very repugnant conclusion and its mild anchor. Accepting the extreme
+    # draws its own bullet; accepting the mild trade but drawing the line at the
+    # extreme draws the "where does it stop" bullet. Accepting the VRC while
+    # calling a single added agony bad is a consistent totalist position, not a
+    # tension, so it draws no extra bullet on top of the VRC one.
+    vrc_yes = page.evaluate(titles, dict(MODAL, vrc="right"))
+    rep.check(any("very repugnant conclusion" in t for t in vrc_yes),
+              "accepting the VRC draws its own bullet", str(vrc_yes))
+    total_like = page.evaluate(titles, dict(MODAL, misery="left", vrc="right", AvZ="right"))
+    rep.check(not any("multitude" in t for t in total_like),
+              "a consistent totalist (misery=left, vrc=right) draws no VRC tension bullet",
+              str(total_like))
+    rep.check(any("very repugnant conclusion" in t for t in total_like),
+              "...but still draws the VRC-acceptance bullet", str(total_like))
+    small = page.evaluate(titles, dict(MODAL, vrc_mild="right", vrc="left"))
+    rep.check(any("small but not the large" in t for t in small),
+              "accepting the trade small but not large draws the boundary bullet", str(small))
+    rep.check(not any("very repugnant conclusion" in t for t in small),
+              "...without claiming the VRC itself was accepted", str(small))
+    rep.check(not any("outweighs a lot of happiness" in t for t in small),
+              "...and accepting the mild trade is not the negative-side repugnance", str(small))
+    # Refusing even the mild trade (G > H) is the mirror repugnance: a little
+    # suffering outweighing a lot of happiness. It draws its own bullet, and the
+    # boundary bullet does not also fire since the trade was not accepted.
+    reject = page.evaluate(titles, dict(MODAL, vrc_mild="left", vrc="left"))
+    rep.check(any("outweighs a lot of happiness" in t for t in reject),
+              "refusing the mild trade draws the negative-side repugnance bullet", str(reject))
+    rep.check(not any("small but not the large" in t for t in reject),
+              "the boundary bullet needs the mild trade accepted", str(reject))
+
     # The property that matters: no revisionary answer can appear in a profile
     # the quiz says nothing at all about.
     watch = [["misery", "right"], ["neutral_mod", "left"], ["neutral_wond", "left"],
              ["benign", "left"], ["nae", "left"], ["pareto", "no"], ["trans_gt", "no"],
              ["trans_eq", "no"], ["trans_none", "no"], ["generalize", "no"],
              ["AvZ", "right"], ["greedy", "equal"], ["same_number", "left"],
-             ["same_number", "none"], ["same_number", "equal"]]
+             ["same_number", "none"], ["same_number", "equal"], ["vrc", "right"],
+             ["vrc_mild", "left"]]
     silent = page.evaluate("""(cfg) => {
       const keep = ANS, bad = new Set();
       cfg.profiles.forEach(a => {
@@ -1007,7 +1043,7 @@ def suite_geometry(page, rep):
       });
       return out;
     }""")
-    rep.check(set(scale) == {"AvZ", "menu"},
+    rep.check(set(scale) == {"AvZ", "menu", "vrc"},
               "the figures that span the knee are the ones carrying to-scale bars",
               str(sorted(scale)))
     for qid, d in scale.items():
@@ -1516,9 +1552,12 @@ def suite_share(page, rep):
     # here precisely because nothing is conditional on it: the ordinary forward
     # step would land on the next question, so arriving at the results is the
     # turn-back completing its errand and nothing else.
-    code = share.split("#a=")[1]
-    i = QIDS.index("AvZ")
-    fresh.goto(f"{base}#a={code[:i]}-{code[i + 1:]}&q=r")
+    # The code is written in CODE_ORDER (URL order), which is deliberately not
+    # the order questions are asked in, so a slot is found by its place there.
+    code = share.split("#a=")[1].split("&")[0]
+    ver = "&v=" + str(fresh.evaluate("() => RUNVER"))
+    i = fresh.evaluate("() => CODE_ORDER.indexOf('AvZ')")
+    fresh.goto(f"{base}#a={code[:i]}-{code[i + 1:]}{ver}&q=r")
     fresh.wait_for_timeout(400)
     rep.check(fresh.evaluate("() => QUESTIONS[IDX].id") == "AvZ",
               "one hole in a finished run turns back to exactly that question",
@@ -1537,8 +1576,8 @@ def suite_share(page, rep):
 
     # A hole can retire a later question, and filling it puts that question
     # back. The run is not finished until that one has an answer either.
-    j = QIDS.index("trans_eq")
-    fresh.goto(f"{base}#a={code[:j]}-{code[j + 1:]}&q=r")
+    j = fresh.evaluate("() => CODE_ORDER.indexOf('trans_eq')")
+    fresh.goto(f"{base}#a={code[:j]}-{code[j + 1:]}{ver}&q=r")
     fresh.wait_for_timeout(400)
     rep.check(fresh.evaluate("() => ANS.menu_eq") is None,
               "a hole that retires a later question clears that answer too")
@@ -1561,6 +1600,37 @@ def suite_share(page, rep):
                   f"{len(errors)} errors, {visible} sections visible")
 
     fresh.close()
+
+    # Versioning. A live run is the current version and its link records it, so
+    # the two VRC questions belong to it. A link made before they existed
+    # carries no &v and a code one character shorter per VRC question; it must
+    # be read as the version it was taken on - v1, those questions inactive -
+    # and still reach a verdict rather than stranding the reader on a question
+    # the run never asked. This is what keeps every link ever shared working.
+    walk(page, CLICK_MODAL)
+    rep.check(page.evaluate("() => RUNVER") == 2, "a fresh run is the current version")
+    rep.check("&v=2" in page.input_value("#sharelink"),
+              "the share link records the version")
+    full = page.input_value("#sharelink").split("#a=")[1].split("&")[0]
+    n_v1 = page.evaluate(
+        "() => CODE_ORDER.length - CODE_ORDER.filter(id => id.slice(0,3) === 'vrc').length")
+    op = page.context.browser.new_page()
+    operr = []
+    op.on("pageerror", lambda e: operr.append(str(e)))
+    op.goto(f"{base}#a={full[:n_v1]}&q=r")
+    op.wait_for_selector("#results .verdict", timeout=5000)
+    rep.check(not operr, "an old versionless link opens without error", str(operr))
+    rep.check(op.evaluate("() => RUNVER") == 1, "a link with no &v is read as version 1")
+    rep.check(op.evaluate("() => VIEW") == "results",
+              "a v1 link lands on the verdict, not a VRC question")
+    rep.check(op.evaluate("() => QUESTIONS.filter(q => q.id.slice(0,3) === 'vrc')"
+                          ".every(q => !isActive(q))"),
+              "the VRC questions stay inactive on a v1 run")
+    rep.check(op.evaluate("() => ANS.vrc === undefined && ANS.vrc_mild === undefined"),
+              "a v1 code carries no VRC answers")
+    rep.check(op.evaluate("() => missingActive().length") == 0,
+              "a v1 run is complete without the VRC questions")
+    op.close()
 
     # Starting over must not leave the old answers in the URL.
     walk(page, CLICK_MODAL)
@@ -1664,7 +1734,7 @@ def suite_conditional(page, rep):
     rep.check(page.evaluate("() => ANS.collapse") is None,
               "the retired answer is discarded, not left in state")
     rep.check(page.evaluate(
-        "() => encodeAns()[QUESTIONS.findIndex(q => q.id === 'collapse')]") == "-",
+        "() => encodeAns()[CODE_ORDER.indexOf('collapse')]") == "-",
         "the retired answer is cleared from the share link too")
 
     # The mirror image, and the one with teeth: an edit that brings a question
