@@ -8,7 +8,7 @@ The list of views to include was initially AI-generated, and then I added a few 
 
 ## Contents
 
-- [Total utilitarianism](#total) - clean, 3 bullets
+- [Total utilitarianism](#total) - clean, 2 bullets
 - [Average utilitarianism](#average) - clean, 2 bullets
 - [Critical-level utilitarianism](#critical_level) - clean, 2 bullets
 - [Geometrism](#geometrism) - clean, 2 bullets
@@ -21,8 +21,8 @@ The list of views to include was initially AI-generated, and then I added a few 
 - [Imprecise comparability](#rough) - 1 conflict, 5 bullets
 - [Wide gaps, and the harm still counts](#wide-gaps-harm-still-counts) - 2 conflicts, 4 bullets
 - [Wide gaps, and only that conflict](#wide-gaps-only-that-conflict) - 1 conflict, 5 bullets
-- [Wide gaps, but spent on the harm anyway](#wide-gaps-spent-anyway) - 1 conflict, 5 bullets
-- [Wide gaps, spent on the harm anyway, without Pareto to spend it](#wide-gaps-spent-no-pareto) - clean, 7 bullets
+- [Wide gaps, but spent on the harm anyway](#wide-gaps-spent-anyway) - 1 conflict, 4 bullets
+- [Wide gaps, spent on the harm anyway, without Pareto to spend it](#wide-gaps-spent-no-pareto) - clean, 6 bullets
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 3 bullets
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 3 bullets
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
@@ -82,7 +82,6 @@ Bullets bitten:
 
 - You accepted the repugnant conclusion.
 - You accepted the very repugnant conclusion.
-- One life of suffering counts, but a multitude does not.
 
 <a id="average"></a>
 
@@ -729,7 +728,6 @@ Bullets bitten:
 
 - You accepted the repugnant conclusion.
 - You accepted the very repugnant conclusion.
-- One life of suffering counts, but a multitude does not.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.
 
@@ -779,7 +777,6 @@ Bullets bitten:
 - You rejected the Pareto principle.
 - You accepted the repugnant conclusion.
 - You accepted the very repugnant conclusion.
-- One life of suffering counts, but a multitude does not.
 - An addition you could not rank outweighed a harm you could.
 - You hold the Procreation Asymmetry.
 - Comparable when the numbers match, unrankable when they do not.

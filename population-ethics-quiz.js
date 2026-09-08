@@ -2785,16 +2785,6 @@ function bullets() {
       claims: ["vrc_mild", "vrc"],
       b: "You let some suffering be outweighed by enough happiness in H, but drew the line before V. That leaves you owing an account of <em>where</em> the trade stops being worth it — every step from one to the other only piles up more faintly-good lives against the same suffering.",
     });
-  // The mirror of the AvZ/misery tension: one suffering life counts, a
-  // multitude gets buried. Not a contradiction - the barely-good lives do real
-  // aggregate work - but it names what the view owes.
-  if (ANS.misery === "left" && ANS.vrc === "right")
-    out.push({
-      t: "One life of suffering counts, but a multitude does not.",
-      claims: ["misery", "vrc"],
-      b: "You said adding a single life of agony makes the world worse. Yet you judged V — arbitrarily many lives of that same agony — better than a world with none of it, because enough barely-good lives were piled beside them. What made the one suffering life matter, if sufficiently many small joys can bury any number of them?",
-    });
-
   if (ANS.neutral_mod === "left" || ANS.neutral_wond === "left") {
     var worseLefts = [];
     if (ANS.neutral_mod === "left") worseLefts.push("neutral_mod");
