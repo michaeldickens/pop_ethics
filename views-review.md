@@ -9,14 +9,14 @@ The list of views to include was initially AI-generated, and then I added a few 
 ## Contents
 
 - [Total utilitarianism](#total) - clean, 2 bullets
-- [Average utilitarianism](#average) - clean, 2 bullets
+- [Average utilitarianism](#average) - clean, 3 bullets
 - [Critical-level utilitarianism](#critical_level) - clean, 2 bullets
 - [Geometrism](#geometrism) - clean, 2 bullets
 - [Variable value](#variable_value) - clean, 3 bullets
-- [Maximin](#maximin) - clean, 3 bullets
-- [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 2 bullets
-- [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 1 bullet
-- [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
+- [Maximin](#maximin) - clean, 4 bullets
+- [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 3 bullets
+- [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 2 bullets
+- [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 3 bullets
 - [Procreation Asymmetry, a gap rather than an equality](#asymmetry_gap) - 3 conflicts, 2 bullets
 - [Imprecise comparability](#rough) - 1 conflict, 5 bullets
 - [Wide gaps, and the harm still counts](#wide-gaps-harm-still-counts) - 2 conflicts, 4 bullets
@@ -25,11 +25,11 @@ The list of views to include was initially AI-generated, and then I added a few 
 - [Wide gaps, spent on the harm anyway, without Pareto to spend it](#wide-gaps-spent-no-pareto) - clean, 6 bullets
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 3 bullets
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 3 bullets
-- [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
+- [Non-transitive betterness](#nontransitive) - 1 conflict, 3 bullets
 - [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 5 bullets
-- [Antinatalism](#antinatalist) - clean, 2 bullets
-- [Negative-leaning](#negative-leaning) - clean, 3 bullets
-- [Hard negative utilitarianism](#hard-negative) - clean, 4 bullets
+- [Antinatalism](#antinatalist) - clean, 3 bullets
+- [Negative-leaning](#negative-leaning) - clean, 4 bullets
+- [Hard negative utilitarianism](#hard-negative) - clean, 5 bullets
 - [The untutored intuitive package (A > B)](#intuitive-v1) - 2 conflicts, 1 bullet
 - [The untutored intuitive package (B > A)](#intuitive-v2) - 1 conflict, 1 bullet
 - [Suffering counts as a gain](#misery_gain) - clean, 3 bullets
@@ -124,6 +124,7 @@ No conflicts.
 
 Bullets bitten:
 
+- A little suffering outweighs a lot of happiness.
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
 
@@ -321,6 +322,7 @@ No conflicts.
 
 Bullets bitten:
 
+- A little suffering outweighs a lot of happiness.
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
 - You hold the Procreation Asymmetry.
@@ -369,6 +371,7 @@ Not asked: collapse, plusVsBoth, trans_none. These questions only appear when ea
 Bullets bitten:
 
 - You denied that a verdict survives a wider menu.
+- A little suffering outweighs a lot of happiness.
 - You hold the Procreation Asymmetry.
 
 <a id="asymmetry_equal"></a>
@@ -415,6 +418,7 @@ Not asked: collapse, plusVsBoth, trans_none. These questions only appear when ea
 
 Bullets bitten:
 
+- A little suffering outweighs a lot of happiness.
 - You hold the Procreation Asymmetry.
 
 <a id="asymmetry_B"></a>
@@ -457,6 +461,7 @@ Not asked: collapse, plusVsBoth, trans_none. These questions only appear when ea
 Bullets bitten:
 
 - You denied that a verdict survives a wider menu.
+- A little suffering outweighs a lot of happiness.
 - You hold the Procreation Asymmetry.
 
 <a id="asymmetry_gap"></a>
@@ -922,6 +927,7 @@ Not asked: collapse, plusVsBoth, trans_none. These questions only appear when ea
 Bullets bitten:
 
 - You rejected transitivity of better-than.
+- A little suffering outweighs a lot of happiness.
 - You hold the Procreation Asymmetry.
 
 <a id="nontransitive-non-independent"></a>
@@ -1012,6 +1018,7 @@ No conflicts.
 
 Bullets bitten:
 
+- A little suffering outweighs a lot of happiness.
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
 
@@ -1057,6 +1064,7 @@ No conflicts.
 
 Bullets bitten:
 
+- A little suffering outweighs a lot of happiness.
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
 - You denied that levelling up improves things.
@@ -1104,6 +1112,7 @@ No conflicts.
 Bullets bitten:
 
 - You rejected the Pareto principle.
+- A little suffering outweighs a lot of happiness.
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
 - When the people change, a world with uniformly better-off people is not judged better.

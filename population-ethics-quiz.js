@@ -2777,8 +2777,20 @@ function bullets() {
       claims: ["vrc"],
       b: "You judged V better than W: a world of arbitrarily many people in agony, redeemed only by adding enough lives barely worth living, is better than a world where everyone is wonderfully well off. This is where unrestricted totalism leads — sufficiently many faint positives outweigh any concentration of suffering. Many regard it as the hardest bullet in the field to bite.",
     });
+  // The mirror of the VRC bullet: refusing even the mild trade lets a little
+  // suffering outweigh a lot of happiness. H adds far more welfare than it
+  // subtracts, so ranking G above it puts heavy, near-lexical weight on the
+  // forty - the shape of an absolute negative view, with its own repugnance.
+  if (ANS.vrc_mild === "left")
+    out.push({
+      t: "A little suffering outweighs a lot of happiness.",
+      claims: ["vrc_mild"],
+      b: "You judged G better than H — a hundred wonderful lives are not worth adding if forty lives of agony come alongside them, even though the happiness added far outweighs the suffering in total. Taken to its limit this is the mirror of the very repugnant conclusion: enough weight on suffering forbids creating flourishing lives to prevent a much smaller harm.",
+    });
   // Accepts the trade in the small but balks at the extreme: the analogue, one
-  // axis over, of saying the ladder's verdict flips somewhere.
+  // axis over, of saying the ladder's verdict flips somewhere. It is a cost
+  // rather than a conflict because nothing elicits the steps between H and V,
+  // so no chain forces the extreme from the mild.
   if (ANS.vrc_mild === "right" && ANS.vrc !== "right" && ANS.vrc !== undefined)
     out.push({
       t: "You accept the trade in the small but not the large.",

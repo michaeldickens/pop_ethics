@@ -378,9 +378,16 @@ def suite_engine(page, rep):
               "accepting the trade small but not large draws the boundary bullet", str(small))
     rep.check(not any("very repugnant conclusion" in t for t in small),
               "...without claiming the VRC itself was accepted", str(small))
-    quiet_small = page.evaluate(titles, dict(MODAL, vrc_mild="left", vrc="left"))
-    rep.check(not any("small but not the large" in t for t in quiet_small),
-              "the boundary bullet needs the mild trade accepted", str(quiet_small))
+    rep.check(not any("outweighs a lot of happiness" in t for t in small),
+              "...and accepting the mild trade is not the negative-side repugnance", str(small))
+    # Refusing even the mild trade (G > H) is the mirror repugnance: a little
+    # suffering outweighing a lot of happiness. It draws its own bullet, and the
+    # boundary bullet does not also fire since the trade was not accepted.
+    reject = page.evaluate(titles, dict(MODAL, vrc_mild="left", vrc="left"))
+    rep.check(any("outweighs a lot of happiness" in t for t in reject),
+              "refusing the mild trade draws the negative-side repugnance bullet", str(reject))
+    rep.check(not any("small but not the large" in t for t in reject),
+              "the boundary bullet needs the mild trade accepted", str(reject))
 
     # The property that matters: no revisionary answer can appear in a profile
     # the quiz says nothing at all about.
@@ -388,7 +395,8 @@ def suite_engine(page, rep):
              ["benign", "left"], ["nae", "left"], ["pareto", "no"], ["trans_gt", "no"],
              ["trans_eq", "no"], ["trans_none", "no"], ["generalize", "no"],
              ["AvZ", "right"], ["greedy", "equal"], ["same_number", "left"],
-             ["same_number", "none"], ["same_number", "equal"], ["vrc", "right"]]
+             ["same_number", "none"], ["same_number", "equal"], ["vrc", "right"],
+             ["vrc_mild", "left"]]
     silent = page.evaluate("""(cfg) => {
       const keep = ANS, bad = new Set();
       cfg.profiles.forEach(a => {
