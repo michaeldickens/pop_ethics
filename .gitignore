@@ -221,3 +221,6 @@ __marimo__/
 
 # Local deploy instructions (irrelevant for public repo)
 DEPLOY.md
+
+# used for analysis locally, but don't expose publicly
+quiz-log.jsonl
