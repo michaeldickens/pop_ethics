@@ -361,22 +361,23 @@ def suite_engine(page, rep):
 
     # The very repugnant conclusion and its mild anchor. Accepting the extreme
     # draws its own bullet; accepting the mild trade but drawing the line at the
-    # extreme draws the "where does it stop" bullet; and calling one added agony
-    # bad while blessing a world built on a multitude draws the tension bullet.
+    # extreme draws the "where does it stop" bullet. Accepting the VRC while
+    # calling a single added agony bad is a consistent totalist position, not a
+    # tension, so it draws no extra bullet on top of the VRC one.
     vrc_yes = page.evaluate(titles, dict(MODAL, vrc="right"))
     rep.check(any("very repugnant conclusion" in t for t in vrc_yes),
               "accepting the VRC draws its own bullet", str(vrc_yes))
-    rep.check(any("multitude does not" in t for t in vrc_yes),
-              "...and, since MODAL calls the added agony bad, the one-vs-many tension",
-              str(vrc_yes))
+    total_like = page.evaluate(titles, dict(MODAL, misery="left", vrc="right", AvZ="right"))
+    rep.check(not any("multitude" in t for t in total_like),
+              "a consistent totalist (misery=left, vrc=right) draws no VRC tension bullet",
+              str(total_like))
+    rep.check(any("very repugnant conclusion" in t for t in total_like),
+              "...but still draws the VRC-acceptance bullet", str(total_like))
     small = page.evaluate(titles, dict(MODAL, vrc_mild="right", vrc="left"))
     rep.check(any("small but not the large" in t for t in small),
               "accepting the trade small but not large draws the boundary bullet", str(small))
     rep.check(not any("very repugnant conclusion" in t for t in small),
               "...without claiming the VRC itself was accepted", str(small))
-    quiet_mult = page.evaluate(titles, dict(MODAL, misery="right", vrc="right"))
-    rep.check(not any("multitude does not" in t for t in quiet_mult),
-              "the one-vs-many tension needs the single agony judged bad", str(quiet_mult))
     quiet_small = page.evaluate(titles, dict(MODAL, vrc_mild="left", vrc="left"))
     rep.check(not any("small but not the large" in t for t in quiet_small),
               "the boundary bullet needs the mild trade accepted", str(quiet_small))
