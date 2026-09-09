@@ -2162,35 +2162,34 @@ class Report(object):
                    "fractional." % pct(tied, len(scores)))
         self.stats["nearest_view"] = {k[0]: v for k, v in hits.items()}
 
-        # Whole-profile exact matches: a respondent whose complete answer set
-        # is identical to some catalogued view, not merely nearest to one.
-        # Every catalogued view answers the same questions, so this needs a
-        # full profile - anyone who skipped or retired a question cannot land
-        # exactly on a view that answers all of them.
-        qset = set()
-        for _key, _name, va in views:
-            qset |= set(va)
-        exact = 0
-        by_view = collections.Counter()
-        for r in runs:
-            ans = self.effective(r)
-            if not qset <= set(ans):
-                continue
-            best = nearest_view(views, ans)
-            if best and best[0] == 1.0:
-                exact += 1
-                for _key, name in best[1]:
-                    by_view[name] += 1
-        self.p("Landing exactly on a catalogued view - a whole %d-answer "
-               "profile identical to a view, not just nearest to one: **%s**. "
-               "Everyone else sits close to a view without matching it, which "
-               "is the normal case: the views are landmarks, not boxes."
-               % (len(qset), pct(exact, len(runs))))
-        if by_view:
-            self.rows(["View matched exactly", "Respondents"],
-                      [[name, c] for name, c in by_view.most_common()])
-        self.stats["exact_view_matches"] = {
-            "n": exact, "of": len(runs), "by_view": dict(by_view)}
+        # Whole-profile exact matches: a respondent whose answers *are* some
+        # catalogued view - the same answer to every question the quiz asked
+        # them. Settled on the engine's encoded profile, which reflects the
+        # quiz's pruning, exactly as the "Whole answer profiles" section does:
+        # a conditional question a run never reached is not held against it. A
+        # naive "answered all 19 questions" test finds almost nobody, because
+        # every path prunes some conditional question. Needs the engine; the
+        # codes are not comparable without it.
+        view_codes = self.view_codes(views)
+        if view_codes:
+            exact = 0
+            by_view = collections.Counter()
+            for r in runs:
+                code = self.profile_code(r)
+                if code and code in view_codes:
+                    exact += 1
+                    by_view[self.join_names(sorted(view_codes[code]))] += 1
+            self.p("Landing exactly on a catalogued view - the same answer to "
+                   "every question the quiz asked, not merely nearest to a "
+                   "view: **%s**. Everyone else sits close to a view without "
+                   "being it, which is the normal case: the views are "
+                   "landmarks, not boxes." % pct(exact, len(runs)))
+            if by_view:
+                self.rows(["View matched exactly", "Respondents"],
+                          [[name, c] for name, c in by_view.most_common()])
+            self.stats["exact_view_matches"] = {
+                "n": exact, "of": len(runs),
+                "by_view": dict(by_view)}
 
     # -- associations -----------------------------------------------------
 
