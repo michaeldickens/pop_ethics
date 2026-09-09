@@ -2334,6 +2334,8 @@ class Report(object):
                "quiz URL to open it."
                % (len(counts), "" if len(counts) == 1 else "s",
                   n, "" if n == 1 else "s"))
+        num_unique = len([k for k in counts if counts[k] == 1])
+        self.p("%d responses (%d%%) were unique — nobody else answered in the exact same way." % (num_unique, 100 * num_unique / n))
         exact = self.view_codes(views)
         if views:
             self.p("Against each, the view in `population_ethics_views.py` "
