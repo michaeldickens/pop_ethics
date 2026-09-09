@@ -63,6 +63,12 @@ section, but it is deliberately kept out of the answer tallies, the modal
 composite and the nearest-view matching: it is not a position on
 population ethics.
 
+The per-question tallies close with a "most divisive questions" ranking:
+every question ordered by how evenly its two leading answers split, so the
+most controversial one is named. The nearest-view section likewise ends
+with a count of how many respondents land exactly on a catalogued view - a
+whole profile identical to one - rather than merely nearest to it.
+
 Besides the per-question tallies there is a "modal answer" section: the
 most popular answer to every question, assembled into one run and put back
 through the quiz. A majority on each question separately can still be
@@ -1371,6 +1377,64 @@ class Report(object):
                               "counts": dict(counts)}
         self.stats["questions"] = stats
 
+        self.divisive(qs, stats)
+
+    def answer_label(self, qid, value):
+        opts = (self.meta_by_id.get(qid) or {}).get("opts") or []
+        return dict((v, strip_tags(l)) for v, l in opts).get(value, value)
+
+    def divisive(self, qs, stats):
+        """Rank the questions by how evenly they split the room.
+
+        Evenness is the smaller of the two most-picked answers over the
+        larger - 1.00 is a dead heat, a low figure a landslide. Only the top
+        two answers count: a near-even contest between two front-runners is
+        the thing being measured, and a third option that draws a few votes
+        (often "equal") should not disguise one.
+        """
+        ranked = []
+        for q in qs:
+            top = collections.Counter(stats[q["id"]]["counts"]).most_common()
+            if len(top) < 2 or top[1][1] == 0:
+                continue
+            evenness = top[1][1] / float(top[0][1])
+            ranked.append((evenness, q["id"], q["label"], top[0], top[1]))
+        if not ranked:
+            return
+        ranked.sort(key=lambda t: (-t[0], t[1]))
+        self.h(3, "Most divisive questions")
+        self.p("Every question with at least two answers given, ranked by how "
+               "close its two leading answers are. **Evenness** is the smaller "
+               "count over the larger, so 1.00 is a dead heat and a low figure "
+               "is a landslide. Only the top two answers count, so a near-even "
+               "split between two front-runners still ranks high even where a "
+               "third option - usually \"equal\" - drains a few votes.")
+        rows = []
+        for evenness, qid, label, first, second in ranked:
+            pair = first[1] + second[1]
+            rows.append([
+                "%s (`%s`)" % (label, qid),
+                "%s vs %s" % (self.answer_label(qid, first[0]),
+                              self.answer_label(qid, second[0])),
+                "%d%% / %d%%" % (round(100.0 * first[1] / pair),
+                                 round(100.0 * second[1] / pair)),
+                "%.2f" % evenness,
+            ])
+        self.rows(["Question", "Leading two", "Split of the two", "Evenness"],
+                  rows, chart="bar_h",
+                  data=[("%s (`%s`)" % (label, qid), evenness)
+                        for evenness, qid, label, _f, _s in ranked])
+        e, qid, label, first, second = ranked[0]
+        self.p("Most divisive: **%s** (`%s`) - a %s split between %s and %s."
+               % (label, qid,
+                  "dead-even" if e >= 0.95 else "near-even",
+                  self.answer_label(qid, first[0]),
+                  self.answer_label(qid, second[0])))
+        self.stats["most_divisive"] = [
+            {"id": qid, "label": label, "evenness": evenness,
+             "leading": [list(first), list(second)]}
+            for evenness, qid, label, first, second in ranked]
+
     def fallback_questions(self, runs):
         """Without the browser, the questions are whatever the log contains."""
         seen = collections.OrderedDict()
@@ -2097,6 +2161,36 @@ class Report(object):
                    "split evenly between them, which is why the counts are "
                    "fractional." % pct(tied, len(scores)))
         self.stats["nearest_view"] = {k[0]: v for k, v in hits.items()}
+
+        # Whole-profile exact matches: a respondent whose complete answer set
+        # is identical to some catalogued view, not merely nearest to one.
+        # Every catalogued view answers the same questions, so this needs a
+        # full profile - anyone who skipped or retired a question cannot land
+        # exactly on a view that answers all of them.
+        qset = set()
+        for _key, _name, va in views:
+            qset |= set(va)
+        exact = 0
+        by_view = collections.Counter()
+        for r in runs:
+            ans = self.effective(r)
+            if not qset <= set(ans):
+                continue
+            best = nearest_view(views, ans)
+            if best and best[0] == 1.0:
+                exact += 1
+                for _key, name in best[1]:
+                    by_view[name] += 1
+        self.p("Landing exactly on a catalogued view - a whole %d-answer "
+               "profile identical to a view, not just nearest to one: **%s**. "
+               "Everyone else sits close to a view without matching it, which "
+               "is the normal case: the views are landmarks, not boxes."
+               % (len(qset), pct(exact, len(runs))))
+        if by_view:
+            self.rows(["View matched exactly", "Respondents"],
+                      [[name, c] for name, c in by_view.most_common()])
+        self.stats["exact_view_matches"] = {
+            "n": exact, "of": len(runs), "by_view": dict(by_view)}
 
     # -- associations -----------------------------------------------------
 
