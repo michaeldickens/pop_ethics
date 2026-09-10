@@ -3156,9 +3156,12 @@ var CARD_HTML = {
       claimText("benign") +
       "</li></ol>";
     h +=
-      '<p class="because">You said adding Nadia with a modest good life makes the outcome <em>better</em> \u2014 K becomes K+. Now run the benign step in two moves. First lift everyone in A by a single unit: that is a Pareto improvement, which you accepted, so the lifted world A\u2032 is better than A. Then add a further group of good-but-lesser lives \u2014 the very same move you have just called an improvement \u2014 so A+ is better than A\u2032. \u201cBetter than\u201d chains, which you also accepted, so A+ is better than A. But you judged A+ ' +
+      '<p class="because"><p>You said adding Nadia with a modest good life makes the outcome <em>better</em> \u2014 K becomes K+. Now run the benign addition in two moves:' +
+'<ol><li>Lift everyone in A by a single unit. That is a Pareto improvement, so the lifted world A\u2032 is better than A.</li>' +
+          '<li>Add a further group of good-but-lesser lives. If K to K+ is an improvement, then by the same principle, A+ is better than A\u2032.</li></ol>' +
+          'By the transitivity of \u201cbetter than\u201d, A+ must be better than A. But you judged A+ ' +
       said +
-      " A. The two steps assume only that a modest good life is worth the same addition wherever it is made, and not merely beside K\u2019s five hundred \u2014 which is exactly what ranking it an improvement, rather than noting a fact about K in particular, already commits you to.</p></div>";
+      " A.</p></p></div>";
     return h;
   },
 };
