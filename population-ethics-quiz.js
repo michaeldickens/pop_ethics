@@ -2475,14 +2475,12 @@ var STORIES = [
     },
     because: function (a) {
       var collision = {
-        left: "You also judged A better than B directly.",
-        equal: "You also judged A and B exactly as good as each other.",
-        none: "You also judged A and B unrankable — not better, not worse, not equal.",
+        left: "But you judged A better than B.",
+        equal: "But you judged A and B exactly as good as each other.",
+        none: "But you judged A and B unrankable — not better, not worse, not equal.",
       }[a.AvB];
       return (
-        "Two rungs are all it takes. If A+ improves on A, and B improves on A+, then transitivity delivers B over A. " +
-        collision +
-        " One of those four has to go — and notice how little the argument needed: no vast numbers, no lives barely worth living, just one application of each move."
+        "If A+ improves on A, and B improves on A+, then transitivity entails that B is better than A. " + collision
       );
     },
   },
