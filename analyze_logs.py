@@ -1566,16 +1566,22 @@ class Report(object):
             self.p("A conflict card carries prose only when the answers "
                    "behind it match one of the quiz's stories, and a story "
                    "names both a set of blamed answers *and* the shape of "
-                   "the answers it describes. The same set reached by a "
-                   "different route falls through to `%s`, which says only "
-                   "what holds of every route - so one blamed set can appear "
-                   "twice in the table above, once told and once not. These "
-                   "are the routes people here actually took." % NO_STORY)
-            urows = [[ids, shape, pct(c, n)]
+                   "the answers it describes. The same set of questions "
+                   "reached by a different route falls through to `%s`, which "
+                   "says only what holds of every route - so one blamed set "
+                   "can appear more than once below, and once in the table "
+                   "above. Each row names the specific answers that triggered "
+                   "the conflict, not just the questions blamed, so two routes "
+                   "through the same set are told apart. These are the routes "
+                   "people here actually took." % NO_STORY)
+            # The blamed set is the questions; the answers to them are the
+            # route. Grouped by set so the several routes to one set sit
+            # together, then commonest route first within each set.
+            urows = [[shape, pct(c, n)]
                      for (ids, shape), c in
-                     sorted(untold.items(), key=lambda kv: (-kv[1], kv[0]))]
-            self.rows(["Answers blamed", "The route they took", "Respondents"],
-                      urows)
+                     sorted(untold.items(),
+                            key=lambda kv: (kv[0][0], -kv[1], kv[0][1]))]
+            self.rows(["Answers blamed", "Respondents"], urows)
             self.stats["conflicts_without_a_story"] = {
                 "%s | %s" % k: v for k, v in untold.items()}
 
