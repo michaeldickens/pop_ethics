@@ -870,6 +870,7 @@ function eqChainMatters(ans) {
      alpha     a choice from three that reverses a choice from two
      collapse  a gap with a determinate verdict one welfare unit away
      zrank     a gap on the ladder with Z ranked at the end of it
+     modben    the modest addition ranked, the same step at A then declined
 
    Broome's greediness of neutrality used to live here too, priced off a range
    of critical levels the two neutrality answers were read as implying. It
@@ -966,6 +967,27 @@ function plusVsBothCandidate(ans) {
   return { dir: ans.plusVsBoth };
 }
 
+// Ranking the modest addition an improvement - K+ better than K - does not
+// stay put at K. Take A and lift everyone one unit: Pareto, which the person
+// accepted, makes that A' better than A. Then add the same good-but-lesser
+// life the modest addition added, and that second step is the very move just
+// called an improvement, so A+ is better than A'. Better-than chains, so A+
+// is better than A - and any benign answer other than "better" denies it.
+// The two steps assume only that the addition is worth the same wherever it
+// is made and not just beside K's five hundred, which is exactly what ranking
+// it an improvement - rather than noting a fact about K - already asserts.
+// Needs Pareto for the lift and trans_gt for the chain: without either the
+// argument is not the person's own, and rejecting that principle already
+// carries a complaint of its own. Not visible to the closure, which never
+// sees an edge between the K worlds and the A worlds; scored here instead.
+function modBenignCandidate(ans) {
+  if (ans.neutral_mod !== "right") return null;
+  if (ans.pareto !== "yes") return null;
+  if (ans.trans_gt !== "yes") return null;
+  if (!ans.benign || ans.benign === "right") return null;
+  return { dir: ans.benign };
+}
+
 var EXTRA_CHECKS = [
   // Contraction consistency (Sen's property alpha): a constraint on choice
   // rather than on the betterness ordering.
@@ -985,6 +1007,7 @@ var EXTRA_CHECKS = [
   },
   { id: "zrank", run: zRankCandidate },
   { id: "plusVsBoth", run: plusVsBothCandidate },
+  { id: "modben", run: modBenignCandidate },
 ];
 
 // Each check's result under its own name, plus the list of the ones that
@@ -3107,6 +3130,35 @@ var CARD_HTML = {
       K_WOND[1].w +
       ". All that changes are the names.<br><br>" +
       "No other information about Owen or Nadia has been given \u2014 no relationship, no personal background, nothing \u2014 so there is no fact this verdict could be tracking. Switching the names alone cannot change the verdict.</p></div>";
+    return h;
+  },
+  modben: function (mb, n) {
+    var said = {
+      left: "worse than",
+      equal: "exactly as good as",
+      none: "not rankable against",
+    }[mb.dir];
+    var h = "";
+    h +=
+      '<div class="hit"><div class="tag">Conflict ' +
+      n +
+      " &middot; the modest addition does not stay put</div>";
+    h +=
+      '<h3 style="margin-top:10px">You called adding a modest life an improvement, then declined the same improvement.</h3>';
+    h +=
+      '<ol class="claims"><li>' +
+      claimText("neutral_mod") +
+      "</li><li>" +
+      claimText("pareto") +
+      "</li><li>" +
+      claimText("trans_gt") +
+      "</li><li>" +
+      claimText("benign") +
+      "</li></ol>";
+    h +=
+      '<p class="because">You said adding Nadia with a modest good life makes the outcome <em>better</em> \u2014 K becomes K+. Now run the benign step in two moves. First lift everyone in A by a single unit: that is a Pareto improvement, which you accepted, so the lifted world A\u2032 is better than A. Then add a further group of good-but-lesser lives \u2014 the very same move you have just called an improvement \u2014 so A+ is better than A\u2032. \u201cBetter than\u201d chains, which you also accepted, so A+ is better than A. But you judged A+ ' +
+      said +
+      " A. The two steps assume only that a modest good life is worth the same addition wherever it is made, and not merely beside K\u2019s five hundred \u2014 which is exactly what ranking it an improvement, rather than noting a fact about K in particular, already commits you to.</p></div>";
     return h;
   },
 };
