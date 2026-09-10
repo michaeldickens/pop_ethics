@@ -1581,11 +1581,21 @@ class Report(object):
                 c = seen.get(key, 0)
                 rows.append([title, "`%s`" % ids, pct(c, n), c])
         rows.sort(key=lambda r: (-r[3], r[0], r[1]))
-        # The chart stays one bar per card (the story), summing its profiles,
-        # so it reads as before while the table breaks each card apart.
-        chart = sorted(((universe_keys[k][1], seen.get(k, 0))
-                        for k in universe_keys if seen.get(k)),
-                       key=lambda tc: (-tc[1], tc[0]))
+        # One bar per card, labelled by its story and summing its profiles.
+        # A story-less card has no story to name, and every one of them would
+        # otherwise read "(no story for this shape)", so split it into one bar
+        # per answer profile and label each by the specific answers instead.
+        chart = []
+        for k in universe_keys:
+            if not seen.get(k):
+                continue
+            ids, title = universe_keys[k]
+            if title == NO_STORY:
+                chart += [(shape, cnt) for shape, cnt in by_card.get(k, [])
+                          if cnt]
+            else:
+                chart.append((title, seen.get(k, 0)))
+        chart.sort(key=lambda tc: (-tc[1], tc[0]))
         self.rows(["Conflict card", "Answers blamed", "Respondents"],
                   [r[:3] for r in rows], chart="bar_h", total=n,
                   data=chart)
