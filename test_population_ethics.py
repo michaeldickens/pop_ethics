@@ -195,8 +195,8 @@ def suite_engine(page, rep):
                             const st = S && storyFor(S, a);
                             return st ? (typeof st.title === 'function'
                                            ? st.title(a) : st.title) : null; }""", mixed)
-    rep.check(told is None,
-              "...and is not told the ladder story, which describes other answers", str(told))
+    rep.check(told is not None and "ranked" in told,
+              "...and is told the ladder story, phrased for the unrankable verdict", str(told))
     rep.check(LADDER_SHORT not in analyse(page, dict(mixed, trans_gt="no"))["sets"],
               "a denied verdict needs the transitivity that derived it",
               str(analyse(page, dict(mixed, trans_gt="no"))["sets"]))
