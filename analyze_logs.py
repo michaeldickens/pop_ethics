@@ -1598,7 +1598,7 @@ class Report(object):
         chart.sort(key=lambda tc: (-tc[1], tc[0]))
         self.rows(["Conflict card", "Answers blamed", "Respondents"],
                   [r[:3] for r in rows], chart="bar_h", total=n,
-                  data=chart)
+                  data=chart[:5])
         if universe:
             hit = sum(1 for k in universe_keys if seen.get(k))
             self.p("%d of the %d conflict cards reachable at all were hit by "
@@ -1648,7 +1648,7 @@ class Report(object):
         rows.sort(key=lambda r: (-r[2], r[0]))
         self.rows(["Bullet", "Respondents"], [r[:2] for r in rows],
                   chart="bar_h", total=n,
-                  data=[(r[0], r[2]) for r in rows if r[2]])
+                  data=[(r[0], r[2]) for r in rows if r[2]][:5])
         self.p("A title with `N` in it had a number filled in per run; the "
                "\"none of the nine pairs rankable\" wording is the same "
                "bullet as the unrankable-pairs row and is counted with it.")
@@ -2233,7 +2233,7 @@ class Report(object):
                 for (key, name), v in ranked]
         self.rows(["View", "Key", "Respondents (ties split)", "Share"], rows,
                   chart="bar_h", total=len(runs),
-                  data=[(name, v) for (key, name), v in ranked[:15] if v])
+                  data=[(name, v) for (key, name), v in ranked[:5] if v])
         if scores:
             self.p("Agreement with the nearest view: mean %.0f%%, median "
                    "%.0f%%, worst %.0f%%. A low figure means the catalogue "
