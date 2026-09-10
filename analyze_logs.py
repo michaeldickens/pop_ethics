@@ -802,17 +802,43 @@ def _nice_max(v):
 # Rather than measure text (which would tie chart drawing to the browser),
 # assume a per-character width comfortably above 12px system sans's average,
 # so an estimate errs towards a wider gutter and a shorter label rather than
-# towards a label that runs off its own chart. Whatever still will not fit is
-# ellipsised, with the full text in the row's tooltip and in the table beside
-# the chart, so nothing is lost.
+# towards a label that runs off its own chart. A label too long for one line
+# wraps onto a second (the row grows to make room); only what still will not
+# fit on two lines is ellipsised, with the full text in the row's tooltip and
+# in the table beside the chart, so nothing is lost.
 CHAR_W = 7.0
 LABEL_MIN, LABEL_MAX = 110, 380
 LABEL_PAD = 24                  # gutter room the estimate is not asked to fill
+LINE_H = 14                     # baseline-to-baseline for a wrapped label
 
 
 def _clip(text, chars):
     text = str(text)
     return text if len(text) <= chars else text[:chars - 1].rstrip() + "…"
+
+
+def _wrap_label(text, max_chars):
+    """Word-wrap a label onto at most two lines no wider than max_chars,
+    balancing the two so neither runs long while the other sits nearly empty.
+    A label that already fits stays on one line; overflow past two lines is
+    ellipsised (the full text lives in the tooltip and the table)."""
+    words = str(text).split()
+    joined = " ".join(words)
+    if len(joined) <= max_chars or len(words) < 2:
+        return [_clip(joined, max_chars)]
+    best = None
+    for k in range(1, len(words)):
+        head = " ".join(words[:k])
+        if len(head) > max_chars:
+            break               # head only grows, so no later split fits
+        tail = " ".join(words[k:])
+        score = max(len(head), min(len(tail), max_chars))
+        if best is None or score < best[0]:
+            best = (score, head, tail)
+    if best is None:            # a single leading word already overflows
+        return [_clip(joined, max_chars)]
+    _, head, tail = best
+    return [head, _clip(tail, max_chars)]
 
 
 def chart_bar_h(rows, total=None, bar_w=300):
@@ -826,7 +852,13 @@ def chart_bar_h(rows, total=None, bar_w=300):
     if not rows:
         return ""
     label_chars = int((LABEL_MAX - LABEL_PAD) / CHAR_W)
-    longest = max(len(_clip(l, label_chars)) for l, _ in rows)
+    # Wrap each label first: the column is sized to the longest resulting
+    # line, and the band is grown to fit the tallest label, so labels that
+    # need two lines are shown in full instead of being cut off.
+    wrapped = [(label, _wrap_label(label, label_chars), value)
+               for label, value in rows]
+    lines_used = max(len(lines) for _, lines, _ in wrapped)
+    longest = max(len(line) for _, lines, _ in wrapped for line in lines)
     label_w = int(min(LABEL_MAX,
                       max(LABEL_MIN, longest * CHAR_W + LABEL_PAD)))
     # The tip label is the value and its share - "104 (100%)" at the widest -
@@ -837,28 +869,35 @@ def chart_bar_h(rows, total=None, bar_w=300):
     plot_x = label_w
     plot_w = bar_w
     top = 8
-    height = top + len(rows) * BAND_H + 8
+    band_h = BAND_H + (lines_used - 1) * LINE_H
+    height = top + len(rows) * band_h + 8
     hi = max([v for _, v in rows] + [1])
     out = ['<svg class="chart" viewBox="0 0 %d %d" width="%d" height="%d" '
            'role="img" xmlns="http://www.w3.org/2000/svg">'
            % (width, height, width, height)]
-    for i, (label, value) in enumerate(rows):
-        y = top + i * BAND_H
-        by = y + (BAND_H - BAR_H) / 2.0
+    for i, (label, lines, value) in enumerate(wrapped):
+        y = top + i * band_h
+        by = y + (band_h - BAR_H) / 2.0
         w = plot_w * value / float(hi)
         share = "" if not total else " (%.0f%%)" % (100.0 * value / total)
-        out.append('<text class="cat" x="%d" y="%.1f">%s</text>'
-                   % (plot_x - 10, y + BAND_H / 2.0 + 4,
-                      esc(_clip(label, label_chars))))
+        mid = y + band_h / 2.0 + 4          # 12px text sits ~4px above centre
+        # Stack the label's lines centred on the band, each right-aligned to
+        # the gutter by the .cat text-anchor.
+        first = mid - (len(lines) - 1) * LINE_H / 2.0
+        tspans = "".join(
+            '<tspan x="%d" y="%.1f">%s</tspan>'
+            % (plot_x - 10, first + j * LINE_H, esc(line))
+            for j, line in enumerate(lines))
+        out.append('<text class="cat">%s</text>' % tspans)
         if value:
             out.append('<path class="mark" d="%s"><title>%s: %s%s</title></path>'
                        % (_bar_path(plot_x, by, w, BAR_H), esc(label),
                           _num(value), share))
         out.append('<text class="val" x="%.1f" y="%.1f">%s%s</text>'
-                   % (plot_x + w + 8, y + BAND_H / 2.0 + 4, _num(value), share))
+                   % (plot_x + w + 8, mid, _num(value), share))
     # The baseline every bar grows from, drawn last so no mark sits on it.
     out.append('<line class="axis" x1="%d" y1="%d" x2="%d" y2="%.1f"/>'
-               % (plot_x, top, plot_x, top + len(rows) * BAND_H))
+               % (plot_x, top, plot_x, top + len(rows) * band_h))
     out.append("</svg>")
     return "\n".join(out)
 
