@@ -783,9 +783,19 @@ function collapseCandidate(ans) {
       // Procreation Asymmetry does. Only compare levels on one side.
       if (lo.w < 0 !== up.w < 0) continue;
       if (ans[lo.id] === "none" && ans[up.id] === "right")
-        return { vague: lo, anchor: up, dir: "up" };
+        return {
+          vague: lo,
+          anchor: up,
+          dir: "up",
+          ids: [lo.id, up.id, "collapse"],
+        };
       if (ans[up.id] === "none" && ans[lo.id] === "left")
-        return { vague: up, anchor: lo, dir: "down" };
+        return {
+          vague: up,
+          anchor: lo,
+          dir: "down",
+          ids: [up.id, lo.id, "collapse"],
+        };
     }
   }
   return null;
@@ -940,6 +950,10 @@ function alphaCandidate(ans) {
       third: p.third,
       viaZ: p.q === "AvZ",
       several: picked.length > 1,
+      // The answers this violation rests on: the menu pick, the pair verdict
+      // it reverses, and the acceptance of alpha. Named so callers outside the
+      // card (the log report) can list them rather than just the check's id.
+      ids: ["menu", p.q, "menu_alpha"],
     };
   }
   return null;
@@ -964,7 +978,7 @@ function alphaCandidate(ans) {
 function plusVsBothCandidate(ans) {
   if (ans.plusVsBoth !== "left" && ans.plusVsBoth !== "equal") return null;
   if (ans.pareto !== "yes") return null;
-  return { dir: ans.plusVsBoth };
+  return { dir: ans.plusVsBoth, ids: ["pareto", "plusVsBoth"] };
 }
 
 // Ranking the modest addition an improvement - K+ better than K - does not
@@ -985,7 +999,7 @@ function modBenignCandidate(ans) {
   if (ans.pareto !== "yes") return null;
   if (ans.trans_gt !== "yes") return null;
   if (!ans.benign || ans.benign === "right") return null;
-  return { dir: ans.benign };
+  return { dir: ans.benign, ids: ["neutral_mod", "pareto", "trans_gt", "benign"] };
 }
 
 var EXTRA_CHECKS = [
@@ -2439,14 +2453,38 @@ var STORIES = [
   ]),
   {
     needs: ["benign", "nae", "trans_gt", "AvB"],
-    // Only for the shape the prose describes: two improvements and a
-    // verdict swinging back. The same four answers collide in other ways.
+    // The two-improvements shape: A+ over A, B over A+, chained to B over A by
+    // transitivity. That derived verdict collides with any direct answer on A
+    // against B except "B is better" - so this covers A over B, A equal to B,
+    // and A unrankable against B alike, reading its title and prose off which
+    // one was given. The remaining shape behind this support set (benign
+    // "none", where the rungs instead rank the step the person declined) is a
+    // different argument and keeps its own story below.
     when: function (a) {
-      return a.benign === "right" && a.nae === "right" && a.AvB === "left";
+      return a.benign === "right" && a.nae === "right";
     },
-    title: "The ladder reaches B, but you say B is worse.",
-    because:
-      "Two rungs are all it takes. If A+ improves on A, and B improves on A+, then transitivity delivers B over A. You also judged A over B directly. One of those four has to go — and notice how little the argument needed: no vast numbers, no lives barely worth living, just one application of each move.",
+    title: function (a) {
+      return (
+        "The ladder reaches B, but you say " +
+        {
+          left: "B is worse.",
+          equal: "the two are equally good.",
+          none: "the two can’t be ranked.",
+        }[a.AvB]
+      );
+    },
+    because: function (a) {
+      var collision = {
+        left: "You also judged A better than B directly.",
+        equal: "You also judged A and B exactly as good as each other.",
+        none: "You also judged A and B unrankable — not better, not worse, not equal.",
+      }[a.AvB];
+      return (
+        "Two rungs are all it takes. If A+ improves on A, and B improves on A+, then transitivity delivers B over A. " +
+        collision +
+        " One of those four has to go — and notice how little the argument needed: no vast numbers, no lives barely worth living, just one application of each move."
+      );
+    },
   },
   {
     // Same four answers as the story above, reached the other way round:

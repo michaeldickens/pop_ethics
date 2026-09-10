@@ -152,7 +152,8 @@ PROBE = """(a) => {
     });
   });
   out.conflicts.sort((x, y) => x.ids.join().localeCompare(y.ids.join()));
-  r.extras.forEach(x => out.extras.push({id: x.id, title: extraTitle(x)}));
+  r.extras.forEach(x => out.extras.push(
+    {id: x.id, title: extraTitle(x), ids: (x.data && x.data.ids) || null}));
   ANS = keep;
   return out;
 }"""
@@ -204,14 +205,17 @@ UNIVERSE_PROBE = """(spec) => {
         : null;
       conflicts[ids.join('+') + '\\u0000' + (title || '')] = {ids: ids, title: title};
     });
-    r.extras.forEach(x => { extras[x.id] = extraTitle(x); });
+    r.extras.forEach(x => {
+      extras[x.id] = {title: extraTitle(x), ids: (x.data && x.data.ids) || null};
+    });
     bullets().forEach(b => { bullets_[b.t] = 1; });
     profiles[profile()] = 1;
   }
   ANS = keep;
   return {
     conflicts: Object.keys(conflicts).map(k => conflicts[k]),
-    extras: Object.keys(extras).map(k => ({id: k, title: extras[k]})),
+    extras: Object.keys(extras).map(k => (
+      {id: k, title: extras[k].title, ids: extras[k].ids})),
     bullets: Object.keys(bullets_),
     profiles: Object.keys(profiles),
   };
@@ -1541,10 +1545,13 @@ class Report(object):
                 key = ("extra:" + x["id"], card_key(x["title"]))
                 keys.add(key)
                 titles[key] = card_key(x["title"])
-                idsets[key] = x["id"]
-                # An extra blames no answer set of its own, so it has no
-                # profile to name; None keeps it a single row below.
-                shapes.add((key[0], key[1], None))
+                idsets[key] = "+".join(x["ids"]) if x.get("ids") else x["id"]
+                # An extra names the answers it rests on, so give it the same
+                # answer=value profile a closure conflict gets rather than a
+                # bare check id like "alpha" that says nothing about the run.
+                shape = (", ".join("%s=%s" % (q, r.scored["answers"].get(q))
+                                   for q in x["ids"]) if x.get("ids") else None)
+                shapes.add((key[0], key[1], shape))
             seen.update(keys)
             shape_seen.update(shapes)
 
@@ -1556,7 +1563,8 @@ class Report(object):
                                       card_key(c["title"] or NO_STORY))
             for x in universe["extras"]:
                 key = ("extra:" + x["id"], card_key(x["title"]))
-                universe_keys[key] = (x["id"], card_key(x["title"]))
+                ids = "+".join(x["ids"]) if x.get("ids") else x["id"]
+                universe_keys[key] = (ids, card_key(x["title"]))
         for key in seen:
             universe_keys.setdefault(key, (idsets[key], titles[key]))
 
