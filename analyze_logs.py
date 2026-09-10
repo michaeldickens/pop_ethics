@@ -1512,27 +1512,41 @@ class Report(object):
         # different cards.
         seen = collections.Counter()
         titles, idsets = {}, {}
+        # A single card can be reached by more than one profile of answers -
+        # the same blamed set is unsatisfiable for more than one reason, and a
+        # story-less card lumps every route to it together - so the questions
+        # blamed do not pin down the answers that triggered it. Count the
+        # profiles too, keyed by card and by the specific answers, so the
+        # table can name each answer set rather than repeat one question set.
+        shape_seen = collections.Counter()
         # A generic card is one whose blamed answers match no story in the
         # quiz, so several routes to the same contradiction share the row.
         # Which routes those were is worth its own table below.
         untold = collections.Counter()
         for r in runs:
-            keys = set()
+            keys, shapes = set(), set()
             for c in r.scored["conflicts"]:
-                key = ("+".join(c["ids"]), card_key(c["title"] or NO_STORY))
+                idstr = "+".join(c["ids"])
+                title = card_key(c["title"] or NO_STORY)
+                key = (idstr, title)
                 keys.add(key)
-                titles[key] = card_key(c["title"] or NO_STORY)
-                idsets[key] = "+".join(c["ids"])
+                titles[key] = title
+                idsets[key] = idstr
+                shape = ", ".join("%s=%s" % (q, r.scored["answers"].get(q))
+                                  for q in c["ids"])
+                shapes.add((idstr, title, shape))
                 if not c["title"]:
-                    untold[("+".join(c["ids"]),
-                            ", ".join("%s=%s" % (q, r.scored["answers"].get(q))
-                                      for q in c["ids"]))] += 1
+                    untold[(idstr, shape)] += 1
             for x in r.scored["extras"]:
                 key = ("extra:" + x["id"], card_key(x["title"]))
                 keys.add(key)
                 titles[key] = card_key(x["title"])
                 idsets[key] = x["id"]
+                # An extra blames no answer set of its own, so it has no
+                # profile to name; None keeps it a single row below.
+                shapes.add((key[0], key[1], None))
             seen.update(keys)
+            shape_seen.update(shapes)
 
         universe_keys = {}
         if universe:
@@ -1546,15 +1560,45 @@ class Report(object):
         for key in seen:
             universe_keys.setdefault(key, (idsets[key], titles[key]))
 
+        by_card = collections.defaultdict(list)
+        for (idstr, title, shape), cnt in shape_seen.items():
+            by_card[(idstr, title)].append((shape, cnt))
+
         rows = []
         for key in sorted(universe_keys):
             ids, title = universe_keys[key]
-            c = seen.get(key, 0)
-            rows.append([title, "`%s`" % ids, pct(c, n), c])
+            observed = by_card.get(key)
+            if observed:
+                # One row per answer profile that reached the card, each
+                # naming the specific answers rather than only the questions,
+                # so a card behind several profiles is no longer one
+                # ambiguous line repeating the same blamed set.
+                for shape, cnt in observed:
+                    blamed = "`%s`" % ids if shape is None else shape
+                    rows.append([title, blamed, pct(cnt, n), cnt])
+            else:
+                # Reachable but hit by nobody here: no answers to name.
+                c = seen.get(key, 0)
+                rows.append([title, "`%s`" % ids, pct(c, n), c])
         rows.sort(key=lambda r: (-r[3], r[0], r[1]))
+        # One bar per card, labelled by its story and summing its profiles.
+        # A story-less card has no story to name, and every one of them would
+        # otherwise read "(no story for this shape)", so split it into one bar
+        # per answer profile and label each by the specific answers instead.
+        chart = []
+        for k in universe_keys:
+            if not seen.get(k):
+                continue
+            ids, title = universe_keys[k]
+            if title == NO_STORY:
+                chart += [(shape, cnt) for shape, cnt in by_card.get(k, [])
+                          if cnt]
+            else:
+                chart.append((title, seen.get(k, 0)))
+        chart.sort(key=lambda tc: (-tc[1], tc[0]))
         self.rows(["Conflict card", "Answers blamed", "Respondents"],
                   [r[:3] for r in rows], chart="bar_h", total=n,
-                  data=[(r[0], r[3]) for r in rows if r[3]])
+                  data=chart)
         if universe:
             hit = sum(1 for k in universe_keys if seen.get(k))
             self.p("%d of the %d conflict cards reachable at all were hit by "
