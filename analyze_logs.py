@@ -81,10 +81,12 @@ and then reads a label back off each group - the catalogued view its
 consensus lands nearest, and the few answers it holds far more tightly than
 everyone else. It is agglomerative (hierarchical) clustering rather than
 k-means, because the answers are categorical - there is no centroid to
-average towards - and the number of clusters is chosen by silhouette rather
-than fixed in advance (--clusters overrides it). It exists to catch the
-sub-group a coarse classification hides: a set of answers that reads as one
-view until a further answer pulls part of the room somewhere else.
+average towards - with Ward linkage so the groups come out comparable in
+size rather than one lump beside a few outliers, and the number of clusters
+is chosen by silhouette rather than fixed in advance (--clusters overrides
+it). It exists to catch the sub-group a coarse classification hides: a set
+of answers that reads as one view until a further answer pulls part of the
+room somewhere else.
 
 Conflicts and bullets are not recomputed here: the quiz itself scores them,
 and a second implementation would drift. The page is loaded in a headless
@@ -785,18 +787,24 @@ def answer_distance(a, b):
 
 
 def agglomerate(dist, weights):
-    """Average-linkage hierarchical clustering; returns the merge sequence.
+    """Ward-linkage hierarchical clustering; returns the merge sequence.
 
     Agglomerative rather than k-means for two reasons. k-means averages its
     points to a centroid, and there is no average of "left" and "equal" to
     take; and it wants the number of clusters chosen up front, which here is
     better read off the data afterwards than guessed. Every item starts as its
-    own cluster and the two nearest clusters are joined, over and over. The
-    distance between two clusters is the mean distance between their members,
-    each member weighted by how many respondents gave that exact answer set
-    (UPGMA), so a profile five people gave pulls like five. Because a merge is
-    never undone, the sequence is a tree that can afterwards be cut at any
-    number of clusters.
+    own cluster and the two nearest clusters are joined, over and over, until a
+    single tree remains that can be cut at any number of clusters.
+
+    The linkage is Ward's (the Ward.D2 form of the Lance-Williams recurrence,
+    with respondent counts as the cluster sizes so a profile five people gave
+    pulls like five). Ward joins the pair that adds least to the total spread
+    within clusters, which keeps the clusters near each other in size and
+    resists the failure that sank the obvious choice here - average linkage
+    peels off the handful of people who answer nothing like anyone else and
+    leaves everyone else in one lump, so the cut is a large blob beside a few
+    stragglers rather than the camps the room actually divides into. Ward
+    splits the blob instead.
 
     `dist` is a full item-by-item distance matrix and `weights[i]` is item i's
     respondent count. Ties break towards the lower cluster id, so the tree is
@@ -821,14 +829,17 @@ def agglomerate(dist, weights):
                 d = cd[(ids[x], ids[y])]
                 if best is None or d < best[0]:
                     best = (d, ids[x], ids[y])
-        _, a, b = best
+        dab, a, b = best
         na, nb = size[a], size[b]
         for c in active:
             if c in (a, b):
                 continue
             da = cd[(min(a, c), max(a, c))]
             db = cd[(min(b, c), max(b, c))]
-            cd[(min(nxt, c), max(nxt, c))] = (na * da + nb * db) / (na + nb)
+            nc = size[c]
+            cd[(min(nxt, c), max(nxt, c))] = math.sqrt(
+                ((na + nc) * da * da + (nb + nc) * db * db - nc * dab * dab)
+                / float(na + nb + nc))
         active[nxt] = active[a] + active[b]
         size[nxt] = na + nb
         del active[a], active[b]
@@ -2403,8 +2414,13 @@ class Report(object):
                "k-means: the answers are categorical, so there is no centroid "
                "to average towards, and the distance between two people is "
                "just the share of the questions they both answered where they "
-               "answered differently. Identical answer sets are merged first "
-               "and carried as one weighted point.")
+               "answered differently. The linkage is Ward's, which joins "
+               "whichever pair adds least to the spread within clusters and so "
+               "keeps them comparable in size - the alternative, average "
+               "linkage, tends to shear off the few people who answer like "
+               "nobody else and leave everyone else in a single lump, which "
+               "says nothing. Identical answer sets are merged first and "
+               "carried as one weighted point.")
         if m < 3 or n < self.args.min_cluster_n:
             self.p("Too little to cluster: it needs at least %d respondents "
                    "and 3 distinct answer sets, and this corpus has %d and %d. "
