@@ -2969,13 +2969,17 @@ function bullets() {
   // Parfit's shape rather than a slip, so it is named as such - and pressed
   // where it is weakest, which is that the line falls between one headcount
   // and the next.
-  // Every pair whose two futures differ in headcount. K against K+- belongs
-  // here too - 500 people against 501 - and was missed when that question
-  // was added, which undercounted the very thing this bullet is counting.
-  // nae is the one pair that does not belong: A+ and B hold the same 200.
+  // The pairs that count are the ones where the two futures hold the same
+  // people and one world simply adds someone: K against K-/K+/K++/K± adds
+  // Nadia, A against A+ adds a group everyone in A survives into. There the
+  // added head is the only thing that moved, so refusing to rank it while
+  // ranking the same-number case is exactly the asymmetry this bullet names.
+  // AvB and AvZ change the headcount too, but they also swap out every person,
+  // so declining them is a refusal to compare across who-exists rather than
+  // this same-people-plus-one asymmetry - and if it does conflict with a
+  // same-number verdict, a different route already catches it.
+  // nae stays out for the same reason it always has: A+ and B hold the same 200.
   var duckedDiffN = [
-    "AvB",
-    "AvZ",
     "benign",
     "misery",
     "neutral_mod",

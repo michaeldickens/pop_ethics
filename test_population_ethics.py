@@ -585,9 +585,13 @@ def suite_engine(page, rep):
     rep.check(bodies[0] != bodies[1] and all(bodies),
               "declining and calling it a tie are described differently")
 
-    # Ranking the same-number case while ducking different-number ones is
+    # Ranking the same-number case while ducking a same-people-plus-one pair is
     # Parfit's shape, not a slip. It must be named only when both halves hold.
-    parfit = dict(MODAL, same_number="right", AvB="none", benign="none")
+    # The pairs that count are the add-a-person ones (K vs K-/K+/K++/K±, A vs
+    # A+): the added head is the only thing that moved. AvB and AvZ change the
+    # headcount too, but they swap out every person, so declining them is not
+    # this asymmetry and must not raise the bullet.
+    parfit = dict(MODAL, same_number="right", benign="none")
     rep.check(any("Comparable when the numbers match" in t
                   for t in bullet_titles(page, parfit)),
               "the same-number/different-number asymmetry is named when it holds")
@@ -597,6 +601,13 @@ def suite_engine(page, rep):
     rep.check(not any("Comparable when the numbers match" in t
                       for t in bullet_titles(page, dict(parfit, same_number="none"))),
               "...nor when the same-number case was declined as well")
+    # Ducking only AvB and AvZ, every add-a-person pair ranked, is not it: those
+    # are a refusal to compare across who-exists, and a same-number verdict that
+    # collides with them is caught by another route.
+    rep.check(not any("Comparable when the numbers match" in t
+                      for t in bullet_titles(page, dict(
+                          MODAL, same_number="right", AvB="none", AvZ="none"))),
+              "...nor when only the different-population pairs (AvB, AvZ) were ducked")
 
     # The probe must stay out of the closure: its two futures share nobody with
     # any other world in the quiz, so an edge from it could only ever be inert,
