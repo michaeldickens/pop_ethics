@@ -26,7 +26,7 @@ The list of views to include was initially AI-generated, and then I added a few 
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 3 bullets
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 3 bullets
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
-- [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 5 bullets
+- [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 4 bullets
 - [Antinatalism](#antinatalist) - clean, 2 bullets
 - [Negative-leaning](#negative-leaning) - clean, 3 bullets
 - [Hard negative utilitarianism](#hard-negative) - clean, 4 bullets
@@ -926,7 +926,6 @@ Bullets bitten:
 - You denied that levelling up improves things.
 - You judged 3 of the 9 pairs unrankable.
 - You hold the Procreation Asymmetry.
-- Comparable when the numbers match, unrankable when they do not.
 
 <a id="antinatalist"></a>
 
