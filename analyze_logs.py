@@ -3124,7 +3124,7 @@ def main():
                     help="in public mode, withhold whole answer profiles held "
                          "by fewer than this many people - a profile is one "
                          "person's individual answers and is also their share "
-                         "link (default: 2 public, 1 private; pass 1 to show "
+                         "link (default: 5 public, 1 private; pass 1 to show "
                          "every profile)")
     ap.add_argument("--permutations", type=int, default=2000, metavar="N",
                     help="reshuffles behind each group-comparison p-value "
@@ -3159,7 +3159,7 @@ def main():
     args = ap.parse_args()
 
     if args.min_cell is None:
-        args.min_cell = 2 if args.mode == "public" else 1
+        args.min_cell = 5 if args.mode == "public" else 1
     if args.familiarity:
         args.familiarity = {v.strip().lower()
                             for v in args.familiarity.split(",") if v.strip()}
