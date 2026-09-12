@@ -886,11 +886,10 @@ Bullets bitten:
 
 ## Non-transitive betterness and rejecting independence
 
-Eitan's view: avoid asserting that Nadia's wonderful life is equal to her modest life by
-allowing verdicts to change when the menu changes. Denying menu independence is what
-buys the escape from the neutral-range collision, which needs two equalities to chain
-before it can bite. Declines to rank A against B or against Z, and so rules none of the
-three out.
+Avoid asserting that Nadia's wonderful life is equal to her modest life by allowing
+verdicts to change when the menu changes. Denying menu independence is what buys the
+escape from the neutral-range collision, which needs two equalities to chain before it
+can bite. Declines to rank A against B or against Z, and so rules none of the three out.
 
 Open it: append `#a=yrnlernyne-l-y-yxn-` to the quiz URL.
 

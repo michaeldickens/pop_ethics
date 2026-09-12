@@ -442,7 +442,7 @@ VIEWS = [
     dict(
         key="nontransitive-non-independent",
         name="Non-transitive betterness and rejecting independence",
-        blurb="""Eitan's view: avoid asserting that Nadia's wonderful life is
+        blurb="""Avoid asserting that Nadia's wonderful life is
             equal to her modest life by allowing verdicts to change when the
             menu changes. Denying menu independence is what buys the escape
             from the neutral-range collision, which needs two equalities to
