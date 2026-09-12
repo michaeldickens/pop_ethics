@@ -74,6 +74,21 @@ most popular answer to every question, assembled into one run and put back
 through the quiz. A majority on each question separately can still be
 jointly inconsistent, so the composite gets a verdict of its own.
 
+The nearest-view section labels each person against a hand-written
+catalogue. The "answer clusters" section does the unsupervised opposite:
+it groups respondents by how alike their answers are, with no view fed in,
+and then reads a label back off each group - the catalogued view its
+consensus lands nearest, and the few answers it holds far more tightly than
+everyone else. It is agglomerative (hierarchical) clustering rather than
+k-means, because the answers are categorical - there is no centroid to
+average towards - with Ward linkage so the groups come out comparable in
+size rather than one lump beside a few outliers. It exists to catch the
+sub-group a coarse classification hides: a set of answers that reads as one
+view until a further answer pulls part of the room somewhere else. It is
+off unless --clusters is given: pass --clusters 0 to let silhouette pick the
+number of groups, or a fixed count. It is a probe to reach for, not part of
+the standing report.
+
 Conflicts and bullets are not recomputed here: the quiz itself scores them,
 and a second implementation would drift. The page is loaded in a headless
 browser and its own engine is run over each set of answers, the same way
@@ -743,6 +758,148 @@ def nearest_view(views, answers):
         elif abs(score - best[0]) < 1e-12:
             best[1].append((key, name))
     return best
+
+
+# ---------------------------------------------------------------------------
+# Clustering: group respondents by how alike their answers are, with no view
+# labels fed in, then read a label off what each group turns out to share.
+#
+# This is the unsupervised counterpart to the nearest-view section above. That
+# one measures each person against a hand-written catalogue; this one ignores
+# the catalogue while grouping and lets the groups fall where the answers put
+# them, so it can surface a cluster the catalogue has no entry for - or split
+# one coarse classification into the two camps hiding inside it.
+# ---------------------------------------------------------------------------
+
+def answer_distance(a, b):
+    """Fraction of the questions both runs answered where they gave different
+    answers - one minus the agreement score the nearest-view section uses.
+
+    The right metric for these answers rather than a borrowed one: they are
+    categorical (left / right / equal / none, yes / no, a menu pick), so there
+    is no mean to take and nothing to subtract, only whether two people
+    answered a question the same way. Two runs that share no answered question
+    are put as far apart as the metric reaches.
+    """
+    shared = [q for q in a if q in b]
+    if not shared:
+        return 1.0
+    return sum(1 for q in shared if a[q] != b[q]) / float(len(shared))
+
+
+def agglomerate(dist, weights):
+    """Ward-linkage hierarchical clustering; returns the merge sequence.
+
+    Agglomerative rather than k-means for two reasons. k-means averages its
+    points to a centroid, and there is no average of "left" and "equal" to
+    take; and it wants the number of clusters chosen up front, which here is
+    better read off the data afterwards than guessed. Every item starts as its
+    own cluster and the two nearest clusters are joined, over and over, until a
+    single tree remains that can be cut at any number of clusters.
+
+    The linkage is Ward's (the Ward.D2 form of the Lance-Williams recurrence,
+    with respondent counts as the cluster sizes so a profile five people gave
+    pulls like five). Ward joins the pair that adds least to the total spread
+    within clusters, which keeps the clusters near each other in size and
+    resists the failure that sank the obvious choice here - average linkage
+    peels off the handful of people who answer nothing like anyone else and
+    leaves everyone else in one lump, so the cut is a large blob beside a few
+    stragglers rather than the camps the room actually divides into. Ward
+    splits the blob instead.
+
+    `dist` is a full item-by-item distance matrix and `weights[i]` is item i's
+    respondent count. Ties break towards the lower cluster id, so the tree is
+    the same on every run.
+    """
+    n = len(weights)
+    active = {i: [i] for i in range(n)}
+    size = {i: weights[i] for i in range(n)}
+    # Cluster-to-cluster distances, updated in place as clusters merge rather
+    # than recomputed from members each time (the Lance-Williams recurrence).
+    cd = {}
+    for i in range(n):
+        for j in range(i + 1, n):
+            cd[(i, j)] = dist[i][j]
+    merges = []
+    nxt = n
+    while len(active) > 1:
+        ids = sorted(active)
+        best = None
+        for x in range(len(ids)):
+            for y in range(x + 1, len(ids)):
+                d = cd[(ids[x], ids[y])]
+                if best is None or d < best[0]:
+                    best = (d, ids[x], ids[y])
+        dab, a, b = best
+        na, nb = size[a], size[b]
+        for c in active:
+            if c in (a, b):
+                continue
+            da = cd[(min(a, c), max(a, c))]
+            db = cd[(min(b, c), max(b, c))]
+            nc = size[c]
+            cd[(min(nxt, c), max(nxt, c))] = math.sqrt(
+                ((na + nc) * da * da + (nb + nc) * db * db - nc * dab * dab)
+                / float(na + nb + nc))
+        active[nxt] = active[a] + active[b]
+        size[nxt] = na + nb
+        del active[a], active[b]
+        merges.append((a, b, nxt))
+        nxt += 1
+    return merges
+
+
+def cut_tree(merges, n, k):
+    """The item groups left when the merges are stopped at k clusters."""
+    members = {i: [i] for i in range(n)}
+    count = n
+    for a, b, new in merges:
+        if count <= k:
+            break
+        members[new] = members[a] + members[b]
+        del members[a], members[b]
+        count -= 1
+    return [sorted(members[c]) for c in sorted(members)]
+
+
+def silhouette(groups, dist, weights):
+    """Weighted mean silhouette width of a partition; higher is better separated.
+
+    For each item, `a` is its mean distance to the rest of its own cluster and
+    `b` the smallest mean distance to another whole cluster, both weighted by
+    respondent count; its width is (b - a) over whichever is larger, so +1 is
+    an item deep inside a well-separated cluster and a negative width is one
+    that sits nearer its neighbours than its own. Averaged over respondents it
+    scores the whole partition, and its high point over k is a defensible place
+    to cut a tree that offers no k of its own.
+    """
+    if len(groups) < 2:
+        return -1.0
+    where = {}
+    for gi, g in enumerate(groups):
+        for i in g:
+            where[i] = gi
+    total_w, total_s = 0.0, 0.0
+    for i in where:
+        sums = [0.0] * len(groups)
+        wts = [0.0] * len(groups)
+        for j in where:
+            if j == i:
+                continue
+            gj = where[j]
+            sums[gj] += dist[i][j] * weights[j]
+            wts[gj] += weights[j]
+        gi = where[i]
+        a = sums[gi] / wts[gi] if wts[gi] > 0 else 0.0
+        others = [sums[o] / wts[o] for o in range(len(groups))
+                  if o != gi and wts[o] > 0]
+        if not others:
+            continue
+        b = min(others)
+        s = 0.0 if max(a, b) == 0 else (b - a) / max(a, b)
+        total_s += s * weights[i]
+        total_w += weights[i]
+    return total_s / total_w if total_w else -1.0
 
 
 # ---------------------------------------------------------------------------
@@ -2212,6 +2369,187 @@ class Report(object):
         self.stats["classification"] = {names[v]: seen.get(v, 0)
                                         for v in reachable}
 
+    # -- clusters ---------------------------------------------------------
+
+    def _weighted_mode(self, qid, counts):
+        """The most-chosen answer to a question, ties broken reproducibly.
+
+        Ties go to the answer the quiz offers first, exactly as the modal
+        composite breaks them, so a cluster's consensus does not depend on
+        dict iteration order.
+        """
+        order = {v: i for i, (v, _) in
+                 enumerate((self.meta_by_id.get(qid) or {}).get("opts") or [])}
+        return max(counts, key=lambda v: (counts[v], -order.get(v, 99)))
+
+    def clusters(self, runs, views):
+        """Group respondents by answer similarity, then label each group.
+
+        No view is fed into the grouping. The label is read back off the group
+        afterwards - the catalogued view its consensus answers land nearest,
+        the classification the quiz would hand that consensus, and the handful
+        of answers the group holds far more tightly than everyone else does.
+        The point is the case the coarse classifier misses: a set of answers
+        that puts people under one heading while a further answer pulls a
+        sub-group somewhere else entirely shows up here as that sub-group,
+        without anyone having to write a special case for it.
+        """
+        self.h(2, "Answer clusters")
+        # Identical answer sets collapse to one weighted point: two people who
+        # answered every question alike are nothing for the clustering to tell
+        # apart, and the weight keeps them counting for two.
+        buckets = collections.OrderedDict()
+        for r in runs:
+            ans = self.effective(r)
+            key = tuple(sorted(ans.items()))
+            if key not in buckets:
+                buckets[key] = [dict(ans), 0]
+            buckets[key][1] += 1
+        items = list(buckets.values())          # [answers, respondent count]
+        m, n = len(items), len(runs)
+        weights = [c for _, c in items]
+
+        self.p("Respondents grouped by how alike their answers are, with the "
+               "catalogue of named views kept out of the grouping entirely. "
+               "The method is agglomerative (hierarchical) clustering, not "
+               "k-means: the answers are categorical, so there is no centroid "
+               "to average towards, and the distance between two people is "
+               "just the share of the questions they both answered where they "
+               "answered differently. The linkage is Ward's, which joins "
+               "whichever pair adds least to the spread within clusters and so "
+               "keeps them comparable in size - the alternative, average "
+               "linkage, tends to shear off the few people who answer like "
+               "nobody else and leave everyone else in a single lump, which "
+               "says nothing. Identical answer sets are merged first and "
+               "carried as one weighted point.")
+        if m < 3 or n < self.args.min_cluster_n:
+            self.p("Too little to cluster: it needs at least %d respondents "
+                   "and 3 distinct answer sets, and this corpus has %d and %d. "
+                   "The nearest-view section above is the per-person version "
+                   "of the same question." % (self.args.min_cluster_n, n, m))
+            return
+
+        dist = [[0.0] * m for _ in range(m)]
+        for i in range(m):
+            for j in range(i + 1, m):
+                d = answer_distance(items[i][0], items[j][0])
+                dist[i][j] = dist[j][i] = d
+        merges = agglomerate(dist, weights)
+
+        # A tree offers no k of its own, so either take the one asked for or
+        # pick the k whose cut separates cleanest by silhouette. The scores are
+        # reported so the choice is not a black box.
+        kmax = max(2, min(self.args.max_clusters, m - 1))
+        scored_k = [(k, silhouette(cut_tree(merges, m, k), dist, weights))
+                    for k in range(2, kmax + 1)]
+        if self.args.clusters and self.args.clusters >= 2:
+            k = min(self.args.clusters, m)
+            how = "%d, as asked" % k
+        else:
+            k = max(scored_k, key=lambda ks: (ks[1], -ks[0]))[0]
+            how = ("%d, the number that scored highest below" % k)
+        self.p("Number of clusters: **%s**. Silhouette runs from -1 to 1; "
+               "higher means the clusters are tighter and better separated, "
+               "and a figure near zero means the answers do not really fall "
+               "into this many groups." % how)
+        self.rows(["Clusters", "Silhouette"],
+                  [["%d%s" % (kk, " (chosen)" if kk == k else ""), "%.2f" % s]
+                   for kk, s in scored_k],
+                  chart="columns",
+                  data=[(str(kk), max(0.0, s)) for kk, s in scored_k])
+
+        groups = cut_tree(merges, m, k)
+        groups.sort(key=lambda g: -sum(weights[i] for i in g))
+        qids = sorted({q for ans, _ in items for q in ans})
+
+        # Each cluster's consensus, and how tightly it holds each answer
+        # against how often everyone outside it gives that same answer. A big
+        # gap is what makes an answer the cluster's own rather than the room's.
+        summary_rows, size_data, detail = [], [], []
+        cluster_stats = []
+        for gi, g in enumerate(groups, 1):
+            gw = sum(weights[i] for i in g)
+            consensus, defining = {}, []
+            for q in qids:
+                inside = collections.Counter()
+                for i in g:
+                    if q in items[i][0]:
+                        inside[items[i][0][q]] += weights[i]
+                if not inside:
+                    continue
+                val = self._weighted_mode(q, inside)
+                consensus[q] = val
+                in_share = inside[val] / float(sum(inside.values()))
+                out_w = out_hit = 0
+                for i in range(m):
+                    if i in g or q not in items[i][0]:
+                        continue
+                    out_w += weights[i]
+                    if items[i][0][q] == val:
+                        out_hit += weights[i]
+                out_share = out_hit / float(out_w) if out_w else 0.0
+                defining.append((in_share - out_share, in_share, out_share,
+                                 q, val))
+            # The answers this cluster agrees on far more than the rest do,
+            # strongest gap first; a near-unanimous answer everybody shares is
+            # not distinctive and is left out.
+            defining.sort(key=lambda t: (-t[0], t[3]))
+            picked = [d for d in defining if d[1] >= 0.6 and d[0] >= 0.15][:5]
+
+            nearest = nearest_view(views, consensus) if views else None
+            near_name = (", ".join(name for _, name in nearest[1])
+                         if nearest else "-")
+            near_share = "%.0f%%" % (100.0 * nearest[0]) if nearest else "-"
+            scored = self.engine.score(consensus) if self.engine else None
+            quiz_says = (profile_names([scored["profile"]])[scored["profile"]]
+                         if scored else "-")
+
+            summary_rows.append([
+                "Cluster %d" % gi, pct(gw, n), near_name, near_share, quiz_says])
+            size_data.append(("Cluster %d" % gi, gw))
+
+            self.h(3, "Cluster %d - %s" % (gi, near_name if views else
+                                           "%d respondents" % gw))
+            self.p("%s. Consensus lands nearest the **%s** view (%s of its "
+                   "answers)%s." % (
+                       pct(gw, n), near_name, near_share,
+                       "; the quiz would classify that consensus as *%s*"
+                       % quiz_says if scored else ""))
+            if picked:
+                self.rows(
+                    ["What sets it apart", "This cluster", "Everyone else"],
+                    [[self.qlabel(q) + ": " + self.vlabel(q, val, 40),
+                      "%.0f%%" % (100.0 * ins), "%.0f%%" % (100.0 * outs)]
+                     for _, ins, outs, q, val in picked])
+            else:
+                self.p("Nothing sets this cluster apart sharply - its answers "
+                       "are close to the room's on every question.")
+            if scored:
+                bl = [card_key(b) for b in scored["bullets"]]
+                self.p("Open its consensus: append `#a=%s` to the quiz URL.%s"
+                       % (scored["code"],
+                          " Bullets its consensus bites: " + "; ".join(bl) + "."
+                          if bl else ""))
+            cluster_stats.append({
+                "size": gw, "nearest_view": near_name,
+                "nearest_agreement": nearest[0] if nearest else None,
+                "quiz_classification": quiz_says,
+                "defining": [{"q": q, "answer": val, "in_share": ins,
+                              "out_share": outs}
+                             for _, ins, outs, q, val in picked],
+                "consensus_code": scored["code"] if scored else None,
+            })
+
+        self.h(3, "The clusters at a glance")
+        self.rows(["Cluster", "Respondents", "Nearest view", "Agreement",
+                   "Quiz calls it"], summary_rows,
+                  chart="bar_h", total=n, data=size_data)
+        self.stats["clusters"] = {
+            "k": k, "chosen_by": ("requested" if self.args.clusters >= 2
+                                  else "silhouette"),
+            "silhouette_by_k": {kk: s for kk, s in scored_k},
+            "distinct_profiles": m, "clusters": cluster_stats}
+
     # -- views ------------------------------------------------------------
 
     def views(self, runs, views):
@@ -2658,6 +2996,18 @@ def main():
     ap.add_argument("--crosstabs", type=int, default=3,
                     help="how many of those to print as a cross-tab "
                          "(default: 3)")
+    ap.add_argument("--clusters", type=int, default=None, metavar="K",
+                    help="add the answer-clusters section, grouping "
+                         "respondents into K clusters. Left off entirely "
+                         "unless this is given; pass 0 to let silhouette pick "
+                         "the number that separates cleanest, or a K of 2 or "
+                         "more to fix it")
+    ap.add_argument("--max-clusters", type=int, default=8, metavar="K",
+                    help="with --clusters 0, the most clusters the automatic "
+                         "choice will weigh (default: 8)")
+    ap.add_argument("--min-cluster-n", type=int, default=12, metavar="N",
+                    help="don't cluster a corpus with fewer than this many "
+                         "respondents (default: 12)")
     ap.add_argument("-o", "--out", help="also write the report to this file")
     ap.add_argument("--html", metavar="PATH",
                     help="write the report to this file as a self-contained "
@@ -2773,6 +3123,10 @@ def main():
     rep.cards(selected, universe)
     rep.classification(selected, universe)
     rep.views(selected, views)
+    # Off unless asked for: the unsupervised grouping is a deliberate probe,
+    # not part of the standing report.
+    if args.clusters is not None:
+        rep.clusters(selected, views)
     rep.associations(selected)
     rep.profiles(selected, views)
 
