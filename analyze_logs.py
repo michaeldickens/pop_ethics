@@ -105,6 +105,9 @@ To count how many people hit a card, the space of cards has to be known
 first - a card nobody hit is a result too, and there is no static list of
 them in the quiz. So the engine is also run over --universe random answer
 profiles to enumerate the conflicts and bullets that are reachable at all.
+That enumeration is a sample, so the count of reachable cards is a floor: a
+card only a narrow set of answers reaches can be missed, and the figure can
+move with --universe and --seed. The report says so where it prints it.
 """
 
 import argparse
@@ -872,6 +875,13 @@ def silhouette(groups, dist, weights):
     that sits nearer its neighbours than its own. Averaged over respondents it
     scores the whole partition, and its high point over k is a defensible place
     to cut a tree that offers no k of its own.
+
+    A cluster of one has no `a` to take - there is nothing else in it to
+    measure against - and by Rousseeuw's convention its width is 0. Treating
+    the missing `a` as 0 instead would score every singleton a perfect 1, so
+    shearing one person off would look like a better cut than the split it is
+    meant to beat, and the automatic k would drift upwards towards exactly the
+    partition Ward linkage was chosen to avoid.
     """
     if len(groups) < 2:
         return -1.0
@@ -890,13 +900,16 @@ def silhouette(groups, dist, weights):
             sums[gj] += dist[i][j] * weights[j]
             wts[gj] += weights[j]
         gi = where[i]
-        a = sums[gi] / wts[gi] if wts[gi] > 0 else 0.0
         others = [sums[o] / wts[o] for o in range(len(groups))
                   if o != gi and wts[o] > 0]
         if not others:
             continue
         b = min(others)
-        s = 0.0 if max(a, b) == 0 else (b - a) / max(a, b)
+        if wts[gi] <= 0:
+            s = 0.0                     # alone in its cluster; see above
+        else:
+            a = sums[gi] / wts[gi]
+            s = 0.0 if max(a, b) == 0 else (b - a) / max(a, b)
         total_s += s * weights[i]
         total_w += weights[i]
     return total_s / total_w if total_w else -1.0
@@ -1316,6 +1329,10 @@ def table(headers, rows):
     return out
 
 
+# How many of the commonest whole profiles the profiles table lists. Most
+# profiles are held by one person, so the full list is as long as the corpus.
+TOP_PROFILES = 20
+
 BANNER = (
     "**PRIVATE - DO NOT SHARE.** This report was built in private mode. It "
     "includes runs whose takers did not consent to public aggregate "
@@ -1369,7 +1386,7 @@ class Report(object):
     # -- sections ---------------------------------------------------------
 
     def corpus(self, all_runs, kept, dropped_consent, dropped_unrecorded, bad,
-               blank, dropped_named, dropped_familiarity):
+               blank, dropped_named, dropped_familiarity, selected):
         self.h(2, "The corpus")
         times = [r.time for r in kept if r.time]
         rows = [
@@ -1393,13 +1410,27 @@ class Report(object):
             rows.append(["Dropped: outside --familiarity", dropped_familiarity])
         if dropped_named:
             rows.append(["Dropped: excluded by name", dropped_named])
-        rows += [["Runs analysed", len(kept)]]
+        # Two different figures, and the report is of the second one. The
+        # filters above take the log down to the runs worth keeping; --dedupe
+        # then takes one run per respondent out of those, and every count in
+        # every section below is over that. Calling the pre-dedupe figure
+        # "runs analysed" overstated the sample by however many people took
+        # the quiz twice.
+        rows += [["Runs kept after filtering", len(kept)]]
+        if len(selected) != len(kept):
+            rows += [["Runs analysed (`--dedupe %s`)" % self.args.dedupe,
+                      len(selected)]]
         if times:
             rows += [
                 ["First run", min(times).strftime("%Y-%m-%d %H:%M UTC")],
                 ["Last run", max(times).strftime("%Y-%m-%d %H:%M UTC")],
             ]
         self.rows(["", "Count"], rows)
+        if len(selected) != len(kept):
+            self.p("The dates and the daily counts below are of all %d runs "
+                   "kept; every other figure in this report is of the %d that "
+                   "`--dedupe %s` selects, one per respondent."
+                   % (len(kept), len(selected), self.args.dedupe))
 
         consented = sum(1 for r in all_runs if r.consent_recorded and r.consent)
         recorded = sum(1 for r in all_runs if r.consent_recorded)
@@ -1429,7 +1460,10 @@ class Report(object):
 
         self.stats["corpus"] = {
             "lines": len(all_runs) + bad + blank, "unparseable": bad + blank,
-            "runs_read": len(all_runs), "runs_analysed": len(kept),
+            # runs_analysed is the deduped figure the report is actually
+            # built on; runs_kept is what survived the filters before that.
+            "runs_read": len(all_runs), "runs_kept": len(kept),
+            "runs_analysed": len(selected),
             "dropped_consent_declined": dropped_consent,
             "dropped_consent_unrecorded": dropped_unrecorded,
             "dropped_excluded_by_name": dropped_named,
@@ -1766,9 +1800,14 @@ class Report(object):
                   data=chart[:5])
         if universe:
             hit = sum(1 for k in universe_keys if seen.get(k))
-            self.p("%d of the %d conflict cards reachable at all were hit by "
-                   "somebody. Cards at 0 are ones the quiz can produce and "
-                   "nobody here produced." % (hit, len(universe_keys)))
+            self.p("%d of the %d conflict cards found reachable were hit by "
+                   "somebody. Cards at 0 are ones the sweep reached and "
+                   "nobody here did. That denominator is a floor rather than "
+                   "a count: the quiz publishes no list of its cards, so they "
+                   "are enumerated by scoring %d random answer profiles, and "
+                   "a card only a narrow set of answers reaches can be missed "
+                   "altogether. Raising `--universe` or changing `--seed` can "
+                   "raise it." % (hit, len(universe_keys), self.args.universe))
 
         if untold:
             self.h(3, "Conflicts the quiz has no story for")
@@ -2200,8 +2239,13 @@ class Report(object):
                     if q["id"] in kept]
             data = [d for d, q in zip(data, [q for q in qs if q["id"] in modal])
                     if q["id"] in kept]
+        # No total passed, so the bars carry counts and no share. Each row's
+        # share has its own denominator - the people asked that question -
+        # and a chart takes one total for the lot, so the only share it could
+        # draw is out of the whole corpus, which is not what the column beside
+        # it means. On a conditional question the two read far apart.
         self.rows(["Question", "Modal answer", "Value", "Of those asked"],
-                  rows, chart="bar_h", total=n, data=data)
+                  rows, chart="bar_h", data=data)
 
         if not scored:
             self.p("*The verdict on this composite needs the quiz's engine; "
@@ -2260,6 +2304,14 @@ class Report(object):
         so the composite really is the centre - or concentrated, with a large
         block missing it on the same few questions, which means the mode has
         blended two camps into a position neither holds.
+
+        Distance counts only the questions a run was actually asked. The quiz
+        retires a conditional question when earlier answers never raise it,
+        and a question somebody was never put cannot be a disagreement with
+        them - scoring it as one measures the quiz's branching rather than
+        the room's spread, and pushes everybody who took a shorter path
+        away from the composite for no reason. This is the rule the
+        nearest-view section and the clustering already work by.
         """
         qs = sorted(kept)
         profiles = collections.Counter(
@@ -2268,25 +2320,41 @@ class Report(object):
         exact = profiles.get(target, 0)
         dist = collections.Counter()
         for profile, c in profiles.items():
-            dist[sum(1 for a, b in zip(profile, target) if a != b)] += c
+            dist[sum(1 for a, b in zip(profile, target)
+                     if a is not None and a != b)] += c
 
-        # What agreeing with every majority at once would come to if the
-        # questions were answered independently. They are not - that is rather
-        # the point - but it says whether nobody matching is even surprising.
-        expected = float(n)
+        # What agreeing throughout would come to if the questions were
+        # answered independently. They are not - that is rather the point -
+        # but it says whether so few agreeing is even surprising. Summed per
+        # run over the questions that run was asked, so it predicts the same
+        # quantity the "0 answers differing" row counts.
+        share = {}
         for q in qs:
             asked = [r for r in runs if q in self.effective(r)]
             if asked:
-                expected *= (sum(1 for r in asked
-                                 if self.effective(r)[q] == kept[q])
-                             / float(len(asked)))
+                share[q] = (sum(1 for r in asked
+                                if self.effective(r)[q] == kept[q])
+                            / float(len(asked)))
+        expected = 0.0
+        for r in runs:
+            eff = self.effective(r)
+            p = 1.0
+            for q in qs:
+                if q in eff:
+                    p *= share.get(q, 0.0)
+            expected += p
 
-        self.p("%s gave exactly this set of answers. Agreeing with all %d "
-               "majorities at once would be expected of about %.1f "
-               "%s even if the questions were answered independently, so "
-               "nobody landing on it is not by itself a surprise."
-               % (pct(exact, n), len(qs), expected,
-                  "person" if 0.5 <= expected < 1.5 else "people"))
+        agreed = dist.get(0, 0)
+        self.p("%s gave exactly this set of answers - the same answer to all "
+               "%d of the composite's questions.%s Under independence - which "
+               "these answers are not - about %.1f %s would be expected to "
+               "agree throughout, so nobody landing on it is not by itself a "
+               "surprise."
+               % (pct(exact, n), len(qs),
+                  " A further %s agreed with it on every question they were "
+                  "asked, having never been put one or more of the rest."
+                  % pct(agreed - exact, n) if agreed > exact else "",
+                  expected, "person" if 0.5 <= expected < 1.5 else "people"))
         misses = sorted(d for d in dist if d)
         if misses:
             closest = misses[0]
@@ -2300,18 +2368,34 @@ class Report(object):
                   [[d, pct(dist.get(d, 0), n)] for d in span],
                   chart="columns", total=n,
                   data=[(str(d), dist.get(d, 0)) for d in span])
+        self.p("Counted over the questions each person was asked. A "
+               "conditional question their answers never reached is not "
+               "held against them, so a short path through the quiz does not "
+               "read here as disagreement.")
 
         # The largest block of people who answered these questions alike. If
         # it is not the composite, it is the more informative number: a real
         # position that real people hold, against a construction nobody does.
+        # Only worth saying when it is a block at all and genuinely bigger
+        # than the composite's own group - with near-unique profiles the
+        # commonest one is an arbitrary single respondent, and the reading
+        # below would be drawn off one person.
         top, tc = profiles.most_common(1)[0]
-        if top != target:
-            differs = [q for q, a in zip(qs, top) if a != kept[q]]
+        differs = [q for q, a in zip(qs, top) if a is not None and a != kept[q]]
+        never_asked = [q for q, a in zip(qs, top) if a is None]
+        if top != target and tc > 1 and tc > exact and differs:
+            # Question labels contain commas of their own, so they are joined
+            # with semicolons; a comma-joined list reads as more items than
+            # the count in front of it.
             self.p("The largest block who answered these questions alike is "
                    "%s - bigger than any group the composite has - and it is "
-                   "not the composite. They part from it on %d of the %d: %s."
-                   % (pct(tc, n), len(differs), len(qs),
-                      ", ".join(self.qlabel(q) for q in differs)))
+                   "not the composite. They part from it on %d of the %d they "
+                   "were asked: %s.%s"
+                   % (pct(tc, n), len(differs), len(qs) - len(never_asked),
+                      "; ".join(self.qlabel(q) for q in differs),
+                      " They were never asked %s."
+                      % "; ".join(self.qlabel(q) for q in never_asked)
+                      if never_asked else ""))
             self.p("Where a block that size misses on the same handful of "
                    "questions, the per-question majorities are coming from "
                    "camps that disagree with each other, and the composite "
@@ -2322,6 +2406,7 @@ class Report(object):
                    "view.")
         self.stats["modal_distance"] = dict(dist)
         self.stats["modal_largest_block"] = tc
+        self.stats["modal_agreed_throughout"] = agreed
         return exact
 
     # -- the quiz's own classification ---------------------------------------
@@ -2360,8 +2445,11 @@ class Report(object):
                   data=[(names[v], seen[v]) for v in shown if seen.get(v)])
         if universe:
             hit = sum(1 for v in reachable if seen.get(v))
-            self.p("%d of the %d classifications the quiz can give were given "
-                   "to somebody." % (hit, len(reachable)))
+            self.p("%d of the %d classifications found reachable were given "
+                   "to somebody. As with the conflict cards, that denominator "
+                   "comes from sweeping random answer profiles rather than "
+                   "from a list the quiz keeps, so it is a floor."
+                   % (hit, len(reachable)))
         # The short names lose the reasoning, so keep the quiz's own sentence
         # beside each - in the same order, so the two tables read together.
         self.rows(["Classification", "What the results page says"],
@@ -2774,20 +2862,41 @@ class Report(object):
 
     def profiles(self, runs, views):
         self.h(2, "Whole answer profiles")
-        counts = collections.Counter(self.profile_code(r) for r in runs
-                                     if self.profile_code(r))
+        # Everything here is out of the runs that carry a profile code, not
+        # out of the corpus. Without the engine a run logged before the quiz
+        # recorded a code has nothing to encode it from, and counting those
+        # in the denominator while leaving them out of the tally made both
+        # the distinct-profile count and the unique share too low.
+        coded = [r for r in runs if self.profile_code(r)]
+        counts = collections.Counter(self.profile_code(r) for r in coded)
         example = {}
-        for r in runs:
+        for r in coded:
             example.setdefault(self.profile_code(r), self.effective(r))
-        n = len(runs)
+        n = len(coded)
+        uncoded = len(runs) - n
+        if not n:
+            self.p("No run carries an answer code, so there are no profiles "
+                   "to show. With `--no-engine` that means the log predates "
+                   "the quiz recording one.")
+            self.stats["distinct_profiles"] = 0
+            return
         self.p("%d distinct answer profile%s across %d respondent%s. A "
                "profile is the whole run, one character per question, and it "
                "is the share link's payload: append `#a=<profile>` to the "
                "quiz URL to open it."
                % (len(counts), "" if len(counts) == 1 else "s",
                   n, "" if n == 1 else "s"))
+        if uncoded:
+            self.p("%s of the %d respondents carr%s no answer code and %s "
+                   "left out of this section - a run logged before the quiz "
+                   "recorded one, which only the engine could encode after "
+                   "the fact."
+                   % (pct(uncoded, len(runs)), len(runs),
+                      "ies" if uncoded == 1 else "y",
+                      "is" if uncoded == 1 else "are"))
         num_unique = len([k for k in counts if counts[k] == 1])
-        self.p("%d responses (%d%%) were unique — nobody else answered in the exact same way." % (num_unique, 100 * num_unique / n))
+        self.p("%s were unique - nobody else answered in exactly the same "
+               "way." % pct(num_unique, n))
         exact = self.view_codes(views)
         if views:
             self.p("Against each, the view in `population_ethics_views.py` "
@@ -2801,9 +2910,10 @@ class Report(object):
                        "profile, so nothing can be confirmed exact and every "
                        "row is marked approximate. A row at 100% is the one "
                        "that would otherwise have read exact.*")
-        ranked = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[:20]
+        ranked = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
+        listed = ranked[:TOP_PROFILES]
         rows = []
-        for code, c in ranked:
+        for code, c in listed:
             if self.args.mode == "public" and c < self.args.min_cell:
                 continue
             row = [("`%s`" % code), pct(c, n)]
@@ -2813,8 +2923,18 @@ class Report(object):
         if rows:
             self.rows(["Profile", "Respondents"]
                       + (["Named view", "Agreement"] if views else []), rows)
+        # The table is the commonest few, not the lot - with answers this
+        # long most profiles are held by one person and the full list is
+        # hundreds of rows. Say so, so the table is not read as the corpus.
+        if len(ranked) > len(listed):
+            self.p("The table lists the %d commonest profiles of the %d; the "
+                   "other %d, each held by %d %s or fewer, %s not shown."
+                   % (len(listed), len(ranked), len(ranked) - len(listed),
+                      listed[-1][1], "person" if listed[-1][1] == 1 else
+                      "people", "is" if len(ranked) - len(listed) == 1
+                      else "are"))
         if self.args.mode == "public":
-            withheld = sum(1 for _, c in ranked if c < self.args.min_cell)
+            withheld = sum(1 for _, c in listed if c < self.args.min_cell)
             self.p("%s Two things make a whole profile different from the "
                    "counts elsewhere in this report. It is one person's "
                    "individual answers, which is the thing the consent "
@@ -3137,7 +3257,7 @@ def main():
               "are included, and nothing below identifies anybody.")
 
     rep.corpus(all_runs, kept, len(declined), len(unrecorded), bad, blank,
-               excluded_runs, dropped_familiarity)
+               excluded_runs, dropped_familiarity, selected)
     rep.respondents(groups, selected, linked, excluded_runs)
     rep.answers(selected)
     rep.familiarity(selected)
