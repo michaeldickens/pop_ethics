@@ -82,11 +82,12 @@ consensus lands nearest, and the few answers it holds far more tightly than
 everyone else. It is agglomerative (hierarchical) clustering rather than
 k-means, because the answers are categorical - there is no centroid to
 average towards - with Ward linkage so the groups come out comparable in
-size rather than one lump beside a few outliers, and the number of clusters
-is chosen by silhouette rather than fixed in advance (--clusters overrides
-it). It exists to catch the sub-group a coarse classification hides: a set
-of answers that reads as one view until a further answer pulls part of the
-room somewhere else.
+size rather than one lump beside a few outliers. It exists to catch the
+sub-group a coarse classification hides: a set of answers that reads as one
+view until a further answer pulls part of the room somewhere else. It is
+off unless --clusters is given: pass --clusters 0 to let silhouette pick the
+number of groups, or a fixed count. It is a probe to reach for, not part of
+the standing report.
 
 Conflicts and bullets are not recomputed here: the quiz itself scores them,
 and a second implementation would drift. The page is loaded in a headless
@@ -2995,13 +2996,15 @@ def main():
     ap.add_argument("--crosstabs", type=int, default=3,
                     help="how many of those to print as a cross-tab "
                          "(default: 3)")
-    ap.add_argument("--clusters", type=int, default=0, metavar="K",
-                    help="group respondents into K answer clusters; 0 "
-                         "(default) picks the number that separates cleanest "
-                         "by silhouette")
+    ap.add_argument("--clusters", type=int, default=None, metavar="K",
+                    help="add the answer-clusters section, grouping "
+                         "respondents into K clusters. Left off entirely "
+                         "unless this is given; pass 0 to let silhouette pick "
+                         "the number that separates cleanest, or a K of 2 or "
+                         "more to fix it")
     ap.add_argument("--max-clusters", type=int, default=8, metavar="K",
-                    help="the most clusters the automatic choice will weigh "
-                         "(default: 8)")
+                    help="with --clusters 0, the most clusters the automatic "
+                         "choice will weigh (default: 8)")
     ap.add_argument("--min-cluster-n", type=int, default=12, metavar="N",
                     help="don't cluster a corpus with fewer than this many "
                          "respondents (default: 12)")
@@ -3120,7 +3123,10 @@ def main():
     rep.cards(selected, universe)
     rep.classification(selected, universe)
     rep.views(selected, views)
-    rep.clusters(selected, views)
+    # Off unless asked for: the unsupervised grouping is a deliberate probe,
+    # not part of the standing report.
+    if args.clusters is not None:
+        rep.clusters(selected, views)
     rep.associations(selected)
     rep.profiles(selected, views)
 
