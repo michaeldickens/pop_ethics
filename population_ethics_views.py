@@ -509,7 +509,7 @@ VIEWS = [
 
     dict(
         key="intuitive-v1",
-        name="The untutored intuitive package (A > B)",
+        name="The untutored intuitive package",
         blurb="""Not a philosopher's view but the one many people arrive with.
             More happy people is straightforwardly good, so both of Nadia's
             good lives are worth adding; every step of the ladder looks right;
@@ -526,7 +526,7 @@ VIEWS = [
 
     dict(
         key="intuitive-v2",
-        name="The untutored intuitive package (B > A)",
+        name="The untutored intuitive package alternate (B > A)",
         blurb="""Not a philosopher's view but the one many people arrive with (v2).
             More happy people is straightforwardly good, so both of Nadia's
             good lives are worth adding; every step of the ladder looks right;

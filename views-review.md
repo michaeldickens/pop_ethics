@@ -30,8 +30,8 @@ The list of views to include was initially AI-generated, and then I added a few 
 - [Antinatalism](#antinatalist) - clean, 2 bullets
 - [Negative-leaning](#negative-leaning) - clean, 3 bullets
 - [Hard negative utilitarianism](#hard-negative) - clean, 4 bullets
-- [The untutored intuitive package (A > B)](#intuitive-v1) - 2 conflicts
-- [The untutored intuitive package (B > A)](#intuitive-v2) - 1 conflict
+- [The untutored intuitive package](#intuitive-v1) - 2 conflicts
+- [The untutored intuitive package alternate (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 2 bullets
 - [A neutral range with a floor](#imprecise-critical-level) - clean, 5 bullets
 - [Imprecise comparability, without Parfit's escape](#rough-transitive) - 2 conflicts, 4 bullets
@@ -1060,7 +1060,7 @@ Bullets bitten:
 
 <a id="intuitive-v1"></a>
 
-## The untutored intuitive package (A > B)
+## The untutored intuitive package
 
 Not a philosopher's view but the one many people arrive with. More happy people is
 straightforwardly good, so both of Nadia's good lives are worth adding; every step of
@@ -1097,7 +1097,7 @@ Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions on
 
 <a id="intuitive-v2"></a>
 
-## The untutored intuitive package (B > A)
+## The untutored intuitive package alternate (B > A)
 
 Not a philosopher's view but the one many people arrive with (v2). More happy people is
 straightforwardly good, so both of Nadia's good lives are worth adding; every step of
