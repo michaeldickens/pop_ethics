@@ -2496,23 +2496,41 @@ class Report(object):
             defining.sort(key=lambda t: (-t[0], t[3]))
             picked = [d for d in defining if d[1] >= 0.6 and d[0] >= 0.15][:5]
 
+            # How tightly the cluster holds together: the average, over its
+            # members, of the share of a member's answers that match the
+            # cluster's own consensus. This is the agreement figure worth
+            # reporting - it measures cohesion around the group's own centre,
+            # not resemblance to a catalogued view, which is arbitrary.
+            coh_w = coh_hit = 0.0
+            for i in g:
+                ans = items[i][0]
+                shared = [q for q in consensus if q in ans]
+                if not shared:
+                    continue
+                coh_w += weights[i]
+                coh_hit += weights[i] * sum(
+                    1 for q in shared if ans[q] == consensus[q]) / len(shared)
+            cohesion = coh_hit / coh_w if coh_w else 0.0
+            coh_share = "%.0f%%" % (100.0 * cohesion)
+
             nearest = nearest_view(views, consensus) if views else None
             near_name = (", ".join(name for _, name in nearest[1])
                          if nearest else "-")
-            near_share = "%.0f%%" % (100.0 * nearest[0]) if nearest else "-"
             scored = self.engine.score(consensus) if self.engine else None
             quiz_says = (profile_names([scored["profile"]])[scored["profile"]]
                          if scored else "-")
 
             summary_rows.append([
-                "Cluster %d" % gi, pct(gw, n), near_name, near_share, quiz_says])
+                "Cluster %d" % gi, pct(gw, n), near_name, coh_share, quiz_says])
             size_data.append(("Cluster %d" % gi, gw))
 
             self.h(3, "Cluster %d - %s" % (gi, near_name if views else
                                            "%d respondents" % gw))
-            self.p("%s. Consensus lands nearest the **%s** view (%s of its "
-                   "answers)%s." % (
-                       pct(gw, n), near_name, near_share,
+            self.p("%s. Its members agree with the cluster's own consensus on "
+                   "%s of their answers, on average%s%s." % (
+                       pct(gw, n), coh_share,
+                       "; the consensus lands nearest the *%s* view" % near_name
+                       if views else "",
                        "; the quiz would classify that consensus as *%s*"
                        % quiz_says if scored else ""))
             if picked:
@@ -2531,7 +2549,8 @@ class Report(object):
                           " Bullets its consensus bites: " + "; ".join(bl) + "."
                           if bl else ""))
             cluster_stats.append({
-                "size": gw, "nearest_view": near_name,
+                "size": gw, "consensus_agreement": cohesion,
+                "nearest_view": near_name,
                 "nearest_agreement": nearest[0] if nearest else None,
                 "quiz_classification": quiz_says,
                 "defining": [{"q": q, "answer": val, "in_share": ins,
@@ -2541,6 +2560,10 @@ class Report(object):
             })
 
         self.h(3, "The clusters at a glance")
+        self.p("**Agreement** is how tightly a cluster holds together: the "
+               "average share of a member's answers that match the cluster's "
+               "own consensus. The nearest catalogued view is only a label - "
+               "how close it sits is not what this column measures.")
         self.rows(["Cluster", "Respondents", "Nearest view", "Agreement",
                    "Quiz calls it"], summary_rows,
                   chart="bar_h", total=n, data=size_data)
