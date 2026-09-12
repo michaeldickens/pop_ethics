@@ -224,3 +224,5 @@ DEPLOY.md
 
 # used for analysis locally, but don't expose publicly
 quiz-log.jsonl
+quiz-log*.jsonl
+*~undo-tree~
