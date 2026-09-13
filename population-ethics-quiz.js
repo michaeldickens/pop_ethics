@@ -3028,7 +3028,13 @@ function profile() {
     (ANS.misery === "equal" || ANS.misery === "none")
   )
     return "Your answers sit closest to a <strong>person-affecting view</strong> with symmetry: creating a new life (whether good or bad) is a neutral act. Something can only be good or bad <em>for</em> an existing person.";
-  if (ANS.AvZ === "left" && ANS.benign === "right")
+    // if (ANS.AvZ === "left" && ANS.benign === "right")
+    if (
+        ANS.AvZ === "left" &&
+            ANS.benign === "right" &&
+            ANS.nae === "right" &&
+            ANS.generalize === "no"
+    )
     return "Your answers pull toward a <strong>critical-level or lexical view</strong> \u2014 sufficiently good lives count, marginally good lives do not.";
   return "Your answers do not settle cleanly onto one of the standard views of population ethics.";
 }
