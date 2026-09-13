@@ -3190,20 +3190,38 @@ def main():
         sys.exit("no runs left after the consent filter; try --mode private "
                  "if you are the one holding the log")
 
+    linked = assign_identities(kept, args.link_anon)
+    groups = group_runs(kept)
+
     # Applied here, beside the consent filter, so that everything downstream -
-    # the grouping, the dedupe, every count - is of the subgroup and nothing
-    # has to remember to filter itself.
+    # the dedupe, every count - is of the subgroup and nothing has to
+    # remember to filter itself. Decided by the run --dedupe would actually
+    # select for each respondent (their first, with the default), not by
+    # any run of theirs: filtering per run let someone whose familiarity
+    # answer changed between retakes pass the filter on one run and fail it
+    # on another, splitting them across both --familiarity subgroups instead
+    # of landing in exactly one. --dedupe all has no such run to prefer -
+    # every run of theirs stays a separate data point - so it keeps the
+    # simpler per-run filter.
     dropped_familiarity = 0
     if args.familiarity:
         before = len(kept)
-        kept = [r for r in kept if familiarity_matches(r, args.familiarity)]
+        if args.dedupe == "all":
+            kept = [r for r in kept if familiarity_matches(r, args.familiarity)]
+            groups = group_runs(kept)
+        else:
+            rep_run = {ident: (runs[0] if args.dedupe == "first" else runs[-1])
+                       for ident, runs in groups.items()}
+            kept_idents = {ident for ident, r in rep_run.items()
+                           if familiarity_matches(r, args.familiarity)}
+            groups = collections.OrderedDict(
+                (k, v) for k, v in groups.items() if k in kept_idents)
+            kept = [r for r in kept if r.identity in kept_idents]
         dropped_familiarity = before - len(kept)
         if not kept:
             sys.exit("no runs match --familiarity %s"
                      % ",".join(sorted(args.familiarity)))
 
-    linked = assign_identities(kept, args.link_anon)
-    groups = group_runs(kept)
     groups, excluded_runs = drop_excluded(groups, args.exclude_name)
     if not groups:
         sys.exit("every respondent was excluded by name; --keep-excluded "
