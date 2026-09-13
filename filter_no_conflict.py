@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
-"""Filter quiz-log.jsonl to the lines whose answers hit no conflict card.
+"""Filter quiz-log.jsonl to the lines whose answers hit no contradiction.
 
 Originally written by Claude Sonnet 5.
 
     python3 filter_no_conflict.py quiz-log.jsonl > clean.jsonl
     python3 filter_no_conflict.py quiz-log.jsonl --file population-ethics-quiz.html
 
-Conflicts aren't recomputed here - the quiz's own engine scores each run's
-answers in a headless browser, the same way analyze_logs.py does it, since a
-second implementation would drift. Needs playwright:
+Contradictions aren't recomputed here - the quiz's own engine scores each
+run's answers in a headless browser, the same way analyze_logs.py does it,
+since a second implementation would drift. Needs playwright:
 
     python3 -m pip install --user playwright
     python3 -m playwright install chromium
 
-A run whose answers produce zero conflict cards is kept; everything else
-(including runs with only extras/bullets but no conflicts) is also kept,
-since "conflict" here means specifically the conflict cards, not extras or
-bitten bullets. Malformed lines are skipped with a warning to stderr.
+A run is kept only if it triggers neither a conflict card nor an extra check
+(Sen's alpha, the collapsing principle, chaining through the gap) - the two
+kinds of contradiction card the results page can show. A bitten bullet alone
+does not drop a run: that's a note about the answers, not a contradiction
+between them. Malformed lines are skipped with a warning to stderr.
 """
 
 import argparse
@@ -49,13 +50,14 @@ def main():
                 bad += 1
                 print("line %d: unparseable, skipped" % i, file=sys.stderr)
                 continue
-            if engine.score(answers)["conflicts"]:
+            scored = engine.score(answers)
+            if scored["conflicts"] or scored["extras"]:
                 dropped += 1
             else:
                 kept += 1
                 sys.stdout.write(line if line.endswith("\n") else line + "\n")
     engine.close()
-    print("kept %d, dropped %d (had conflicts), %d unparseable"
+    print("kept %d, dropped %d (had a contradiction), %d unparseable"
           % (kept, dropped, bad), file=sys.stderr)
 
 
