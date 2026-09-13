@@ -2550,6 +2550,16 @@ class Report(object):
         groups.sort(key=lambda g: -sum(weights[i] for i in g))
         qids = sorted({q for ans, _ in items for q in ans})
 
+        # Questions only a thin slice of the corpus ever saw make noisy
+        # "what sets it apart" rows: a cluster can look defined by an answer
+        # barely anyone was asked. Keep such questions out of the defining
+        # answers by requiring at least this share of respondents to have seen
+        # each one.
+        seen_min = 0.20
+        seen_share = {
+            q: sum(weights[i] for i in range(m) if q in items[i][0]) / float(n)
+            for q in qids}
+
         # Each cluster's consensus, and how tightly it holds each answer
         # against how often everyone outside it gives that same answer. A big
         # gap is what makes an answer the cluster's own rather than the room's.
@@ -2582,7 +2592,8 @@ class Report(object):
             # strongest gap first; a near-unanimous answer everybody shares is
             # not distinctive and is left out.
             defining.sort(key=lambda t: (-t[0], t[3]))
-            picked = [d for d in defining if d[1] >= 0.6 and d[0] >= 0.15][:5]
+            picked = [d for d in defining if d[1] >= 0.6 and d[0] >= 0.15
+                      and seen_share[d[3]] >= seen_min][:5]
 
             # How tightly the cluster holds together: the average, over its
             # members, of the share of a member's answers that match the
