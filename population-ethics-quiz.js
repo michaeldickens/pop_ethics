@@ -1292,18 +1292,20 @@ function decodeAns(code) {
 // alongside CODE_ORDER; anything not named here has been present since before
 // versioning and counts as v1.
 var INTRO_VERSION = { vrc_mild: 2, vrc: 2, pinprick: 2 };
-// The version a shared code must have been produced on, read from the code
-// itself: the highest introduction-version among the slots it actually fills.
-// A link may arrive without the &v that marks its version - a code pasted
-// without the trailing &v=2, an old bookmark - so the run version is taken as
-// the higher of the link's &v and what the code implies, and the later
-// questions replay instead of being silently dropped. A code that predates
-// those questions never fills their slots, so it still implies v1.
+// The version a shared code must have been produced on, read from its length.
+// Codes are fixed-width - encodeAns writes every slot, a gap as "-" - so a code
+// that reaches a version-gated slot at all (even left blank) can only have been
+// made once that slot existed. The implied version is thus the highest
+// introduction-version among the slots the code spans. A link may arrive
+// without the &v that marks its version - a code pasted without the trailing
+// &v=2, an old bookmark - so the run version is taken as the higher of the
+// link's &v and what the code implies, and the later questions replay instead
+// of being dropped. A genuine v1 code is a shorter prefix that never reaches
+// those slots, so it still implies v1 and replays exactly as it was taken.
 function impliedVersion(code) {
   var v = 1;
   CODE_ORDER.forEach(function (id, i) {
-    if (i < code.length && code.charAt(i) !== "-")
-      v = Math.max(v, INTRO_VERSION[id] || 1);
+    if (i < code.length) v = Math.max(v, INTRO_VERSION[id] || 1);
   });
   return v;
 }

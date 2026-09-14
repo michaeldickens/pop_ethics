@@ -1658,8 +1658,11 @@ def suite_share(page, rep):
     rep.check("&v=2" in page.input_value("#sharelink"),
               "the share link records the version")
     full = page.input_value("#sharelink").split("#a=")[1].split("&")[0]
+    # The width of a genuine v1 code: every slot that predates versioning. Read
+    # from INTRO_VERSION so it stays right as versions are added, rather than
+    # matching id names (pinprick is a v2 slot but is not "vrc"-prefixed).
     n_v1 = page.evaluate(
-        "() => CODE_ORDER.length - CODE_ORDER.filter(id => id.slice(0,3) === 'vrc').length")
+        "() => CODE_ORDER.filter(id => (INTRO_VERSION[id] || 1) < 2).length")
     op = page.context.browser.new_page()
     operr = []
     op.on("pageerror", lambda e: operr.append(str(e)))
@@ -1679,8 +1682,9 @@ def suite_share(page, rep):
     op.close()
 
     # A v2 code can reach us stripped of its &v - pasted without the trailing
-    # &v=2, or from an old bookmark of the fragment alone. Its own contents must
-    # date it: filling a VRC slot could only have happened on v2, so the run is
+    # &v=2, or from an old bookmark of the fragment alone. Its length dates it:
+    # a code is fixed-width, so one long enough to hold a v2 slot could only
+    # have been made on v2, whether or not that slot is filled. So the run is
     # read as v2 and the VRC questions replay rather than being dropped back to
     # a v1 reading. (This was a real bug: such a link redirected to a v1 run.)
     walk(page, CLICK_LEXICAL)
@@ -1694,13 +1698,37 @@ def suite_share(page, rep):
     op2.wait_for_selector("#results .verdict", timeout=5000)
     rep.check(not op2err, "a versionless v2 code opens without error", str(op2err))
     rep.check(op2.evaluate("() => RUNVER") == 2,
-              "a v2 code with no &v is recovered as version 2 from its contents")
+              "a v2 code with no &v is recovered as version 2 from its length")
     rep.check(op2.evaluate("() => QUESTIONS.filter(q => q.id.slice(0,3) === 'vrc')"
                            ".every(q => isActive(q))"),
               "the VRC questions are active on the recovered v2 run")
     rep.check(op2.evaluate("() => ANS.vrc_mild !== undefined && ANS.vrc !== undefined"),
               "the recovered run keeps its VRC answers")
     op2.close()
+
+    # The same, from a v2 run that never reached the VRC questions (the RC was
+    # rejected, so those slots are blank). Length still dates it as v2 - which
+    # answer-based detection would miss, since no VRC slot is filled - and the
+    # verdict is reached with the VRC questions rightly inactive.
+    walk(page, CLICK_MODAL)                      # AvZ left: VRC never asked
+    blankcode = page.input_value("#sharelink").split("#a=")[1].split("&")[0]
+    rep.check(len(blankcode) == len(QIDS) and
+              blankcode[n_v1:] == "-" * (len(blankcode) - n_v1),
+              "the modal run leaves the VRC slots blank", blankcode)
+    op3 = page.context.browser.new_page()
+    op3err = []
+    op3.on("pageerror", lambda e: op3err.append(str(e)))
+    op3.goto(f"{base}#a={blankcode}&q=r")        # no &v on purpose
+    op3.wait_for_selector("#results .verdict", timeout=5000)
+    rep.check(not op3err, "a versionless blank-VRC v2 code opens without error", str(op3err))
+    rep.check(op3.evaluate("() => RUNVER") == 2,
+              "a full-width code with blank VRC slots is still recovered as version 2")
+    rep.check(op3.evaluate("() => QUESTIONS.filter(q => q.id.slice(0,3) === 'vrc')"
+                           ".every(q => !isActive(q))"),
+              "the VRC questions stay inactive when the RC was rejected")
+    rep.check(op3.evaluate("() => missingActive().length") == 0,
+              "the blank-VRC run is complete and reaches the verdict")
+    op3.close()
 
     # Starting over must not leave the old answers in the URL.
     walk(page, CLICK_MODAL)
