@@ -482,7 +482,9 @@ VIEWS = [
             the very repugnant conclusion and even the single-step trade of a
             little agony for a lot of added happiness. For suffering-free
             comparisons it just is the total view; the two part company only
-            once suffering is on the table. The shape a good many people's
+            once suffering is on the table. Offered a mountain of happiness
+            beside a single pinprick it takes the happiness -- the weight on
+            suffering is heavy but finite. The shape a good many people's
             answers take once the suffering is made vivid.""",
         answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
                      neutral_mod="right", benign="right", nae="right", generalize="yes",
@@ -492,8 +494,27 @@ VIEWS = [
     ),
 
     dict(
-        key="hard-negative",
-        name="Hard negative utilitarianism",
+        key="lexical",
+        name="Lexical negative utilitarianism",
+        blurb="""Happiness counts, but only as a tie-breaker: any suffering,
+            however slight, outweighs any happiness, however great. Among
+            suffering-free worlds it ranks by total happiness like the total
+            view, so it accepts the repugnant conclusion -- but the moment real
+            suffering appears it dominates, so the very repugnant conclusion and
+            the single-step trade are both refused. Offered a mountain of joy
+            beside a single pinprick it keeps the pinprick out and forgoes the
+            joy: the benevolent world-exploder, and the one answer that tells a
+            lexical view apart from a merely negative-leaning one.""",
+        answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
+                     neutral_mod="right", benign="right", nae="right", generalize="yes",
+                     AvZ="right", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
+                     trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
+                     menu="Z", menu_alpha="yes"),
+    ),
+
+    dict(
+        key="maximally-negative",
+        name="Maximally negative utilitarianism",
         blurb="""Happiness is not good, only suffering is bad -- so the same
             people all living happier lives is no improvement (the one view in
             the catalogue that rejects Pareto, and for a reason rather than by
@@ -750,7 +771,8 @@ _VRC = {
     "nontransitive-non-independent": ("none", "none"),
     "antinatalist": ("left", "left"),
     "negative-leaning": ("left", "left"),
-    "hard-negative": ("left", "left"),
+    "lexical": ("left", "left"),
+    "maximally-negative": ("left", "left"),
     "intuitive-v1": ("right", "left"),
     "intuitive-v2": ("right", "left"),
     "misery_gain": ("right", "right"),
@@ -761,10 +783,15 @@ _VRC = {
     "genethics": ("none", "none"),
     "quietist": ("none", "none"),
 }
+# The pinprick answer only bites the two views that reach it (accept the RC,
+# refuse the mild trade): lexical refuses even the pinprick's joy, negative-
+# leaning takes it. Everyone else is never asked it, so the default is inert.
+_PINPRICK = {"lexical": "left"}
 for _v in VIEWS:
     _mild, _ext = _VRC[_v["key"]]
     _v["answers"].setdefault("vrc_mild", _mild)
     _v["answers"].setdefault("vrc", _ext)
+    _v["answers"].setdefault("pinprick", _PINPRICK.get(_v["key"], "right"))
 
 VIEWS_BY_KEY = {v["key"]: v for v in VIEWS}
 
@@ -794,8 +821,9 @@ EXPECT = {
     'nontransitive': {'conflicts': [['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of better-than.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'nontransitive-non-independent': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You denied that levelling up improves things.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'antinatalist': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
-    'negative-leaning': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'A little suffering outweighs a lot of happiness.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'hard-negative': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', "You priced Nadia's life at exactly Owen's loss.", 'You denied that levelling up improves things.', 'You hold the Procreation Asymmetry.', 'When the people change, a world with uniformly better-off people is not judged better.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
+    'negative-leaning': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'A little suffering outweighs a lot of happiness.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'pinprick', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'lexical': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'A little suffering outweighs a lot of happiness.', 'A pinprick of suffering outweighs a world of joy.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'pinprick', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'maximally-negative': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', "You priced Nadia's life at exactly Owen's loss.", 'You denied that levelling up improves things.', 'You hold the Procreation Asymmetry.', 'When the people change, a world with uniformly better-off people is not judged better.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'intuitive-v1': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': [], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'intuitive-v2': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': [], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'misery_gain': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You counted a life of suffering as a gain.', 'You accepted the very repugnant conclusion.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},

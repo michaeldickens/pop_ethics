@@ -37,14 +37,15 @@ import sys
 from playwright.sync_api import sync_playwright
 
 QIDS = ["pareto", "same_number", "AvB", "misery", "neutral_mod", "benign", "nae",
-        "generalize", "AvZ", "vrc_mild", "vrc", "neutral_wond", "collapse", "greedy",
-        "plusVsBoth", "trans_gt", "trans_none", "trans_eq", "menu_eq", "menu", "menu_alpha"]
+        "generalize", "AvZ", "vrc_mild", "vrc", "pinprick", "neutral_wond", "collapse",
+        "greedy", "plusVsBoth", "trans_gt", "trans_none", "trans_eq", "menu_eq", "menu",
+        "menu_alpha"]
 PAIRS = ["same_number", "AvB", "misery", "neutral_mod", "benign", "nae", "AvZ",
-         "vrc_mild", "vrc", "neutral_wond", "greedy", "plusVsBoth"]
+         "vrc_mild", "vrc", "pinprick", "neutral_wond", "greedy", "plusVsBoth"]
 PRINCIPLES = ["pareto", "generalize", "collapse", "trans_gt", "trans_none",
               "trans_eq", "menu_eq", "menu_alpha"]
 CONDITIONAL = ("collapse", "greedy", "plusVsBoth", "trans_none", "menu_eq",
-               "menu_alpha", "vrc_mild", "vrc")
+               "menu_alpha", "vrc_mild", "vrc", "pinprick")
 PAIR_VALUES = ["left", "right", "equal", "none"]
 PRINCIPLE_VALUES = ["yes", "no"]
 MENU_VALUES = ["A", "B", "Z", "AB", "all"]
@@ -390,6 +391,19 @@ def suite_engine(page, rep):
               "refusing the mild trade draws the negative-side repugnance bullet", str(reject))
     rep.check(not any("small but not the large" in t for t in reject),
               "the boundary bullet needs the mild trade accepted", str(reject))
+    # The pinprick / benevolent-world-exploder. Ranking G at or above G-star
+    # (a mountain of joy plus one pinprick) is the lexical bullet; taking the
+    # joy (pinprick=right) is the merely negative-leaning answer and draws
+    # nothing. This is what tells the two apart.
+    lex = dict(MODAL, AvZ="right", vrc_mild="left", vrc="left")
+    for val in ("left", "equal"):
+        got = page.evaluate(titles, dict(lex, pinprick=val))
+        rep.check(any("pinprick of suffering outweighs" in t for t in got),
+                  f"ranking the pinprick world worse ({val}) draws the world-exploder bullet",
+                  str(got))
+    taken = page.evaluate(titles, dict(lex, pinprick="right"))
+    rep.check(not any("pinprick of suffering outweighs" in t for t in taken),
+              "taking the pinprick's joy draws no bullet", str(taken))
 
     # The property that matters: no revisionary answer can appear in a profile
     # the quiz says nothing at all about.
@@ -398,7 +412,7 @@ def suite_engine(page, rep):
              ["trans_eq", "no"], ["trans_none", "no"], ["generalize", "no"],
              ["AvZ", "right"], ["greedy", "equal"], ["same_number", "left"],
              ["same_number", "none"], ["same_number", "equal"], ["vrc", "right"],
-             ["vrc_mild", "left"]]
+             ["vrc_mild", "left"], ["pinprick", "left"]]
     silent = page.evaluate("""(cfg) => {
       const keep = ANS, bad = new Set();
       cfg.profiles.forEach(a => {
@@ -1647,6 +1661,11 @@ CLICK_VAGUE = dict(CLICK_MODAL, neutral_mod=3, neutral_wond=1)
 # CLICK_MODAL answers both neutral questions "exactly as good", so the
 # equalities chain and menu independence is live instead.
 CLICK_NO_CHAIN = dict(CLICK_MODAL, trans_eq=1)
+# Accepts the repugnant conclusion (AvZ right) but refuses the mild suffering
+# trade (vrc_mild left) -- the profile that reaches the pinprick question, and
+# the only one that does. Built from the totalist, which already answers AvZ
+# right and both additions as gains, then flips the VRC pair to "left".
+CLICK_LEXICAL = dict(CLICK_TOTALIST, vrc_mild=0, vrc=0, pinprick=0)
 # Unrankable with nothing determinate beside it: one edit away from triggering
 # the collapsing question, but not triggering it yet.
 CLICK_GAP = dict(CLICK_MODAL, neutral_mod=3)
@@ -1667,7 +1686,11 @@ def suite_conditional(page, rep):
             # The greediness five cannot bite on someone who ranked both
             # additions as plain gains, but the totalist accepts the repugnant
             # conclusion, so it is asked the two VRC questions and nothing else.
-            ("both additions ranked as gains", CLICK_TOTALIST, {"vrc_mild", "vrc"})]:
+            ("both additions ranked as gains", CLICK_TOTALIST, {"vrc_mild", "vrc"}),
+            # Accepts the RC, refuses the mild trade: reaches the VRC pair and,
+            # because the mild trade was refused, the pinprick too.
+            ("accepts RC, refuses the mild trade", CLICK_LEXICAL,
+             {"vrc_mild", "vrc", "pinprick"})]:
         walk(page, clicks)
         got = {q for q in CONDITIONAL if q in walk.asked}
         rep.check(got == want, f"{label}: asks {sorted(want) or 'none of them'}",

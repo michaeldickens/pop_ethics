@@ -121,6 +121,18 @@ var VRC_V = [
   { n: 100, w: -40 },
   { n: 40000, w: 4 },
 ];
+// The pinprick / benevolent-world-exploder test, added to the same base G as
+// the mild figure so the added bundles are directly comparable. G plus a great
+// many more wonderful lives and one life dragged a hair below zero. Ranking it
+// below G says one pinprick of suffering outweighs all that added joy - the
+// bullet the lexical and strong-negative views bite. The pinprick group is at
+// -5 rather than -1 so its bar clears the visibility floor; both added groups
+// stay under the width knee, so no to-scale row is needed.
+var PIN_WORLD = [
+  { n: 100, w: 70 },
+  { n: 150, w: 90, tag: "a hundred and fifty more" },
+  { n: 1, w: -5, tag: "one pinprick" },
+];
 
 /* ---------------------------------------------------------------
    Questions. Three kinds:
@@ -269,6 +281,25 @@ var QUESTIONS = [
     title: "Enough small joys to outweigh any amount of agony?",
     body:
       "<strong>W</strong> holds <strong>arbitrarily many</strong> people, every one of them living a <strong>wonderful</strong> life. <strong>V</strong> holds <strong>arbitrarily many people in terrible agony</strong> — and alongside them, a far greater number whose lives are <strong>barely worth living</strong>, each holding only the faintest trace of good. There are enough of these last lives that <strong>V has more total welfare than W</strong>. <em>The blocks cannot be drawn to scale; the bars underneath carry the totals.</em>",
+  },
+  {
+    id: "pinprick",
+    kind: "pair",
+    label: "A pinprick beside a great deal of joy",
+    // Only put to someone who has just refused the mild suffering trade
+    // (vrc_mild left): that is where it separates a merely negative-leaning
+    // view, on which enough happiness eventually outweighs, from a lexical or
+    // strong-negative one, on which no amount ever does. Never asked of anyone
+    // who took the mild trade, so the incoherent "took the small trade, refuse
+    // the far better one" pair cannot arise here.
+    when: function (a) {
+      return RUNVER >= 2 && a.vrc_mild === "left";
+    },
+    pops: [VRC_G, PIN_WORLD],
+    names: ["G", "G✦"],
+    title: "A world of joy, and one pinprick.",
+    body:
+      "The same <strong>G</strong> — a hundred wonderful lives. <strong>G✦</strong> keeps them and adds <strong>a hundred and fifty more, every one wonderful</strong> — and one further person whose life is dragged <strong>a pinprick below the line worth living</strong>. G✦ holds far more welfare in total; the only shadow on it is that single pinprick.",
   },
   {
     id: "neutral_wond",
@@ -1222,7 +1253,7 @@ var CODE_ORDER = [
   "pareto", "same_number", "AvB", "misery", "neutral_mod", "benign", "nae",
   "generalize", "AvZ", "neutral_wond", "collapse", "greedy", "plusVsBoth",
   "trans_gt", "trans_none", "trans_eq", "menu_eq", "menu", "menu_alpha",
-  "vrc_mild", "vrc",
+  "vrc_mild", "vrc", "pinprick",
 ];
 var QBYID = {};
 QUESTIONS.forEach(function (q) {
@@ -2269,6 +2300,18 @@ var LABELS = {
       " one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total."
     );
   },
+  pinprick: function (a) {
+    return (
+      "G is " +
+      {
+        left: "better than",
+        right: "worse than",
+        equal: "exactly as good as",
+        none: "not rankable against",
+      }[a] +
+      " G✦ — a hundred and fifty wonderful lives added, against one pinprick of suffering."
+    );
+  },
   misery: function (a) {
     return (
       "Adding Nadia with a life of suffering makes the outcome " +
@@ -2859,6 +2902,17 @@ function bullets() {
       t: "You accept the trade in the small but not the large.",
       claims: ["vrc_mild", "vrc"],
       b: "You let some suffering be outweighed by enough happiness in H, but drew the line before V. That leaves you owing an account of <em>where</em> the trade stops being worth it — every step from one to the other only piles up more faintly-good lives against the same suffering.",
+    });
+  // The benevolent world-exploder. Ranking G at or above G✦ — where the only
+  // difference is a great deal of added joy and one pinprick — is the lexical
+  // claim that no amount of happiness outweighs any suffering at all. Refusing
+  // the mild trade is compatible with a merely finite weight on suffering;
+  // this is what tells that apart from a lexical or strong-negative view.
+  if (ANS.pinprick === "left" || ANS.pinprick === "equal")
+    out.push({
+      t: "A pinprick of suffering outweighs a world of joy.",
+      claims: ["pinprick"],
+      b: "You judged G at least as good as G✦, though G✦ adds a hundred and fifty wonderful lives and only one pinprick of suffering. That is the lexical claim that no quantity of happiness, however vast, can outweigh any suffering, however slight — and its conclusion is the benevolent world-exploder: a flourishing world is worse for the least suffering it holds, so better ended. A merely negative-leaning view, one that weights suffering heavily but finitely, takes the added joy here instead.",
     });
   if (ANS.neutral_mod === "left" || ANS.neutral_wond === "left") {
     var worseLefts = [];
