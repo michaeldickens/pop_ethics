@@ -2797,7 +2797,7 @@ function bullets() {
   // population grows - the sub-linear/bounded family. Declared here so bullets
   // that share it can attach the same note.
   var dilutionProblemText =
-    "<strong>The dilution problem.</strong> On a view where each further life counts for less than the one before, the worth of any single life — your own among them — is hostage to the total. Discover tomorrow that the world holds eight trillion people, not the eight billion you had assumed, and nothing about your own life has changed; yet you are now bound to reckon your welfare a thousandth as valuable as you did, on the strength of strangers you will never meet.";
+      "<strong>The dilution problem.</strong> The value of any life depends on how many others exist, even if you don't know about them. If you discover tomorrow that the world holds 8 trillion people, not 8 billion, then you have learned nothing about your own welfare; yet you are now forced to judge your welfare as less valuable than you once did, on the strength of strangers you will never meet.";
   if (ANS.trans_gt === "no")
     out.push({
       t: "You rejected transitivity of better-than.",
