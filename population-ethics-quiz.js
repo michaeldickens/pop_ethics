@@ -2797,7 +2797,7 @@ function bullets() {
   // population grows - the sub-linear/bounded family. Declared here so bullets
   // that share it can attach the same note.
   var separabilityProblemText =
-      "<strong>The separability problem.</strong> If you discover tomorrow that the world holds 8 <em>trillion</em> people, not 8 billion — and those extra 7.99 trillion are all better-off than you — then you have learned nothing about your own welfare; yet you are now forced to judge your welfare as less valuable than you once did, due to the existence of strangers you will never meet.";
+      "<strong>The separability problem.</strong> If you discover tomorrow that the world holds 8 <em>trillion</em> people, not 8 billion, then you have learned nothing about your own welfare; yet you are now forced to judge your welfare as less valuable than you once did, due to the existence of strangers you will never meet.";
   if (ANS.trans_gt === "no")
     out.push({
       t: "You rejected transitivity of better-than.",
