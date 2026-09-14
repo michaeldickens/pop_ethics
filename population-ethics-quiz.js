@@ -3220,8 +3220,19 @@ function bullets() {
 }
 
 function profile() {
-  if (ANS.AvZ === "right" && ANS.benign === "right" && ANS.nae === "right")
-    return "Your answers sit closest to <strong>totalism</strong> \u2014 welfare summed across everyone who ever lives.";
+  // The negative family accepts the repugnant conclusion just as totalism does
+  // - a suffering-free ladder is ranked by its happiness - and splits from it
+  // only once real suffering is on the table. So an accepted RC no longer means
+  // totalism on its own; it means totalism only if the suffering trades are
+  // taken too.
+  if (ANS.AvZ === "right" && ANS.benign === "right" && ANS.nae === "right") {
+    var refusesTrade = ANS.vrc_mild === "left" || ANS.vrc === "left";
+    if (!refusesTrade)
+      return "Your answers sit closest to <strong>totalism</strong> \u2014 welfare summed across everyone who ever lives.";
+    if (ANS.pinprick === "left" || ANS.pinprick === "equal")
+      return "Your answers sit closest to a <strong>lexical negative view</strong> \u2014 happiness counts, but no amount of it, however vast, outweighs any suffering at all.";
+    return "Your answers sit closest to a <strong>negative-leaning view</strong> \u2014 happiness counts, but suffering counts for much more, so you accept the repugnant conclusion yet refuse to buy added happiness with added suffering.";
+  }
   if (
     ANS.AvB === "left" &&
     ANS.AvZ === "left" &&
@@ -3230,6 +3241,17 @@ function profile() {
     ANS.nae === "right"
   )
     return "Your answers sit closest to <strong>averagism</strong> \u2014 the view that aims to improve the <em>average</em> welfare of populations.";
+  // Only suffering counts: a happier life is no gain, so Pareto is rejected and
+  // additions of happy lives are neither better nor worse. Must precede the
+  // person-affecting asymmetry below, whose addition pattern it shares; the
+  // rejection of Pareto is what tells them apart.
+  if (
+    ANS.pareto === "no" &&
+    ANS.misery === "left" &&
+    (ANS.neutral_mod === "equal" || ANS.neutral_mod === "none") &&
+    (ANS.neutral_wond === "equal" || ANS.neutral_wond === "none")
+  )
+    return "Your answers sit closest to <strong>maximally negative utilitarianism</strong> — only suffering counts, so a happier life is no improvement at all.";
   if (
     (ANS.neutral_mod === "equal" || ANS.neutral_mod === "none") &&
     (ANS.neutral_wond === "equal" || ANS.neutral_wond === "none") &&
