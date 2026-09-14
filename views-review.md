@@ -28,9 +28,10 @@ The list of views to include was initially AI-generated, and then I added a few 
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
 - [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 5 bullets
 - [Antinatalism](#antinatalist) - clean, 2 bullets
-- [Negative-leaning](#negative-leaning) - clean, 2 bullets
+- [Negative-leaning](#negative-leaning) - clean, 3 bullets
 - [Lexical negative utilitarianism](#lexical) - clean, 3 bullets
 - [Maximally negative utilitarianism](#maximally-negative) - clean, 5 bullets
+- [Sub-linear aggregation](#sub-linear) - clean, 3 bullets
 - [The untutored intuitive package](#intuitive-v1) - 2 conflicts
 - [The untutored intuitive package alternate (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 3 bullets
@@ -986,14 +987,17 @@ Happiness is genuinely good, so where no one suffers this view tracks the total:
 accepts benign additions, levelling up, and the repugnant conclusion -- Z's many mildly
 happy lives, holding more happiness between them and no more suffering than A, come out
 better. What sets it apart is the weight on real suffering: a life in agony counts for
-far more than its welfare number, so it refuses the very repugnant conclusion and even
-the single-step trade of a little agony for a lot of added happiness. For suffering-free
-comparisons it just is the total view; the two part company only once suffering is on
-the table. Offered a mountain of happiness beside a single pinprick it takes the
-happiness -- the weight on suffering is heavy but finite. The shape a good many people's
+far more than its welfare number, so it refuses the single-step trade of a little agony
+for a lot of added happiness. For suffering-free comparisons it just is the total view;
+the two part company only once suffering is on the table. But the weight is finite --
+offered a mountain of happiness beside a single pinprick it takes the happiness -- and a
+finite weight is only a choice of units, so the scaled very repugnant conclusion, whose
+barely-good lives are numerous enough to clear the agony at any fixed rate, comes in by
+force. It accepts it while refusing the mild trade, which is the rescaling charge made
+vivid: the exchange rate is what is left to defend. The shape a good many people's
 answers take once the suffering is made vivid.
 
-Open it: append `#a=yrrlrrryrr---y-y-z-llr` to the quiz URL.
+Open it: append `#a=yrrlrrryrr---y-y-z-lrr` to the quiz URL.
 
 ### Answers
 
@@ -1009,7 +1013,7 @@ Open it: append `#a=yrrlrrryrr---y-y-z-llr` to the quiz URL.
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
 | Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
+| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is worse than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | A pinprick beside a great deal of joy | G is worse than G✦ -- a hundred and fifty wonderful lives added, against one pinprick of suffering. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -1026,6 +1030,7 @@ Bullets bitten:
 
 - You accepted the repugnant conclusion.
 - A little suffering outweighs a lot of happiness.
+- You accepted the very repugnant conclusion.
 
 <a id="lexical"></a>
 
@@ -1121,6 +1126,59 @@ Bullets bitten:
 - You denied that levelling up improves things.
 - You hold the Procreation Asymmetry.
 - When the people change, a world with uniformly better-off people is not judged better.
+
+<a id="sub-linear"></a>
+
+## Sub-linear aggregation
+
+Like the negative-leaning view it weights suffering heavily -- it refuses the mild
+trade, a hundred wonderful lives not worth their forty in agony -- and like it the
+weight is finite, so it takes the pinprick's joy and accepts the plain repugnant
+conclusion. Where it parts company is the scaled very repugnant conclusion. The
+negative-leaner is forced to accept that, since a finite weight leaves faint positives
+free to pile up; this view escapes only because happiness aggregates sub-linearly --
+past some point each further barely-good life counts for less, so three million of them
+never clear the agony however the suffering is weighted. That is the one view numbers
+cannot corner, since forcing it in is exactly what the bounded sum forbids. It pays for
+the escape with a tight range: accept the pinprick and the plain conclusion and reject
+the scaled one, and the returns must fall off within a narrow band, with an account owed
+of why the band sits there rather than a rung up or down. The bullet for happiness
+running out is the whole of it; there should be no conflict.
+
+Open it: append `#a=yrrlrrryrr---y-y-z-llr` to the quiz URL.
+
+### Answers
+
+| Question | What this view says |
+| --- | --- |
+| Pareto improvement | If the very same people all live better lives, that is better. |
+| The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
+| A against B | A is worse than B. |
+| Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome better. |
+| Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
+| A against Z | A is worse than Z. |
+| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
+| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
+| A pinprick beside a great deal of joy | G is worse than G✦ -- a hundred and fifty wonderful lives added, against one pinprick of suffering. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
+| Transitivity of better-than | "Better than" is transitive. |
+| Transitivity of equal-goodness | "Exactly as good as" is transitive. |
+| Choosing from three | Z is the best of A, B and Z. |
+
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+
+### Verdict
+
+No conflicts.
+
+Bullets bitten:
+
+- You accepted the repugnant conclusion.
+- A little suffering outweighs a lot of happiness.
+- Enough happiness stops adding up.
 
 <a id="intuitive-v1"></a>
 

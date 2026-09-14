@@ -116,10 +116,16 @@ var VRC_H = [
 // check sees both (a fully tagged population divides zero by zero). The
 // eps-lives group is drawn at a low-but-visible welfare rather than a literal
 // eps, which would vanish under the bar-visibility floor.
+// V is scaled so that a merely finite weight on suffering cannot escape it:
+// anyone who takes the pinprick trade (which caps that weight) is forced to
+// rank V above W, so refusing V marks a happiness that saturates rather than
+// one merely outweighed. Three million barely-good lives clear the agony even
+// at the pinprick's ceiling on the exchange rate. Not drawn to scale - the
+// bars carry totals.
 var VRC_W = [{ n: 100, w: 95 }];
 var VRC_V = [
   { n: 100, w: -40 },
-  { n: 40000, w: 4 },
+  { n: 3000000, w: 4 },
 ];
 // The pinprick / benevolent-world-exploder test, added to the same base G as
 // the mild figure so the added bundles are directly comparable. G plus a great
@@ -2873,46 +2879,39 @@ function bullets() {
     });
   }
 
-  // The very repugnant conclusion, taken head-on. Unlike AvZ, the favoured
-  // side here visibly holds suffering, so this cannot be read as a bare
-  // quality-vs-quantity trade: it is the claim that enough faint positives
-  // outweigh any amount of concentrated agony.
-  if (ANS.vrc === "right")
-    out.push({
-      t: "You accepted the very repugnant conclusion.",
-      claims: ["vrc"],
-      b: "You judged V better than W: a world of arbitrarily many people in agony, redeemed only by adding enough lives barely worth living, is better than a world where everyone is wonderfully well off. This is where unrestricted totalism leads — sufficiently many faint positives outweigh any concentration of suffering. Many regard it as the hardest bullet in the field to bite.",
-    });
-  // The mirror of the VRC bullet: refusing the mild trade lets a little
-  // suffering outweigh a lot of happiness. The tail then turns on the pinprick
-  // answer. If they still take the pinprick's joy, the weight on suffering is
-  // finite - and a finite weight is just a rescaling of the total view, so the
-  // charge is not "you value suffering" but "why this exchange rate". If they
-  // refuse even the pinprick, the weight is lexical and forbids the joy
-  // outright (and the world-exploder bullet says so directly).
-  if (ANS.vrc_mild === "left") {
-    var negCore =
-      "You judged G better than H — a hundred wonderful lives are not worth adding if forty lives of agony come alongside them, even though the happiness added far outweighs the suffering in total. ";
-    var negFinite =
-      "Yet you would still add them were the suffering slighter: your answer to the pinprick says enough happiness does outweigh it in the end. So suffering counts for more only by some finite factor — and a fixed factor is just a choice of scale. Your view is the total view with the suffering side of the ledger multiplied by a constant; rescale the units and it is plain totalism again. What is left to defend is not that suffering counts, but why <em>your</em> exchange rate, rather than any other, is the right one.";
-    var negLexical =
-      "Taken to its limit this is the mirror of the very repugnant conclusion: enough weight on suffering forbids creating flourishing lives to prevent a much smaller harm.";
+  // The negative-leaning stance in the small: refusing the mild trade lets a
+  // little suffering outweigh a lot of happiness. This is the shared claim of
+  // the whole negative family; where it leads - forced totalism-in-heavier-
+  // units, the world-exploder, or a happiness that saturates - is what the
+  // bullets below sort out. Core only: no tail, since the tail's argument now
+  // lives on the VRC bullet, which is where the exchange rate actually bites.
+  if (ANS.vrc_mild === "left")
     out.push({
       t: "A little suffering outweighs a lot of happiness.",
-      claims: ANS.pinprick === "right" ? ["vrc_mild", "pinprick"] : ["vrc_mild"],
-      b: negCore + (ANS.pinprick === "right" ? negFinite : negLexical),
+      claims: ["vrc_mild"],
+      b: "You judged G better than H — a hundred more wonderful lives are not worth adding once forty lives of agony come with them, though the happiness added far outstrips the suffering in the total. Suffering, on your answer, counts for more than its welfare number lets on; how much more is what the questions that follow turn on.",
     });
+  // The very repugnant conclusion, taken head-on. The V figure is scaled so
+  // that a merely finite weight on suffering cannot escape it, so the bullet
+  // reads two ways. For the totalist (took the mild trade) it is the plain
+  // hardest-bullet text. For the negative-leaner (refused the mild trade but
+  // still finite, having taken the pinprick) it is the rescaling charge: a
+  // fixed factor on suffering is just a choice of units, so V comes by force
+  // and what is left to defend is the exchange rate, not the weighting.
+  if (ANS.vrc === "right") {
+    if (ANS.vrc_mild === "left")
+      out.push({
+        t: "You accepted the very repugnant conclusion.",
+        claims: ["vrc", "vrc_mild"],
+        b: "You judged V better than W: a world of arbitrarily many people in agony, redeemed only by adding enough lives barely worth living, beats a world where everyone is wonderfully well off. You refused the mild trade, so you weight suffering above its welfare number — but you took the pinprick's joy, so that weight is finite, some fixed factor and no more. A fixed factor is only a choice of scale: multiply the suffering side of the total view by it and you have your view exactly, and enough faint positives outrun any finite penalty on the agony, just as they do for the totalist. So V arrives by force. What is left to defend is not that suffering counts, but why <em>this</em> exchange rate rather than any other.",
+      });
+    else
+      out.push({
+        t: "You accepted the very repugnant conclusion.",
+        claims: ["vrc"],
+        b: "You judged V better than W: a world of arbitrarily many people in agony, redeemed only by adding enough lives barely worth living, is better than a world where everyone is wonderfully well off. This is where unrestricted totalism leads — sufficiently many faint positives outweigh any concentration of suffering. Many regard it as the hardest bullet in the field to bite.",
+      });
   }
-  // Accepts the trade in the small but balks at the extreme: the analogue, one
-  // axis over, of saying the ladder's verdict flips somewhere. It is a cost
-  // rather than a conflict because nothing elicits the steps between H and V,
-  // so no chain forces the extreme from the mild.
-  if (ANS.vrc_mild === "right" && ANS.vrc !== "right" && ANS.vrc !== undefined)
-    out.push({
-      t: "You accept the trade in the small but not the large.",
-      claims: ["vrc_mild", "vrc"],
-      b: "You let some suffering be outweighed by enough happiness in H, but drew the line before V. That leaves you owing an account of <em>where</em> the trade stops being worth it — every step from one to the other only piles up more faintly-good lives against the same suffering.",
-    });
   // The benevolent world-exploder. Ranking G at or above G✦ — where the only
   // difference is a great deal of added joy and one pinprick — is the lexical
   // claim that no amount of happiness outweighs any suffering at all. Refusing
@@ -2923,6 +2922,30 @@ function bullets() {
       t: "A pinprick of suffering outweighs a world of joy.",
       claims: ["pinprick"],
       b: "You judged G at least as good as G✦, though G✦ adds a hundred and fifty wonderful lives and only one pinprick of suffering. That is the lexical claim that no quantity of happiness, however vast, can outweigh any suffering, however slight — and its conclusion is the benevolent world-exploder: a flourishing world is worse for the least suffering it holds, so better ended. A merely negative-leaning view, one that weights suffering heavily but finitely, takes the added joy here instead.",
+    });
+  // Refused V, yet somewhere traded happiness against suffering at a finite
+  // rate - shown either by taking the pinprick's joy or by taking the mild
+  // trade outright. Against a finite rate, enough faint positives clear any
+  // fixed penalty on the agony, which is just what V offers, so refusing V can
+  // only be held if happiness saturates. Not a conflict: a sub-linear view is
+  // exactly the one numbers cannot corner, so it is a cost that names what such
+  // a view owes. Needs the finite-rate evidence: someone who was indifferent to
+  // the mild trade, or left it or the pinprick unranked, is owed nothing here,
+  // and the lexical refusal of the pinprick is the world-exploder above instead.
+  var vrcFinite =
+    ANS.pinprick === "right"
+      ? "you took the pinprick's joy over keeping one life out of suffering"
+      : ANS.vrc_mild === "right"
+        ? "you took the mild trade, letting a hundred wonderful lives be worth adding for all the forty in agony"
+        : null;
+  if (ANS.vrc === "left" && vrcFinite)
+    out.push({
+      t: "Enough happiness stops adding up.",
+      claims: ANS.pinprick === "right" ? ["vrc", "pinprick"] : ["vrc", "vrc_mild"],
+      b:
+        "You ranked W above V, refusing to let barely-good lives outweigh the agony however many of them there are. Yet " +
+        vrcFinite +
+        ", so you do buy happiness against suffering at some finite rate — and against a finite rate, faint positives piled high enough clear any fixed penalty on the agony, which is exactly what V does. The one way to hold both is that happiness saturates: past some point added lives buy steadily less, so no quantity of them ever tips the scale. That is a coherent view — Sider's geometrism is one — but it owes an account of where the returns fall off, and why there rather than a rung higher or lower.",
     });
   if (ANS.neutral_mod === "left" || ANS.neutral_wond === "left") {
     var worseLefts = [];
@@ -3241,7 +3264,9 @@ function profile() {
       return "Your answers sit closest to <strong>totalism</strong> \u2014 welfare summed across everyone who ever lives.";
     if (ANS.pinprick === "left" || ANS.pinprick === "equal")
       return "Your answers sit closest to a <strong>lexical negative view</strong> \u2014 happiness counts, but no amount of it, however vast, outweighs any suffering at all.";
-    return "Your answers sit closest to a <strong>negative-leaning view</strong> \u2014 happiness counts, but suffering counts for much more, so you accept the repugnant conclusion yet refuse to buy added happiness with added suffering.";
+    if (ANS.vrc === "left")
+      return "Your answers sit closest to a <strong>sub-linear view</strong> \u2014 happiness aggregates with diminishing returns, so past some point added lives buy steadily less and no quantity of barely-good lives outweighs concentrated agony; you accept the repugnant conclusion, but the very repugnant conclusion never arrives, since the happiness runs out before it can.";
+    return "Your answers sit closest to a <strong>negative-leaning view</strong> \u2014 happiness counts, but suffering counts for far more; you accept the repugnant conclusion and refuse the single-step trade of agony for added happiness, yet weight suffering only finitely, so enough faint lives carry the very repugnant conclusion in against your wishes.";
   }
   if (
     ANS.AvB === "left" &&
