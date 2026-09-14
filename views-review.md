@@ -28,10 +28,10 @@ The list of views to include was initially AI-generated, and then I added a few 
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
 - [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 5 bullets
 - [Antinatalism](#antinatalist) - clean, 2 bullets
-- [Negative-leaning](#negative-leaning) - clean, 3 bullets
-- [Lexical negative utilitarianism](#lexical) - clean, 3 bullets
+- [Negative-leaning](#negative-leaning) - clean, 2 bullets
+- [Lexical negative utilitarianism](#lexical) - clean, 2 bullets
 - [Maximally negative utilitarianism](#maximally-negative) - clean, 5 bullets
-- [Sub-linear aggregation](#sub-linear) - clean, 3 bullets
+- [Sub-linear aggregation](#sub-linear) - clean, 2 bullets
 - [The untutored intuitive package](#intuitive-v1) - 2 conflicts
 - [The untutored intuitive package alternate (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 3 bullets
@@ -1029,8 +1029,7 @@ No conflicts.
 Bullets bitten:
 
 - You accepted the repugnant conclusion.
-- A little suffering outweighs a lot of happiness.
-- You accepted the very repugnant conclusion.
+- Weighting suffering more heavily is just totalism in other units.
 
 <a id="lexical"></a>
 
@@ -1076,7 +1075,6 @@ No conflicts.
 Bullets bitten:
 
 - You accepted the repugnant conclusion.
-- A little suffering outweighs a lot of happiness.
 - A pinprick of suffering outweighs a world of joy.
 
 <a id="maximally-negative"></a>
@@ -1177,7 +1175,6 @@ No conflicts.
 Bullets bitten:
 
 - You accepted the repugnant conclusion.
-- A little suffering outweighs a lot of happiness.
 - Enough happiness stops adding up.
 
 <a id="intuitive-v1"></a>

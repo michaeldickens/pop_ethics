@@ -286,7 +286,7 @@ var QUESTIONS = [
     totals: true,
     title: "Enough small joys to outweigh any amount of agony?",
     body:
-      "<strong>W</strong> holds <strong>arbitrarily many</strong> people, every one of them living a <strong>wonderful</strong> life. <strong>V</strong> holds <strong>arbitrarily many people in terrible agony</strong> — and alongside them, a far greater number whose lives are <strong>barely worth living</strong>, each holding only the faintest trace of good. There are enough of these last lives that <strong>V has more total welfare than W</strong>. <em>The blocks cannot be drawn to scale; the bars underneath carry the totals.</em>",
+      "<strong>W</strong> holds <strong>arbitrarily many</strong> people, every one of them living a <strong>wonderful</strong> life. <strong>V</strong> holds <strong>arbitrarily many people in terrible agony</strong> — and alongside them a <strong>vastly greater number</strong>, more numerous by any factor you like, whose lives are <strong>barely worth living</strong>, each holding only the faintest trace of good. They are so overwhelmingly many that those faint traces, summed across them all, outrun both the agony among them and the whole of W's wonderful lives — so <strong>V has more total welfare than W</strong>. <em>The blocks cannot be drawn to scale; the bars underneath carry the totals.</em>",
   },
   {
     id: "pinprick",
@@ -2905,31 +2905,23 @@ function bullets() {
     });
   }
 
-  // The negative-leaning stance in the small: refusing the mild trade lets a
-  // little suffering outweigh a lot of happiness. This is the shared claim of
-  // the whole negative family; where it leads - forced totalism-in-heavier-
-  // units, the world-exploder, or a happiness that saturates - is what the
-  // bullets below sort out. Core only: no tail, since the tail's argument now
-  // lives on the VRC bullet, which is where the exchange rate actually bites.
-  if (ANS.vrc_mild === "left")
-    out.push({
-      t: "A little suffering outweighs a lot of happiness.",
-      claims: ["vrc_mild"],
-      b: "You judged G better than H — a hundred more wonderful lives are not worth adding once forty lives of agony come with them, though the happiness added far outstrips the suffering in the total. Suffering, on your answer, counts for more than its welfare number lets on; how much more is what the questions that follow turn on.",
-    });
   // The very repugnant conclusion, taken head-on. The V figure is scaled so
   // that a merely finite weight on suffering cannot escape it, so the bullet
   // reads two ways. For the totalist (took the mild trade) it is the plain
-  // hardest-bullet text. For the negative-leaner (refused the mild trade but
-  // still finite, having taken the pinprick) it is the rescaling charge: a
-  // fixed factor on suffering is just a choice of units, so V comes by force
-  // and what is left to defend is the exchange rate, not the weighting.
+  // hardest-bullet text. For the negative-leaner (refused the mild trade, so
+  // weights suffering above its number, but is still finite - the pinprick's
+  // joy taken) it is the rescaling charge, and that is the bullet: weighting
+  // suffering more heavily is only a change of units, so the view is the total
+  // view rescaled and V follows for it exactly as for the totalist. Refusing
+  // the mild trade is not itself flagged - a heavier rate on suffering is an
+  // alternative intuition, not a cost - it is accepting V on a finite weight
+  // that is.
   if (ANS.vrc === "right") {
     if (ANS.vrc_mild === "left")
       out.push({
-        t: "You accepted the very repugnant conclusion.",
+        t: "Weighting suffering more heavily is just totalism in other units.",
         claims: ["vrc", "vrc_mild"],
-        b: "You judged V better than W: a world of arbitrarily many people in agony, redeemed only by adding enough lives barely worth living, beats a world where everyone is wonderfully well off. You refused the mild trade, so you weight suffering above its welfare number — but you took the pinprick's joy, so that weight is finite, some fixed factor and no more. A fixed factor is only a choice of scale: multiply the suffering side of the total view by it and you have your view exactly, and enough faint positives outrun any finite penalty on the agony, just as they do for the totalist. So V arrives by force. What is left to defend is not that suffering counts, but why <em>this</em> exchange rate rather than any other.",
+        b: "You refused the mild trade, so you weight a unit of suffering above its welfare number — but you took the pinprick's joy, so that weight is finite, some fixed factor and no more. A fixed factor is only a choice of scale: multiply the suffering side of the total view by it and you have your view exactly. So enough faint positives outrun any weight you put on the agony, and you judged V better than W — arbitrarily many in agony, redeemed only by barely-good lives, over a wholly wonderful world — for the same reason the totalist does, just in heavier units. The very repugnant conclusion comes with the territory; what is left to defend is not that suffering counts for more, but why <em>this</em> exchange rate rather than any other.",
       });
     else
       out.push({
@@ -2953,11 +2945,15 @@ function bullets() {
   // rate - shown either by taking the pinprick's joy or by taking the mild
   // trade outright. Against a finite rate, enough faint positives clear any
   // fixed penalty on the agony, which is just what V offers, so refusing V can
-  // only be held if happiness saturates. Not a conflict: a sub-linear view is
-  // exactly the one numbers cannot corner, so it is a cost that names what such
-  // a view owes. Needs the finite-rate evidence: someone who was indifferent to
-  // the mild trade, or left it or the pinprick unranked, is owed nothing here,
-  // and the lexical refusal of the pinprick is the world-exploder above instead.
+  // only be held if happiness saturates. The RC is the other jaw of the vice:
+  // whoever reaches V accepted Z over A, where a multitude of barely-good lives
+  // did outweigh a few wonderful ones - so happiness added up there and stopped
+  // adding up by V, which pins the falling-off to a narrow band between the two
+  // scales. Not a conflict: a sub-linear view is exactly the one numbers cannot
+  // corner, so it is a cost that names what such a view owes. Needs the
+  // finite-rate evidence: someone indifferent to the mild trade, or who left it
+  // or the pinprick unranked, is owed nothing here, and the lexical refusal of
+  // the pinprick is the world-exploder above instead.
   var vrcFinite =
     ANS.pinprick === "right"
       ? "you took the pinprick's joy over keeping one life out of suffering"
@@ -2967,11 +2963,11 @@ function bullets() {
   if (ANS.vrc === "left" && vrcFinite)
     out.push({
       t: "Enough happiness stops adding up.",
-      claims: ANS.pinprick === "right" ? ["vrc", "pinprick"] : ["vrc", "vrc_mild"],
+      claims: ANS.pinprick === "right" ? ["vrc", "pinprick", "AvZ"] : ["vrc", "vrc_mild", "AvZ"],
       b:
         "You ranked W above V, refusing to let barely-good lives outweigh the agony however many of them there are. Yet " +
         vrcFinite +
-        ", so you do buy happiness against suffering at some finite rate — and against a finite rate, faint positives piled high enough clear any fixed penalty on the agony, which is exactly what V does. The one way to hold both is that happiness saturates: past some point added lives buy steadily less, so no quantity of them ever tips the scale. That is a coherent view — Sider's geometrism is one — but it owes an account of where the returns fall off, and why there rather than a rung higher or lower.",
+        ", so you do buy happiness against suffering at some finite rate — and against a finite rate, faint positives piled high enough clear any fixed penalty on the agony, which is exactly what V does. The one way to hold both is that happiness saturates: past some point added lives buy steadily less, so no quantity of them ever tips the scale. But you also ranked Z above A — there a multitude of barely-good lives <em>did</em> outweigh a handful of wonderful ones, so the adding-up was still working at that scale. Happiness that added up at Z's numbers and gave out by V's has to bend within the stretch between them: the account you owe is not just that returns diminish, but why they fall off in that particular band, and neither sooner nor later.",
     });
   if (ANS.neutral_mod === "left" || ANS.neutral_wond === "left") {
     var worseLefts = [];
@@ -3288,11 +3284,12 @@ function profile() {
     var refusesTrade = ANS.vrc_mild === "left" || ANS.vrc === "left";
     if (!refusesTrade)
       return "Your answers sit closest to <strong>totalism</strong> \u2014 welfare summed across everyone who ever lives.";
-    if (ANS.pinprick === "left" || ANS.pinprick === "equal")
-      return "Your answers sit closest to a <strong>lexical negative view</strong> \u2014 happiness counts, but no amount of it, however vast, outweighs any suffering at all.";
-    if (ANS.vrc === "left")
-      return "Your answers sit closest to a <strong>sub-linear view</strong> \u2014 happiness aggregates with diminishing returns, so past some point added lives buy steadily less and no quantity of barely-good lives outweighs concentrated agony; you accept the repugnant conclusion, but the very repugnant conclusion never arrives, since the happiness runs out before it can.";
-    return "Your answers sit closest to a <strong>negative-leaning view</strong> \u2014 happiness counts, but suffering counts for far more; you accept the repugnant conclusion and refuse the single-step trade of agony for added happiness, yet weight suffering only finitely, so enough faint lives carry the very repugnant conclusion in against your wishes.";
+    // One broad bucket for the whole negative family - lexical, sub-linear, or
+    // a merely heavier finite weight alike. They accept the repugnant
+    // conclusion but part from totalism once real suffering is on the table;
+    // exactly how far they part is what the bullets above draw out, and is left
+    // to them rather than pinned to a sub-label here.
+    return "Your answers sit closest to a <strong>negative-leaning view</strong> \u2014 happiness counts, but suffering counts for more; you accept the repugnant conclusion yet refuse to buy added happiness with added suffering. How far that goes \u2014 a heavier exchange rate, a happiness that saturates, or no amount of joy outweighing any suffering at all \u2014 is the question the bullets above take up.";
   }
   if (
     ANS.AvB === "left" &&

@@ -360,89 +360,101 @@ def suite_engine(page, rep):
     rep.check(not any("verdict gets worse" in t for t in mono),
               "a monotonic ranking of the three additions is not flagged", str(mono))
 
-    # The very repugnant conclusion and its neighbours, one bullet per horn.
-    # The V figure is scaled so a finite weight on suffering cannot escape it,
-    # so the four negative-family positions split cleanly on (vrc_mild, vrc,
-    # pinprick): the totalist takes both trades, the negative-leaner refuses the
-    # mild trade yet is carried into the extreme by force, the lexical view
-    # refuses even the pinprick's joy, and the sub-linear view takes the pinprick
-    # but lets its happiness run out before the extreme. The VRC questions are
-    # only reached when the plain RC is accepted, so every profile carries
-    # AvZ=right to stay reachable.
+    # The very repugnant conclusion and its neighbours. The V figure is scaled
+    # so a finite weight on suffering cannot escape it, and refusing the mild
+    # trade is itself drawn no bullet - a heavier exchange rate is an alternative
+    # intuition, not a cost. What is flagged is where the refusal then leads:
+    # the totalist takes both trades and bites the VRC plainly; the negative-
+    # leaner refuses the mild trade yet accepts V on a finite weight, which is
+    # just totalism rescaled; the lexical view refuses even the pinprick's joy;
+    # the sub-linear view takes the pinprick but lets its happiness run out
+    # before the extreme. The VRC questions are only reached when the plain RC
+    # is accepted, so every profile carries AvZ=right to stay reachable.
     bodies = """(a) => { const keep = ANS; ANS = a;
                          const b = bullets().map(x => x.t + ' :: ' + x.b);
                          ANS = keep; return b; }"""
-    A = "outweighs a lot of happiness"     # refused the mild trade
-    B = "very repugnant conclusion"        # accepted the extreme
-    C = "pinprick of suffering outweighs"  # the world-exploder
-    D = "stops adding up"                  # happiness saturates
+    BTOT = "very repugnant conclusion"       # the plain totalist acceptance bullet
+    BNEG = "totalism in other units"         # accepting V on a finite weight
+    C = "pinprick of suffering outweighs"    # the world-exploder
+    D = "stops adding up"                     # happiness saturates
+    MILD = "outweighs a lot of happiness"    # the retired mild-refusal bullet
 
     # Totalist: both trades taken. Only the acceptance bullet, in its plain
     # "hardest bullet in the field" wording.
     totalist = page.evaluate(titles, dict(MODAL, vrc_mild="right", vrc="right", AvZ="right"))
-    rep.check(any(B in t for t in totalist) and not any(A in t for t in totalist)
+    rep.check(any(BTOT in t for t in totalist) and not any(BNEG in t for t in totalist)
               and not any(C in t for t in totalist) and not any(D in t for t in totalist),
-              "a totalist (both trades) draws only the VRC-acceptance bullet", str(totalist))
+              "a totalist (both trades) draws only the plain VRC-acceptance bullet", str(totalist))
     tbody = page.evaluate(bodies, dict(MODAL, vrc_mild="right", vrc="right", AvZ="right"))
     rep.check(any("hardest bullet" in t for t in tbody),
               "...worded as the plain totalist bullet", str(tbody))
 
-    # Negative-leaning: refuses the mild trade, takes the pinprick, and so is
-    # forced into the extreme. Draws A and B, and B carries the rescaling charge.
+    # Negative-leaning: refuses the mild trade, takes the pinprick, so accepts V
+    # by force. One bullet - the rescaling charge - and refusing the mild trade
+    # draws none of its own.
     negl = dict(MODAL, AvZ="right", vrc_mild="left", pinprick="right", vrc="right")
     nt = page.evaluate(titles, negl)
-    rep.check(any(A in t for t in nt) and any(B in t for t in nt)
-              and not any(C in t for t in nt) and not any(D in t for t in nt),
-              "a negative-leaner (finite weight) draws the mild-refusal and forced-VRC bullets", str(nt))
+    rep.check(any(BNEG in t for t in nt) and not any(BTOT in t for t in nt)
+              and not any(MILD in t for t in nt) and not any(C in t for t in nt)
+              and not any(D in t for t in nt),
+              "a negative-leaner (finite weight, accepts V) draws only the rescaling bullet", str(nt))
     nb = page.evaluate(bodies, negl)
-    rep.check(any(B in t and "exchange rate" in t for t in nb),
-              "...and the VRC bullet makes the rescaling charge, not the plain one", str(nb))
+    rep.check(any(BNEG in t and "exchange rate" in t for t in nb),
+              "...and it makes the rescaling charge - a finite weight is just other units", str(nb))
 
-    # Lexical: refuses even the pinprick. Draws A and the world-exploder C, and
-    # not the acceptance bullet. Both refusals of the pinprick trade count.
+    # Lexical: refuses even the pinprick. The world-exploder alone; the mild
+    # refusal is not itself a bullet, and the acceptance bullet does not fire.
     for val in ("left", "equal"):
         lex = page.evaluate(titles, dict(MODAL, AvZ="right", vrc_mild="left", vrc="left", pinprick=val))
-        rep.check(any(A in t for t in lex) and any(C in t for t in lex)
-                  and not any(B in t for t in lex) and not any(D in t for t in lex),
-                  f"a lexical view (pinprick={val}) draws the world-exploder, not acceptance", str(lex))
+        rep.check(any(C in t for t in lex) and not any(MILD in t for t in lex)
+                  and not any(BTOT in t for t in lex) and not any(BNEG in t for t in lex)
+                  and not any(D in t for t in lex),
+                  f"a lexical view (pinprick={val}) draws the world-exploder, and nothing else", str(lex))
 
     # Sub-linear: takes the pinprick but lets its happiness run out before the
-    # extreme. Draws A and the saturation bullet D, and neither C nor acceptance.
-    subl = page.evaluate(titles, dict(MODAL, AvZ="right", vrc_mild="left", vrc="left", pinprick="right"))
-    rep.check(any(A in t for t in subl) and any(D in t for t in subl)
-              and not any(B in t for t in subl) and not any(C in t for t in subl),
-              "a sub-linear view (takes pinprick, refuses extreme) draws the saturation bullet", str(subl))
+    # extreme. The saturation bullet alone, and it invokes the RC as the other
+    # jaw - happiness added up at Z, so the falling-off is pinned to a band.
+    subl = dict(MODAL, AvZ="right", vrc_mild="left", vrc="left", pinprick="right")
+    st = page.evaluate(titles, subl)
+    rep.check(any(D in t for t in st) and not any(MILD in t for t in st)
+              and not any(BTOT in t for t in st) and not any(BNEG in t for t in st)
+              and not any(C in t for t in st),
+              "a sub-linear view (takes pinprick, refuses extreme) draws the saturation bullet", str(st))
+    sb = page.evaluate(bodies, subl)
+    rep.check(any(D in t and "Z above A" in t for t in sb),
+              "...and it invokes the accepted RC to pin where the returns fall off", str(sb))
 
     # Took the mild trade but drew the line at the extreme: the pinprick is never
-    # asked, so the saturation bullet fires from the mild-trade evidence instead,
-    # and neither the mild-refusal nor the acceptance bullet appears.
+    # asked, so the saturation bullet fires from the mild-trade evidence instead.
     small = page.evaluate(titles, dict(MODAL, vrc_mild="right", vrc="left", AvZ="right"))
-    rep.check(any(D in t for t in small) and not any(B in t for t in small)
-              and not any(A in t for t in small) and not any(C in t for t in small),
+    rep.check(any(D in t for t in small) and not any(BTOT in t for t in small)
+              and not any(BNEG in t for t in small) and not any(C in t for t in small),
               "accepting the mild trade but not the extreme draws the saturation bullet", str(small))
 
     # The saturation bullet needs finite-rate evidence: someone who was
     # indifferent to the mild trade, or refused it and could not rank the
     # pinprick, has shown no finite exchange rate, so refusing the extreme is
-    # owed nothing. (Without this guard the bullet would wrongly say they "took
-    # the mild trade".)
+    # owed nothing - and with no bullet flagged for refusing the mild trade
+    # either, these draw nothing at all.
     wash = page.evaluate(titles, dict(MODAL, vrc_mild="equal", vrc="left", AvZ="right"))
-    rep.check(not any(D in t for t in wash) and not any(A in t for t in wash),
+    rep.check(not any(D in t for t in wash),
               "indifference to the mild trade plus refusing the extreme draws no saturation bullet",
               str(wash))
     noev = page.evaluate(titles, dict(MODAL, vrc_mild="left", pinprick="none", vrc="left", AvZ="right"))
-    rep.check(any(A in t for t in noev) and not any(D in t for t in noev),
-              "refusing the mild trade with the pinprick unranked draws the mild-refusal bullet, not saturation",
+    rep.check(not any(D in t for t in noev) and not any(MILD in t for t in noev),
+              "refusing the mild trade with the pinprick unranked draws no VRC bullet",
               str(noev))
 
     # The property that matters: no revisionary answer can appear in a profile
-    # the quiz says nothing at all about.
+    # the quiz says nothing at all about. (Refusing the mild trade is not on this
+    # list: a heavier finite exchange rate is a permitted intuition, so vrc_mild
+    # =left can stand alone in silence when nothing it leads to fires.)
     watch = [["misery", "right"], ["neutral_mod", "left"], ["neutral_wond", "left"],
              ["benign", "left"], ["nae", "left"], ["pareto", "no"], ["trans_gt", "no"],
              ["trans_eq", "no"], ["trans_none", "no"], ["generalize", "no"],
              ["AvZ", "right"], ["greedy", "equal"], ["same_number", "left"],
              ["same_number", "none"], ["same_number", "equal"], ["vrc", "right"],
-             ["vrc_mild", "left"], ["pinprick", "left"]]
+             ["pinprick", "left"]]
     silent = page.evaluate("""(cfg) => {
       const keep = ANS, bad = new Set();
       cfg.profiles.forEach(a => {
