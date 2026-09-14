@@ -67,7 +67,7 @@ Open it: append `#a=yrrlrrryrr---y-y-z-rr-&v=2` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
-| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
+| Suffering against happiness | A is worse than H -- a hundred more excellent lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A, a hundred excellent lives, is worse than V -- arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -685,7 +685,7 @@ Open it: append `#a=yrrlnrryrn-r-y-y-z-rr-&v=2` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
-| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
+| Suffering against happiness | A is worse than H -- a hundred more excellent lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A, a hundred excellent lives, is worse than V -- arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is worse than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -733,7 +733,7 @@ Open it: append `#a=xrrlnrryrn-r-y-y-z-rr-&v=2` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
-| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
+| Suffering against happiness | A is worse than H -- a hundred more excellent lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A, a hundred excellent lives, is worse than V -- arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is worse than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -1012,9 +1012,9 @@ Open it: append `#a=yrrlrrryrr---y-y-z-lrr&v=2` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
-| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
+| Suffering against happiness | A is better than H -- a hundred more excellent lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A, a hundred excellent lives, is worse than V -- arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
-| A pinprick beside a great deal of joy | G is worse than G✦ -- a hundred and fifty wonderful lives added, against one pinprick of suffering. |
+| A pinprick beside a great deal of joy | A is worse than A✦ -- a hundred and fifty wonderful lives added, against one pinprick of suffering. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
@@ -1058,9 +1058,9 @@ Open it: append `#a=yrrlrrryrr---y-y-z-lll&v=2` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
-| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
+| Suffering against happiness | A is better than H -- a hundred more excellent lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A, a hundred excellent lives, is better than V -- arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
-| A pinprick beside a great deal of joy | G is better than G✦ -- a hundred and fifty wonderful lives added, against one pinprick of suffering. |
+| A pinprick beside a great deal of joy | A is better than A✦ -- a hundred and fifty wonderful lives added, against one pinprick of suffering. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
@@ -1158,9 +1158,9 @@ Open it: append `#a=yrrlrrryrr---y-y-z-llr&v=2` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
-| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
+| Suffering against happiness | A is better than H -- a hundred more excellent lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A, a hundred excellent lives, is better than V -- arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
-| A pinprick beside a great deal of joy | G is worse than G✦ -- a hundred and fifty wonderful lives added, against one pinprick of suffering. |
+| A pinprick beside a great deal of joy | A is worse than A✦ -- a hundred and fifty wonderful lives added, against one pinprick of suffering. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
@@ -1274,7 +1274,7 @@ Open it: append `#a=yrrrrrryrr---y-y-z-rr-&v=2` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is worse than Z. |
-| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
+| Suffering against happiness | A is worse than H -- a hundred more excellent lives added, and forty in agony, for more welfare in total. |
 | Suffering against sheer numbers | A, a hundred excellent lives, is worse than V -- arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |

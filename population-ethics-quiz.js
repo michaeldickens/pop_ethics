@@ -98,17 +98,18 @@ var PARETO_AFTER = [{ n: 100, w: 90 }];
 // than merely lower welfare - which is the gap the A/B and ladder comparisons
 // leave open, since nothing there says whether B's people suffer or are only
 // less happy. -40 is the same depth of agony as Nadia's life in the misery
-// question; 1 is a life barely worth living, as at the foot of the ladder.
-var VRC_G = [{ n: 100, w: 70 }];
-// H is G unchanged plus two additions, so the added lives can be drawn as
+// question. The wonderful side of both the mild and the pinprick comparison
+// reuses A, the top of the ladder (a hundred excellent lives), rather than
+// minting a fresh near-identical world.
+// H is A unchanged plus two additions, so the added lives can be drawn as
 // their own outlined-and-captioned bars, the way Nadia is in the addition
-// questions - everyone wonderful stays at 70, so nothing muddies the trade.
-// The base hundred is left untagged and carries the honesty check; both
-// groups stay under the width knee, so a block's area still reads as its
-// total welfare and no to-scale row is needed.
+// questions - the added hundred sit at A's own welfare, so nothing but the
+// suffering forty muddies the trade. The base hundred is left untagged and
+// carries the honesty check; both groups stay under the width knee, so a
+// block's area still reads as its total welfare and no to-scale row is needed.
 var VRC_H = [
-  { n: 100, w: 70 },
-  { n: 100, w: 70, tag: "a hundred more" },
+  { n: A_POP[0].n, w: A_POP[0].w },
+  { n: A_POP[0].n, w: A_POP[0].w, tag: "a hundred more" },
   { n: 40, w: -40, tag: "the suffering forty" },
 ];
 // The extreme figure spans the knee, so - like AvZ - the bars carry totals and
@@ -129,15 +130,15 @@ var VRC_V = [
   { n: 100, w: -40 },
   { n: 3000000, w: 4 },
 ];
-// The pinprick / benevolent-world-exploder test, added to the same base G as
-// the mild figure so the added bundles are directly comparable. G plus a great
+// The pinprick / benevolent-world-exploder test, added to the same base A as
+// the mild figure so the added bundles are directly comparable. A plus a great
 // many more wonderful lives and one life dragged a hair below zero. Ranking it
-// below G says one pinprick of suffering outweighs all that added joy - the
+// below A says one pinprick of suffering outweighs all that added joy - the
 // bullet the lexical and strong-negative views bite. The pinprick group is at
 // -5 rather than -1 so its bar clears the visibility floor; both added groups
 // stay under the width knee, so no to-scale row is needed.
 var PIN_WORLD = [
-  { n: 100, w: 70 },
+  { n: A_POP[0].n, w: A_POP[0].w },
   { n: 150, w: 90, tag: "a hundred and fifty more" },
   { n: 1, w: -5, tag: "one pinprick" },
 ];
@@ -265,11 +266,11 @@ var QUESTIONS = [
     when: function (a) {
       return RUNVER >= 2 && a.AvZ === "right";
     },
-    pops: [VRC_G, VRC_H],
-    names: ["G", "H"],
+    pops: [A_POP, VRC_H],
+    names: ["A", "H"],
     title: "More welfare in total, but some of it is agony.",
     body:
-      "<strong>G</strong> holds 100 people with wonderful lives. <strong>H</strong> holds those same 100, <strong>and adds a hundred more just as wonderful</strong>, together with <strong>40 people whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than G.",
+      "<strong>A</strong> once more — the top of the ladder, a hundred people with <strong>excellent</strong> lives. <strong>H</strong> holds those same hundred, unaffected — <strong>and adds a hundred more just as excellent</strong>, together with <strong>40 people whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than A; the cost is that 40 of its people genuinely suffer.",
   },
   {
     id: "vrc",
@@ -303,11 +304,11 @@ var QUESTIONS = [
     when: function (a) {
       return RUNVER >= 2 && a.vrc_mild === "left";
     },
-    pops: [VRC_G, PIN_WORLD],
-    names: ["G", "G✦"],
+    pops: [A_POP, PIN_WORLD],
+    names: ["A", "A✦"],
     title: "A world of joy, and one pinprick.",
     body:
-      "The same <strong>G</strong> — a hundred wonderful lives. <strong>G✦</strong> keeps them and adds <strong>a hundred and fifty more, every one wonderful</strong> — and one further person whose life is dragged <strong>a pinprick below the line worth living</strong>. G✦ holds far more welfare in total; the only shadow on it is that single pinprick.",
+      "The same <strong>A</strong> — a hundred excellent lives. <strong>A✦</strong> keeps them and adds <strong>a hundred and fifty more, every one wonderful</strong> — and one further person whose life is dragged <strong>a pinprick below the line worth living</strong>. A✦ holds far more welfare in total; the only shadow on it is that single pinprick.",
   },
   {
     id: "neutral_wond",
@@ -2312,14 +2313,14 @@ var LABELS = {
   },
   vrc_mild: function (a) {
     return (
-      "G is " +
+      "A is " +
       {
         left: "better than",
         right: "worse than",
         equal: "exactly as good as",
         none: "not rankable against",
       }[a] +
-      " H — a hundred wonderful lives added, and forty in agony, for more welfare in total."
+      " H — a hundred more excellent lives added, and forty in agony, for more welfare in total."
     );
   },
   vrc: function (a) {
@@ -2336,14 +2337,14 @@ var LABELS = {
   },
   pinprick: function (a) {
     return (
-      "G is " +
+      "A is " +
       {
         left: "better than",
         right: "worse than",
         equal: "exactly as good as",
         none: "not rankable against",
       }[a] +
-      " G✦ — a hundred and fifty wonderful lives added, against one pinprick of suffering."
+      " A✦ — a hundred and fifty wonderful lives added, against one pinprick of suffering."
     );
   },
   misery: function (a) {
@@ -2931,7 +2932,7 @@ function bullets() {
           });
       }
   }
-  // The benevolent world-exploder. Ranking G at or above G✦ — where the only
+  // The benevolent world-exploder. Ranking A at or above A✦ — where the only
   // difference is a great deal of added joy and one pinprick — is the lexical
   // claim that no amount of happiness outweighs any suffering at all. Refusing
   // the mild trade is compatible with a merely finite weight on suffering;
@@ -2940,7 +2941,7 @@ function bullets() {
     out.push({
       t: "A pinprick of suffering outweighs a world of joy.",
       claims: ["pinprick"],
-      b: "You judged G at least as good as G✦, though G✦ adds a hundred and fifty wonderful lives and only one pinprick of suffering. That is the lexical claim that no quantity of happiness, however vast, can outweigh any suffering, however slight — and its conclusion is the benevolent world-exploder: a flourishing world is worse for the least suffering it holds, so better ended. A merely negative-leaning view, one that weights suffering heavily but finitely, takes the added joy here instead.",
+      b: "You judged A at least as good as A✦, though A✦ adds a hundred and fifty wonderful lives and only one pinprick of suffering. That is the lexical claim that no quantity of happiness, however vast, can outweigh any suffering, however slight — and its conclusion is the benevolent world-exploder: a flourishing world is worse for the least suffering it holds, so better ended. A merely negative-leaning view, one that weights suffering heavily but finitely, takes the added joy here instead.",
     });
   // Refused V, yet somewhere traded happiness against suffering at a finite
   // rate - shown either by taking the pinprick's joy or by taking the mild
@@ -2959,7 +2960,7 @@ function bullets() {
     ANS.pinprick === "right"
       ? "you took the pinprick's joy over keeping one life out of suffering"
       : ANS.vrc_mild === "right"
-        ? "you took the mild trade, letting a hundred wonderful lives be worth adding for all the forty in agony"
+        ? "you took the mild trade, letting a hundred more excellent lives be worth adding for all the forty in agony"
         : null;
   if (ANS.vrc === "left" && vrcFinite)
     out.push({
