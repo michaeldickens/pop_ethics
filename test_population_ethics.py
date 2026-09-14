@@ -44,7 +44,7 @@ PAIRS = ["same_number", "AvB", "misery", "neutral_mod", "benign", "nae", "AvZ",
 PRINCIPLES = ["pareto", "generalize", "collapse", "trans_gt", "trans_none",
               "trans_eq", "menu_eq", "menu_alpha"]
 CONDITIONAL = ("collapse", "greedy", "plusVsBoth", "trans_none", "menu_eq",
-               "menu_alpha")
+               "menu_alpha", "vrc_mild", "vrc")
 PAIR_VALUES = ["left", "right", "equal", "none"]
 PRINCIPLE_VALUES = ["yes", "no"]
 MENU_VALUES = ["A", "B", "Z", "AB", "all"]
@@ -364,7 +364,9 @@ def suite_engine(page, rep):
     # extreme draws the "where does it stop" bullet. Accepting the VRC while
     # calling a single added agony bad is a consistent totalist position, not a
     # tension, so it draws no extra bullet on top of the VRC one.
-    vrc_yes = page.evaluate(titles, dict(MODAL, vrc="right"))
+    # The VRC questions are only reached when the plain RC is accepted, so
+    # these profiles carry AvZ=right to stay reachable.
+    vrc_yes = page.evaluate(titles, dict(MODAL, vrc="right", AvZ="right"))
     rep.check(any("very repugnant conclusion" in t for t in vrc_yes),
               "accepting the VRC draws its own bullet", str(vrc_yes))
     total_like = page.evaluate(titles, dict(MODAL, misery="left", vrc="right", AvZ="right"))
@@ -373,7 +375,7 @@ def suite_engine(page, rep):
               str(total_like))
     rep.check(any("very repugnant conclusion" in t for t in total_like),
               "...but still draws the VRC-acceptance bullet", str(total_like))
-    small = page.evaluate(titles, dict(MODAL, vrc_mild="right", vrc="left"))
+    small = page.evaluate(titles, dict(MODAL, vrc_mild="right", vrc="left", AvZ="right"))
     rep.check(any("small but not the large" in t for t in small),
               "accepting the trade small but not large draws the boundary bullet", str(small))
     rep.check(not any("very repugnant conclusion" in t for t in small),
@@ -383,7 +385,7 @@ def suite_engine(page, rep):
     # Refusing even the mild trade (G > H) is the mirror repugnance: a little
     # suffering outweighing a lot of happiness. It draws its own bullet, and the
     # boundary bullet does not also fire since the trade was not accepted.
-    reject = page.evaluate(titles, dict(MODAL, vrc_mild="left", vrc="left"))
+    reject = page.evaluate(titles, dict(MODAL, vrc_mild="left", vrc="left", AvZ="right"))
     rep.check(any("outweighs a lot of happiness" in t for t in reject),
               "refusing the mild trade draws the negative-side repugnance bullet", str(reject))
     rep.check(not any("small but not the large" in t for t in reject),
@@ -1653,17 +1655,19 @@ CLICK_GAP = dict(CLICK_MODAL, neutral_mod=3)
 def suite_conditional(page, rep):
     rep.suite("conditional")
 
-    # Each conditional question must appear exactly when it can bite, and the
-    # five must gate independently of one another.
+    # Each conditional question must appear exactly when it can bite, and they
+    # must gate independently of one another. The VRC pair is asked only when
+    # the plain repugnant conclusion is accepted (AvZ right), which the modal,
+    # vague and no-chain profiles all reject, so only the totalist sees them.
     for label, clicks, want in [
             ("unrankable beside a determinate verdict", CLICK_VAGUE,
              {"collapse", "greedy", "plusVsBoth"}),
             ("two chaining equalities", CLICK_MODAL, {"menu_eq", "greedy"}),
             ("equalities that cannot chain", CLICK_NO_CHAIN, {"greedy"}),
-            # Nothing in the greediness case can bite on someone who ranked
-            # both additions as plain gains, so it is the one profile that is
-            # asked none of the five.
-            ("both additions ranked as gains", CLICK_TOTALIST, set())]:
+            # The greediness five cannot bite on someone who ranked both
+            # additions as plain gains, but the totalist accepts the repugnant
+            # conclusion, so it is asked the two VRC questions and nothing else.
+            ("both additions ranked as gains", CLICK_TOTALIST, {"vrc_mild", "vrc"})]:
         walk(page, clicks)
         got = {q for q in CONDITIONAL if q in walk.asked}
         rep.check(got == want, f"{label}: asks {sorted(want) or 'none of them'}",

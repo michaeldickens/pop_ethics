@@ -9,14 +9,14 @@ The list of views to include was initially AI-generated, and then I added a few 
 ## Contents
 
 - [Total utilitarianism](#total) - clean, 2 bullets
-- [Average utilitarianism](#average) - clean, 3 bullets
-- [Critical-level utilitarianism](#critical_level) - clean, 2 bullets
-- [Geometrism](#geometrism) - clean, 2 bullets
-- [Variable value](#variable_value) - clean, 3 bullets
-- [Maximin](#maximin) - clean, 4 bullets
-- [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 3 bullets
-- [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 2 bullets
-- [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 3 bullets
+- [Average utilitarianism](#average) - clean, 2 bullets
+- [Critical-level utilitarianism](#critical_level) - clean, 1 bullet
+- [Geometrism](#geometrism) - clean, 1 bullet
+- [Variable value](#variable_value) - clean, 2 bullets
+- [Maximin](#maximin) - clean, 3 bullets
+- [Procreation Asymmetry, menu-dependent](#asymmetry_menu) - 2 conflicts, 2 bullets
+- [Procreation Asymmetry, strong form](#asymmetry_equal) - 3 conflicts, 1 bullet
+- [Procreation Asymmetry, prefer greater utility (B > A)](#asymmetry_B) - 1 conflict, 2 bullets
 - [Procreation Asymmetry, a gap rather than an equality](#asymmetry_gap) - 3 conflicts, 2 bullets
 - [Imprecise comparability](#rough) - 1 conflict, 5 bullets
 - [Wide gaps, and the harm still counts](#wide-gaps-harm-still-counts) - 2 conflicts, 4 bullets
@@ -25,13 +25,13 @@ The list of views to include was initially AI-generated, and then I added a few 
 - [Wide gaps, spent on the harm anyway, without Pareto to spend it](#wide-gaps-spent-no-pareto) - clean, 6 bullets
 - [Unrankable below, better above](#vague_boundary) - 2 conflicts, 3 bullets
 - [Unrankable below, and boundaries fall where they fall](#vague_boundary_ok) - 2 conflicts, 3 bullets
-- [Non-transitive betterness](#nontransitive) - 1 conflict, 3 bullets
+- [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
 - [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 5 bullets
-- [Antinatalism](#antinatalist) - clean, 3 bullets
-- [Negative-leaning](#negative-leaning) - clean, 4 bullets
-- [Hard negative utilitarianism](#hard-negative) - clean, 5 bullets
-- [The untutored intuitive package (A > B)](#intuitive-v1) - 2 conflicts, 1 bullet
-- [The untutored intuitive package (B > A)](#intuitive-v2) - 1 conflict, 1 bullet
+- [Antinatalism](#antinatalist) - clean, 2 bullets
+- [Negative-leaning](#negative-leaning) - clean, 3 bullets
+- [Hard negative utilitarianism](#hard-negative) - clean, 4 bullets
+- [The untutored intuitive package](#intuitive-v1) - 2 conflicts
+- [The untutored intuitive package alternate (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 3 bullets
 - [A neutral range with a floor](#imprecise-critical-level) - clean, 5 bullets
 - [Imprecise comparability, without Parfit's escape](#rough-transitive) - 2 conflicts, 4 bullets
@@ -93,7 +93,7 @@ worse; at 70 it raises the average and makes things better. Consistent, but it h
 deny benign addition, and it implies that a life well worth living can be a loss purely
 for being below par.
 
-Open it: append `#a=yrllllrylr-l-y-y-a-ll` to the quiz URL.
+Open it: append `#a=yrllllrylr-l-y-y-a---` to the quiz URL.
 
 ### Answers
 
@@ -108,8 +108,6 @@ Open it: append `#a=yrllllrylr-l-y-y-a-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -124,7 +122,6 @@ No conflicts.
 
 Bullets bitten:
 
-- A little suffering outweighs a lot of happiness.
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
 
@@ -138,7 +135,7 @@ fall below it, so Z is worse than A and the moves cannot be repeated indefinitel
 best of the three and is chosen. Blocking the ladder at 'the moves repeat' is what saves
 it, and it is committed to some lives worth living being not worth adding.
 
-Open it: append `#a=yrrlrrrxlr---y-y-b-rl` to the quiz URL.
+Open it: append `#a=yrrlrrrxlr---y-y-b---` to the quiz URL.
 
 ### Answers
 
@@ -153,8 +150,6 @@ Open it: append `#a=yrrlrrrxlr---y-y-b-rl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Somewhere on the ladder those two verdicts flip. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
@@ -169,7 +164,6 @@ No conflicts.
 Bullets bitten:
 
 - You said the verdict flips somewhere on the ladder.
-- You accept the trade in the small but not the large.
 
 <a id="geometrism"></a>
 
@@ -190,7 +184,7 @@ charged with. That is what the levelling-up bullet names here. It also says addi
 at 7 is an improvement of about 7/2^500 of a unit: the right sign, and a quantity
 nothing could ever be traded against.
 
-Open it: append `#a=yrllrrlylr---y-y-a-rl` to the quiz URL.
+Open it: append `#a=yrllrrlylr---y-y-a---` to the quiz URL.
 
 ### Answers
 
@@ -205,8 +199,6 @@ Open it: append `#a=yrllrrlylr---y-y-a-rl` to the quiz URL.
 | Levelling up | B is worse than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
@@ -220,7 +212,6 @@ No conflicts.
 
 Bullets bitten:
 
-- You accept the trade in the small but not the large.
 - You denied that levelling up improves things.
 
 <a id="variable_value"></a>
@@ -243,7 +234,7 @@ near the crossover are thin -- a slower dampening function flips the greediness 
 a faster one flips benign addition -- which is worth knowing about the family rather
 than a defect of this specimen.
 
-Open it: append `#a=yrrllrrxlr-l-y-y-b-rl` to the quiz URL.
+Open it: append `#a=yrrllrrxlr-l-y-y-b---` to the quiz URL.
 
 ### Answers
 
@@ -258,8 +249,6 @@ Open it: append `#a=yrrllrrxlr-l-y-y-b-rl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Somewhere on the ladder those two verdicts flip. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -275,7 +264,6 @@ No conflicts.
 Bullets bitten:
 
 - You said the verdict flips somewhere on the ladder.
-- You accept the trade in the small but not the large.
 - You said a life worth living makes the world worse by being lived.
 
 <a id="maximin"></a>
@@ -290,7 +278,7 @@ does not collide with Pareto here: the Pareto question is about the same people,
 them better off, and K++ contains a person K does not. So maximin comes out consistent,
 and is told instead what its verdicts commit it to.
 
-Open it: append `#a=yrllllryle-l-y-yya-ll` to the quiz URL.
+Open it: append `#a=yrllllryle-l-y-yya---` to the quiz URL.
 
 ### Answers
 
@@ -305,8 +293,6 @@ Open it: append `#a=yrllllryle-l-y-yya-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -322,7 +308,6 @@ No conflicts.
 
 Bullets bitten:
 
-- A little suffering outweighs a lot of happiness.
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
 - You hold the Procreation Asymmetry.
@@ -337,7 +322,7 @@ the table and K+ falls below the other two. Denying that a verdict survives a wi
 is what lets all three stand. Should escape the neutral-range collision and be told it
 violates Sen's property beta.
 
-Open it: append `#a=yrllerryle-l-y-yxa-ll` to the quiz URL.
+Open it: append `#a=yrllerryle-l-y-yxa---` to the quiz URL.
 
 ### Answers
 
@@ -352,8 +337,6 @@ Open it: append `#a=yrllerryle-l-y-yxa-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -371,7 +354,6 @@ Not asked: collapse, plusVsBoth, trans_none. These questions only appear when ea
 Bullets bitten:
 
 - You denied that a verdict survives a wider menu.
-- A little suffering outweighs a lot of happiness.
 - You hold the Procreation Asymmetry.
 
 <a id="asymmetry_equal"></a>
@@ -384,7 +366,7 @@ Existing people still matter, so benign addition and levelling up are both impro
 but A > B. Should collide twice over: once on the ladder, and once because two lives of
 very different quality cannot both be exactly worth nothing.
 
-Open it: append `#a=yrllerryle-l-y-yya-ll` to the quiz URL.
+Open it: append `#a=yrllerryle-l-y-yya---` to the quiz URL.
 
 ### Answers
 
@@ -399,8 +381,6 @@ Open it: append `#a=yrllerryle-l-y-yya-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -418,7 +398,6 @@ Not asked: collapse, plusVsBoth, trans_none. These questions only appear when ea
 
 Bullets bitten:
 
-- A little suffering outweighs a lot of happiness.
 - You hold the Procreation Asymmetry.
 
 <a id="asymmetry_B"></a>
@@ -428,7 +407,7 @@ Bullets bitten:
 Common-sense person-affecting view #1. Adding a happy life is neither good nor badr.
 Increasing total utility in a single step is good (B > A), but Z is worse than A.
 
-Open it: append `#a=yrrlerryle-l-y-yxb-ll` to the quiz URL.
+Open it: append `#a=yrrlerryle-l-y-yxb---` to the quiz URL.
 
 ### Answers
 
@@ -443,8 +422,6 @@ Open it: append `#a=yrrlerryle-l-y-yxb-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -461,7 +438,6 @@ Not asked: collapse, plusVsBoth, trans_none. These questions only appear when ea
 Bullets bitten:
 
 - You denied that a verdict survives a wider menu.
-- A little suffering outweighs a lot of happiness.
 - You hold the Procreation Asymmetry.
 
 <a id="asymmetry_gap"></a>
@@ -485,7 +461,7 @@ reason for it, so K beats K+- -- and yet between K+ and K+- the asymmetry is sil
 since Nadia exists in both, so her 63 against Owen's 35 puts K+- ahead of K+, which
 chains back to a verdict on K against K+, the pair just declined.
 
-Open it: append `#a=yrllnrryln-lry-y-a-nl` to the quiz URL.
+Open it: append `#a=yrllnrryln-lry-y-a---` to the quiz URL.
 
 ### Answers
 
@@ -500,8 +476,6 @@ Open it: append `#a=yrllnrryln-lry-y-a-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | The modest addition against the harm | K+ is worse than K± -- Nadia added at 7 against Owen down by 35 and Nadia added at 70. |
@@ -543,7 +517,7 @@ reads 'cannot be ranked' as the strong claim, not better and not worse and not e
 a derived verdict contradicts it; Parfit's own claim about mere addition is the weaker
 'not worse than', which no option here states on its own.
 
-Open it: append `#a=yrllnnryln-n-yxy-a-nl` to the quiz URL.
+Open it: append `#a=yrllnnryln-n-yxy-a---` to the quiz URL.
 
 ### Answers
 
@@ -558,8 +532,6 @@ Open it: append `#a=yrllnnryln-n-yxy-a-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -595,7 +567,7 @@ a real conflict now, not a bullet. The ladder is blocked at not-worse-than, so n
 arrives at Z; what it does not escape is the denied benign step, which every view
 holding a gap there collides on.
 
-Open it: append `#a=yrllnnryln-lryxy-a-nl` to the quiz URL.
+Open it: append `#a=yrllnnryln-lryxy-a---` to the quiz URL.
 
 ### Answers
 
@@ -610,8 +582,6 @@ Open it: append `#a=yrllnnryln-lryxy-a-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | The modest addition against the harm | K+ is worse than K± -- Nadia added at 7 against Owen down by 35 and Nadia added at 70. |
@@ -646,7 +616,7 @@ needs a ranked verdict on both rungs to chain through and the greediness story d
 go anywhere near nae. What is left is a single, clean case of Broome's argument, with
 nothing else riding along.
 
-Open it: append `#a=yrllnnnyln-lryxy-a-nl` to the quiz URL.
+Open it: append `#a=yrllnnnyln-lryxy-a---` to the quiz URL.
 
 ### Answers
 
@@ -661,8 +631,6 @@ Open it: append `#a=yrllnnnyln-lryxy-a-nl` to the quiz URL.
 | Levelling up | B is not rankable against A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | The modest addition against the harm | K+ is worse than K± -- Nadia added at 7 against Owen down by 35 and Nadia added at 70. |
@@ -799,7 +767,7 @@ its own bullet for passing on a dominance result -- a smaller one than ranking K
 K+- would, since it never claims identity should decide value, but a bullet all the
 same.
 
-Open it: append `#a=yrrlnrrylrylny-y-b-nl` to the quiz URL.
+Open it: append `#a=yrrlnrrylrylny-y-b---` to the quiz URL.
 
 ### Answers
 
@@ -814,8 +782,6 @@ Open it: append `#a=yrrlnrrylrylny-y-b-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life cannot turn "unrankable" into a determinate verdict. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -845,7 +811,7 @@ The same answers as the previous view, except that a sharp boundary between 'unr
 and 'better' is accepted as the price of vagueness. That single change should be the
 difference between being caught by the collapsing principle and not.
 
-Open it: append `#a=yrllnrrylrxlny-y-a-nl` to the quiz URL.
+Open it: append `#a=yrllnrrylrxlny-y-a---` to the quiz URL.
 
 ### Answers
 
@@ -860,8 +826,6 @@ Open it: append `#a=yrllnrrylrxlny-y-a-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | The collapsing principle | A tiny improvement to one life can turn "unrankable" into a determinate verdict. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
@@ -894,7 +858,7 @@ neutrality answers are stipulated rather than drawn from Temkin, and are here to
 the contrast: the remaining collision turns on equality, which rejecting transitivity of
 better-than does nothing to touch.
 
-Open it: append `#a=yrllerryle-l-x-yya-ll` to the quiz URL.
+Open it: append `#a=yrllerryle-l-x-yya---` to the quiz URL.
 
 ### Answers
 
@@ -909,8 +873,6 @@ Open it: append `#a=yrllerryle-l-x-yya-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is not always transitive. |
@@ -927,20 +889,18 @@ Not asked: collapse, plusVsBoth, trans_none. These questions only appear when ea
 Bullets bitten:
 
 - You rejected transitivity of better-than.
-- A little suffering outweighs a lot of happiness.
 - You hold the Procreation Asymmetry.
 
 <a id="nontransitive-non-independent"></a>
 
 ## Non-transitive betterness and rejecting independence
 
-Eitan's view: avoid asserting that Nadia's wonderful life is equal to her modest life by
-allowing verdicts to change when the menu changes. Denying menu independence is what
-buys the escape from the neutral-range collision, which needs two equalities to chain
-before it can bite. Declines to rank A against B or against Z, and so rules none of the
-three out.
+Avoid asserting that Nadia's wonderful life is equal to her modest life by allowing
+verdicts to change when the menu changes. Denying menu independence is what buys the
+escape from the neutral-range collision, which needs two equalities to chain before it
+can bite. Declines to rank A against B or against Z, and so rules none of the three out.
 
-Open it: append `#a=yrnlernyne-l-y-yxn-nn` to the quiz URL.
+Open it: append `#a=yrnlernyne-l-y-yxn---` to the quiz URL.
 
 ### Answers
 
@@ -955,8 +915,6 @@ Open it: append `#a=yrnlernyne-l-y-yxn-nn` to the quiz URL.
 | Levelling up | B is not rankable against A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is not rankable against one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -987,7 +945,7 @@ worse, whether the life goes badly or wonderfully. Among people who exist anyway
 wellbeing is still better, so levelling up improves things. Fewer people is better
 without limit, and the best world contains nobody.
 
-Open it: append `#a=yrllllryll-l-y-y-a-ll` to the quiz URL.
+Open it: append `#a=yrllllryll-l-y-y-a---` to the quiz URL.
 
 ### Answers
 
@@ -1002,8 +960,6 @@ Open it: append `#a=yrllllryll-l-y-y-a-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -1018,7 +974,6 @@ No conflicts.
 
 Bullets bitten:
 
-- A little suffering outweighs a lot of happiness.
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
 
@@ -1033,7 +988,7 @@ gain, and why levelling up is refused: B's two hundred at 64 hold more shortfall
 them than A+'s better-off hundred do. Not a standard view so much as the shape a good
 many people's answers take once the suffering is made vivid.
 
-Open it: append `#a=yrlllllylr-l-y-y-a-ll` to the quiz URL.
+Open it: append `#a=yrlllllylr-l-y-y-a---` to the quiz URL.
 
 ### Answers
 
@@ -1048,8 +1003,6 @@ Open it: append `#a=yrlllllylr-l-y-y-a-ll` to the quiz URL.
 | Levelling up | B is worse than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -1064,7 +1017,6 @@ No conflicts.
 
 Bullets bitten:
 
-- A little suffering outweighs a lot of happiness.
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
 - You denied that levelling up improves things.
@@ -1080,7 +1032,7 @@ source of suffering and so a loss, whatever the life contains, and two futures o
 hundred people apiece come out exactly as good when neither holds any suffering to tell
 them apart.
 
-Open it: append `#a=xellllryll-l-y-y-a-ll` to the quiz URL.
+Open it: append `#a=xellllryll-l-y-y-a---` to the quiz URL.
 
 ### Answers
 
@@ -1095,8 +1047,6 @@ Open it: append `#a=xellllryll-l-y-y-a-ll` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome worse. |
 | A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -1112,14 +1062,13 @@ No conflicts.
 Bullets bitten:
 
 - You rejected the Pareto principle.
-- A little suffering outweighs a lot of happiness.
 - You said a life worth living makes the world worse by being lived.
 - Everyone gains, good lives are added, and you called it worse.
 - When the people change, a world with uniformly better-off people is not judged better.
 
 <a id="intuitive-v1"></a>
 
-## The untutored intuitive package (A > B)
+## The untutored intuitive package
 
 Not a philosopher's view but the one many people arrive with. More happy people is
 straightforwardly good, so both of Nadia's good lives are worth adding; every step of
@@ -1127,7 +1076,7 @@ the ladder looks right; better-than obviously chains; and yet A is plainly bette
 and vastly better than Z. No view about neutrality here at all, so the neutral-range
 collision should not fire - the ladder ones should, twice.
 
-Open it: append `#a=yrllrrrylr---y-y-a-rl` to the quiz URL.
+Open it: append `#a=yrllrrrylr---y-y-a---` to the quiz URL.
 
 ### Answers
 
@@ -1142,8 +1091,6 @@ Open it: append `#a=yrllrrrylr---y-y-a-rl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
@@ -1156,13 +1103,9 @@ Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions on
 - **The ladder reaches B, but you say B is worse.** `AvB+benign+nae+trans_gt`
 - **Each rung of the ladder is an improvement, but you end up worse than you started.** `AvZ+benign+generalize+nae+trans_gt`
 
-Bullets bitten:
-
-- You accept the trade in the small but not the large.
-
 <a id="intuitive-v2"></a>
 
-## The untutored intuitive package (B > A)
+## The untutored intuitive package alternate (B > A)
 
 Not a philosopher's view but the one many people arrive with (v2). More happy people is
 straightforwardly good, so both of Nadia's good lives are worth adding; every step of
@@ -1170,7 +1113,7 @@ the ladder looks right; better-than obviously chains; B is better than A; and ye
 worse than A or B. No view about neutrality here at all, so the neutral-range collision
 should not fire - the ladder ones should, twice.
 
-Open it: append `#a=yrrlrrrylr---y-y-b-rl` to the quiz URL.
+Open it: append `#a=yrrlrrrylr---y-y-b---` to the quiz URL.
 
 ### Answers
 
@@ -1185,8 +1128,6 @@ Open it: append `#a=yrrlrrrylr---y-y-b-rl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is worse than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
@@ -1197,10 +1138,6 @@ Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions on
 ### Verdict
 
 - **Each rung of the ladder is an improvement, but you end up worse than you started.** `AvZ+benign+generalize+nae+trans_gt`
-
-Bullets bitten:
-
-- You accept the trade in the small but not the large.
 
 <a id="misery_gain"></a>
 
@@ -1263,7 +1200,7 @@ no conflict, only the bullets naming what the gaps cost it. Offered all three it
 and B together: the open question between them does not close because Z joined the
 table, and Z is out either way.
 
-Open it: append `#a=yrnlnnrxln-n-y-y-p-nl` to the quiz URL.
+Open it: append `#a=yrnlnnrxln-n-y-y-p---` to the quiz URL.
 
 ### Answers
 
@@ -1278,8 +1215,6 @@ Open it: append `#a=yrnlnnrxln-n-y-y-p-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Somewhere on the ladder those two verdicts flip. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -1314,7 +1249,7 @@ than A after all. Should collide on the ladder route, where the view above comes
 clean -- and on the denied benign step as well, which both views share and which neither
 answer to the not-worse-than question touches.
 
-Open it: append `#a=yrllnnryln-n-yyy-a-nl` to the quiz URL.
+Open it: append `#a=yrllnnryln-n-yyy-a---` to the quiz URL.
 
 ### Answers
 
@@ -1329,8 +1264,6 @@ Open it: append `#a=yrllnnryln-n-yyy-a-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -1369,7 +1302,7 @@ is the one saying the incomparable outcomes cannot be explained by a neutral ran
 Should draw no conflict at all. Picks A and B together from the three, as any view that
 declines to rank them against each other but ranks both above Z has to.
 
-Open it: append `#a=ynnnnnrxln-n-y-y-p-nl` to the quiz URL.
+Open it: append `#a=ynnnnnrxln-n-y-y-p---` to the quiz URL.
 
 ### Answers
 
@@ -1384,8 +1317,6 @@ Open it: append `#a=ynnnnnrxln-n-y-y-p-nl` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Somewhere on the ladder those two verdicts flip. |
 | A against Z | A is better than Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -1430,7 +1361,7 @@ rather than called worse -- the price of drawing the line at the headcount and n
 else. Arrhenius's different-number-based imprecision is the same shape with imprecision
 in place of incomparability.
 
-Open it: append `#a=yrnnnnrynn-n-y-y-n-nn` to the quiz URL.
+Open it: append `#a=yrnnnnrynn-n-y-y-n---` to the quiz URL.
 
 ### Answers
 
@@ -1445,8 +1376,6 @@ Open it: append `#a=yrnnnnrynn-n-y-y-n-nn` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is not rankable against one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -1485,7 +1414,7 @@ unsayable, and Nadia's agony is placed outside the ranking rather than called wo
 and one more besides, since letting the same-number case go means a world of uniformly
 better-off people is not judged better when the people change.
 
-Open it: append `#a=ynnnnnrynn-n-y-y-n-nn` to the quiz URL.
+Open it: append `#a=ynnnnnrynn-n-y-y-n---` to the quiz URL.
 
 ### Answers
 
@@ -1500,8 +1429,6 @@ Open it: append `#a=ynnnnnrynn-n-y-y-n-nn` to the quiz URL.
 | Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is not rankable against one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
@@ -1530,7 +1457,7 @@ boundary case: there is nothing to be inconsistent with, so the quiz should find
 collisions, and should not manufacture one. If this profile ever produces a conflict,
 something is wrong.
 
-Open it: append `#a=xnnnnnnynn-n-y-y-n-nn` to the quiz URL.
+Open it: append `#a=xnnnnnnynn-n-y-y-n---` to the quiz URL.
 
 ### Answers
 
@@ -1545,8 +1472,6 @@ Open it: append `#a=xnnnnnnynn-n-y-y-n-nn` to the quiz URL.
 | Levelling up | B is not rankable against A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
 | A against Z | A is not rankable against Z. |
-| Suffering against happiness | G is not rankable against H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
-| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is not rankable against one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome incomparable. |
 | A harm beside the addition | K is not rankable against K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |

@@ -237,11 +237,13 @@ var QUESTIONS = [
     id: "vrc_mild",
     kind: "pair",
     label: "Suffering against happiness",
-    // Version-gated so it never appears on a run shared from before it
-    // existed: a v1 link (no &v, so RUNVER 1) treats it as inactive and
+    // Only asked of someone who accepts the plain repugnant conclusion (Z
+    // better than A): anyone who rejects it will reject the strictly harder
+    // trades here too, so asking would only lengthen the quiz. Version-gated
+    // as well, so a v1 link (no &v, RUNVER 1) treats it as inactive and
     // replays exactly as it did. See RUNVER and encodeAns.
-    when: function () {
-      return RUNVER >= 2;
+    when: function (a) {
+      return RUNVER >= 2 && a.AvZ === "right";
     },
     pops: [VRC_G, VRC_H],
     names: ["G", "H"],
@@ -256,8 +258,10 @@ var QUESTIONS = [
     // through this conclusion without priming, and names it only in the
     // results, so the label stays descriptive.
     label: "Suffering against sheer numbers",
-    when: function () {
-      return RUNVER >= 2;
+    // Same gate as vrc_mild: only for someone who accepts the plain repugnant
+    // conclusion, and only on a v2 run.
+    when: function (a) {
+      return RUNVER >= 2 && a.AvZ === "right";
     },
     pops: [VRC_W, VRC_V],
     names: ["W", "V"],
