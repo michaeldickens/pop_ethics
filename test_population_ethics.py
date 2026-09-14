@@ -363,52 +363,55 @@ def suite_engine(page, rep):
     # The very repugnant conclusion and its neighbours. The V figure is scaled
     # so a finite weight on suffering cannot escape it, and refusing the mild
     # trade is itself drawn no bullet - a heavier exchange rate is an alternative
-    # intuition, not a cost. What is flagged is where the refusal then leads:
-    # the totalist takes both trades and bites the VRC plainly; the negative-
-    # leaner refuses the mild trade yet accepts V on a finite weight, which is
-    # just totalism rescaled; the lexical view refuses even the pinprick's joy;
-    # the sub-linear view takes the pinprick but lets its happiness run out
-    # before the extreme. The VRC questions are only reached when the plain RC
-    # is accepted, so every profile carries AvZ=right to stay reachable.
+    # intuition, not a cost. Everyone who ranks V above A gets the VRC-acceptance
+    # bullet; its body reads two ways. The totalist takes both trades and gets
+    # the plain hardest-bullet wording. The negative-leaner refuses the mild
+    # trade yet accepts V on a finite weight, and the body adds the rescaling
+    # charge - just totalism in heavier units. The lexical view refuses even the
+    # pinprick's joy; the sub-linear view takes the pinprick but lets its
+    # happiness run out before the extreme. The VRC questions are only reached
+    # when the plain RC is accepted, so every profile carries AvZ=right.
     bodies = """(a) => { const keep = ANS; ANS = a;
                          const b = bullets().map(x => x.t + ' :: ' + x.b);
                          ANS = keep; return b; }"""
-    BTOT = "very repugnant conclusion"       # the plain totalist acceptance bullet
-    BNEG = "totalism in other units"         # accepting V on a finite weight
+    BVRC = "You accepted the very repugnant conclusion."  # the acceptance bullet, shared
+    RESCALE = "in heavier units"             # the negative-leaner's rescaling body
+    PLAIN = "hardest bullet"                 # the totalist's plain body
     C = "pinprick of suffering outweighs"    # the world-exploder
     D = "stops adding up"                     # happiness saturates
     MILD = "outweighs a lot of happiness"    # the retired mild-refusal bullet
 
-    # Totalist: both trades taken. Only the acceptance bullet, in its plain
-    # "hardest bullet in the field" wording.
-    totalist = page.evaluate(titles, dict(MODAL, vrc_mild="right", vrc="right", AvZ="right"))
-    rep.check(any(BTOT in t for t in totalist) and not any(BNEG in t for t in totalist)
-              and not any(C in t for t in totalist) and not any(D in t for t in totalist),
-              "a totalist (both trades) draws only the plain VRC-acceptance bullet", str(totalist))
-    tbody = page.evaluate(bodies, dict(MODAL, vrc_mild="right", vrc="right", AvZ="right"))
-    rep.check(any("hardest bullet" in t for t in tbody),
-              "...worded as the plain totalist bullet", str(tbody))
+    # Totalist: both trades taken. The acceptance bullet in its plain wording,
+    # and not the rescaling charge.
+    tot = dict(MODAL, vrc_mild="right", vrc="right", AvZ="right")
+    tt = page.evaluate(titles, tot)
+    rep.check(any(BVRC in t for t in tt) and not any(C in t for t in tt)
+              and not any(D in t for t in tt),
+              "a totalist (both trades) draws the VRC-acceptance bullet", str(tt))
+    tb = page.evaluate(bodies, tot)
+    rep.check(any(PLAIN in t for t in tb) and not any(RESCALE in t for t in tb),
+              "...in its plain totalist wording, not the rescaling charge", str(tb))
 
     # Negative-leaning: refuses the mild trade, takes the pinprick, so accepts V
-    # by force. One bullet - the rescaling charge - and refusing the mild trade
-    # draws none of its own.
+    # by force. The same acceptance bullet is surfaced - not silenced - and its
+    # body carries the rescaling charge instead of the plain wording. Refusing
+    # the mild trade draws no bullet of its own.
     negl = dict(MODAL, AvZ="right", vrc_mild="left", pinprick="right", vrc="right")
     nt = page.evaluate(titles, negl)
-    rep.check(any(BNEG in t for t in nt) and not any(BTOT in t for t in nt)
-              and not any(MILD in t for t in nt) and not any(C in t for t in nt)
-              and not any(D in t for t in nt),
-              "a negative-leaner (finite weight, accepts V) draws only the rescaling bullet", str(nt))
+    rep.check(any(BVRC in t for t in nt) and not any(MILD in t for t in nt)
+              and not any(C in t for t in nt) and not any(D in t for t in nt),
+              "a negative-leaner who accepts V still gets the VRC-acceptance bullet", str(nt))
     nb = page.evaluate(bodies, negl)
-    rep.check(any(BNEG in t and "exchange rate" in t for t in nb),
-              "...and it makes the rescaling charge - a finite weight is just other units", str(nb))
+    rep.check(any(BVRC in t and RESCALE in t and "exchange rate" in t for t in nb)
+              and not any(PLAIN in t for t in nb),
+              "...and its body makes the rescaling charge - a finite weight is just other units", str(nb))
 
     # Lexical: refuses even the pinprick. The world-exploder alone; the mild
     # refusal is not itself a bullet, and the acceptance bullet does not fire.
     for val in ("left", "equal"):
         lex = page.evaluate(titles, dict(MODAL, AvZ="right", vrc_mild="left", vrc="left", pinprick=val))
         rep.check(any(C in t for t in lex) and not any(MILD in t for t in lex)
-                  and not any(BTOT in t for t in lex) and not any(BNEG in t for t in lex)
-                  and not any(D in t for t in lex),
+                  and not any(BVRC in t for t in lex) and not any(D in t for t in lex),
                   f"a lexical view (pinprick={val}) draws the world-exploder, and nothing else", str(lex))
 
     # Sub-linear: takes the pinprick but lets its happiness run out before the
@@ -417,8 +420,7 @@ def suite_engine(page, rep):
     subl = dict(MODAL, AvZ="right", vrc_mild="left", vrc="left", pinprick="right")
     st = page.evaluate(titles, subl)
     rep.check(any(D in t for t in st) and not any(MILD in t for t in st)
-              and not any(BTOT in t for t in st) and not any(BNEG in t for t in st)
-              and not any(C in t for t in st),
+              and not any(BVRC in t for t in st) and not any(C in t for t in st),
               "a sub-linear view (takes pinprick, refuses extreme) draws the saturation bullet", str(st))
     sb = page.evaluate(bodies, subl)
     rep.check(any(D in t and "Z above A" in t for t in sb),
@@ -427,8 +429,8 @@ def suite_engine(page, rep):
     # Took the mild trade but drew the line at the extreme: the pinprick is never
     # asked, so the saturation bullet fires from the mild-trade evidence instead.
     small = page.evaluate(titles, dict(MODAL, vrc_mild="right", vrc="left", AvZ="right"))
-    rep.check(any(D in t for t in small) and not any(BTOT in t for t in small)
-              and not any(BNEG in t for t in small) and not any(C in t for t in small),
+    rep.check(any(D in t for t in small) and not any(BVRC in t for t in small)
+              and not any(C in t for t in small),
               "accepting the mild trade but not the extreme draws the saturation bullet", str(small))
 
     # The saturation bullet needs finite-rate evidence: someone who was

@@ -116,13 +116,15 @@ var VRC_H = [
 // check sees both (a fully tagged population divides zero by zero). The
 // eps-lives group is drawn at a low-but-visible welfare rather than a literal
 // eps, which would vanish under the bar-visibility floor.
+// The wonderful side of the comparison just reuses A, the top of the ladder
+// (a hundred excellent lives) - it and a purpose-built "W" differ only in a
+// welfare point or two, so there is no reason to mint a second world.
 // V is scaled so that a merely finite weight on suffering cannot escape it:
 // anyone who takes the pinprick trade (which caps that weight) is forced to
-// rank V above W, so refusing V marks a happiness that saturates rather than
+// rank V above A, so refusing V marks a happiness that saturates rather than
 // one merely outweighed. Three million barely-good lives clear the agony even
 // at the pinprick's ceiling on the exchange rate. Not drawn to scale - the
 // bars carry totals.
-var VRC_W = [{ n: 100, w: 95 }];
 var VRC_V = [
   { n: 100, w: -40 },
   { n: 3000000, w: 4 },
@@ -281,12 +283,12 @@ var QUESTIONS = [
     when: function (a) {
       return RUNVER >= 2 && a.AvZ === "right";
     },
-    pops: [VRC_W, VRC_V],
-    names: ["W", "V"],
+    pops: [A_POP, VRC_V],
+    names: ["A", "V"],
     totals: true,
     title: "Enough small joys to outweigh any amount of agony?",
     body:
-      "<strong>W</strong> holds <strong>arbitrarily many</strong> people, every one of them living a <strong>wonderful</strong> life. <strong>V</strong> holds <strong>arbitrarily many people in terrible agony</strong> — and alongside them a <strong>vastly greater number</strong>, more numerous by any factor you like, whose lives are <strong>barely worth living</strong>, each holding only the faintest trace of good. They are so overwhelmingly many that those faint traces, summed across them all, outrun both the agony among them and the whole of W's wonderful lives — so <strong>V has more total welfare than W</strong>. <em>The blocks cannot be drawn to scale; the bars underneath carry the totals.</em>",
+      "<strong>A</strong> once more — the top of the ladder, a hundred people with <strong>excellent</strong> lives. <strong>V</strong> holds <strong>arbitrarily many people in terrible agony</strong> — and alongside them a <strong>vastly greater number</strong>, more numerous by any factor you like, whose lives are <strong>barely worth living</strong>, each holding only the faintest trace of good. They are so overwhelmingly many that those faint traces, summed across them all, outrun both the agony among them and the whole of A — so <strong>V has more total welfare than A</strong>. <em>The blocks cannot be drawn to scale; the bars underneath carry the totals.</em>",
   },
   {
     id: "pinprick",
@@ -2322,14 +2324,14 @@ var LABELS = {
   },
   vrc: function (a) {
     return (
-      "A world of arbitrarily many wonderful lives is " +
+      "A, a hundred excellent lives, is " +
       {
         left: "better than",
         right: "worse than",
         equal: "exactly as good as",
         none: "not rankable against",
       }[a] +
-      " one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total."
+      " V — arbitrarily many in agony plus enough barely-good lives to hold more welfare in total."
     );
   },
   pinprick: function (a) {
@@ -2905,29 +2907,28 @@ function bullets() {
     });
   }
 
-  // The very repugnant conclusion, taken head-on. The V figure is scaled so
-  // that a merely finite weight on suffering cannot escape it, so the bullet
-  // reads two ways. For the totalist (took the mild trade) it is the plain
-  // hardest-bullet text. For the negative-leaner (refused the mild trade, so
-  // weights suffering above its number, but is still finite - the pinprick's
-  // joy taken) it is the rescaling charge, and that is the bullet: weighting
-  // suffering more heavily is only a change of units, so the view is the total
-  // view rescaled and V follows for it exactly as for the totalist. Refusing
-  // the mild trade is not itself flagged - a heavier rate on suffering is an
-  // alternative intuition, not a cost - it is accepting V on a finite weight
-  // that is.
+  // The very repugnant conclusion, taken head-on - the bullet everyone who
+  // ranks V above A gets, whatever their route to it. The body reads two ways.
+  // For the totalist (took the mild trade) it is the plain hardest-bullet text.
+  // For the negative-leaner (refused the mild trade, so weights suffering above
+  // its number, but is still finite - the pinprick's joy taken) it adds the
+  // rescaling charge: weighting suffering more heavily is only a change of
+  // units, so the view is the total view rescaled and V follows exactly as for
+  // the totalist. Refusing the mild trade is not itself flagged - a heavier
+  // rate on suffering is an alternative intuition, not a cost - it is accepting
+  // V on a finite weight that is.
   if (ANS.vrc === "right") {
     if (ANS.vrc_mild === "left")
       out.push({
-        t: "Weighting suffering more heavily is just totalism in other units.",
+        t: "You accepted the very repugnant conclusion.",
         claims: ["vrc", "vrc_mild"],
-        b: "You refused the mild trade, so you weight a unit of suffering above its welfare number — but you took the pinprick's joy, so that weight is finite, some fixed factor and no more. A fixed factor is only a choice of scale: multiply the suffering side of the total view by it and you have your view exactly. So enough faint positives outrun any weight you put on the agony, and you judged V better than W — arbitrarily many in agony, redeemed only by barely-good lives, over a wholly wonderful world — for the same reason the totalist does, just in heavier units. The very repugnant conclusion comes with the territory; what is left to defend is not that suffering counts for more, but why <em>this</em> exchange rate rather than any other.",
+        b: "You judged V better than A: a world of arbitrarily many people in agony, redeemed only by adding enough lives barely worth living, over the wholly excellent world at the top of the ladder. You refused the mild trade, so you weight a unit of suffering above its welfare number — but you took the pinprick's joy, so that weight is finite, some fixed factor and no more. A fixed factor is only a choice of scale: multiply the suffering side of the total view by it and you have your view exactly, so enough faint positives outrun any weight you put on the agony, and V arrives for the same reason it does for the totalist — just in heavier units. What is left to defend is not that suffering counts for more, but why <em>this</em> exchange rate rather than any other.",
       });
     else
       out.push({
         t: "You accepted the very repugnant conclusion.",
         claims: ["vrc"],
-        b: "You judged V better than W: a world of arbitrarily many people in agony, redeemed only by adding enough lives barely worth living, is better than a world where everyone is wonderfully well off. This is where unrestricted totalism leads — sufficiently many faint positives outweigh any concentration of suffering. Many regard it as the hardest bullet in the field to bite.",
+        b: "You judged V better than A: a world of arbitrarily many people in agony, redeemed only by adding enough lives barely worth living, is better than the wholly excellent world at the top of the ladder. This is where unrestricted totalism leads — sufficiently many faint positives outweigh any concentration of suffering. Many regard it as the hardest bullet in the field to bite.",
       });
   }
   // The benevolent world-exploder. Ranking G at or above G✦ — where the only
@@ -2965,7 +2966,7 @@ function bullets() {
       t: "Enough happiness stops adding up.",
       claims: ANS.pinprick === "right" ? ["vrc", "pinprick", "AvZ"] : ["vrc", "vrc_mild", "AvZ"],
       b:
-        "You ranked W above V, refusing to let barely-good lives outweigh the agony however many of them there are. Yet " +
+        "You ranked A above V, refusing to let barely-good lives outweigh the agony however many of them there are. Yet " +
         vrcFinite +
         ", so you do buy happiness against suffering at some finite rate — and against a finite rate, faint positives piled high enough clear any fixed penalty on the agony, which is exactly what V does. The one way to hold both is that happiness saturates: past some point added lives buy steadily less, so no quantity of them ever tips the scale. But you also ranked Z above A — there a multitude of barely-good lives <em>did</em> outweigh a handful of wonderful ones, so the adding-up was still working at that scale. Happiness that added up at Z's numbers and gave out by V's has to bend within the stretch between them: the account you owe is not just that returns diminish, but why they fall off in that particular band, and neither sooner nor later.",
     });
