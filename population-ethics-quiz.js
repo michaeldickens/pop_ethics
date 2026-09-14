@@ -1288,6 +1288,26 @@ function decodeAns(code) {
   return out;
 }
 
+// The quiz version each version-gated slot was introduced in. Append-only,
+// alongside CODE_ORDER; anything not named here has been present since before
+// versioning and counts as v1.
+var INTRO_VERSION = { vrc_mild: 2, vrc: 2, pinprick: 2 };
+// The version a shared code must have been produced on, read from the code
+// itself: the highest introduction-version among the slots it actually fills.
+// A link may arrive without the &v that marks its version - a code pasted
+// without the trailing &v=2, an old bookmark - so the run version is taken as
+// the higher of the link's &v and what the code implies, and the later
+// questions replay instead of being silently dropped. A code that predates
+// those questions never fills their slots, so it still implies v1.
+function impliedVersion(code) {
+  var v = 1;
+  CODE_ORDER.forEach(function (id, i) {
+    if (i < code.length && code.charAt(i) !== "-")
+      v = Math.max(v, INTRO_VERSION[id] || 1);
+  });
+  return v;
+}
+
 /* ---------------------------------------------------------------
    Optional response logging. On a genuine completion - not a shared
    link being replayed - POST the answers to the server, which appends
@@ -1459,11 +1479,15 @@ function boot() {
     LASTHASH = "";
     return;
   }
-  // A link with no &v predates versioning: it is a v1 run, and its
-  // version-gated questions must stay inactive so it replays as it was taken.
+  // A link with no &v predates versioning, so it starts as a v1 run - but a
+  // v2 code can reach us without its &v (pasted without the trailing &v=2),
+  // so the code's own contents override upward: the run version is the higher
+  // of the &v and what the answers imply. A genuine v1 code fills no v2 slot
+  // and stays v1, so its version-gated questions rightly stay inactive.
   // Set before pruneInactive, which reads RUNVER through each question's when.
-  RUNVER = p.v ? parseInt(p.v, 10) || 1 : 1;
-  ANS = decodeAns(p.a || "");
+  var codeStr = p.a || "";
+  RUNVER = Math.max(p.v ? parseInt(p.v, 10) || 1 : 1, impliedVersion(codeStr));
+  ANS = decodeAns(codeStr);
   pruneInactive();
   var n = parseInt(p.q, 10);
   // Both forms of "show me the results" - the view marker, and the share link,

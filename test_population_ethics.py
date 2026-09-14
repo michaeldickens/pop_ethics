@@ -1678,6 +1678,30 @@ def suite_share(page, rep):
               "a v1 run is complete without the VRC questions")
     op.close()
 
+    # A v2 code can reach us stripped of its &v - pasted without the trailing
+    # &v=2, or from an old bookmark of the fragment alone. Its own contents must
+    # date it: filling a VRC slot could only have happened on v2, so the run is
+    # read as v2 and the VRC questions replay rather than being dropped back to
+    # a v1 reading. (This was a real bug: such a link redirected to a v1 run.)
+    walk(page, CLICK_LEXICAL)
+    v2code = page.input_value("#sharelink").split("#a=")[1].split("&")[0]
+    rep.check(v2code[n_v1:] != "-" * (len(v2code) - n_v1),
+              "the lexical run fills the VRC slots the test relies on", v2code)
+    op2 = page.context.browser.new_page()
+    op2err = []
+    op2.on("pageerror", lambda e: op2err.append(str(e)))
+    op2.goto(f"{base}#a={v2code}&q=r")           # no &v on purpose
+    op2.wait_for_selector("#results .verdict", timeout=5000)
+    rep.check(not op2err, "a versionless v2 code opens without error", str(op2err))
+    rep.check(op2.evaluate("() => RUNVER") == 2,
+              "a v2 code with no &v is recovered as version 2 from its contents")
+    rep.check(op2.evaluate("() => QUESTIONS.filter(q => q.id.slice(0,3) === 'vrc')"
+                           ".every(q => isActive(q))"),
+              "the VRC questions are active on the recovered v2 run")
+    rep.check(op2.evaluate("() => ANS.vrc_mild !== undefined && ANS.vrc !== undefined"),
+              "the recovered run keeps its VRC answers")
+    op2.close()
+
     # Starting over must not leave the old answers in the URL.
     walk(page, CLICK_MODAL)
     page.click("#again")
