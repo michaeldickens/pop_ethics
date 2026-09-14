@@ -364,73 +364,75 @@ def suite_engine(page, rep):
     # so a finite weight on suffering cannot escape it, and refusing the mild
     # trade is itself drawn no bullet - a heavier exchange rate is an alternative
     # intuition, not a cost. Everyone who ranks V above A gets the VRC-acceptance
-    # bullet; its body reads two ways. The totalist takes both trades and gets
-    # the plain hardest-bullet wording. The negative-leaner refuses the mild
-    # trade yet accepts V on a finite weight, and the body adds the rescaling
-    # charge - just totalism in heavier units. The lexical view refuses even the
-    # pinprick's joy; the sub-linear view takes the pinprick but lets its
+    # bullet; the negative-leaner (refused the mild trade, took the pinprick, so
+    # a finite weight) gets a second bullet besides, that accepting V on a finite
+    # weight is just totalism in rescaled units. The lexical view refuses even
+    # the pinprick's joy; the sub-linear view takes the pinprick but lets its
     # happiness run out before the extreme. The VRC questions are only reached
     # when the plain RC is accepted, so every profile carries AvZ=right.
     bodies = """(a) => { const keep = ANS; ANS = a;
                          const b = bullets().map(x => x.t + ' :: ' + x.b);
                          ANS = keep; return b; }"""
-    BVRC = "You accepted the very repugnant conclusion."  # the acceptance bullet, shared
-    RESCALE = "in heavier units"             # the negative-leaner's rescaling body
-    PLAIN = "hardest bullet"                 # the totalist's plain body
+    worlds = """(a) => { const keep = ANS; ANS = a;
+                         const w = bullets().map(x => x.t + ' :: ' + (x.world||''));
+                         ANS = keep; return w; }"""
+    BVRC = "You accepted the very repugnant conclusion."       # the acceptance bullet
+    BNEG = "totalism in other units"         # the negative-leaner's rescaling bullet
     C = "pinprick of suffering outweighs"    # the world-exploder
     D = "stops adding up"                     # happiness saturates
     MILD = "outweighs a lot of happiness"    # the retired mild-refusal bullet
 
-    # Totalist: both trades taken. The acceptance bullet in its plain wording,
-    # and not the rescaling charge.
-    tot = dict(MODAL, vrc_mild="right", vrc="right", AvZ="right")
-    tt = page.evaluate(titles, tot)
-    rep.check(any(BVRC in t for t in tt) and not any(C in t for t in tt)
-              and not any(D in t for t in tt),
-              "a totalist (both trades) draws the VRC-acceptance bullet", str(tt))
-    tb = page.evaluate(bodies, tot)
-    rep.check(any(PLAIN in t for t in tb) and not any(RESCALE in t for t in tb),
-              "...in its plain totalist wording, not the rescaling charge", str(tb))
+    # Totalist: both trades taken. The acceptance bullet, and not the rescaling
+    # bullet the negative-leaner gets.
+    tot = page.evaluate(titles, dict(MODAL, vrc_mild="right", vrc="right", AvZ="right"))
+    rep.check(any(BVRC in t for t in tot) and not any(BNEG in t for t in tot)
+              and not any(C in t for t in tot) and not any(D in t for t in tot),
+              "a totalist (both trades) draws the plain VRC-acceptance bullet alone", str(tot))
 
     # Negative-leaning: refuses the mild trade, takes the pinprick, so accepts V
-    # by force. The same acceptance bullet is surfaced - not silenced - and its
-    # body carries the rescaling charge instead of the plain wording. Refusing
-    # the mild trade draws no bullet of its own.
+    # by force. The acceptance bullet is surfaced - not silenced - AND a second
+    # bullet makes the rescaling charge. Refusing the mild trade draws none of
+    # its own.
     negl = dict(MODAL, AvZ="right", vrc_mild="left", pinprick="right", vrc="right")
     nt = page.evaluate(titles, negl)
-    rep.check(any(BVRC in t for t in nt) and not any(MILD in t for t in nt)
-              and not any(C in t for t in nt) and not any(D in t for t in nt),
-              "a negative-leaner who accepts V still gets the VRC-acceptance bullet", str(nt))
+    rep.check(any(BVRC in t for t in nt) and any(BNEG in t for t in nt)
+              and not any(MILD in t for t in nt) and not any(C in t for t in nt)
+              and not any(D in t for t in nt),
+              "a negative-leaner who accepts V gets acceptance plus the rescaling bullet", str(nt))
     nb = page.evaluate(bodies, negl)
-    rep.check(any(BVRC in t and RESCALE in t and "exchange rate" in t for t in nb)
-              and not any(PLAIN in t for t in nb),
-              "...and its body makes the rescaling charge - a finite weight is just other units", str(nb))
+    rep.check(any(BNEG in t and "total view" in t for t in nb),
+              "...and the rescaling bullet makes the totalism-in-other-units charge", str(nb))
 
     # Lexical: refuses even the pinprick. The world-exploder alone; the mild
-    # refusal is not itself a bullet, and the acceptance bullet does not fire.
+    # refusal is not itself a bullet, and neither VRC-acceptance bullet fires.
     for val in ("left", "equal"):
         lex = page.evaluate(titles, dict(MODAL, AvZ="right", vrc_mild="left", vrc="left", pinprick=val))
         rep.check(any(C in t for t in lex) and not any(MILD in t for t in lex)
-                  and not any(BVRC in t for t in lex) and not any(D in t for t in lex),
+                  and not any(BVRC in t for t in lex) and not any(BNEG in t for t in lex)
+                  and not any(D in t for t in lex),
                   f"a lexical view (pinprick={val}) draws the world-exploder, and nothing else", str(lex))
 
     # Sub-linear: takes the pinprick but lets its happiness run out before the
-    # extreme. The saturation bullet alone, and it invokes the RC as the other
-    # jaw - happiness added up at Z, so the falling-off is pinned to a band.
+    # extreme. The saturation bullet alone; it invokes the accepted RC (Z above A)
+    # as the other jaw, and carries the dilution problem as its concrete example.
     subl = dict(MODAL, AvZ="right", vrc_mild="left", vrc="left", pinprick="right")
     st = page.evaluate(titles, subl)
     rep.check(any(D in t for t in st) and not any(MILD in t for t in st)
-              and not any(BVRC in t for t in st) and not any(C in t for t in st),
+              and not any(BVRC in t for t in st) and not any(BNEG in t for t in st)
+              and not any(C in t for t in st),
               "a sub-linear view (takes pinprick, refuses extreme) draws the saturation bullet", str(st))
     sb = page.evaluate(bodies, subl)
     rep.check(any(D in t and "Z above A" in t for t in sb),
               "...and it invokes the accepted RC to pin where the returns fall off", str(sb))
+    sw = page.evaluate(worlds, subl)
+    rep.check(any(D in t and "dilution" in t for t in sw),
+              "...and it carries the dilution problem as its concrete example", str(sw))
 
     # Took the mild trade but drew the line at the extreme: the pinprick is never
     # asked, so the saturation bullet fires from the mild-trade evidence instead.
     small = page.evaluate(titles, dict(MODAL, vrc_mild="right", vrc="left", AvZ="right"))
     rep.check(any(D in t for t in small) and not any(BVRC in t for t in small)
-              and not any(C in t for t in small),
+              and not any(BNEG in t for t in small) and not any(C in t for t in small),
               "accepting the mild trade but not the extreme draws the saturation bullet", str(small))
 
     # The saturation bullet needs finite-rate evidence: someone who was

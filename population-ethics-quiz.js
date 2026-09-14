@@ -2793,6 +2793,11 @@ function worldNote(s) {
 
 function bullets() {
   var out = [];
+  // A concrete problem for any view on which a life's worth falls as the
+  // population grows - the sub-linear/bounded family. Declared here so bullets
+  // that share it can attach the same note.
+  var dilutionProblemText =
+    "<strong>The dilution problem.</strong> On a view where each further life counts for less than the one before, the worth of any single life — your own among them — is hostage to the total. Discover tomorrow that the world holds eight trillion people, not the eight billion you had assumed, and nothing about your own life has changed; yet you are now bound to reckon your welfare a thousandth as valuable as you did, on the strength of strangers you will never meet.";
   if (ANS.trans_gt === "no")
     out.push({
       t: "You rejected transitivity of better-than.",
@@ -2970,7 +2975,8 @@ function bullets() {
       b:
         "You ranked A above V, refusing to let barely-good lives outweigh the agony however many of them there are. Yet " +
         vrcFinite +
-            ", so you do buy happiness against suffering at some finite rate. The one way to hold both is that happiness saturates: past some point, added lives buy steadily less, so no quantity of them ever tips the scale — but suffering continues to aggregate linearly.<br><br>However, you also ranked Z above A — there, a multitude of barely-good lives <em>did</em> outweigh a handful of wonderful ones. The account you owe is not just that returns diminish, but why they fall off somewhere <em>beyond</em> Z, but </em>before</em> V, and neither sooner nor later.",
+        ", so you do buy happiness against suffering at some finite rate. The one way to hold both is that happiness saturates: past some point, added lives buy steadily less, so no quantity of them ever tips the scale — but suffering continues to aggregate linearly.<br><br>However, you also ranked Z above A — there, a multitude of barely-good lives <em>did</em> outweigh a handful of wonderful ones. The account you owe is not just that returns diminish, but why they fall off somewhere <em>beyond</em> Z, but <em>before</em> V, and neither sooner nor later.",
+      world: dilutionProblemText,
     });
   if (ANS.neutral_mod === "left" || ANS.neutral_wond === "left") {
     var worseLefts = [];
