@@ -139,8 +139,8 @@ var VRC_V = [
 // stay under the width knee, so no to-scale row is needed.
 var PIN_WORLD = [
   { n: A_POP[0].n, w: A_POP[0].w },
-  { n: 150, w: 90, tag: "a hundred and fifty more" },
-  { n: 1, w: -5, tag: "one pinprick" },
+  { n: 150, w: 100, tag: "a hundred and fifty more" },
+  { n: 1, w: -1, tag: "one pinprick" },
 ];
 
 /* ---------------------------------------------------------------
@@ -270,7 +270,7 @@ var QUESTIONS = [
     names: ["A", "H"],
     title: "More welfare in total, but some of it is agony.",
     body:
-      "<strong>A</strong> once more — the top of the ladder, a hundred people with <strong>excellent</strong> lives. <strong>H</strong> holds those same hundred, unaffected — <strong>and adds a hundred more just as excellent</strong>, together with <strong>40 people whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than A.",
+      "Outcome <strong>A</strong> has 100 people with <strong>wonderful</strong> lives. <strong>H</strong> holds those same hundred, unaffected — <strong>and adds a hundred more just as </strong>, together with <strong>40 people whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than A.",
   },
   {
     id: "vrc",
@@ -287,9 +287,9 @@ var QUESTIONS = [
     pops: [A_POP, VRC_V],
     names: ["A", "V"],
     totals: true,
-    title: "Enough small joys to outweigh any amount of agony?",
+    title: "Enough small joys to outweigh any amount of misery?",
     body:
-      "<strong>A</strong> holds 100 people with wonderful lives. <strong>V</strong> holds <strong>100 people in agony</strong> — and alongside them a <strong>vastly greater number</strong>, more numerous by any factor you like, whose lives are <strong>barely worth living</strong>. Their numbers are so overwhelming that <strong>V has vastly more total welfare than A</strong>. <em>The blocks cannot be drawn to scale; the bars underneath carry the totals.</em>",
+      "<strong>A</strong> holds one hundred people with wonderful lives. <strong>V</strong> holds <strong>one hundred people in misery</strong> — and alongside them a <strong>vastly greater number</strong>, more numerous by any factor you like, whose lives are <strong>barely worth living</strong>. Their numbers are so overwhelming that <strong>V has vastly more total welfare than A</strong>. <em>The blocks cannot be drawn to scale; the bars underneath carry the totals.</em>",
   },
   {
     id: "pinprick",
@@ -308,7 +308,7 @@ var QUESTIONS = [
     names: ["A", "A✦"],
     title: "A world of joy, and one pinprick.",
     body:
-      "The same <strong>A</strong> — a hundred excellent lives. <strong>A✦</strong> keeps them and adds <strong>a hundred and fifty more, every one wonderful</strong> — and one further person whose life is dragged <strong>a pinprick below the line worth living</strong>. A✦ holds far more welfare in total; the only shadow on it is that single pinprick.",
+      "The same <strong>A</strong> — a hundred excellent lives. <strong>A✦</strong> keeps them and adds <strong>a hundred and fifty more, every one wonderful</strong> — and one further person whose life is dragged <strong>a pinprick below the line worth living</strong>. A✦ holds far more welfare in total; the downside is that single pinprick.",
   },
   {
     id: "neutral_wond",
@@ -2796,8 +2796,8 @@ function bullets() {
   // A concrete problem for any view on which a life's worth falls as the
   // population grows - the sub-linear/bounded family. Declared here so bullets
   // that share it can attach the same note.
-  var dilutionProblemText =
-      "<strong>The dilution problem.</strong> The value of any life depends on how many others exist, even if you don't know about them. If you discover tomorrow that the world holds 8 trillion people, not 8 billion, then you have learned nothing about your own welfare; yet you are now forced to judge your welfare as less valuable than you once did, on the strength of strangers you will never meet.";
+  var separabilityProblemText =
+      "<strong>The separability problem.</strong> If you discover tomorrow that the world holds 8 <em>trillion</em> people, not 8 billion — and those extra 7.99 trillion are all better-off than you — then you have learned nothing about your own welfare; yet you are now forced to judge your welfare as less valuable than you once did, due to the existence of strangers you will never meet.";
   if (ANS.trans_gt === "no")
     out.push({
       t: "You rejected transitivity of better-than.",
@@ -2976,7 +2976,7 @@ function bullets() {
         "You ranked A above V, refusing to let barely-good lives outweigh the agony however many of them there are. Yet " +
         vrcFinite +
         ", so you do buy happiness against suffering at some finite rate. The one way to hold both is that happiness saturates: past some point, added lives buy steadily less, so no quantity of them ever tips the scale — but suffering continues to aggregate linearly.<br><br>However, you also ranked Z above A — there, a multitude of barely-good lives <em>did</em> outweigh a handful of wonderful ones. The account you owe is not just that returns diminish, but why they fall off somewhere <em>beyond</em> Z, but <em>before</em> V, and neither sooner nor later.",
-      world: dilutionProblemText,
+      world: separabilityProblemText,
     });
   if (ANS.neutral_mod === "left" || ANS.neutral_wond === "left") {
     var worseLefts = [];
