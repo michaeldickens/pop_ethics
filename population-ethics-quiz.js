@@ -288,7 +288,7 @@ var QUESTIONS = [
     totals: true,
     title: "Enough small joys to outweigh any amount of agony?",
     body:
-      "<strong>A</strong> holds 100 people with wonderful lives. <strong>V</strong> holds <strong>arbitrarily many people in terrible agony</strong> — and alongside them a <strong>vastly greater number</strong>, more numerous by any factor you like, whose lives are <strong>barely worth living</strong>, each holding only the faintest trace of good. They are so overwhelmingly many that those faint traces, summed across them all, outrun both the agony among them and the whole of A — so <strong>V has vastly more total welfare than A</strong>. <em>The blocks cannot be drawn to scale; the bars underneath carry the totals.</em>",
+      "<strong>A</strong> holds 100 people with wonderful lives. <strong>V</strong> holds <strong>100 people in agony</strong> — and alongside them a <strong>vastly greater number</strong>, more numerous by any factor you like, whose lives are <strong>barely worth living</strong>. Their numbers are so overwhelming that <strong>V has vastly more total welfare than A</strong>. <em>The blocks cannot be drawn to scale; the bars underneath carry the totals.</em>",
   },
   {
     id: "pinprick",
@@ -2918,18 +2918,18 @@ function bullets() {
   // rate on suffering is an alternative intuition, not a cost - it is accepting
   // V on a finite weight that is.
   if (ANS.vrc === "right") {
-    if (ANS.vrc_mild === "left")
       out.push({
-        t: "You accepted the very repugnant conclusion.",
-        claims: ["vrc", "vrc_mild"],
-        b: "You judged V better than A: a world of arbitrarily many people in agony, redeemed only by adding enough lives barely worth living, over the wholly excellent world at the top of the ladder. You refused the mild trade, so you weight a unit of suffering above its welfare number — but you took the pinprick's joy, so that weight is finite, some fixed factor and no more. A fixed factor is only a choice of scale: multiply the suffering side of the total view by it and you have your view exactly, so enough faint positives outrun any weight you put on the agony, and V arrives for the same reason it does for the totalist — just in heavier units. What is left to defend is not that suffering counts for more, but why <em>this</em> exchange rate rather than any other.",
+          t: "You accepted the very repugnant conclusion.",
+          claims: ["vrc"],
+          b: "You judged V better than A: a world of 100 people in agony, along with a vast number of lives barely worth living, is better than the wholly excellent world at the top of the ladder.",
       });
-    else
-      out.push({
-        t: "You accepted the very repugnant conclusion.",
-        claims: ["vrc"],
-        b: "You judged V better than A: a world of arbitrarily many people in agony, redeemed only by adding enough lives barely worth living, is better than the wholly excellent world at the top of the ladder. This is where unrestricted totalism leads — sufficiently many faint positives outweigh any concentration of suffering. Many regard it as the hardest bullet in the field to bite.",
-      });
+      if (ANS.vrc_mild === "left") {
+          out.push({
+              t: "Weighting suffering more heavily is just totalism in other units.",
+              claims: ["vrc", "vrc_mild"],
+              b: "You judged V better than A: a world of 100 people in agony, along with a vast number of lives barely worth living, is better than the wholly excellent world at the top of the ladder. You refused the mild trade, so you weight a unit of suffering above its welfare number — but you took the pinprick's joy, so that weight is finite, some fixed factor and no more. A fixed factor is only a choice of scale: if you change the definition of \"1 unit of suffering\" to match your scale, you're left with exactly the total view.",
+          });
+      }
   }
   // The benevolent world-exploder. Ranking G at or above G✦ — where the only
   // difference is a great deal of added joy and one pinprick — is the lexical
