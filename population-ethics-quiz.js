@@ -270,7 +270,7 @@ var QUESTIONS = [
     names: ["A", "H"],
     title: "More welfare in total, but some of it is agony.",
     body:
-      "<strong>A</strong> once more — the top of the ladder, a hundred people with <strong>excellent</strong> lives. <strong>H</strong> holds those same hundred, unaffected — <strong>and adds a hundred more just as excellent</strong>, together with <strong>40 people whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than A; the cost is that 40 of its people genuinely suffer.",
+      "<strong>A</strong> once more — the top of the ladder, a hundred people with <strong>excellent</strong> lives. <strong>H</strong> holds those same hundred, unaffected — <strong>and adds a hundred more just as excellent</strong>, together with <strong>40 people whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than A.",
   },
   {
     id: "vrc",
@@ -2332,7 +2332,7 @@ var LABELS = {
         equal: "exactly as good as",
         none: "not rankable against",
       }[a] +
-      " V — arbitrarily many in agony plus enough barely-good lives to hold more welfare in total."
+      " V — 100 lives in agony plus enough barely-good lives to hold much more welfare in total."
     );
   },
   pinprick: function (a) {
@@ -2941,7 +2941,8 @@ function bullets() {
     out.push({
       t: "A pinprick of suffering outweighs a world of joy.",
       claims: ["pinprick"],
-      b: "You judged A at least as good as A✦, though A✦ adds a hundred and fifty wonderful lives and only one pinprick of suffering. That is the lexical claim that no quantity of happiness, however vast, can outweigh any suffering, however slight — and its conclusion is the benevolent world-exploder: a flourishing world is worse for the least suffering it holds, so better ended. A merely negative-leaning view, one that weights suffering heavily but finitely, takes the added joy here instead.",
+      b: "You judged A at least as good as A✦, though A✦ adds 150 wonderful lives and only one pinprick of suffering. That is the lexical claim that no quantity of happiness, however vast, can outweigh any suffering, however slight.",
+        world: "<strong>Extinction would be a good thing.</strong> If any slight suffering can outweigh unlimited happiness, then it would be better to extinguish all life than to risk letting one being suffer."
     });
   // Refused V, yet somewhere traded happiness against suffering at a finite
   // rate - shown either by taking the pinprick's joy or by taking the mild
@@ -2960,7 +2961,7 @@ function bullets() {
     ANS.pinprick === "right"
       ? "you took the pinprick's joy over keeping one life out of suffering"
       : ANS.vrc_mild === "right"
-        ? "you took the mild trade, letting a hundred more excellent lives be worth adding for all the forty in agony"
+        ? "you took the mild trade, letting a hundred more excellent lives outweigh another forty in agony"
         : null;
   if (ANS.vrc === "left" && vrcFinite)
     out.push({
@@ -2969,7 +2970,7 @@ function bullets() {
       b:
         "You ranked A above V, refusing to let barely-good lives outweigh the agony however many of them there are. Yet " +
         vrcFinite +
-        ", so you do buy happiness against suffering at some finite rate — and against a finite rate, faint positives piled high enough clear any fixed penalty on the agony, which is exactly what V does. The one way to hold both is that happiness saturates: past some point added lives buy steadily less, so no quantity of them ever tips the scale. But you also ranked Z above A — there a multitude of barely-good lives <em>did</em> outweigh a handful of wonderful ones, so the adding-up was still working at that scale. Happiness that added up at Z's numbers and gave out by V's has to bend within the stretch between them: the account you owe is not just that returns diminish, but why they fall off in that particular band, and neither sooner nor later.",
+            ", so you do buy happiness against suffering at some finite rate. The one way to hold both is that happiness saturates: past some point, added lives buy steadily less, so no quantity of them ever tips the scale — but suffering continues to aggregate linearly.<br><br>However, you also ranked Z above A — there, a multitude of barely-good lives <em>did</em> outweigh a handful of wonderful ones. The account you owe is not just that returns diminish, but why they fall off somewhere <em>beyond</em> Z, but </em>before</em> V, and neither sooner nor later.",
     });
   if (ANS.neutral_mod === "left" || ANS.neutral_wond === "left") {
     var worseLefts = [];
