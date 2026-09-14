@@ -2883,16 +2883,26 @@ function bullets() {
       claims: ["vrc"],
       b: "You judged V better than W: a world of arbitrarily many people in agony, redeemed only by adding enough lives barely worth living, is better than a world where everyone is wonderfully well off. This is where unrestricted totalism leads — sufficiently many faint positives outweigh any concentration of suffering. Many regard it as the hardest bullet in the field to bite.",
     });
-  // The mirror of the VRC bullet: refusing even the mild trade lets a little
-  // suffering outweigh a lot of happiness. H adds far more welfare than it
-  // subtracts, so ranking G above it puts heavy, near-lexical weight on the
-  // forty - the shape of an absolute negative view, with its own repugnance.
-  if (ANS.vrc_mild === "left")
+  // The mirror of the VRC bullet: refusing the mild trade lets a little
+  // suffering outweigh a lot of happiness. The tail then turns on the pinprick
+  // answer. If they still take the pinprick's joy, the weight on suffering is
+  // finite - and a finite weight is just a rescaling of the total view, so the
+  // charge is not "you value suffering" but "why this exchange rate". If they
+  // refuse even the pinprick, the weight is lexical and forbids the joy
+  // outright (and the world-exploder bullet says so directly).
+  if (ANS.vrc_mild === "left") {
+    var negCore =
+      "You judged G better than H — a hundred wonderful lives are not worth adding if forty lives of agony come alongside them, even though the happiness added far outweighs the suffering in total. ";
+    var negFinite =
+      "Yet you would still add them were the suffering slighter: your answer to the pinprick says enough happiness does outweigh it in the end. So suffering counts for more only by some finite factor — and a fixed factor is just a choice of scale. Your view is the total view with the suffering side of the ledger multiplied by a constant; rescale the units and it is plain totalism again. What is left to defend is not that suffering counts, but why <em>your</em> exchange rate, rather than any other, is the right one.";
+    var negLexical =
+      "Taken to its limit this is the mirror of the very repugnant conclusion: enough weight on suffering forbids creating flourishing lives to prevent a much smaller harm.";
     out.push({
       t: "A little suffering outweighs a lot of happiness.",
-      claims: ["vrc_mild"],
-      b: "You judged G better than H — a hundred wonderful lives are not worth adding if forty lives of agony come alongside them, even though the happiness added far outweighs the suffering in total. Taken to its limit this is the mirror of the very repugnant conclusion: enough weight on suffering forbids creating flourishing lives to prevent a much smaller harm.",
+      claims: ANS.pinprick === "right" ? ["vrc_mild", "pinprick"] : ["vrc_mild"],
+      b: negCore + (ANS.pinprick === "right" ? negFinite : negLexical),
     });
+  }
   // Accepts the trade in the small but balks at the extreme: the analogue, one
   // axis over, of saying the ladder's verdict flips somewhere. It is a cost
   // rather than a conflict because nothing elicits the steps between H and V,
