@@ -267,7 +267,7 @@ var QUESTIONS = [
     names: ["G", "H"],
     title: "More welfare in total, but some of it is agony.",
     body:
-      "<strong>G</strong> holds 100 people with wonderful lives. <strong>H</strong> holds those same 100, unaffected — <strong>and adds a hundred more just as wonderful</strong>, together with <strong>40 people whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than G; the cost is that 40 of its people genuinely suffer.",
+      "<strong>G</strong> holds 100 people with wonderful lives. <strong>H</strong> holds those same 100, <strong>and adds a hundred more just as wonderful</strong>, together with <strong>40 people whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than G.",
   },
   {
     id: "vrc",
@@ -286,7 +286,7 @@ var QUESTIONS = [
     totals: true,
     title: "Enough small joys to outweigh any amount of agony?",
     body:
-      "<strong>W</strong> holds <strong>arbitrarily many</strong> people, every one of them living a <strong>wonderful</strong> life. <strong>V</strong> holds <strong>arbitrarily many people in terrible agony</strong> — and alongside them a <strong>vastly greater number</strong>, more numerous by any factor you like, whose lives are <strong>barely worth living</strong>, each holding only the faintest trace of good. They are so overwhelmingly many that those faint traces, summed across them all, outrun both the agony among them and the whole of W's wonderful lives — so <strong>V has more total welfare than W</strong>. <em>The blocks cannot be drawn to scale; the bars underneath carry the totals.</em>",
+      "<strong>W</strong> holds 100 people living wonderful lives. <strong>V</strong> holds <strong>arbitrarily many people in terrible agony</strong> — and alongside them a <strong>vastly greater number</strong>, more numerous by any factor you like, whose lives are <strong>barely worth living</strong>, each holding only the faintest trace of good. They are so overwhelmingly many that those faint traces, summed across them all, outrun both the agony among them and the whole of W's wonderful lives — so <strong>V has more total welfare than W</strong>. <em>The blocks cannot be drawn to scale; the bars underneath carry the totals.</em>",
   },
   {
     id: "pinprick",
@@ -3289,7 +3289,7 @@ function profile() {
     // conclusion but part from totalism once real suffering is on the table;
     // exactly how far they part is what the bullets above draw out, and is left
     // to them rather than pinned to a sub-label here.
-    return "Your answers sit closest to a <strong>negative-leaning view</strong> \u2014 happiness counts, but suffering counts for more; you accept the repugnant conclusion yet refuse to buy added happiness with added suffering. How far that goes \u2014 a heavier exchange rate, a happiness that saturates, or no amount of joy outweighing any suffering at all \u2014 is the question the bullets above take up.";
+      return "Your answers sit closest to a <strong>negative-leaning view</strong> \u2014 happiness counts, but suffering counts for more. You accept the repugnant conclusion, but refuse to buy added happiness with added suffering.";
   }
   if (
     ANS.AvB === "left" &&
