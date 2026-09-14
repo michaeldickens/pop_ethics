@@ -28,8 +28,8 @@ The list of views to include was initially AI-generated, and then I added a few 
 - [Non-transitive betterness](#nontransitive) - 1 conflict, 2 bullets
 - [Non-transitive betterness and rejecting independence](#nontransitive-non-independent) - clean, 5 bullets
 - [Antinatalism](#antinatalist) - clean, 2 bullets
-- [Negative-leaning](#negative-leaning) - clean, 3 bullets
-- [Hard negative utilitarianism](#hard-negative) - clean, 4 bullets
+- [Negative-leaning](#negative-leaning) - clean, 2 bullets
+- [Hard negative utilitarianism](#hard-negative) - clean, 5 bullets
 - [The untutored intuitive package](#intuitive-v1) - 2 conflicts
 - [The untutored intuitive package alternate (B > A)](#intuitive-v2) - 1 conflict
 - [Suffering counts as a gain](#misery_gain) - clean, 3 bullets
@@ -981,14 +981,16 @@ Bullets bitten:
 
 ## Negative-leaning
 
-More happiness is better, but even a small amount of suffering outweighs a large amount
-of happiness. Additions are ranked by what they do to the suffering in the world rather
-than by their own welfare, which is why a life at 7 comes out a loss and a life at 70 a
-gain, and why levelling up is refused: B's two hundred at 64 hold more shortfall between
-them than A+'s better-off hundred do. Not a standard view so much as the shape a good
-many people's answers take once the suffering is made vivid.
+Happiness is genuinely good, so where no one suffers this view tracks the total: it
+accepts benign additions, levelling up, and the repugnant conclusion -- Z's many mildly
+happy lives, holding more happiness between them and no more suffering than A, come out
+better. What sets it apart is the weight on real suffering: a life in agony counts for
+far more than its welfare number, so it refuses the very repugnant conclusion and even
+the single-step trade of a little agony for a lot of added happiness. For suffering-free
+comparisons it just is the total view; the two part company only once suffering is on
+the table. The shape a good many people's answers take once the suffering is made vivid.
 
-Open it: append `#a=yrlllllylr-l-y-y-a---` to the quiz URL.
+Open it: append `#a=yrrlrrryrr---y-y-z-ll` to the quiz URL.
 
 ### Answers
 
@@ -996,20 +998,21 @@ Open it: append `#a=yrlllllylr-l-y-y-a---` to the quiz URL.
 | --- | --- |
 | Pareto improvement | If the very same people all live better lives, that is better. |
 | The same number, different people | A future of 100 people is worse than a future of 100 entirely different people whose lives all go far better. |
-| A against B | A is better than B. |
+| A against B | A is worse than B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
-| Adding a modest good life | Adding Nadia with a modest good life makes the outcome worse. |
-| Benign addition | A+ is worse than A -- everyone gains, and good new lives are added. |
-| Levelling up | B is worse than A+ -- same headcount, more total, more average, fully equal. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome better. |
+| Benign addition | A+ is better than A -- everyone gains, and good new lives are added. |
+| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
-| A against Z | A is better than Z. |
+| A against Z | A is worse than Z. |
+| Suffering against happiness | G is better than H -- a hundred wonderful lives added, and forty in agony, for more welfare in total. |
+| Suffering against sheer numbers | A world of arbitrarily many wonderful lives is better than one of arbitrarily many in agony plus enough barely-good lives to hold more welfare in total. |
 | Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome better. |
-| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
-| Choosing from three | A is the best of A, B and Z. |
+| Choosing from three | Z is the best of A, B and Z. |
 
-Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, greedy, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -1017,22 +1020,22 @@ No conflicts.
 
 Bullets bitten:
 
-- You said a life worth living makes the world worse by being lived.
-- Everyone gains, good lives are added, and you called it worse.
-- You denied that levelling up improves things.
+- You accepted the repugnant conclusion.
+- A little suffering outweighs a lot of happiness.
 
 <a id="hard-negative"></a>
 
 ## Hard negative utilitarianism
 
-Happiness is not good, but suffering is bad. The one view in the catalogue that rejects
-Pareto, and it rejects it for a reason rather than by accident: if happiness is no gain,
-the same people all living happier lives is no improvement. Every addition is a fresh
-source of suffering and so a loss, whatever the life contains, and two futures of a
-hundred people apiece come out exactly as good when neither holds any suffering to tell
-them apart.
+Happiness is not good, only suffering is bad -- so the same people all living happier
+lives is no improvement (the one view in the catalogue that rejects Pareto, and for a
+reason rather than by accident), and any two suffering-free futures come out exactly as
+good however much happiness they hold or however many happy lives they add. Adding a
+life of agony is the one thing that makes a world worse. Because it rates suffering-free
+worlds as tied rather than one better than another, it neither accepts nor rejects the
+repugnant conclusion: Z and A are simply equal.
 
-Open it: append `#a=xellllryll-l-y-y-a---` to the quiz URL.
+Open it: append `#a=xeeleeeyee-e-y-yyn---` to the quiz URL.
 
 ### Answers
 
@@ -1040,20 +1043,21 @@ Open it: append `#a=xellllryll-l-y-y-a---` to the quiz URL.
 | --- | --- |
 | Pareto improvement | A future need not be better even when the very same people are all better off in it. |
 | The same number, different people | A future of 100 people is exactly as good as a future of 100 entirely different people whose lives all go far better. |
-| A against B | A is better than B. |
+| A against B | A is exactly as good as B. |
 | Adding a life of suffering | Adding Nadia with a life of suffering makes the outcome worse. |
-| Adding a modest good life | Adding Nadia with a modest good life makes the outcome worse. |
-| Benign addition | A+ is worse than A -- everyone gains, and good new lives are added. |
-| Levelling up | B is better than A+ -- same headcount, more total, more average, fully equal. |
+| Adding a modest good life | Adding Nadia with a modest good life makes the outcome neither better nor worse. |
+| Benign addition | A+ is exactly as good as A -- everyone gains, and good new lives are added. |
+| Levelling up | B is exactly as good as A+ -- same headcount, more total, more average, fully equal. |
 | Repeating the moves | Those two verdicts hold identically at every rung of the ladder. |
-| A against Z | A is better than Z. |
-| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome worse. |
-| A harm beside the addition | K is better than K± -- Owen down from 55 to 20, and Nadia added at 70. |
+| A against Z | A is exactly as good as Z. |
+| Adding a wonderful life | Adding Nadia with a wonderful life makes the outcome neither better nor worse. |
+| A harm beside the addition | K is exactly as good as K± -- Owen down from 55 to 20, and Nadia added at 70. |
 | Transitivity of better-than | "Better than" is transitive. |
 | Transitivity of equal-goodness | "Exactly as good as" is transitive. |
-| Choosing from three | A is the best of A, B and Z. |
+| Verdicts across a wider menu | A verdict reached between two options still holds when a third joins them. |
+| Choosing from three | None of A, B and Z can be ruled out as best. |
 
-Not asked: collapse, plusVsBoth, trans_none, menu_eq. These questions only appear when earlier answers give them something to bite on.
+Not asked: collapse, plusVsBoth, trans_none. These questions only appear when earlier answers give them something to bite on.
 
 ### Verdict
 
@@ -1062,8 +1066,9 @@ No conflicts.
 Bullets bitten:
 
 - You rejected the Pareto principle.
-- You said a life worth living makes the world worse by being lived.
-- Everyone gains, good lives are added, and you called it worse.
+- You priced Nadia's life at exactly Owen's loss.
+- You denied that levelling up improves things.
+- You hold the Procreation Asymmetry.
 - When the people change, a world with uniformly better-off people is not judged better.
 
 <a id="intuitive-v1"></a>

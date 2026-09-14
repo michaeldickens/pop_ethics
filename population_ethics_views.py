@@ -473,38 +473,41 @@ VIEWS = [
     dict(
         key="negative-leaning",
         name="Negative-leaning",
-        blurb="""More happiness is better, but even a small amount of
-            suffering outweighs a large amount of happiness. Additions are
-            ranked by what they do to the suffering in the world rather than
-            by their own welfare, which is why a life at 7 comes out a loss
-            and a life at 70 a gain, and why levelling up is refused: B's two
-            hundred at 64 hold more shortfall between them than A+'s
-            better-off hundred do. Not a standard view so much as the shape a
-            good many people's answers take once the suffering is made
-            vivid.""",
-        answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
-                     neutral_mod="left", benign="left", nae="left", generalize="yes",
-                     AvZ="left", neutral_wond="right", collapse="yes", greedy="left", plusVsBoth="left",
+        blurb="""Happiness is genuinely good, so where no one suffers this view
+            tracks the total: it accepts benign additions, levelling up, and
+            the repugnant conclusion -- Z's many mildly happy lives, holding
+            more happiness between them and no more suffering than A, come out
+            better. What sets it apart is the weight on real suffering: a life
+            in agony counts for far more than its welfare number, so it refuses
+            the very repugnant conclusion and even the single-step trade of a
+            little agony for a lot of added happiness. For suffering-free
+            comparisons it just is the total view; the two part company only
+            once suffering is on the table. The shape a good many people's
+            answers take once the suffering is made vivid.""",
+        answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
+                     neutral_mod="right", benign="right", nae="right", generalize="yes",
+                     AvZ="right", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A", menu_alpha="yes"),
+                     menu="Z", menu_alpha="yes"),
     ),
 
     dict(
         key="hard-negative",
         name="Hard negative utilitarianism",
-        blurb="""Happiness is not good, but suffering is bad. The one view in
-            the catalogue that rejects Pareto, and it rejects it for a reason
-            rather than by accident: if happiness is no gain, the same people
-            all living happier lives is no improvement. Every addition is a
-            fresh source of suffering and so a loss, whatever the life
-            contains, and two futures of a hundred people apiece come out
-            exactly as good when neither holds any suffering to tell them
-            apart.""",
-        answers=dict(pareto="no", same_number="equal", AvB="left", misery="left",
-                     neutral_mod="left", benign="left", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="left", collapse="yes", greedy="left", plusVsBoth="left",
+        blurb="""Happiness is not good, only suffering is bad -- so the same
+            people all living happier lives is no improvement (the one view in
+            the catalogue that rejects Pareto, and for a reason rather than by
+            accident), and any two suffering-free futures come out exactly as
+            good however much happiness they hold or however many happy lives
+            they add. Adding a life of agony is the one thing that makes a
+            world worse. Because it rates suffering-free worlds as tied rather
+            than one better than another, it neither accepts nor rejects the
+            repugnant conclusion: Z and A are simply equal.""",
+        answers=dict(pareto="no", same_number="equal", AvB="equal", misery="left",
+                     neutral_mod="equal", benign="equal", nae="equal", generalize="yes",
+                     AvZ="equal", neutral_wond="equal", collapse="yes", greedy="equal", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A", menu_alpha="yes"),
+                     menu="all", menu_alpha="yes"),
     ),
 
     dict(
@@ -791,8 +794,8 @@ EXPECT = {
     'nontransitive': {'conflicts': [['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of better-than.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'nontransitive-non-independent': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You denied that levelling up improves things.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'antinatalist': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
-    'negative-leaning': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.', 'You denied that levelling up improves things.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
-    'hard-negative': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', 'You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.', 'When the people change, a world with uniformly better-off people is not judged better.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
+    'negative-leaning': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'A little suffering outweighs a lot of happiness.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'hard-negative': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', "You priced Nadia's life at exactly Owen's loss.", 'You denied that levelling up improves things.', 'You hold the Procreation Asymmetry.', 'When the people change, a world with uniformly better-off people is not judged better.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'intuitive-v1': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': [], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'intuitive-v2': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': [], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'misery_gain': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You counted a life of suffering as a gain.', 'You accepted the very repugnant conclusion.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
