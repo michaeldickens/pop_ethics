@@ -37,25 +37,31 @@ import sys
 from playwright.sync_api import sync_playwright
 
 QIDS = ["pareto", "same_number", "AvB", "misery", "neutral_mod", "benign", "nae",
-        "generalize", "AvZ", "neutral_wond", "collapse", "greedy", "plusVsBoth",
-        "trans_gt", "trans_none", "trans_eq", "menu_eq", "menu", "menu_alpha"]
+        "generalize", "AvZ", "vrc_mild", "vrc", "pinprick", "neutral_wond", "collapse",
+        "greedy", "plusVsBoth", "trans_gt", "trans_none", "trans_eq", "menu_eq", "menu",
+        "menu_alpha"]
 PAIRS = ["same_number", "AvB", "misery", "neutral_mod", "benign", "nae", "AvZ",
-         "neutral_wond", "greedy", "plusVsBoth"]
+         "vrc_mild", "vrc", "pinprick", "neutral_wond", "greedy", "plusVsBoth"]
 PRINCIPLES = ["pareto", "generalize", "collapse", "trans_gt", "trans_none",
               "trans_eq", "menu_eq", "menu_alpha"]
 CONDITIONAL = ("collapse", "greedy", "plusVsBoth", "trans_none", "menu_eq",
-               "menu_alpha")
+               "menu_alpha", "vrc_mild", "vrc", "pinprick")
 PAIR_VALUES = ["left", "right", "equal", "none"]
 PRINCIPLE_VALUES = ["yes", "no"]
 MENU_VALUES = ["A", "B", "Z", "AB", "all"]
 
 # Index of the answer button to click, per question, for named profiles.
+# vrc_mild/vrc use pair indices: 0 left (first world better), 1 right (second
+# better), 2 equal, 3 none. Modal rejects both trades (suffering not outweighed);
+# the totalist accepts both, biting the very repugnant conclusion.
 CLICK_MODAL = {"pareto": 0, "same_number": 1, "AvB": 0, "misery": 0, "neutral_mod": 2,
-               "benign": 1, "nae": 1, "generalize": 0, "AvZ": 0, "neutral_wond": 2,
+               "benign": 1, "nae": 1, "generalize": 0, "AvZ": 0, "vrc_mild": 0, "vrc": 0,
+               "neutral_wond": 2,
                "collapse": 0, "greedy": 0, "plusVsBoth": 0, "trans_gt": 0, "trans_none": 0,
                "trans_eq": 0, "menu_eq": 0, "menu": 0}
 CLICK_TOTALIST = {"pareto": 0, "same_number": 1, "AvB": 1, "misery": 0, "neutral_mod": 1,
-                  "benign": 1, "nae": 1, "generalize": 0, "AvZ": 1, "neutral_wond": 1,
+                  "benign": 1, "nae": 1, "generalize": 0, "AvZ": 1, "vrc_mild": 1, "vrc": 1,
+                  "neutral_wond": 1,
                   "collapse": 0, "greedy": 1, "plusVsBoth": 0, "trans_gt": 0, "trans_none": 0,
                   "trans_eq": 0, "menu_eq": 0, "menu": 2}
 # menu=0 picks A, reversing this profile's own "B is better" - and index 0 on
@@ -354,13 +360,105 @@ def suite_engine(page, rep):
     rep.check(not any("verdict gets worse" in t for t in mono),
               "a monotonic ranking of the three additions is not flagged", str(mono))
 
+    # The very repugnant conclusion and its neighbours. The V figure is scaled
+    # so a finite weight on suffering cannot escape it, and refusing the mild
+    # trade is itself drawn no bullet - a heavier exchange rate is an alternative
+    # intuition, not a cost. Everyone who ranks V above A gets the VRC-acceptance
+    # bullet; the negative-leaner (refused the mild trade, took the pinprick, so
+    # a finite weight) gets a second bullet besides, that accepting V on a finite
+    # weight is just totalism in rescaled units. The lexical view refuses even
+    # the pinprick's joy; the sub-linear view takes the pinprick but lets its
+    # happiness run out before the extreme. The VRC questions are only reached
+    # when the plain RC is accepted, so every profile carries AvZ=right.
+    bodies = """(a) => { const keep = ANS; ANS = a;
+                         const b = bullets().map(x => x.t + ' :: ' + x.b);
+                         ANS = keep; return b; }"""
+    worlds = """(a) => { const keep = ANS; ANS = a;
+                         const w = bullets().map(x => x.t + ' :: ' + (x.world||''));
+                         ANS = keep; return w; }"""
+    BVRC = "You accepted the very repugnant conclusion."       # the acceptance bullet
+    BNEG = "totalism in other units"         # the negative-leaner's rescaling bullet
+    C = "pinprick of suffering outweighs"    # the world-exploder
+    D = "stops adding up"                     # happiness saturates
+    MILD = "outweighs a lot of happiness"    # the retired mild-refusal bullet
+
+    # Totalist: both trades taken. The acceptance bullet, and not the rescaling
+    # bullet the negative-leaner gets.
+    tot = page.evaluate(titles, dict(MODAL, vrc_mild="right", vrc="right", AvZ="right"))
+    rep.check(any(BVRC in t for t in tot) and not any(BNEG in t for t in tot)
+              and not any(C in t for t in tot) and not any(D in t for t in tot),
+              "a totalist (both trades) draws the plain VRC-acceptance bullet alone", str(tot))
+
+    # Negative-leaning: refuses the mild trade, takes the pinprick, so accepts V
+    # by force. The acceptance bullet is surfaced - not silenced - AND a second
+    # bullet makes the rescaling charge. Refusing the mild trade draws none of
+    # its own.
+    negl = dict(MODAL, AvZ="right", vrc_mild="left", pinprick="right", vrc="right")
+    nt = page.evaluate(titles, negl)
+    rep.check(any(BVRC in t for t in nt) and any(BNEG in t for t in nt)
+              and not any(MILD in t for t in nt) and not any(C in t for t in nt)
+              and not any(D in t for t in nt),
+              "a negative-leaner who accepts V gets acceptance plus the rescaling bullet", str(nt))
+    nb = page.evaluate(bodies, negl)
+    rep.check(any(BNEG in t and "total view" in t for t in nb),
+              "...and the rescaling bullet makes the totalism-in-other-units charge", str(nb))
+
+    # Lexical: refuses even the pinprick. The world-exploder alone; the mild
+    # refusal is not itself a bullet, and neither VRC-acceptance bullet fires.
+    for val in ("left", "equal"):
+        lex = page.evaluate(titles, dict(MODAL, AvZ="right", vrc_mild="left", vrc="left", pinprick=val))
+        rep.check(any(C in t for t in lex) and not any(MILD in t for t in lex)
+                  and not any(BVRC in t for t in lex) and not any(BNEG in t for t in lex)
+                  and not any(D in t for t in lex),
+                  f"a lexical view (pinprick={val}) draws the world-exploder, and nothing else", str(lex))
+
+    # Sub-linear: takes the pinprick but lets its happiness run out before the
+    # extreme. The saturation bullet alone; it invokes the accepted RC (Z above A)
+    # as the other jaw, and carries the dilution problem as its concrete example.
+    subl = dict(MODAL, AvZ="right", vrc_mild="left", vrc="left", pinprick="right")
+    st = page.evaluate(titles, subl)
+    rep.check(any(D in t for t in st) and not any(MILD in t for t in st)
+              and not any(BVRC in t for t in st) and not any(BNEG in t for t in st)
+              and not any(C in t for t in st),
+              "a sub-linear view (takes pinprick, refuses extreme) draws the saturation bullet", str(st))
+    sb = page.evaluate(bodies, subl)
+    rep.check(any(D in t and "Z above A" in t for t in sb),
+              "...and it invokes the accepted RC to pin where the returns fall off", str(sb))
+    sw = page.evaluate(worlds, subl)
+    rep.check(any(D in t and "dilution" in t for t in sw),
+              "...and it carries the dilution problem as its concrete example", str(sw))
+
+    # Took the mild trade but drew the line at the extreme: the pinprick is never
+    # asked, so the saturation bullet fires from the mild-trade evidence instead.
+    small = page.evaluate(titles, dict(MODAL, vrc_mild="right", vrc="left", AvZ="right"))
+    rep.check(any(D in t for t in small) and not any(BVRC in t for t in small)
+              and not any(BNEG in t for t in small) and not any(C in t for t in small),
+              "accepting the mild trade but not the extreme draws the saturation bullet", str(small))
+
+    # The saturation bullet needs finite-rate evidence: someone who was
+    # indifferent to the mild trade, or refused it and could not rank the
+    # pinprick, has shown no finite exchange rate, so refusing the extreme is
+    # owed nothing - and with no bullet flagged for refusing the mild trade
+    # either, these draw nothing at all.
+    wash = page.evaluate(titles, dict(MODAL, vrc_mild="equal", vrc="left", AvZ="right"))
+    rep.check(not any(D in t for t in wash),
+              "indifference to the mild trade plus refusing the extreme draws no saturation bullet",
+              str(wash))
+    noev = page.evaluate(titles, dict(MODAL, vrc_mild="left", pinprick="none", vrc="left", AvZ="right"))
+    rep.check(not any(D in t for t in noev) and not any(MILD in t for t in noev),
+              "refusing the mild trade with the pinprick unranked draws no VRC bullet",
+              str(noev))
+
     # The property that matters: no revisionary answer can appear in a profile
-    # the quiz says nothing at all about.
+    # the quiz says nothing at all about. (Refusing the mild trade is not on this
+    # list: a heavier finite exchange rate is a permitted intuition, so vrc_mild
+    # =left can stand alone in silence when nothing it leads to fires.)
     watch = [["misery", "right"], ["neutral_mod", "left"], ["neutral_wond", "left"],
              ["benign", "left"], ["nae", "left"], ["pareto", "no"], ["trans_gt", "no"],
              ["trans_eq", "no"], ["trans_none", "no"], ["generalize", "no"],
              ["AvZ", "right"], ["greedy", "equal"], ["same_number", "left"],
-             ["same_number", "none"], ["same_number", "equal"]]
+             ["same_number", "none"], ["same_number", "equal"], ["vrc", "right"],
+             ["pinprick", "left"]]
     silent = page.evaluate("""(cfg) => {
       const keep = ANS, bad = new Set();
       cfg.profiles.forEach(a => {
@@ -1007,7 +1105,7 @@ def suite_geometry(page, rep):
       });
       return out;
     }""")
-    rep.check(set(scale) == {"AvZ", "menu"},
+    rep.check(set(scale) == {"AvZ", "menu", "vrc"},
               "the figures that span the knee are the ones carrying to-scale bars",
               str(sorted(scale)))
     for qid, d in scale.items():
@@ -1516,9 +1614,12 @@ def suite_share(page, rep):
     # here precisely because nothing is conditional on it: the ordinary forward
     # step would land on the next question, so arriving at the results is the
     # turn-back completing its errand and nothing else.
-    code = share.split("#a=")[1]
-    i = QIDS.index("AvZ")
-    fresh.goto(f"{base}#a={code[:i]}-{code[i + 1:]}&q=r")
+    # The code is written in CODE_ORDER (URL order), which is deliberately not
+    # the order questions are asked in, so a slot is found by its place there.
+    code = share.split("#a=")[1].split("&")[0]
+    ver = "&v=" + str(fresh.evaluate("() => RUNVER"))
+    i = fresh.evaluate("() => CODE_ORDER.indexOf('AvZ')")
+    fresh.goto(f"{base}#a={code[:i]}-{code[i + 1:]}{ver}&q=r")
     fresh.wait_for_timeout(400)
     rep.check(fresh.evaluate("() => QUESTIONS[IDX].id") == "AvZ",
               "one hole in a finished run turns back to exactly that question",
@@ -1537,8 +1638,8 @@ def suite_share(page, rep):
 
     # A hole can retire a later question, and filling it puts that question
     # back. The run is not finished until that one has an answer either.
-    j = QIDS.index("trans_eq")
-    fresh.goto(f"{base}#a={code[:j]}-{code[j + 1:]}&q=r")
+    j = fresh.evaluate("() => CODE_ORDER.indexOf('trans_eq')")
+    fresh.goto(f"{base}#a={code[:j]}-{code[j + 1:]}{ver}&q=r")
     fresh.wait_for_timeout(400)
     rep.check(fresh.evaluate("() => ANS.menu_eq") is None,
               "a hole that retires a later question clears that answer too")
@@ -1562,6 +1663,89 @@ def suite_share(page, rep):
 
     fresh.close()
 
+    # Versioning. A live run is the current version and its link records it, so
+    # the two VRC questions belong to it. A link made before they existed
+    # carries no &v and a code one character shorter per VRC question; it must
+    # be read as the version it was taken on - v1, those questions inactive -
+    # and still reach a verdict rather than stranding the reader on a question
+    # the run never asked. This is what keeps every link ever shared working.
+    walk(page, CLICK_MODAL)
+    rep.check(page.evaluate("() => RUNVER") == 2, "a fresh run is the current version")
+    rep.check("&v=2" in page.input_value("#sharelink"),
+              "the share link records the version")
+    full = page.input_value("#sharelink").split("#a=")[1].split("&")[0]
+    # The width of a genuine v1 code: every slot that predates versioning. Read
+    # from INTRO_VERSION so it stays right as versions are added, rather than
+    # matching id names (pinprick is a v2 slot but is not "vrc"-prefixed).
+    n_v1 = page.evaluate(
+        "() => CODE_ORDER.filter(id => (INTRO_VERSION[id] || 1) < 2).length")
+    op = page.context.browser.new_page()
+    operr = []
+    op.on("pageerror", lambda e: operr.append(str(e)))
+    op.goto(f"{base}#a={full[:n_v1]}&q=r")
+    op.wait_for_selector("#results .verdict", timeout=5000)
+    rep.check(not operr, "an old versionless link opens without error", str(operr))
+    rep.check(op.evaluate("() => RUNVER") == 1, "a link with no &v is read as version 1")
+    rep.check(op.evaluate("() => VIEW") == "results",
+              "a v1 link lands on the verdict, not a VRC question")
+    rep.check(op.evaluate("() => QUESTIONS.filter(q => q.id.slice(0,3) === 'vrc')"
+                          ".every(q => !isActive(q))"),
+              "the VRC questions stay inactive on a v1 run")
+    rep.check(op.evaluate("() => ANS.vrc === undefined && ANS.vrc_mild === undefined"),
+              "a v1 code carries no VRC answers")
+    rep.check(op.evaluate("() => missingActive().length") == 0,
+              "a v1 run is complete without the VRC questions")
+    op.close()
+
+    # A v2 code can reach us stripped of its &v - pasted without the trailing
+    # &v=2, or from an old bookmark of the fragment alone. Its length dates it:
+    # a code is fixed-width, so one long enough to hold a v2 slot could only
+    # have been made on v2, whether or not that slot is filled. So the run is
+    # read as v2 and the VRC questions replay rather than being dropped back to
+    # a v1 reading. (This was a real bug: such a link redirected to a v1 run.)
+    walk(page, CLICK_LEXICAL)
+    v2code = page.input_value("#sharelink").split("#a=")[1].split("&")[0]
+    rep.check(v2code[n_v1:] != "-" * (len(v2code) - n_v1),
+              "the lexical run fills the VRC slots the test relies on", v2code)
+    op2 = page.context.browser.new_page()
+    op2err = []
+    op2.on("pageerror", lambda e: op2err.append(str(e)))
+    op2.goto(f"{base}#a={v2code}&q=r")           # no &v on purpose
+    op2.wait_for_selector("#results .verdict", timeout=5000)
+    rep.check(not op2err, "a versionless v2 code opens without error", str(op2err))
+    rep.check(op2.evaluate("() => RUNVER") == 2,
+              "a v2 code with no &v is recovered as version 2 from its length")
+    rep.check(op2.evaluate("() => QUESTIONS.filter(q => q.id.slice(0,3) === 'vrc')"
+                           ".every(q => isActive(q))"),
+              "the VRC questions are active on the recovered v2 run")
+    rep.check(op2.evaluate("() => ANS.vrc_mild !== undefined && ANS.vrc !== undefined"),
+              "the recovered run keeps its VRC answers")
+    op2.close()
+
+    # The same, from a v2 run that never reached the VRC questions (the RC was
+    # rejected, so those slots are blank). Length still dates it as v2 - which
+    # answer-based detection would miss, since no VRC slot is filled - and the
+    # verdict is reached with the VRC questions rightly inactive.
+    walk(page, CLICK_MODAL)                      # AvZ left: VRC never asked
+    blankcode = page.input_value("#sharelink").split("#a=")[1].split("&")[0]
+    rep.check(len(blankcode) == len(QIDS) and
+              blankcode[n_v1:] == "-" * (len(blankcode) - n_v1),
+              "the modal run leaves the VRC slots blank", blankcode)
+    op3 = page.context.browser.new_page()
+    op3err = []
+    op3.on("pageerror", lambda e: op3err.append(str(e)))
+    op3.goto(f"{base}#a={blankcode}&q=r")        # no &v on purpose
+    op3.wait_for_selector("#results .verdict", timeout=5000)
+    rep.check(not op3err, "a versionless blank-VRC v2 code opens without error", str(op3err))
+    rep.check(op3.evaluate("() => RUNVER") == 2,
+              "a full-width code with blank VRC slots is still recovered as version 2")
+    rep.check(op3.evaluate("() => QUESTIONS.filter(q => q.id.slice(0,3) === 'vrc')"
+                           ".every(q => !isActive(q))"),
+              "the VRC questions stay inactive when the RC was rejected")
+    rep.check(op3.evaluate("() => missingActive().length") == 0,
+              "the blank-VRC run is complete and reaches the verdict")
+    op3.close()
+
     # Starting over must not leave the old answers in the URL.
     walk(page, CLICK_MODAL)
     page.click("#again")
@@ -1575,6 +1759,11 @@ CLICK_VAGUE = dict(CLICK_MODAL, neutral_mod=3, neutral_wond=1)
 # CLICK_MODAL answers both neutral questions "exactly as good", so the
 # equalities chain and menu independence is live instead.
 CLICK_NO_CHAIN = dict(CLICK_MODAL, trans_eq=1)
+# Accepts the repugnant conclusion (AvZ right) but refuses the mild suffering
+# trade (vrc_mild left) -- the profile that reaches the pinprick question, and
+# the only one that does. Built from the totalist, which already answers AvZ
+# right and both additions as gains, then flips the VRC pair to "left".
+CLICK_LEXICAL = dict(CLICK_TOTALIST, vrc_mild=0, vrc=0, pinprick=0)
 # Unrankable with nothing determinate beside it: one edit away from triggering
 # the collapsing question, but not triggering it yet.
 CLICK_GAP = dict(CLICK_MODAL, neutral_mod=3)
@@ -1583,17 +1772,23 @@ CLICK_GAP = dict(CLICK_MODAL, neutral_mod=3)
 def suite_conditional(page, rep):
     rep.suite("conditional")
 
-    # Each conditional question must appear exactly when it can bite, and the
-    # five must gate independently of one another.
+    # Each conditional question must appear exactly when it can bite, and they
+    # must gate independently of one another. The VRC pair is asked only when
+    # the plain repugnant conclusion is accepted (AvZ right), which the modal,
+    # vague and no-chain profiles all reject, so only the totalist sees them.
     for label, clicks, want in [
             ("unrankable beside a determinate verdict", CLICK_VAGUE,
              {"collapse", "greedy", "plusVsBoth"}),
             ("two chaining equalities", CLICK_MODAL, {"menu_eq", "greedy"}),
             ("equalities that cannot chain", CLICK_NO_CHAIN, {"greedy"}),
-            # Nothing in the greediness case can bite on someone who ranked
-            # both additions as plain gains, so it is the one profile that is
-            # asked none of the five.
-            ("both additions ranked as gains", CLICK_TOTALIST, set())]:
+            # The greediness five cannot bite on someone who ranked both
+            # additions as plain gains, but the totalist accepts the repugnant
+            # conclusion, so it is asked the two VRC questions and nothing else.
+            ("both additions ranked as gains", CLICK_TOTALIST, {"vrc_mild", "vrc"}),
+            # Accepts the RC, refuses the mild trade: reaches the VRC pair and,
+            # because the mild trade was refused, the pinprick too.
+            ("accepts RC, refuses the mild trade", CLICK_LEXICAL,
+             {"vrc_mild", "vrc", "pinprick"})]:
         walk(page, clicks)
         got = {q for q in CONDITIONAL if q in walk.asked}
         rep.check(got == want, f"{label}: asks {sorted(want) or 'none of them'}",
@@ -1664,7 +1859,7 @@ def suite_conditional(page, rep):
     rep.check(page.evaluate("() => ANS.collapse") is None,
               "the retired answer is discarded, not left in state")
     rep.check(page.evaluate(
-        "() => encodeAns()[QUESTIONS.findIndex(q => q.id === 'collapse')]") == "-",
+        "() => encodeAns()[CODE_ORDER.indexOf('collapse')]") == "-",
         "the retired answer is cleared from the share link too")
 
     # The mirror image, and the one with teeth: an edit that brings a question
@@ -1697,6 +1892,11 @@ def suite_views(page, rep):
     rep.suite("views")
     try:
         from population_ethics_views import VIEWS, EXPECT
+        # EXPECT is generated by review_views.py, which normalises punctuation
+        # (curly quotes, dashes, entities) in bullet text. VIEW_PROBE returns
+        # the raw bullet titles, so normalise them the same way before
+        # comparing, keeping the two "in step".
+        from review_views import strip_tags
     except ImportError:
         rep.check(False, "population_ethics_views.py is importable")
         return
@@ -1709,6 +1909,7 @@ def suite_views(page, rep):
             rep.check(False, f"{key}: has a reviewed expectation")
             continue
         got = page.evaluate(VIEW_PROBE, view["answers"])
+        got["bullets"] = [strip_tags(b) for b in got["bullets"]]
         rep.check(got["conflicts"] == want["conflicts"], f"{key}: same conflicts",
                   f"{got['conflicts']} vs {want['conflicts']}")
         # One comparison for every check outside the closure, named by the

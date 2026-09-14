@@ -92,6 +92,57 @@ var K_BASE_OWEN = [
 var PARETO_BEFORE = [{ n: 100, w: 50 }];
 var PARETO_AFTER = [{ n: 100, w: 90 }];
 
+// The very repugnant conclusion, and its mild anchor. These are the only
+// figures in the quiz whose "better" side visibly holds sub-zero lives, so a
+// preference for greater total welfare has to face genuine suffering rather
+// than merely lower welfare - which is the gap the A/B and ladder comparisons
+// leave open, since nothing there says whether B's people suffer or are only
+// less happy. -40 is the same depth of agony as Nadia's life in the misery
+// question. The wonderful side of both the mild and the pinprick comparison
+// reuses A, the top of the ladder (a hundred excellent lives), rather than
+// minting a fresh near-identical world.
+// H is A unchanged plus two additions, so the added lives can be drawn as
+// their own outlined-and-captioned bars, the way Nadia is in the addition
+// questions - the added hundred sit at A's own welfare, so nothing but the
+// suffering forty muddies the trade. The base hundred is left untagged and
+// carries the honesty check; both groups stay under the width knee, so a
+// block's area still reads as its total welfare and no to-scale row is needed.
+var VRC_H = [
+  { n: A_POP[0].n, w: A_POP[0].w },
+  { n: A_POP[0].n, w: A_POP[0].w, tag: "a hundred more" },
+  { n: 40, w: -40, tag: "the suffering forty" },
+];
+// The extreme figure spans the knee, so - like AvZ - the bars carry totals and
+// go uncaptioned; the body names the two groups. Left untagged so the honesty
+// check sees both (a fully tagged population divides zero by zero). The
+// eps-lives group is drawn at a low-but-visible welfare rather than a literal
+// eps, which would vanish under the bar-visibility floor.
+// The wonderful side of the comparison just reuses A, the top of the ladder
+// (a hundred excellent lives) - it and a purpose-built "W" differ only in a
+// welfare point or two, so there is no reason to mint a second world.
+// V is scaled so that a merely finite weight on suffering cannot escape it:
+// anyone who takes the pinprick trade (which caps that weight) is forced to
+// rank V above A, so refusing V marks a happiness that saturates rather than
+// one merely outweighed. Three million barely-good lives clear the agony even
+// at the pinprick's ceiling on the exchange rate. Not drawn to scale - the
+// bars carry totals.
+var VRC_V = [
+  { n: 100, w: -40 },
+  { n: 3000000, w: 4 },
+];
+// The pinprick / benevolent-world-exploder test, added to the same base A as
+// the mild figure so the added bundles are directly comparable. A plus a great
+// many more wonderful lives and one life dragged a hair below zero. Ranking it
+// below A says one pinprick of suffering outweighs all that added joy - the
+// bullet the lexical and strong-negative views bite. The pinprick group is at
+// -5 rather than -1 so its bar clears the visibility floor; both added groups
+// stay under the width knee, so no to-scale row is needed.
+var PIN_WORLD = [
+  { n: A_POP[0].n, w: A_POP[0].w },
+  { n: 150, w: 100, tag: "a hundred and fifty more" },
+  { n: 1, w: -1, tag: "one pinprick" },
+];
+
 /* ---------------------------------------------------------------
    Questions. Three kinds:
    pair      — compare two populations; answer becomes a gt/eq edge
@@ -202,6 +253,62 @@ var QUESTIONS = [
       "<strong>A</strong> is where the ladder started: 100 people with excellent lives. <strong>Z</strong> is where it ends: " +
       last.n.toLocaleString() +
       " people whose lives are <strong>barely worth living</strong>. Z holds about <strong>20 times more total welfare</strong> than A. <em>The blocks cannot be drawn to scale \u2014 Z\u2019s would be thirty pages wide \u2014 so the bars underneath carry the totals instead.</em>",
+  },
+  {
+    id: "vrc_mild",
+    kind: "pair",
+    label: "Suffering against happiness",
+    // Only asked of someone who accepts the plain repugnant conclusion (Z
+    // better than A): anyone who rejects it will reject the strictly harder
+    // trades here too, so asking would only lengthen the quiz. Version-gated
+    // as well, so a v1 link (no &v, RUNVER 1) treats it as inactive and
+    // replays exactly as it did. See RUNVER and encodeAns.
+    when: function (a) {
+      return RUNVER >= 2 && a.AvZ === "right";
+    },
+    pops: [A_POP, VRC_H],
+    names: ["A", "H"],
+    title: "More welfare in total, but some of it is agony.",
+    body:
+      "Outcome <strong>A</strong> has 100 people with <strong>wonderful</strong> lives. <strong>H</strong> holds those same hundred, unaffected — <strong>and adds a hundred more just as </strong>, together with <strong>40 people whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than A.",
+  },
+  {
+    id: "vrc",
+    kind: "pair",
+    // Not named in the label: as with its milder cousin, the quiz walks
+    // through this conclusion without priming, and names it only in the
+    // results, so the label stays descriptive.
+    label: "Suffering against sheer numbers",
+    // Same gate as vrc_mild: only for someone who accepts the plain repugnant
+    // conclusion, and only on a v2 run.
+    when: function (a) {
+      return RUNVER >= 2 && a.AvZ === "right";
+    },
+    pops: [A_POP, VRC_V],
+    names: ["A", "V"],
+    totals: true,
+    title: "Enough small joys to outweigh any amount of misery?",
+    body:
+      "<strong>A</strong> holds one hundred people with wonderful lives. <strong>V</strong> holds <strong>one hundred people in misery</strong> — and alongside them a <strong>vastly greater number</strong>, more numerous by any factor you like, whose lives are <strong>barely worth living</strong>. Their numbers are so overwhelming that <strong>V has vastly more total welfare than A</strong>. <em>The blocks cannot be drawn to scale; the bars underneath carry the totals.</em>",
+  },
+  {
+    id: "pinprick",
+    kind: "pair",
+    label: "A pinprick beside a great deal of joy",
+    // Only put to someone who has just refused the mild suffering trade
+    // (vrc_mild left): that is where it separates a merely negative-leaning
+    // view, on which enough happiness eventually outweighs, from a lexical or
+    // strong-negative one, on which no amount ever does. Never asked of anyone
+    // who took the mild trade, so the incoherent "took the small trade, refuse
+    // the far better one" pair cannot arise here.
+    when: function (a) {
+      return RUNVER >= 2 && a.vrc_mild === "left";
+    },
+    pops: [A_POP, PIN_WORLD],
+    names: ["A", "A✦"],
+    title: "A world of joy, and one pinprick.",
+    body:
+      "The same <strong>A</strong> — a hundred excellent lives. <strong>A✦</strong> keeps them and adds <strong>a hundred and fifty more, every one wonderful</strong> — and one further person whose life is dragged <strong>a pinprick below the line worth living</strong>. A✦ holds far more welfare in total; the downside is that single pinprick.",
   },
   {
     id: "neutral_wond",
@@ -1087,6 +1194,13 @@ var ANS = {},
   IDX = 0,
   VIEW = "intro",
   SHARED = false;
+// The quiz version a run belongs to. Bumped whenever questions are added, so a
+// share link made before the change still replays as the quiz it was taken on:
+// RUNVER is read from the link's &v (absent means v1, before versioning), and
+// version-gated questions stay inactive below their version. A fresh run is
+// always the current version.
+var QUIZ_VERSION = 2;
+var RUNVER = QUIZ_VERSION;
 // Optional, given on the namestep screen just before results. Never required,
 // never decoded from a share link - it travels only in the /log POST.
 var NAME = "";
@@ -1136,23 +1250,67 @@ Object.keys(CODES).forEach(function (k) {
   });
 });
 
+// The order answers are written into the code, held fixed and separate from
+// the order questions are asked in. New questions are only ever APPENDED here,
+// so a code made before they existed is a prefix of one made after: its
+// characters still line up with the same questions, and the new positions
+// simply read as unanswered. That is what lets a question be slotted into the
+// middle of the quiz (QUESTIONS order) while its answer rides at the end of the
+// URL, and what keeps every link ever shared decodable. Never reorder or
+// remove an entry; only append.
+var CODE_ORDER = [
+  "pareto", "same_number", "AvB", "misery", "neutral_mod", "benign", "nae",
+  "generalize", "AvZ", "neutral_wond", "collapse", "greedy", "plusVsBoth",
+  "trans_gt", "trans_none", "trans_eq", "menu_eq", "menu", "menu_alpha",
+  "vrc_mild", "vrc", "pinprick",
+];
+var QBYID = {};
+QUESTIONS.forEach(function (q) {
+  QBYID[q.id] = q;
+});
+
 function encodeAns() {
-  return QUESTIONS.map(function (q) {
-    var m = CODES[q.kind],
-      v = ANS[q.id];
+  return CODE_ORDER.map(function (id) {
+    var m = CODES[QBYID[id].kind],
+      v = ANS[id];
     return v !== undefined && m[v] ? m[v] : "-";
   }).join("");
 }
 function decodeAns(code) {
   var out = {};
-  // One character per question, positionally. A link made before a question
-  // was added or removed would decode shifted, so refuse it outright.
-  if (code.length !== QUESTIONS.length) return out;
-  QUESTIONS.forEach(function (q, i) {
-    var v = DECODES[q.kind][code.charAt(i)];
-    if (v !== undefined) out[q.id] = v;
+  // One character per slot, positionally. A longer code than we know slots for
+  // is shifted or corrupt, so refuse it; a shorter one is an older version's
+  // link, whose slots are a clean prefix - decode those and leave the rest
+  // unanswered. (Version-gated questions stay inactive on such a run anyway.)
+  if (code.length > CODE_ORDER.length) return out;
+  CODE_ORDER.forEach(function (id, i) {
+    if (i >= code.length) return;
+    var v = DECODES[QBYID[id].kind][code.charAt(i)];
+    if (v !== undefined) out[id] = v;
   });
   return out;
+}
+
+// The quiz version each version-gated slot was introduced in. Append-only,
+// alongside CODE_ORDER; anything not named here has been present since before
+// versioning and counts as v1.
+var INTRO_VERSION = { vrc_mild: 2, vrc: 2, pinprick: 2 };
+// The version a shared code must have been produced on, read from its length.
+// Codes are fixed-width - encodeAns writes every slot, a gap as "-" - so a code
+// that reaches a version-gated slot at all (even left blank) can only have been
+// made once that slot existed. The implied version is thus the highest
+// introduction-version among the slots the code spans. A link may arrive
+// without the &v that marks its version - a code pasted without the trailing
+// &v=2, an old bookmark - so the run version is taken as the higher of the
+// link's &v and what the code implies, and the later questions replay instead
+// of being dropped. A genuine v1 code is a shorter prefix that never reaches
+// those slots, so it still implies v1 and replays exactly as it was taken.
+function impliedVersion(code) {
+  var v = 1;
+  CODE_ORDER.forEach(function (id, i) {
+    if (i < code.length) v = Math.max(v, INTRO_VERSION[id] || 1);
+  });
+  return v;
 }
 
 /* ---------------------------------------------------------------
@@ -1182,6 +1340,9 @@ function logAnswers() {
   var payload = {
     code: encodeAns(),
     answers: ANS,
+    // The quiz version this run was taken on, so the corpus can tell a run
+    // that skipped a question from one taken before the question existed.
+    version: QUIZ_VERSION,
     page: baseURL(),
     consent_public_aggregate: CONSENT,
     // Always sent, "" and all, so that a run where the question went
@@ -1210,6 +1371,8 @@ function fragment() {
   return (
     "#a=" +
     encodeAns() +
+    "&v=" +
+    RUNVER +
     "&q=" +
     (VIEW === "results" ? "r" : IDX + 1) +
     (SHARED ? "&s=1" : "")
@@ -1219,7 +1382,7 @@ function baseURL() {
   return location.href.split("#")[0];
 }
 function shareURL() {
-  return baseURL() + "#a=" + encodeAns();
+  return baseURL() + "#a=" + encodeAns() + "&v=" + RUNVER;
 }
 function syncHash() {
   var frag = fragment();
@@ -1316,11 +1479,20 @@ function boot() {
     IDX = 0;
     SHARED = false;
     NAME = "";
+    RUNVER = QUIZ_VERSION;
     show("intro");
     LASTHASH = "";
     return;
   }
-  ANS = decodeAns(p.a || "");
+  // A link with no &v predates versioning, so it starts as a v1 run - but a
+  // v2 code can reach us without its &v (pasted without the trailing &v=2),
+  // so the code's own contents override upward: the run version is the higher
+  // of the &v and what the answers imply. A genuine v1 code fills no v2 slot
+  // and stays v1, so its version-gated questions rightly stay inactive.
+  // Set before pruneInactive, which reads RUNVER through each question's when.
+  var codeStr = p.a || "";
+  RUNVER = Math.max(p.v ? parseInt(p.v, 10) || 1 : 1, impliedVersion(codeStr));
+  ANS = decodeAns(codeStr);
   pruneInactive();
   var n = parseInt(p.q, 10);
   // Both forms of "show me the results" - the view marker, and the share link,
@@ -2139,6 +2311,42 @@ var LABELS = {
       " Z."
     );
   },
+  vrc_mild: function (a) {
+    return (
+      "A is " +
+      {
+        left: "better than",
+        right: "worse than",
+        equal: "exactly as good as",
+        none: "not rankable against",
+      }[a] +
+      " H — a hundred more excellent lives added, and forty in agony, for more welfare in total."
+    );
+  },
+  vrc: function (a) {
+    return (
+      "A, a hundred excellent lives, is " +
+      {
+        left: "better than",
+        right: "worse than",
+        equal: "exactly as good as",
+        none: "not rankable against",
+      }[a] +
+      " V — 100 lives in agony plus enough barely-good lives to hold much more welfare in total."
+    );
+  },
+  pinprick: function (a) {
+    return (
+      "A is " +
+      {
+        left: "better than",
+        right: "worse than",
+        equal: "exactly as good as",
+        none: "not rankable against",
+      }[a] +
+      " A✦ — a hundred and fifty wonderful lives added, against one pinprick of suffering."
+    );
+  },
   misery: function (a) {
     return (
       "Adding Nadia with a life of suffering makes the outcome " +
@@ -2585,6 +2793,11 @@ function worldNote(s) {
 
 function bullets() {
   var out = [];
+  // A concrete problem for any view on which a life's worth falls as the
+  // population grows - the sub-linear/bounded family. Declared here so bullets
+  // that share it can attach the same note.
+  var separabilityProblemText =
+      "<strong>The separability problem.</strong> If you discover tomorrow that the world holds 8 <em>trillion</em> people, not 8 billion — and those extra 7.99 trillion are all better-off than you — then you have learned nothing about your own welfare; yet you are now forced to judge your welfare as less valuable than you once did, due to the existence of strangers you will never meet.";
   if (ANS.trans_gt === "no")
     out.push({
       t: "You rejected transitivity of better-than.",
@@ -2700,6 +2913,71 @@ function bullets() {
     });
   }
 
+  // The very repugnant conclusion, taken head-on - the bullet everyone who
+  // ranks V above A gets, whatever their route to it. The body reads two ways.
+  // For the totalist (took the mild trade) it is the plain hardest-bullet text.
+  // For the negative-leaner (refused the mild trade, so weights suffering above
+  // its number, but is still finite - the pinprick's joy taken) it adds the
+  // rescaling charge: weighting suffering more heavily is only a change of
+  // units, so the view is the total view rescaled and V follows exactly as for
+  // the totalist. Refusing the mild trade is not itself flagged - a heavier
+  // rate on suffering is an alternative intuition, not a cost - it is accepting
+  // V on a finite weight that is.
+  if (ANS.vrc === "right") {
+      out.push({
+          t: "You accepted the very repugnant conclusion.",
+          claims: ["vrc"],
+          b: "You judged V better than A: a world of 100 people in agony, along with a vast number of lives barely worth living, is better than the wholly excellent world at the top of the ladder.",
+      });
+      if (ANS.vrc_mild === "left") {
+          out.push({
+              t: "Weighting suffering more heavily is just totalism in other units.",
+              claims: ["vrc", "vrc_mild"],
+              b: "You judged V better than A: a world of 100 people in agony, along with a vast number of lives barely worth living, is better than the wholly excellent world at the top of the ladder. You refused the mild trade, so you weight a unit of suffering above its welfare number — but you took the pinprick's joy, so that weight is finite, some fixed factor and no more. A fixed factor is only a choice of scale: if you change the definition of \"1 unit of suffering\" to match your scale, you're left with exactly the total view.",
+          });
+      }
+  }
+  // The benevolent world-exploder. Ranking A at or above A✦ — where the only
+  // difference is a great deal of added joy and one pinprick — is the lexical
+  // claim that no amount of happiness outweighs any suffering at all. Refusing
+  // the mild trade is compatible with a merely finite weight on suffering;
+  // this is what tells that apart from a lexical or strong-negative view.
+  if (ANS.pinprick === "left" || ANS.pinprick === "equal")
+    out.push({
+      t: "A pinprick of suffering outweighs a world of joy.",
+      claims: ["pinprick"],
+      b: "You judged A at least as good as A✦, though A✦ adds 150 wonderful lives and only one pinprick of suffering. That is the lexical claim that no quantity of happiness, however vast, can outweigh any suffering, however slight.",
+        world: "<strong>Extinction would be a good thing.</strong> If any slight suffering can outweigh unlimited happiness, then it would be better to extinguish all life than to risk letting one being suffer."
+    });
+  // Refused V, yet somewhere traded happiness against suffering at a finite
+  // rate - shown either by taking the pinprick's joy or by taking the mild
+  // trade outright. Against a finite rate, enough faint positives clear any
+  // fixed penalty on the agony, which is just what V offers, so refusing V can
+  // only be held if happiness saturates. The RC is the other jaw of the vice:
+  // whoever reaches V accepted Z over A, where a multitude of barely-good lives
+  // did outweigh a few wonderful ones - so happiness added up there and stopped
+  // adding up by V, which pins the falling-off to a narrow band between the two
+  // scales. Not a conflict: a sub-linear view is exactly the one numbers cannot
+  // corner, so it is a cost that names what such a view owes. Needs the
+  // finite-rate evidence: someone indifferent to the mild trade, or who left it
+  // or the pinprick unranked, is owed nothing here, and the lexical refusal of
+  // the pinprick is the world-exploder above instead.
+  var vrcFinite =
+    ANS.pinprick === "right"
+      ? "you took the pinprick's joy over keeping one life out of suffering"
+      : ANS.vrc_mild === "right"
+        ? "you took the mild trade, letting a hundred more excellent lives outweigh another forty in agony"
+        : null;
+  if (ANS.vrc === "left" && vrcFinite)
+    out.push({
+      t: "Enough happiness stops adding up.",
+      claims: ANS.pinprick === "right" ? ["vrc", "pinprick", "AvZ"] : ["vrc", "vrc_mild", "AvZ"],
+      b:
+        "You ranked A above V, refusing to let barely-good lives outweigh the agony however many of them there are. Yet " +
+        vrcFinite +
+        ", so you do buy happiness against suffering at some finite rate. The one way to hold both is that happiness saturates: past some point, added lives buy steadily less, so no quantity of them ever tips the scale — but suffering continues to aggregate linearly.<br><br>However, you also ranked Z above A — there, a multitude of barely-good lives <em>did</em> outweigh a handful of wonderful ones. The account you owe is not just that returns diminish, but why they fall off somewhere <em>beyond</em> Z, but <em>before</em> V, and neither sooner nor later.",
+      world: separabilityProblemText,
+    });
   if (ANS.neutral_mod === "left" || ANS.neutral_wond === "left") {
     var worseLefts = [];
     if (ANS.neutral_mod === "left") worseLefts.push("neutral_mod");
@@ -3006,8 +3284,22 @@ function bullets() {
 }
 
 function profile() {
-  if (ANS.AvZ === "right" && ANS.benign === "right" && ANS.nae === "right")
-    return "Your answers sit closest to <strong>totalism</strong> \u2014 welfare summed across everyone who ever lives.";
+  // The negative family accepts the repugnant conclusion just as totalism does
+  // - a suffering-free ladder is ranked by its happiness - and splits from it
+  // only once real suffering is on the table. So an accepted RC no longer means
+  // totalism on its own; it means totalism only if the suffering trades are
+  // taken too.
+  if (ANS.AvZ === "right" && ANS.benign === "right" && ANS.nae === "right") {
+    var refusesTrade = ANS.vrc_mild === "left" || ANS.vrc === "left";
+    if (!refusesTrade)
+      return "Your answers sit closest to <strong>totalism</strong> \u2014 welfare summed across everyone who ever lives.";
+    // One broad bucket for the whole negative family - lexical, sub-linear, or
+    // a merely heavier finite weight alike. They accept the repugnant
+    // conclusion but part from totalism once real suffering is on the table;
+    // exactly how far they part is what the bullets above draw out, and is left
+    // to them rather than pinned to a sub-label here.
+      return "Your answers sit closest to a <strong>negative-leaning view</strong> \u2014 happiness counts, but suffering counts for more. You accept the repugnant conclusion, but refuse to buy added happiness with added suffering.";
+  }
   if (
     ANS.AvB === "left" &&
     ANS.AvZ === "left" &&
@@ -3016,6 +3308,17 @@ function profile() {
     ANS.nae === "right"
   )
     return "Your answers sit closest to <strong>averagism</strong> \u2014 the view that aims to improve the <em>average</em> welfare of populations.";
+  // Only suffering counts: a happier life is no gain, so Pareto is rejected and
+  // additions of happy lives are neither better nor worse. Must precede the
+  // person-affecting asymmetry below, whose addition pattern it shares; the
+  // rejection of Pareto is what tells them apart.
+  if (
+    ANS.pareto === "no" &&
+    ANS.misery === "left" &&
+    (ANS.neutral_mod === "equal" || ANS.neutral_mod === "none") &&
+    (ANS.neutral_wond === "equal" || ANS.neutral_wond === "none")
+  )
+    return "Your answers sit closest to <strong>maximally negative utilitarianism</strong> — only suffering counts, so a happier life is no improvement at all.";
   if (
     (ANS.neutral_mod === "equal" || ANS.neutral_mod === "none") &&
     (ANS.neutral_wond === "equal" || ANS.neutral_wond === "none") &&
@@ -3383,6 +3686,8 @@ function showResults() {
     return (
       '<a href="#a=' +
       revCode +
+      "&v=" +
+      RUNVER +
       "&q=" +
       (i + 1) +
       (SHARED ? "&s=1" : "") +

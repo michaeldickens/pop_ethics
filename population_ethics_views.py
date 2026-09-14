@@ -473,38 +473,93 @@ VIEWS = [
     dict(
         key="negative-leaning",
         name="Negative-leaning",
-        blurb="""More happiness is better, but even a small amount of
-            suffering outweighs a large amount of happiness. Additions are
-            ranked by what they do to the suffering in the world rather than
-            by their own welfare, which is why a life at 7 comes out a loss
-            and a life at 70 a gain, and why levelling up is refused: B's two
-            hundred at 64 hold more shortfall between them than A+'s
-            better-off hundred do. Not a standard view so much as the shape a
-            good many people's answers take once the suffering is made
-            vivid.""",
-        answers=dict(pareto="yes", same_number="right", AvB="left", misery="left",
-                     neutral_mod="left", benign="left", nae="left", generalize="yes",
-                     AvZ="left", neutral_wond="right", collapse="yes", greedy="left", plusVsBoth="left",
+        blurb="""Happiness is genuinely good, so where no one suffers this view
+            tracks the total: it accepts benign additions, levelling up, and
+            the repugnant conclusion -- Z's many mildly happy lives, holding
+            more happiness between them and no more suffering than A, come out
+            better. What sets it apart is the weight on real suffering: a life
+            in agony counts for far more than its welfare number, so it refuses
+            the single-step trade of a little agony for a lot of added
+            happiness. For suffering-free comparisons it just is the total view;
+            the two part company only once suffering is on the table. But the
+            weight is finite -- offered a mountain of happiness beside a single
+            pinprick it takes the happiness -- and a finite weight is only a
+            choice of units, so the scaled very repugnant conclusion, whose
+            barely-good lives are numerous enough to clear the agony at any
+            fixed rate, comes in by force. It accepts it while refusing the mild
+            trade, which is the rescaling charge made vivid: the exchange rate is
+            what is left to defend. The shape a good many people's answers take
+            once the suffering is made vivid.""",
+        answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
+                     neutral_mod="right", benign="right", nae="right", generalize="yes",
+                     AvZ="right", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A", menu_alpha="yes"),
+                     menu="Z", menu_alpha="yes"),
     ),
 
     dict(
-        key="hard-negative",
-        name="Hard negative utilitarianism",
-        blurb="""Happiness is not good, but suffering is bad. The one view in
-            the catalogue that rejects Pareto, and it rejects it for a reason
-            rather than by accident: if happiness is no gain, the same people
-            all living happier lives is no improvement. Every addition is a
-            fresh source of suffering and so a loss, whatever the life
-            contains, and two futures of a hundred people apiece come out
-            exactly as good when neither holds any suffering to tell them
-            apart.""",
-        answers=dict(pareto="no", same_number="equal", AvB="left", misery="left",
-                     neutral_mod="left", benign="left", nae="right", generalize="yes",
-                     AvZ="left", neutral_wond="left", collapse="yes", greedy="left", plusVsBoth="left",
+        key="lexical",
+        name="Lexical negative utilitarianism",
+        blurb="""Happiness counts, but only as a tie-breaker: any suffering,
+            however slight, outweighs any happiness, however great. Among
+            suffering-free worlds it ranks by total happiness like the total
+            view, so it accepts the repugnant conclusion -- but the moment real
+            suffering appears it dominates, so the very repugnant conclusion and
+            the single-step trade are both refused. Offered a mountain of joy
+            beside a single pinprick it keeps the pinprick out and forgoes the
+            joy: the benevolent world-exploder, and the one answer that tells a
+            lexical view apart from a merely negative-leaning one.""",
+        answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
+                     neutral_mod="right", benign="right", nae="right", generalize="yes",
+                     AvZ="right", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
                      trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
-                     menu="A", menu_alpha="yes"),
+                     menu="Z", menu_alpha="yes"),
+    ),
+
+    dict(
+        key="maximally-negative",
+        name="Maximally negative utilitarianism",
+        blurb="""Happiness is not good, only suffering is bad -- so the same
+            people all living happier lives is no improvement (the one view in
+            the catalogue that rejects Pareto, and for a reason rather than by
+            accident), and any two suffering-free futures come out exactly as
+            good however much happiness they hold or however many happy lives
+            they add. Adding a life of agony is the one thing that makes a
+            world worse. Because it rates suffering-free worlds as tied rather
+            than one better than another, it neither accepts nor rejects the
+            repugnant conclusion: Z and A are simply equal.""",
+        answers=dict(pareto="no", same_number="equal", AvB="equal", misery="left",
+                     neutral_mod="equal", benign="equal", nae="equal", generalize="yes",
+                     AvZ="equal", neutral_wond="equal", collapse="yes", greedy="equal", plusVsBoth="left",
+                     trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
+                     menu="all", menu_alpha="yes"),
+    ),
+
+    dict(
+        key="sub-linear",
+        name="Sub-linear aggregation",
+        blurb="""Like the negative-leaning view it weights suffering heavily --
+            it refuses the mild trade, a hundred wonderful lives not worth their
+            forty in agony -- and like it the weight is finite, so it takes the
+            pinprick's joy and accepts the plain repugnant conclusion. Where it
+            parts company is the scaled very repugnant conclusion. The
+            negative-leaner is forced to accept that, since a finite weight
+            leaves faint positives free to pile up; this view escapes only
+            because happiness aggregates sub-linearly -- past some point each
+            further barely-good life counts for less, so three million of them
+            never clear the agony however the suffering is weighted. That is the
+            one view numbers cannot corner, since forcing it in is exactly what
+            the bounded sum forbids. It pays for the escape with a tight range:
+            accept the pinprick and the plain conclusion and reject the scaled
+            one, and the returns must fall off within a narrow band, with an
+            account owed of why the band sits there rather than a rung up or
+            down. The bullet for happiness running out is the whole of it; there
+            should be no conflict.""",
+        answers=dict(pareto="yes", same_number="right", AvB="right", misery="left",
+                     neutral_mod="right", benign="right", nae="right", generalize="yes",
+                     AvZ="right", neutral_wond="right", collapse="yes", greedy="right", plusVsBoth="left",
+                     trans_gt="yes", trans_none="yes", trans_eq="yes", menu_eq="yes",
+                     menu="Z", menu_alpha="yes"),
     ),
 
     dict(
@@ -711,6 +766,68 @@ VIEWS = [
     ),
 ]
 
+# Very-repugnant-conclusion stances for the catalogue, drafted per view and
+# kept in one table so they can be reviewed together rather than hunted for in
+# thirty answer dicts. Two answers each: (vrc_mild, vrc).
+#   vrc       G vs V world:  W (arbitrarily many wonderful) vs V (arbitrarily
+#             many in agony plus enough barely-good lives for a higher total).
+#             "right" accepts the very repugnant conclusion.
+#   vrc_mild  G vs H: 100 wonderful lives vs 400 good lives and 40 in agony,
+#             higher total. "right" accepts the trade; "left" refuses it.
+# Drafted by rule: a view that accepts the plain repugnant conclusion (AvZ
+# "right") accepts the VRC and the mild trade; one that declines A-vs-Z ("none")
+# declines both; one that rejects the RC ("left") rejects the strictly harder
+# VRC, and takes the mild trade only if it is not suffering-focused, asymmetric,
+# average- or worst-off-driven, or a neutral-range decliner. These are a first
+# pass to be read by eye against each description, like every other answer here.
+_VRC = {
+    "total": ("right", "right"),
+    "average": ("left", "left"),
+    "critical_level": ("right", "left"),
+    "geometrism": ("right", "left"),
+    "variable_value": ("right", "left"),
+    "maximin": ("left", "left"),
+    "asymmetry_menu": ("left", "left"),
+    "asymmetry_equal": ("left", "left"),
+    "asymmetry_B": ("left", "left"),
+    "asymmetry_gap": ("none", "left"),
+    "rough": ("none", "left"),
+    "wide-gaps-harm-still-counts": ("none", "left"),
+    "wide-gaps-only-that-conflict": ("none", "left"),
+    "wide-gaps-spent-anyway": ("right", "right"),
+    "wide-gaps-spent-no-pareto": ("right", "right"),
+    "vague_boundary": ("none", "left"),
+    "vague_boundary_ok": ("none", "left"),
+    "nontransitive": ("left", "left"),
+    "nontransitive-non-independent": ("none", "none"),
+    "antinatalist": ("left", "left"),
+    "negative-leaning": ("left", "right"),
+    "lexical": ("left", "left"),
+    "maximally-negative": ("left", "left"),
+    "sub-linear": ("left", "left"),
+    "intuitive-v1": ("right", "left"),
+    "intuitive-v2": ("right", "left"),
+    "misery_gain": ("right", "right"),
+    "imprecise-critical-level": ("none", "left"),
+    "rough-transitive": ("none", "left"),
+    "symmetric-gap-ranks-Z": ("none", "left"),
+    "same_number_only": ("none", "none"),
+    "genethics": ("none", "none"),
+    "quietist": ("none", "none"),
+}
+# The pinprick answer is only asked of views that refuse the mild trade
+# (vrc_mild "left"), and only lexical refuses the pinprick's joy as well; the
+# negative-leaning and sub-linear views take it (finite weight on suffering),
+# which is what forces the former into the scaled VRC and leaves the latter to
+# escape only by bounded aggregation. Everyone who took the mild trade is never
+# asked it, so the default is pruned away for them.
+_PINPRICK = {"lexical": "left"}
+for _v in VIEWS:
+    _mild, _ext = _VRC[_v["key"]]
+    _v["answers"].setdefault("vrc_mild", _mild)
+    _v["answers"].setdefault("vrc", _ext)
+    _v["answers"].setdefault("pinprick", _PINPRICK.get(_v["key"], "right"))
+
 VIEWS_BY_KEY = {v["key"]: v for v in VIEWS}
 
 # What the engine currently produces for each view, checked by eye against the
@@ -719,7 +836,7 @@ VIEWS_BY_KEY = {v["key"]: v for v in VIEWS}
 #     python3 review_views.py --expect
 
 EXPECT = {
-    'total': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'total': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You accepted the very repugnant conclusion.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'average': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'critical_level': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said the verdict flips somewhere on the ladder.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'geometrism': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You denied that levelling up improves things.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
@@ -732,18 +849,20 @@ EXPECT = {
     'rough': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'A neutral addition made a harm unrankable.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
     'wide-gaps-harm-still-counts': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['greedy', 'neutral_mod', 'plusVsBoth', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
     'wide-gaps-only-that-conflict': {'conflicts': [['greedy', 'neutral_mod', 'plusVsBoth', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of not-worse-than.', 'You denied that levelling up improves things.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
-    'wide-gaps-spent-anyway': {'conflicts': [['greedy', 'neutral_wond', 'pareto', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
-    'wide-gaps-spent-no-pareto': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', 'You accepted the repugnant conclusion.', 'An addition you could not rank outweighed a harm you could.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
+    'wide-gaps-spent-anyway': {'conflicts': [['greedy', 'neutral_wond', 'pareto', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You accepted the very repugnant conclusion.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
+    'wide-gaps-spent-no-pareto': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', 'You accepted the repugnant conclusion.', 'You accepted the very repugnant conclusion.', 'An addition you could not rank outweighed a harm you could.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'vague_boundary': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': ['collapse'], 'zrank': None, 'bullets': ['You declined to rank K+ against K±, even though K± is a Pareto improvement from an anonymous perspective.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_eq', 'menu']},
     'vague_boundary_ok': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': ['You declined to rank K+ against K±, even though K± is a Pareto improvement from an anonymous perspective.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'collapse', 'greedy', 'plusVsBoth', 'trans_gt', 'trans_eq', 'menu']},
     'nontransitive': {'conflicts': [['menu_eq', 'neutral_mod', 'neutral_wond', 'pareto', 'trans_eq']], 'extras': [], 'zrank': None, 'bullets': ['You rejected transitivity of better-than.', 'You hold the Procreation Asymmetry.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'nontransitive-non-independent': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You denied that a verdict survives a wider menu.', 'You denied that levelling up improves things.', 'You judged 3 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
     'antinatalist': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
-    'negative-leaning': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.', 'You denied that levelling up improves things.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
-    'hard-negative': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', 'You said a life worth living makes the world worse by being lived.', 'Everyone gains, good lives are added, and you called it worse.', 'When the people change, a world with uniformly better-off people is not judged better.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
+    'negative-leaning': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You accepted the very repugnant conclusion.', 'Weighting suffering more heavily is just totalism in other units.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'pinprick', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'lexical': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'A pinprick of suffering outweighs a world of joy.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'pinprick', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'maximally-negative': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You rejected the Pareto principle.', "You priced Nadia's life at exactly Owen's loss.", 'You denied that levelling up improves things.', 'You hold the Procreation Asymmetry.', 'When the people change, a world with uniformly better-off people is not judged better.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu_eq', 'menu']},
+    'sub-linear': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'Enough happiness stops adding up.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'pinprick', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'intuitive-v1': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt'], ['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': [], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'intuitive-v2': {'conflicts': [['AvZ', 'benign', 'generalize', 'nae', 'trans_gt']], 'extras': [], 'zrank': None, 'bullets': [], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
-    'misery_gain': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You counted a life of suffering as a gain.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
+    'misery_gain': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You accepted the repugnant conclusion.', 'You counted a life of suffering as a gain.', 'You accepted the very repugnant conclusion.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'vrc_mild', 'vrc', 'neutral_wond', 'trans_gt', 'trans_eq', 'menu']},
     'imprecise-critical-level': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said the verdict flips somewhere on the ladder.', 'A neutral addition made a harm unrankable.', 'You judged 5 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},
     'rough-transitive': {'conflicts': [['AvB', 'benign', 'nae', 'trans_gt']], 'extras': ['zrank'], 'zrank': 'ladder', 'bullets': ['A neutral addition made a harm unrankable.', 'You judged 4 of the 9 pairs unrankable.', 'You hold the Procreation Asymmetry.', 'Comparable when the numbers match, unrankable when they do not.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_none', 'trans_eq', 'menu']},
     'symmetric-gap-ranks-Z': {'conflicts': [], 'extras': [], 'zrank': None, 'bullets': ['You said the verdict flips somewhere on the ladder.', 'Adding a life of misery did not make the world worse.', 'The outcomes you judged incomparable cannot be explained by a neutral range.', 'A neutral addition made a harm unrankable.', 'You judged 7 of the 9 pairs unrankable.', 'When the people change, a world with uniformly better-off people is not judged better.'], 'asked': ['pareto', 'same_number', 'AvB', 'misery', 'neutral_mod', 'benign', 'nae', 'generalize', 'AvZ', 'neutral_wond', 'greedy', 'trans_gt', 'trans_eq', 'menu']},

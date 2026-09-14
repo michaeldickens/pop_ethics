@@ -43,8 +43,11 @@ PROBE = """(a) => {
     // The share fragment for these answers, so the entry below can be opened
     // in a browser and read as the person taking the quiz would see it.
     // Taken after pruning, so a question the view is never shown encodes as a
-    // gap rather than as an answer nobody was asked for.
+    // gap rather than as an answer nobody was asked for. The version rides
+    // alongside, exactly as the quiz's own share link carries it, so the link
+    // activates the questions the run reached instead of dropping to v1.
     code: encodeAns(),
+    version: RUNVER,
     claims: asked.map(id => [id, QUESTIONS.find(q => q.id === id).label,
       id === 'menu'
         ? menuClaimText(eff.menu)
@@ -195,7 +198,7 @@ def as_markdown(results):
             "",
             textwrap.fill(" ".join(view["blurb"].split()), 88),
             "",
-            "Open it: append `#a=%s` to the quiz URL." % r["code"],
+            "Open it: append `#a=%s&v=%s` to the quiz URL." % (r["code"], r["version"]),
             "",
             "### Answers",
             "",
