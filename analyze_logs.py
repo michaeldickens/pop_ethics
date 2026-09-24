@@ -46,8 +46,10 @@ an office as often as it is a person. --dedupe then takes each
 respondent's first run, their last, or all of them.
 
 Runs by a name on the exclusion list - the author's own test runs, "MD
-Test", by default - are dropped from the corpus before anything is counted.
---exclude-name replaces that list, --keep-excluded turns it off.
+Test", by default - are dropped from the corpus before anything is counted,
+as are runs whose name contains "test" or "testing" as a whole word ("this
+is a test to see how the quiz works"). --exclude-name and --exclude-word
+replace those lists, --keep-excluded turns both off.
 
 --familiarity narrows the corpus to runs giving a particular answer to that
 question - a comma-separated list of no, heard, explain, answered (any of
@@ -484,18 +486,29 @@ def assign_identities(runs, link_anon):
 # turns the filter off.
 DEFAULT_EXCLUDED_NAMES = ["MD Test"]
 
+# Anyone else trying the quiz out tends to say so in the name box - "this is
+# a test to see how the quiz works". A name containing one of these as a
+# whole word is dropped the same way; "Testa" or "contest" is not.
+# --exclude-word replaces the list, --keep-excluded turns it off.
+DEFAULT_EXCLUDED_WORDS = ["test", "testing"]
 
-def drop_excluded(groups, names):
-    """Remove whole respondents whose name is on the exclusion list.
+
+def drop_excluded(groups, names, words=()):
+    """Remove whole respondents whose name is on the exclusion list, or
+    contains one of the excluded words as a whole word.
 
     Done per respondent rather than per run, so that a run linked to an
     excluded name by --link-anon goes with it rather than surviving as an
     anonymous stranger.
     """
     wanted = {norm_name(n) for n in names if n.strip()}
+    words = [w.strip().casefold() for w in words if w.strip()]
+    word_re = (re.compile(r"\b(?:%s)\b" % "|".join(map(re.escape, words)))
+               if words else None)
     dropped, kept = 0, collections.OrderedDict()
     for key, runs in groups.items():
-        if key[0] == "name" and key[1] in wanted:
+        if key[0] == "name" and (key[1] in wanted or
+                                 (word_re and word_re.search(key[1]))):
             dropped += len(runs)
             continue
         kept[key] = runs
@@ -1477,9 +1490,16 @@ class Report(object):
     def respondents(self, groups, selected, linked, excluded_runs):
         self.h(2, "Respondents")
         if excluded_runs:
+            rules = []
+            if self.args.exclude_name:
+                rules.append(", ".join(self.args.exclude_name))
+            if self.args.exclude_word:
+                rules.append("any name containing the word %s"
+                             % " or ".join('"%s"' % w
+                                           for w in self.args.exclude_word))
             self.p("Excluded by name (%s): %d run%s, dropped before any of "
                    "the counts below. `--keep-excluded` keeps them."
-                   % (", ".join(self.args.exclude_name), excluded_runs,
+                   % ("; ".join(rules), excluded_runs,
                       "" if excluded_runs == 1 else "s"))
         named = sum(1 for k in groups if k[0] == "name")
         repeats = {k: v for k, v in groups.items() if len(v) > 1}
@@ -3107,8 +3127,14 @@ def main():
                          "--link-anon folds into it. Repeatable; giving it at "
                          "all replaces the default list (%s)"
                          % ", ".join(DEFAULT_EXCLUDED_NAMES))
+    ap.add_argument("--exclude-word", action="append", metavar="WORD",
+                    help="drop every run whose name contains this as a whole "
+                         "word, case-insensitively. Repeatable; giving it at "
+                         "all replaces the default list (%s)"
+                         % ", ".join(DEFAULT_EXCLUDED_WORDS))
     ap.add_argument("--keep-excluded", action="store_true",
-                    help="keep the runs --exclude-name would drop")
+                    help="keep the runs --exclude-name and --exclude-word "
+                         "would drop")
     ap.add_argument("--familiarity", metavar="VALUES",
                     help="analyse only runs whose familiarity answer is one "
                          "of these, comma-separated: %s. `answered` is any of "
@@ -3181,8 +3207,11 @@ def main():
                         ", ".join(FAMILIARITY_FILTERS)))
     if args.exclude_name is None:
         args.exclude_name = list(DEFAULT_EXCLUDED_NAMES)
+    if args.exclude_word is None:
+        args.exclude_word = list(DEFAULT_EXCLUDED_WORDS)
     if args.keep_excluded:
         args.exclude_name = []
+        args.exclude_word = []
 
     try:
         all_runs, bad, blank = read_log(args.log)
@@ -3233,7 +3262,8 @@ def main():
             sys.exit("no runs match --familiarity %s"
                      % ",".join(sorted(args.familiarity)))
 
-    groups, excluded_runs = drop_excluded(groups, args.exclude_name)
+    groups, excluded_runs = drop_excluded(groups, args.exclude_name,
+                                          args.exclude_word)
     if not groups:
         sys.exit("every respondent was excluded by name; --keep-excluded "
                  "keeps them")
