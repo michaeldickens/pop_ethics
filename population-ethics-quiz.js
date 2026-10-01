@@ -270,7 +270,7 @@ var QUESTIONS = [
     names: ["A", "H"],
     title: "More welfare in total, but some of it is agony.",
     body:
-      "Outcome <strong>A</strong> has 100 people with <strong>wonderful</strong> lives. <strong>H</strong> holds those same hundred, unaffected — <strong>and adds a hundred more just as </strong>, together with <strong>40 people whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than A.",
+      "Outcome <strong>A</strong> has 100 people with <strong>wonderful</strong> lives. <strong>H</strong> holds those same hundred, unaffected — <strong>and adds a hundred more just as happy</strong>, together with <strong>40 people whose lives are agony</strong>, the kind it would have been better for them never to have lived. H has <strong>more total welfare</strong> than A.",
   },
   {
     id: "vrc",
