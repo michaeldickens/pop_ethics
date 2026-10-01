@@ -76,6 +76,15 @@ most popular answer to every question, assembled into one run and put back
 through the quiz. A majority on each question separately can still be
 jointly inconsistent, so the composite gets a verdict of its own.
 
+Those who accept the repugnant conclusion are asked the suffering
+questions (vrc_mild, vrc, then pinprick for anyone who refused the mild
+trade). A section of their own splits them into totalish - both suffering
+trades taken the way total utilitarianism takes them - and negative-ish,
+everyone else asked them, and compares how far each group's older answers
+stray from the total view, with each group's whole profiles listed under
+the same --min-cell rule as the whole-profile section. It is absent from a
+log with nobody asked those questions.
+
 The nearest-view section labels each person against a hand-written
 catalogue. The "answer clusters" section does the unsupervised opposite:
 it groups respondents by how alike their answers are, with no view fed in,
@@ -648,6 +657,26 @@ def permutation_p(pairs, group, iterations, seed):
     # Add-one, so the p-value can never be reported as exactly zero: with B
     # reshuffles the most it can say is that none of them beat the data.
     return observed, (hits + 1) / float(iterations + 1), iterations
+
+
+def permutation_mean_p(a, b, iterations, seed):
+    """Two-sided P(a gap in means at least this wide) with labels reshuffled.
+
+    Counts of departures are small integers piled up at zero, so a t-test's
+    normal approximation has little to stand on; reshuffling needs nothing.
+    """
+    if not a or not b or iterations <= 0:
+        return None
+    pooled = list(a) + list(b)
+    observed = abs(sum(a) / float(len(a)) - sum(b) / float(len(b)))
+    rng = random.Random(seed)
+    hits = 0
+    for _ in range(iterations):
+        rng.shuffle(pooled)
+        x, y = pooled[:len(a)], pooled[len(a):]
+        if abs(sum(x) / float(len(x)) - sum(y) / float(len(y))) >= observed - 1e-9:
+            hits += 1
+    return (hits + 1) / float(iterations + 1)
 
 
 def ks_uniform(ps):
@@ -1345,6 +1374,12 @@ def table(headers, rows):
 # How many of the commonest whole profiles the profiles table lists. Most
 # profiles are held by one person, so the full list is as long as the corpus.
 TOP_PROFILES = 20
+
+# The suffering questions, asked only of those who accept the repugnant
+# conclusion. Everyone asked any of them is asked the first two; the pinprick
+# only follows a refused mild trade, so it cannot be part of the split.
+NU_QUESTIONS = ("vrc_mild", "vrc", "pinprick")
+NU_SPLIT = ("vrc_mild", "vrc")
 
 BANNER = (
     "**PRIVATE - DO NOT SHARE.** This report was built in private mode. It "
@@ -2980,6 +3015,127 @@ class Report(object):
                       "people." % self.args.min_cell))
         self.stats["distinct_profiles"] = len(counts)
 
+    # -- repugnant-conclusion acceptors -----------------------------------
+
+    def rc_acceptors(self, runs, views):
+        """Totalish against negative-ish, among those asked the v2 questions.
+
+        Only someone who accepts the repugnant conclusion is asked the
+        suffering questions, so this is a section about that sub-sample. The
+        split is on the two questions everyone in it is asked: totalish takes
+        both trades the way total utilitarianism does, negative-ish answers
+        either one any other way. The question it asks is whether the
+        negative-ish answer like a coherent view on the older questions too,
+        or scatter - measured as how many older answers depart from the total
+        view's.
+        """
+        asked = [r for r in runs
+                 if any(q in self.effective(r) for q in NU_QUESTIONS)]
+        if not asked:
+            return
+        total = next((a for key, _, a in (views or []) if key == "total"),
+                     None)
+        if not total:
+            return
+        self.h(2, "Repugnant-conclusion acceptors: totalish and negative-ish")
+        self.p("Everyone below accepted the repugnant conclusion and so was "
+               "asked the suffering questions: %d of the %d respondents. "
+               "**Totalish** answered %s the way total utilitarianism does, "
+               "taking the greater total welfare both times; "
+               "**negative-ish** answered at least one of them any other "
+               "way, \"cannot be ranked\" included."
+               % (len(asked), len(runs),
+                  " and ".join("`%s`" % q if self.qlabel(q) == q
+                               else "%s (`%s`)" % (self.qlabel(q), q)
+                               for q in NU_SPLIT)))
+
+        # The catalogue lists each view's answers in the quiz's own order.
+        order = list(total) + sorted(
+            {q for r in asked for q in self.effective(r)} - set(total))
+
+        def totalish(r):
+            a = self.effective(r)
+            return all(a.get(q) == total[q] for q in NU_SPLIT)
+
+        # A conditional question only reached through an earlier departure
+        # counts only if it too is answered unlike total, so a path through
+        # the quiz is not itself held against anyone.
+        def departures(r):
+            a = self.effective(r)
+            return [q for q in order
+                    if q in a and q not in NU_QUESTIONS and total.get(q) != a[q]]
+
+        groups = [("Totalish", [r for r in asked if totalish(r)]),
+                  ("Negative-ish", [r for r in asked if not totalish(r)])]
+        older = {label: [len(departures(r)) for r in g] for label, g in groups}
+        self.rows(["Group", "Respondents", "Distinct profiles",
+                   "Mean departures from total on older questions",
+                   "Total on every older question"],
+                  [[label, len(g),
+                    len({self.profile_code(r) for r in g}),
+                    "%.2f" % (sum(older[label]) / float(len(g))) if g else "-",
+                    pct(older[label].count(0), len(g)) if g else "-"]
+                   for label, g in groups])
+
+        a, b = older["Totalish"], older["Negative-ish"]
+        p = None
+        if a and b:
+            p = permutation_mean_p(a, b, self.args.permutations,
+                                   self.args.seed)
+            self.p("The difference in mean departures: p %.3f, from "
+                   "reshuffling the two labels %d times. Departures are "
+                   "counted over the older questions each person was "
+                   "asked, against the total view's answer to each; the "
+                   "suffering questions themselves are left out, since they "
+                   "are what defines the groups."
+                   % (p, self.args.permutations))
+
+        exact = self.view_codes(views)
+        withheld = 0
+        for label, g in groups:
+            if not g:
+                continue
+            counts = collections.Counter(self.profile_code(r) for r in g)
+            example = {}
+            for r in g:
+                example.setdefault(self.profile_code(r), r)
+            rows = []
+            for code, c in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])):
+                if self.args.mode == "public" and c < self.args.min_cell:
+                    withheld += c
+                    continue
+                r = example[code]
+                diff = ", ".join("%s=%s" % (q, self.effective(r)[q])
+                                 for q in departures(r)) or "-"
+                nu = ", ".join("%s=%s" % (q, self.effective(r)[q])
+                               for q in NU_QUESTIONS if q in self.effective(r))
+                rows.append(["`%s`" % code, c, nu, diff]
+                            + self.view_of(code, self.effective(r), exact))
+            if not rows:
+                continue
+            self.h(3, "%s profiles" % label)
+            self.rows(["Profile", "Respondents", "Suffering questions",
+                       "Older answers unlike total", "Named view",
+                       "Agreement"], rows)
+        if withheld:
+            self.p("%d respondent%s whose whole profile fewer than %d people "
+                   "share %s left out of the profile tables, for the reason "
+                   "the whole-profile section gives; they are still in the "
+                   "summary above. `--min-cell 1` shows them."
+                   % (withheld, "" if withheld == 1 else "s",
+                      self.args.min_cell, "is" if withheld == 1 else "are"))
+
+        self.stats["rc_acceptors"] = {
+            "asked": len(asked),
+            "groups": {label: {"n": len(g),
+                               "distinct_profiles": len(
+                                   {self.profile_code(r) for r in g}),
+                               # a histogram, not a per-person list
+                               "departures": dict(collections.Counter(
+                                   older[label]))}
+                       for label, g in groups},
+            "p_mean_departures": p}
+
     # -- assembly ---------------------------------------------------------
 
     def footer(self, text):
@@ -3331,6 +3487,7 @@ def main():
         rep.clusters(selected, views)
     rep.associations(selected)
     rep.profiles(selected, views)
+    rep.rc_acceptors(selected, views)
 
     if args.mode == "private":
         rep.footer(BANNER)
