@@ -2477,11 +2477,22 @@ class Report(object):
         if not self.engine:
             return
         n = len(runs)
-        seen = collections.Counter(r.scored["profile"] for r in runs)
+        verdicts = [r.scored["profile"] for r in runs]
         reachable = list(universe["profiles"]) if universe else []
-        for v in seen:
+        for v in verdicts:
             if v not in reachable:
                 reachable.append(v)
+        # Maximally negative utilitarianism is the far end of the negative
+        # family, so it is counted under negative-leaning rather than as a
+        # position of its own. Matched on the bold name, as profile_names
+        # reads it, so rewording either sentence does not undo the fold.
+        bold = profile_names(reachable)
+        target = next((v for v in reachable
+                       if bold[v].lower().startswith("negative-leaning")), None)
+        folded = {v: target for v in reachable if target and
+                  bold[v].lower().startswith("maximally negative")}
+        seen = collections.Counter(folded.get(v, v) for v in verdicts)
+        reachable = [v for v in reachable if v not in folded]
         names = profile_names(reachable)
 
         self.h(2, "The quiz's own classification")
@@ -2492,6 +2503,9 @@ class Report(object):
         self.p("Everyone gets exactly one, including the people whose "
                "answers match none of the patterns, so unlike the nearest "
                "view these are whole people and they add up to the corpus.")
+        if folded:
+            self.p("The quiz's verdict of maximally negative utilitarianism "
+                   "is counted here under %s." % names[target])
         shown = list(reachable)
         shown.sort(key=lambda v: (-seen.get(v, 0), names[v]))
         self.rows(["Classification", "Respondents"],
