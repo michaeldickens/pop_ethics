@@ -1220,6 +1220,30 @@ var CONSENT = true;
 // behind the last quarter of an hour to mean anything.
 // Like NAME and CONSENT it never travels in a share link.
 var FAMILIARITY = "";
+// Which group this taker was recruited from, read from the page's ?src= query
+// parameter, so that a link handed to one group (?src=mturk, ?src=philosophers)
+// can be told apart from the rest in the log. The query survives the fragment
+// rewrites, a reload and starting over, so it is read once and holds for every
+// run on this page. It is kept out of share links: someone who opens a shared
+// result and then takes the quiz themselves is not one of the sharer's group.
+var SOURCE = readSource();
+function readSource() {
+  var m = /[?&]src=([^&]*)/.exec(location.search);
+  if (!m) return "";
+  var v;
+  try {
+    v = decodeURIComponent(m[1].replace(/\+/g, " "));
+  } catch (e) {
+    v = m[1];
+  }
+  // Kept to a short, tidy label so a typo'd or hostile link can't put
+  // anything odd in the log. analyze_logs.py normalises the same way.
+  return v
+    .toLowerCase()
+    .replace(/[^a-z0-9_.-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 64);
+}
 // Set when a request for the results was turned back for want of an answer;
 // rendered on the question it was turned back to, then spent.
 var NOTICE = "";
@@ -1349,6 +1373,8 @@ function logAnswers() {
     // unanswered is distinguishable in the log from one taken before the
     // question existed.
     familiarity: FAMILIARITY,
+    // "" when the link carried no ?src=.
+    source: SOURCE,
   };
   if (NAME) payload.name = NAME;
   try {
@@ -1382,7 +1408,13 @@ function baseURL() {
   return location.href.split("#")[0];
 }
 function shareURL() {
-  return baseURL() + "#a=" + encodeAns() + "&v=" + RUNVER;
+  // Without ?src=, so the recipient isn't counted in the sharer's group.
+  var base = baseURL()
+    .replace(/([?&])src=[^&]*(&|$)/, function (_, pre, post) {
+      return post ? pre : "";
+    })
+    .replace(/\?$/, "");
+  return base + "#a=" + encodeAns() + "&v=" + RUNVER;
 }
 function syncHash() {
   var frag = fragment();

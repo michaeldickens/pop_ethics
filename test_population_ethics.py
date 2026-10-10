@@ -1432,6 +1432,26 @@ def suite_flow(page, rep):
     rep.check(page.evaluate("() => NAME") == "",
               "starting over clears the name")
 
+    # A ?src= tag on the link marks which group the taker came from. It is
+    # logged, tidied to a plain label, and kept out of the share link so the
+    # sharer's group doesn't absorb whoever opens it.
+    plain = page.url.split("#")[0].split("?")[0]
+    walk_to_namestep(CLICK_MODAL)
+    rep.check(logged("source") == "", "an untagged link logs an empty source")
+    page.goto(plain + "?x=1&src=MTurk%20Batch%201")
+    walk_to_namestep(CLICK_MODAL)
+    rep.check(logged("source") == "mturk-batch-1",
+              "the ?src= tag reaches the log as a tidied label")
+    share = page.input_value("#sharelink")
+    rep.check("src=" not in share and "?x=1#a=" in share,
+              "the share link drops ?src= and keeps the rest of the query", share)
+    page.click("#again")
+    page.wait_for_timeout(400)
+    rep.check(page.evaluate("() => SOURCE") == "mturk-batch-1",
+              "starting over keeps the source tag")
+    page.goto(plain)
+    page.wait_for_timeout(300)
+
 
 ROUNDTRIP_JS = """
 () => {

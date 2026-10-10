@@ -13,7 +13,8 @@ plotting dependency - with each table drawn as a chart beside it.
 
 The log is one JSON object per line: the server's fields (time, ip,
 remote_addr, user_agent) wrapped around the client's `submission` (the
-answers, the answer code, the consent choice, and a name if one was given).
+answers, the answer code, the consent choice, the ?src= source tag, and a
+name if one was given).
 
 Two modes, because the log holds two different kinds of thing:
 
@@ -57,6 +58,19 @@ the three), declined (asked and passed) or unasked (logged before the
 question existed). Off by default. It is applied beside the consent filter,
 before anything is grouped or counted, so every figure in the report is of
 the subgroup and the report says so at the top.
+
+A link to the quiz can be tagged with ?src=<label> - say ?src=mturk for one
+group and ?src=philosophers for another - and every run taken from it logs
+that label as its source (lower-cased, anything outside a-z, 0-9, _ . -
+turned into a dash). Runs without a tag are `untagged`. When any run is
+tagged the report gains a sources section - how many came from each, their
+verdicts and their answers side by side - and the group comparisons test
+each source against everyone else. --source narrows the corpus to the given
+sources, comma-separated, the same way --familiarity does, so
+`--source philosophers` is the whole report for that group alone. In public
+mode a source with fewer than --min-cell respondents is counted but left out
+of the side-by-side breakdowns, since a group that small is one person's
+answers.
 
 Runs taken after the namestep began asking about it also carry a
 self-reported familiarity with the repugnant conclusion. It gets a section
@@ -131,6 +145,7 @@ import pathlib
 import random
 import re
 import sys
+import urllib.parse
 import zlib
 
 # ---------------------------------------------------------------------------
@@ -396,7 +411,7 @@ class Run(object):
 
     __slots__ = ("lineno", "time", "ip", "user_agent", "name", "consent",
                  "consent_recorded", "familiarity", "familiarity_recorded",
-                 "answers", "code", "page", "identity", "scored")
+                 "source", "answers", "code", "page", "identity", "scored")
 
     def __init__(self, lineno, rec):
         sub = rec.get("submission") or {}
@@ -417,12 +432,33 @@ class Run(object):
                         if isinstance(v, str)}
         self.code = sub.get("code") or ""
         self.page = sub.get("page") or ""
+        # Runs logged before the quiz sent `source` still carry the page URL,
+        # so a ?src= link handed out before then is recovered from it.
+        src = sub.get("source")
+        if not isinstance(src, str):
+            query = urllib.parse.urlsplit(self.page).query
+            src = urllib.parse.parse_qs(query).get("src", [""])[0]
+        self.source = norm_source(src)
         self.identity = None
         self.scored = None
 
     @property
     def fingerprint(self):
         return (self.ip, self.user_agent)
+
+
+def norm_source(s):
+    """The quiz's own readSource() normalisation, so the two always agree."""
+    s = re.sub(r"[^a-z0-9_.-]+", "-", s.lower()).strip("-")
+    return s[:64]
+
+
+# How a run with no ?src= is labelled, in the report and in --source.
+UNTAGGED = "untagged"
+
+
+def source_label(run):
+    return run.source or UNTAGGED
 
 
 def parse_time(s):
@@ -536,6 +572,31 @@ def group_runs(runs):
         groups[k].sort(key=lambda r: (r.time or datetime.datetime.min.replace(
             tzinfo=datetime.timezone.utc), order[id(r)]))
     return groups
+
+
+def filter_respondents(kept, groups, dedupe, keep):
+    """Narrow the corpus to the respondents `keep` accepts.
+
+    Decided by the run --dedupe would actually select for each respondent
+    (their first, with the default), not by any run of theirs: filtering per
+    run let someone whose answer changed between retakes pass the filter on
+    one run and fail it on another, splitting them across both subgroups
+    instead of landing in exactly one. --dedupe all has no such run to
+    prefer - every run stays a separate data point - so it filters per run.
+    Returns (kept, groups, number of runs dropped).
+    """
+    before = len(kept)
+    if dedupe == "all":
+        kept = [r for r in kept if keep(r)]
+        groups = group_runs(kept)
+    else:
+        rep_run = {ident: (runs[0] if dedupe == "first" else runs[-1])
+                   for ident, runs in groups.items()}
+        kept_idents = {ident for ident, r in rep_run.items() if keep(r)}
+        groups = collections.OrderedDict(
+            (k, v) for k, v in groups.items() if k in kept_idents)
+        kept = [r for r in kept if r.identity in kept_idents]
+    return kept, groups, before - len(kept)
 
 
 def select(groups, mode):
@@ -1434,7 +1495,8 @@ class Report(object):
     # -- sections ---------------------------------------------------------
 
     def corpus(self, all_runs, kept, dropped_consent, dropped_unrecorded, bad,
-               blank, dropped_named, dropped_familiarity, selected):
+               blank, dropped_named, dropped_familiarity, dropped_source,
+               selected):
         self.h(2, "The corpus")
         times = [r.time for r in kept if r.time]
         rows = [
@@ -1456,6 +1518,8 @@ class Report(object):
             ]
         if dropped_familiarity:
             rows.append(["Dropped: outside --familiarity", dropped_familiarity])
+        if dropped_source:
+            rows.append(["Dropped: outside --source", dropped_source])
         if dropped_named:
             rows.append(["Dropped: excluded by name", dropped_named])
         # Two different figures, and the report is of the second one. The
@@ -1516,6 +1580,7 @@ class Report(object):
             "dropped_consent_unrecorded": dropped_unrecorded,
             "dropped_excluded_by_name": dropped_named,
             "dropped_familiarity_filter": dropped_familiarity,
+            "dropped_source_filter": dropped_source,
             "consent_rate": (consented / float(recorded)) if recorded else None,
             "named_runs": named, "familiarity_asked": fam,
             "first": min(times).isoformat() if times else None,
@@ -2032,6 +2097,88 @@ class Report(object):
             self.stats["familiarity_vs_AvZ"] = {
                 "v": res["v"], "p": res["p"], "n": res["n"]}
 
+    # -- sources ----------------------------------------------------------
+
+    def sources(self, runs):
+        """Who came in through which tagged link, and how each group answered.
+
+        A link is tagged by adding ?src=<label> to the quiz URL - one label
+        per group it is handed to. The groups are recruited differently, not
+        assigned at random, so a difference here is a difference between the
+        groups, not an effect of anything the quiz did.
+        """
+        counts = collections.Counter(source_label(r) for r in runs)
+        if set(counts) == {UNTAGGED}:
+            return
+        self.h(2, "Sources")
+        self.p("Which tagged link (`?src=`) each respondent arrived through; "
+               "`%s` is the plain link. The groups were recruited "
+               "separately, so a difference between them is a difference "
+               "between the people, not an effect of the link." % UNTAGGED)
+        order = [s for s, _ in counts.most_common()]
+        self.rows(["Source", "Respondents"],
+                  [["`%s`" % s, pct(counts[s], len(runs))] for s in order],
+                  chart="bar_h", total=len(runs),
+                  data=[(s, counts[s]) for s in order])
+        self.stats["sources"] = dict(counts)
+        if self.args.source:
+            self.p("`--source` has already cut the corpus down to %s."
+                   % ", ".join("`%s`" % s for s in sorted(self.args.source)))
+
+        # A group of one or two is that person's answers, so public mode
+        # leaves small groups out of the breakdowns, as it does profiles.
+        shown = [s for s in order if self.args.mode == "private"
+                 or counts[s] >= self.args.min_cell]
+        hidden = [s for s in order if s not in shown]
+        if len(shown) < 2:
+            return
+        if hidden:
+            self.p("Left out of the breakdowns below for having fewer than "
+                   "%d respondents (`--min-cell`): %s."
+                   % (self.args.min_cell,
+                      ", ".join("`%s`" % s for s in hidden)))
+        by = {s: [r for r in runs if source_label(r) == s] for s in shown}
+
+        if self.engine and all(r.scored for r in runs):
+            self.h(3, "Verdicts by source")
+            rows = []
+            for s in shown:
+                g = by[s]
+                cf = [len(r.scored["conflicts"]) + len(r.scored["extras"])
+                      for r in g]
+                bl = [len({card_key(b) for b in r.scored["bullets"]}) for r in g]
+                rows.append(["`%s`" % s, len(g),
+                             "%.2f" % (sum(cf) / float(len(g))),
+                             "%.2f" % (sum(bl) / float(len(g))),
+                             pct(sum(1 for c in cf if c == 0), len(g))])
+            self.rows(["Source", "n", "Mean conflicts", "Mean bullets",
+                       "No conflict at all"], rows)
+
+        self.h(3, "Answers by source")
+        self.p("Each cell is the share of that source's respondents who were "
+               "asked the question and gave that answer; the bold row under "
+               "each question is how many were asked. Whether a gap is more "
+               "than noise is tested in the next section.")
+        qs = (self.engine.meta["questions"] if self.engine
+              else self.fallback_questions(runs))
+        rows, stats = [], {}
+        for q in qs:
+            qid = q["id"]
+            asked = {s: [self.effective(r)[qid] for r in by[s]
+                         if qid in self.effective(r)] for s in shown}
+            if not any(asked.values()):
+                continue
+            rows.append(["**%s**" % self.qlabel(qid), "**asked**"]
+                        + ["**%d**" % len(asked[s]) for s in shown])
+            given = {v for vs in asked.values() for v in vs}
+            for v in self.in_option_order(qid, given):
+                rows.append(["", self.vlabel(qid, v)]
+                            + ["%.0f%%" % (100.0 * asked[s].count(v) / len(asked[s]))
+                               if asked[s] else "-" for s in shown])
+            stats[qid] = {s: dict(collections.Counter(asked[s])) for s in shown}
+        self.rows(["Question", "Answer"] + ["`%s`" % s for s in shown], rows)
+        self.stats["answers_by_source"] = stats
+
     def crosstab(self, a, b, res):
         """One contingency table, in the quiz's own wording and order."""
         ra_vals = self.in_option_order(a, res["rows"])
@@ -2065,6 +2212,28 @@ class Report(object):
                         "question, or predates it, is in neither group: not "
                         "having said is not the same as having said no.",
             })
+        # Each tagged group against everyone else. With only two groups the
+        # second split would be the first one mirrored, so it is left out.
+        # Public mode skips a split with a side under --min-cell, as the
+        # sources section does.
+        counts = collections.Counter(source_label(r) for r in runs)
+        labels = [s for s, c in counts.most_common()
+                  if self.args.mode == "private"
+                  or min(c, len(runs) - c) >= self.args.min_cell]
+        if len(counts) >= 2:
+            for s in labels[:1] if len(counts) == 2 else labels:
+                out.append({
+                    "key": "source:" + s,
+                    "title": "Source `%s` against everyone else" % s,
+                    "groups": (s, "Everyone else"),
+                    "of": lambda r, s=s: (s if source_label(r) == s
+                                          else "Everyone else"),
+                    "note": ("Respondents who arrived through the plain link, "
+                             "with no `?src=`, against everyone who came "
+                             "through a tagged one." if s == UNTAGGED else
+                             "Respondents who arrived through the `?src=%s` "
+                             "link against all the rest, tagged or not." % s),
+                })
         # Public mode drops the non-consenting runs before anything is
         # counted, so there is no second group left to compare against; the
         # split only exists on a corpus that still has them.
@@ -3311,6 +3480,11 @@ def main():
                          "the three, `declined` was asked and passed, "
                          "`unasked` predates the question. Default: no filter"
                          % ", ".join(FAMILIARITY_FILTERS))
+    ap.add_argument("--source", metavar="VALUES",
+                    help="analyse only runs that arrived through a link "
+                         "tagged ?src= with one of these, comma-separated; "
+                         "`%s` is runs with no tag. Default: no filter"
+                         % UNTAGGED)
     ap.add_argument("--link-anon", action="store_true",
                     help="fold an unnamed run into a named respondent when "
                          "they share an (IP, user-agent) and only one name "
@@ -3375,6 +3549,9 @@ def main():
             ap.error("unknown --familiarity value%s: %s (choose from %s)"
                      % ("" if len(bad) == 1 else "s", ", ".join(bad),
                         ", ".join(FAMILIARITY_FILTERS)))
+    if args.source:
+        args.source = {norm_source(v) or UNTAGGED
+                       for v in args.source.split(",") if v.strip()}
     if args.exclude_name is None:
         args.exclude_name = list(DEFAULT_EXCLUDED_NAMES)
     if args.exclude_word is None:
@@ -3405,32 +3582,21 @@ def main():
 
     # Applied here, beside the consent filter, so that everything downstream -
     # the dedupe, every count - is of the subgroup and nothing has to
-    # remember to filter itself. Decided by the run --dedupe would actually
-    # select for each respondent (their first, with the default), not by
-    # any run of theirs: filtering per run let someone whose familiarity
-    # answer changed between retakes pass the filter on one run and fail it
-    # on another, splitting them across both --familiarity subgroups instead
-    # of landing in exactly one. --dedupe all has no such run to prefer -
-    # every run of theirs stays a separate data point - so it keeps the
-    # simpler per-run filter.
-    dropped_familiarity = 0
+    # remember to filter itself.
+    dropped_familiarity = dropped_source = 0
     if args.familiarity:
-        before = len(kept)
-        if args.dedupe == "all":
-            kept = [r for r in kept if familiarity_matches(r, args.familiarity)]
-            groups = group_runs(kept)
-        else:
-            rep_run = {ident: (runs[0] if args.dedupe == "first" else runs[-1])
-                       for ident, runs in groups.items()}
-            kept_idents = {ident for ident, r in rep_run.items()
-                           if familiarity_matches(r, args.familiarity)}
-            groups = collections.OrderedDict(
-                (k, v) for k, v in groups.items() if k in kept_idents)
-            kept = [r for r in kept if r.identity in kept_idents]
-        dropped_familiarity = before - len(kept)
+        kept, groups, dropped_familiarity = filter_respondents(
+            kept, groups, args.dedupe,
+            lambda r: familiarity_matches(r, args.familiarity))
         if not kept:
             sys.exit("no runs match --familiarity %s"
                      % ",".join(sorted(args.familiarity)))
+    if args.source:
+        kept, groups, dropped_source = filter_respondents(
+            kept, groups, args.dedupe,
+            lambda r: source_label(r) in args.source)
+        if not kept:
+            sys.exit("no runs match --source %s" % ",".join(sorted(args.source)))
 
     groups, excluded_runs = drop_excluded(groups, args.exclude_name,
                                           args.exclude_word)
@@ -3481,15 +3647,20 @@ def main():
         rep.p("**Filtered to `--familiarity %s`.** Every figure below is of "
               "that subgroup only, not of the whole corpus."
               % ",".join(sorted(args.familiarity)))
+    if args.source:
+        rep.p("**Filtered to `--source %s`.** Every figure below is of "
+              "that subgroup only, not of the whole corpus."
+              % ",".join(sorted(args.source)))
     if args.mode == "public":
         rep.p("Only runs whose taker consented to public aggregate analysis "
               "are included, and nothing below identifies anybody.")
 
     rep.corpus(all_runs, kept, len(declined), len(unrecorded), bad, blank,
-               excluded_runs, dropped_familiarity, selected)
+               excluded_runs, dropped_familiarity, dropped_source, selected)
     rep.respondents(groups, selected, linked, excluded_runs)
     rep.answers(selected)
     rep.familiarity(selected)
+    rep.sources(selected)
     rep.group_tests(selected)
     rep.modal(selected, views)
     rep.cards(selected, universe)
@@ -3520,6 +3691,8 @@ def main():
         rep.stats["dedupe"] = args.dedupe
         rep.stats["familiarity_filter"] = (sorted(args.familiarity)
                                            if args.familiarity else None)
+        rep.stats["source_filter"] = (sorted(args.source)
+                                      if args.source else None)
         if args.mode == "private":
             rep.stats["warning"] = ("built in private mode: includes runs "
                                     "that did not consent to public "
